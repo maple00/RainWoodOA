@@ -14,6 +14,8 @@ import com.rainwood.oa.ui.fragment.MineFragment;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.jar.Manifest;
+
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 
 public class HomeActivity extends BaseActivity {
@@ -44,25 +46,6 @@ public class HomeActivity extends BaseActivity {
         initListener();
     }
 
-    private void initListener() {
-        mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            if(item.getItemId() == R.id.navigation_home) {
-                LogUtils.d(this,"切换到首页");
-                switchFragment(mHomeFragment);
-            } else if(item.getItemId() == R.id.navigation_manager) {
-                LogUtils.i(this,"切换到管理");
-                switchFragment(mManagerFragment);
-            } else if(item.getItemId() == R.id.navigation_backlog) {
-                LogUtils.w(this,"切换到待办事项");
-                switchFragment(mBlockLogFragment);
-            } else if(item.getItemId() == R.id.navigation_mine) {
-                LogUtils.e(this,"切换到我的");
-                switchFragment(mMineFragment);
-            }
-            return true;
-        });
-    }
-
     private void initFragments() {
         mHomeFragment = new HomeFragment();
         mManagerFragment = new ManagerFragment();
@@ -70,6 +53,21 @@ public class HomeActivity extends BaseActivity {
         mMineFragment = new MineFragment();
         mFragmentManager = getSupportFragmentManager();
         switchFragment(mHomeFragment);
+    }
+
+    private void initListener() {
+        mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_home) {
+                switchFragment(mHomeFragment);
+            } else if (item.getItemId() == R.id.navigation_manager) {
+                switchFragment(mManagerFragment);
+            } else if (item.getItemId() == R.id.navigation_backlog) {
+                switchFragment(mBlockLogFragment);
+            } else if (item.getItemId() == R.id.navigation_mine) {
+                switchFragment(mMineFragment);
+            }
+            return true;
+        });
     }
 
     @Override
@@ -87,6 +85,16 @@ public class HomeActivity extends BaseActivity {
         if (lastOneFragment == targetFragment) {
             return;
         }
+        // logcat
+        if (targetFragment instanceof HomeFragment){
+            LogUtils.d(this, "切换到首页");
+        }else if (targetFragment instanceof ManagerFragment){
+            LogUtils.d(this, "切换到管理");
+        }else if (targetFragment instanceof BlockLogFragment){
+            LogUtils.d(this, "切换到待办事项");
+        }else {
+            LogUtils.d(this, "切换到我的");
+        }
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         if (!targetFragment.isAdded()) {
@@ -98,7 +106,7 @@ public class HomeActivity extends BaseActivity {
             fragmentTransaction.hide(lastOneFragment);
         }
         lastOneFragment = targetFragment;
-        //fragmentTransaction.replace(R.id.main_page_container,targetFragment);
+        // fragmentTransaction.replace(R.id.fl_main_container,targetFragment);
         fragmentTransaction.commit();
     }
 }
