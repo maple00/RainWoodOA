@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@mipmap/ic_bottom_selected_temp"
+        android:title="@string/navigation_home" />
+
+    <item
+        android:id="@+id/navigation_manager"
+        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:title="@string/navigation_manager" />
+
+    <item
+        android:id="@+id/navigation_backlog"
+        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:title="@string/navigation_backlog" />
+
+    <item
+        android:id="@+id/navigation_mine"
+        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:title="@string/navigation_mine" />
+
+</menu>

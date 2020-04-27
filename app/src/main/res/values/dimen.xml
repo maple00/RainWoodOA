@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 覆写导航栏图标大小和文字大小 -->
+    <dimen name="design_navigation_icon_padding" tools:override="true">11dp</dimen>
+    <dimen name="design_navigation_icon_size" tools:override="true">23dp</dimen>
+</resources>

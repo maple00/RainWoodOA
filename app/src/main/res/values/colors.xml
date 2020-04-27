@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#11CA8D</color>
+    <color name="colorPrimaryDark">#11CA8D</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorGrey">#7B7B7B</color>
+
+    <!-- common color-->
+    <!-- 白色-->
+    <color name="white00">#FFFFFF</color>
+
+
+    <!-- 黑色-->
+    <color name="black00">#000000</color>
+
+</resources>

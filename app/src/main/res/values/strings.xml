@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">RainWoodOA</string>
+
+    <string name="frame_name" translatable="true">AndroidOHP</string>
+    <string name="navigation_home">首页</string>
+    <string name="navigation_manager">管理</string>
+    <string name="navigation_backlog">待办事项</string>
+    <string name="navigation_mine">我的</string>
+    <string name="text_network_error">网络出错，请点击重试</string>
+    <string name="text_loading">玩命加载中</string>
+</resources>
