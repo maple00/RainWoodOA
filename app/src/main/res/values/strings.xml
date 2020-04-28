@@ -8,4 +8,6 @@
     <string name="navigation_mine">我的</string>
     <string name="text_network_error">网络出错，请点击重试</string>
     <string name="text_loading">玩命加载中</string>
+    <string name="text_mine_account">会计账户(元)</string>
+    <string name="text_mine_manager">我的管理</string>
 </resources>

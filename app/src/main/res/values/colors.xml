@@ -4,13 +4,28 @@
     <color name="colorPrimaryDark">#11CA8D</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGrey">#7B7B7B</color>
+    <color name="windowBackground">#F4F4F4</color>
+    <color name="light_gray">#bfbfbf</color>
+
+    <!-- 主要字体颜色-->
+    <color name="fontColor">#333333</color>
+    <color name="colorMiddle">#666666</color>
+    <!-- 标签颜色-->
+    <color name="labelColor">#999999</color>
+    <!-- 分割线的颜色 -->
+    <color name="colorLine">#ECECEC</color>
+    <!-- 按钮禁用时的颜色 -->
+    <color name="colorButtonDisable">#BBBBBB</color>
 
     <!-- common color-->
     <!-- 白色-->
     <color name="white00">#FFFFFF</color>
-
-
     <!-- 黑色-->
     <color name="black00">#000000</color>
+    <!-- 灰色-->
+    <color name="gray05">#F9F9F9</color>
+    <color name="gray10">#F3F3F3</color>
+    <!-- 绿色-->
+    <color name="green05">#11CA8D</color>
 
 </resources>

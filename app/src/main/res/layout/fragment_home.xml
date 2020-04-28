@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white00">
+    android:background="@color/white00"
+    tools:ignore="HardcodedText"
+    tools:context=".ui.fragment.HomeFragment">
 
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.rainwood.oa.ui.widget.XCollapsingToolbarLayout
+            android:id="@+id/ctl_test_bar"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            app:contentScrim="@color/white00"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimVisibleHeightTrigger="100dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/bg_monkey_king" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/t_test_title"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:layout_marginEnd="20dp"
+                app:layout_collapseMode="pin" />
+
+        </com.rainwood.oa.ui.widget.XCollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <!--suppress AndroidDomInspection -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:textColor="@color/black00"
-        android:text="首页" />
-</LinearLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="首页"
+                android:textColor="@color/black00" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

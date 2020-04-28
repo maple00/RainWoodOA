@@ -13,8 +13,7 @@ import com.rainwood.oa.ui.fragment.ManagerFragment;
 import com.rainwood.oa.ui.fragment.MineFragment;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
-
-import java.util.jar.Manifest;
+import com.rainwood.tools.statusbar.StatusBarUtil;
 
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 
@@ -58,12 +57,16 @@ public class HomeActivity extends BaseActivity {
     private void initListener() {
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
+                StatusBarUtil.setStatusBarDarkTheme(this, false);
                 switchFragment(mHomeFragment);
             } else if (item.getItemId() == R.id.navigation_manager) {
+                StatusBarUtil.setStatusBarDarkTheme(this, true);
                 switchFragment(mManagerFragment);
             } else if (item.getItemId() == R.id.navigation_backlog) {
+                StatusBarUtil.setStatusBarDarkTheme(this, true);
                 switchFragment(mBlockLogFragment);
             } else if (item.getItemId() == R.id.navigation_mine) {
+                StatusBarUtil.setStatusBarDarkTheme(this, true);
                 switchFragment(mMineFragment);
             }
             return true;
@@ -86,13 +89,13 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         // logcat
-        if (targetFragment instanceof HomeFragment){
+        if (targetFragment instanceof HomeFragment) {
             LogUtils.d(this, "切换到首页");
-        }else if (targetFragment instanceof ManagerFragment){
+        } else if (targetFragment instanceof ManagerFragment) {
             LogUtils.d(this, "切换到管理");
-        }else if (targetFragment instanceof BlockLogFragment){
+        } else if (targetFragment instanceof BlockLogFragment) {
             LogUtils.d(this, "切换到待办事项");
-        }else {
+        } else {
             LogUtils.d(this, "切换到我的");
         }
         //修改成add和hide的方式来控制Fragment的切换
@@ -106,7 +109,12 @@ public class HomeActivity extends BaseActivity {
             fragmentTransaction.hide(lastOneFragment);
         }
         lastOneFragment = targetFragment;
-        // fragmentTransaction.replace(R.id.fl_main_container,targetFragment);
+        // fragmentTransaction.replace(R.id.fl_main_container, targetFragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtil.setTranslucentStatus(this);
     }
 }

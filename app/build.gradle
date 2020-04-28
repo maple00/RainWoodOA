@@ -18,6 +18,7 @@ android {
         targetCompatibility 1.8
     }
 
+
     buildTypes {
         release {
             minifyEnabled false
@@ -43,7 +44,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     // Google
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
     // okHttp框架
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 

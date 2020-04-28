@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white00"
+    android:orientation="vertical"
+    android:paddingStart="15dp"
+    android:paddingTop="25dp"
+    android:paddingEnd="15dp"
+    android:paddingBottom="25dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_manager_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="行政人事"
+            android:textColor="@color/fontColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_img"
+            android:layout_width="24dp"
+            android:layout_height="14dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_up_arrow" />
+
+    </RelativeLayout>
+
+    <com.rainwood.oa.ui.widget.MeasureGridView
+        android:id="@+id/gv_manager_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:horizontalSpacing="25dp"
+        android:numColumns="4"
+        android:scrollbars="none"
+        android:verticalSpacing="25dp" />
+
+</LinearLayout>

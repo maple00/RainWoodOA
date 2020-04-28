@@ -7,8 +7,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.rainwood.oa.R;
 import com.rainwood.oa.network.app.App;
 import com.rainwood.tools.annotation.ViewBind;
+import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.toast.ToastUtils;
 
 /**
@@ -37,6 +39,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initEvent();
         initPresenter();
+        setStatusBar();
+    }
+
+    protected void setStatusBar() {
+        StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.white00));
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.rainwood.oa.base;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
     private View mEmptyView;
 
     public enum State {
-        NONE,LOADING,SUCCESS,ERROR,EMPTY
+        NONE, LOADING, SUCCESS, ERROR, EMPTY
     }
 
     private FrameLayout mBaseContainer;
@@ -37,7 +39,7 @@ public abstract class BaseFragment extends Fragment {
     @OnClick(R.id.network_error_tips)
     public void retry() {
         //点击了重新加载内容
-        LogUtils.d(this,"on retry...");
+        LogUtils.d(this, "on retry...");
         onRetryClick();
     }
 
@@ -52,9 +54,9 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup
             container, @Nullable Bundle savedInstanceState) {
-        View rootView = loadRootView(inflater,container);
+        View rootView = loadRootView(inflater, container);
         mBaseContainer = rootView.findViewById(R.id.base_container);
-        loadStatesView(inflater,container);
+        loadStatesView(inflater, container);
         ViewBind.inject(this, rootView);
         initView(rootView);
         initListener();
@@ -70,8 +72,8 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
-    protected View loadRootView(LayoutInflater inflater,ViewGroup container) {
-        return inflater.inflate(R.layout.fragment_base_layout,container,false);
+    protected View loadRootView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.fragment_base_layout, container, false);
     }
 
     /**
@@ -80,29 +82,29 @@ public abstract class BaseFragment extends Fragment {
      * @param inflater
      * @param container
      */
-    private void loadStatesView(LayoutInflater inflater,ViewGroup container) {
+    private void loadStatesView(LayoutInflater inflater, ViewGroup container) {
         //成功的view
-        mSuccessView = loadSuccessView(inflater,container);
+        mSuccessView = loadSuccessView(inflater, container);
         mBaseContainer.addView(mSuccessView);
         //Loading的View
-        mLoadingView = loadLoadingView(inflater,container);
+        mLoadingView = loadLoadingView(inflater, container);
         mBaseContainer.addView(mLoadingView);
         //错误页面
-        mErrorView = loadErrorView(inflater,container);
+        mErrorView = loadErrorView(inflater, container);
         mBaseContainer.addView(mErrorView);
         //内容为空的页面
-        mEmptyView = loadEmptyView(inflater,container);
+        mEmptyView = loadEmptyView(inflater, container);
         mBaseContainer.addView(mEmptyView);
         setUpState(State.NONE);
     }
 
-    protected View loadErrorView(LayoutInflater inflater,ViewGroup container) {
-        return inflater.inflate(R.layout.fragment_error,container,false);
+    protected View loadErrorView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.fragment_error, container, false);
     }
 
 
-    protected View loadEmptyView(LayoutInflater inflater,ViewGroup container) {
-        return inflater.inflate(R.layout.fragment_empty,container,false);
+    protected View loadEmptyView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.fragment_empty, container, false);
     }
 
     /**
@@ -125,8 +127,8 @@ public abstract class BaseFragment extends Fragment {
      * @param container
      * @return
      */
-    protected View loadLoadingView(LayoutInflater inflater,ViewGroup container) {
-        return inflater.inflate(R.layout.fragment_loading,container,false);
+    protected View loadLoadingView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.fragment_loading, container, false);
     }
 
     protected void initView(View rootView) {
@@ -153,9 +155,10 @@ public abstract class BaseFragment extends Fragment {
 
     protected View loadSuccessView(LayoutInflater inflater, ViewGroup container) {
         int resId = getRootViewResId();
-        return inflater.inflate(resId,container,false);
+        return inflater.inflate(resId, container, false);
     }
 
     protected abstract int getRootViewResId();
+
 
 }

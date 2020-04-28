@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_manager_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white00"
     android:orientation="vertical">
 
-    <TextView
+    <View
+        android:id="@+id/sxs_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textColor="@color/black00"
-        android:text="管理" />
+        android:layout_height="@dimen/statusbar_view_height"
+        android:background="@color/white00" />
+
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_main_manager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gray05" />
+
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+
 </LinearLayout>

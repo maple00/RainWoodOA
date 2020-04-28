@@ -1,13 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_mine_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white00"
     android:orientation="vertical">
 
-    <TextView
+    <View
+        android:id="@+id/sxs_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textColor="@color/black00"
-        android:text="我的" />
+        android:layout_height="@dimen/statusbar_view_height"
+        android:background="@color/white00" />
+
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.rainwood.oa.ui.widget.RWNestedScrollView
+            android:id="@+id/rns_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="30dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp">
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="韩梅梅"
+                        android:textColor="@color/fontColor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_depart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_name"
+                        android:layout_marginTop="13dp"
+                        android:text="市场部-销售顾问"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_depart"
+                        android:layout_marginTop="13dp"
+                        android:text="2014.09.26入职 · 在岗 · 已工作258天"
+                        android:textColor="@color/labelColor"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_head_photo"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/bg_monkey_king" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/shape_mine_account">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/text_mine_account"
+                        android:textColor="@color/white00"
+                        android:textSize="11sp"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/tv_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="13dp"
+                        android:text="5200.3"
+                        android:textColor="@color/white00"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+                <!-- 会计账户信息-->
+                <com.rainwood.oa.ui.widget.MeasureGridView
+                    android:id="@+id/mgv_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:numColumns="2"
+                    android:paddingStart="15dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="20dp"
+                    android:verticalSpacing="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:text="@string/text_mine_manager"
+                    android:textColor="@color/fontColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- 我的管理-->
+                <com.rainwood.oa.ui.widget.MeasureGridView
+                    android:id="@+id/mgv_mine_manager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:numColumns="4"
+                    android:paddingTop="22dp"
+                    android:paddingBottom="25dp"
+                    android:verticalSpacing="36dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/gray05" />
+
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_app"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="15dp"
+                    android:divider="@color/white00"
+                    android:dividerHeight="35dp"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp" />
+
+                <Button
+                    android:id="@+id/btn_logout"
+                    style="@style/ButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:text="退出登录"
+                    android:textColor="@color/colorMiddle" />
+
+            </LinearLayout>
+        </com.rainwood.oa.ui.widget.RWNestedScrollView>
+
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>
