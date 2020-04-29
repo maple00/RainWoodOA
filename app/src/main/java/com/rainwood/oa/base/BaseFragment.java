@@ -24,6 +24,9 @@ import com.rainwood.tools.annotation.ViewBind;
  */
 public abstract class BaseFragment extends Fragment {
 
+    // public String TAG = this.getClass().getSimpleName();
+    public final String TAG = "sxs";
+
     private State currentState = State.NONE;
     private View mLoadingView;
     private View mSuccessView;

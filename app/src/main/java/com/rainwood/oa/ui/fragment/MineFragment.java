@@ -118,7 +118,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                 ViewGroup.LayoutParams layoutParams = accountGv.getLayoutParams();
                 layoutParams.height = measuredHeight;
                 accountGv.setLayoutParams(layoutParams);
-                // 我的管理高度
+                // 我的管理- 高度
                 ViewGroup.LayoutParams managerLayoutParams = mineManager.getLayoutParams();
                 managerLayoutParams.height = measuredHeight;
                 mineManager.setLayoutParams(layoutParams);
@@ -153,7 +153,6 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         Glide.with(this).load(R.mipmap.bg_monkey_king)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);
-
         // 数据加载到了
         setUpState(State.SUCCESS);
     }

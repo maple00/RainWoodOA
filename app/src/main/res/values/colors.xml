@@ -14,6 +14,7 @@
     <color name="labelColor">#999999</color>
     <!-- 分割线的颜色 -->
     <color name="colorLine">#ECECEC</color>
+    <color name="colorStockLine">#E1E1E1</color>
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#BBBBBB</color>
 
@@ -25,7 +26,11 @@
     <!-- 灰色-->
     <color name="gray05">#F9F9F9</color>
     <color name="gray10">#F3F3F3</color>
+    <color name="gray15">#F8F8F8</color>
+    <color name="gray20">#CCCCCC</color>
     <!-- 绿色-->
     <color name="green05">#11CA8D</color>
+    <color name="green10">#3AD7A9</color>
+    <color name="green15">#2AE3DC</color>
 
 </resources>
