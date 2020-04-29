@@ -10,12 +10,14 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewBind;
+import com.rainwood.tools.toast.ToastUtils;
 
 /**
  * @Author: a797s
@@ -162,6 +164,24 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected abstract int getRootViewResId();
+
+    /**
+     * 土司管理
+     */
+    /**
+     * 显示吐司
+     */
+    public void toast(CharSequence text) {
+        ToastUtils.show(text);
+    }
+
+    public void toast(@StringRes int id) {
+        ToastUtils.show(id);
+    }
+
+    public void toast(Object object) {
+        ToastUtils.show(object);
+    }
 
 
 }
