@@ -196,6 +196,7 @@ public class PickerLayoutManager extends LinearLayoutManager {
         private boolean mReverseLayout;
         private OnPickerListener mListener;
 
+        // 设置默认显示最大的子项个数
         private int mMaxItem = 3;
         private float mScale = 0.6f;
         private boolean mAlpha = true;

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 流式布局
+ */
 public class TextFlowLayout extends ViewGroup {
 
     public static final float DEFAULT_SPACE = 10;

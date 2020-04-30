@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -41,8 +42,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @ViewInject(R.id.sxs_status_bar)
     private View statusBar;
-    @ViewInject(R.id.trl_pager_refresh)
-    private TwinklingRefreshLayout pagerRefresh;
+    // @ViewInject(R.id.trl_pager_refresh)
+    // private TwinklingRefreshLayout pagerRefresh;
     // 个人信息
     @ViewInject(R.id.tv_name)
     private TextView name;
@@ -87,8 +88,11 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         // 设置状态栏高度 140 - 96
         // LogUtils.d(this, "bar height ---- > " + StatusBarUtil.getStatusBarHeight(getContext()));
         ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                StatusBarUtil.getStatusBarHeight(getContext()));
+                StatusBarUtil.getStatusBarHeight(rootView.getContext()));
         statusBar.setLayoutParams(layoutParams);
+        // 字体设置(苹方字体)
+        Typeface typeface = Typeface.createFromAsset(rootView.getContext().getAssets(), "pingfang.ttf");
+        accountBalance.setTypeface(typeface);
         // 创建适配器--- 账户管理、我的管理
         mMineAccountAdapter = new MineAccountAdapter();
         mModuleAdapter = new ItemModuleAdapter();
@@ -98,8 +102,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         mineManager.setAdapter(mModuleAdapter);
         appData.setAdapter(mAppAdapter);
         // refresh
-        pagerRefresh.setEnableRefresh(false);
-        pagerRefresh.setEnableLoadmore(false);
+        // pagerRefresh.setEnableRefresh(false);
+        // pagerRefresh.setEnableLoadmore(false);
     }
 
     @Override
@@ -150,11 +154,17 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         // app
         mAppAdapter.setAppMines(appMines);
         //
-        Glide.with(this).load(R.mipmap.bg_monkey_king)
+        Glide.with(this).load(R.drawable.bg_monkey_king)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);
         // 数据加载到了
         setUpState(State.SUCCESS);
+    }
+
+    @Override
+    protected void onClickManager() {
+        // 点击事件管理
+
     }
 
     @Override

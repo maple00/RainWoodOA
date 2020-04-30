@@ -1,7 +1,5 @@
 package com.rainwood.oa.base;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +39,10 @@ public abstract class BaseFragment extends Fragment {
 
     private FrameLayout mBaseContainer;
 
-    @OnClick(R.id.network_error_tips)
+    @OnClick(R.id.ll_network_error_tips)
     public void retry() {
         //点击了重新加载内容
-        LogUtils.d(this, "on retry...");
+        LogUtils.d("sxs", "on retry...");
         onRetryClick();
     }
 
@@ -52,6 +50,13 @@ public abstract class BaseFragment extends Fragment {
      * 如果子fragment需要知道网络错误以后的点击，那覆盖些方法即可
      */
     protected void onRetryClick() {
+
+    }
+
+    /**
+     * 点击事件管理
+     */
+    protected void onClickManager(){
 
     }
 
@@ -165,9 +170,6 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract int getRootViewResId();
 
-    /**
-     * 土司管理
-     */
     /**
      * 显示吐司
      */

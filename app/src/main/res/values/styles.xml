@@ -27,7 +27,7 @@
         <item name="android:overScrollMode">never</item>
     </style>
 
-    <style name="AppTheme" parent="AppBaseTheme"/>
+    <style name="AppTheme" parent="AppBaseTheme" />
 
     <style name="AnimationActivity" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>
@@ -53,26 +53,60 @@
 
     <!-- 默认圆角按钮样式 -->
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">35dp</item>
+        <item name="android:paddingEnd">35dp</item>
+        <item name="android:paddingTop">15.5dp</item>
+        <item name="android:paddingBottom">15.5dp</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/fontColor</item>
+        <item name="android:textColor">@color/white00</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/selector_button</item>
         <item name="android:foreground">@null</item>
     </style>
 
+    <!-- 次要按钮默认样式-->
+    <style name="SecondaryButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:paddingStart">35dp</item>
+        <item name="android:paddingEnd">35dp</item>
+        <item name="android:paddingTop">15.5dp</item>
+        <item name="android:paddingBottom">15.5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/selector_secondary_button</item>
+        <item name="android:foreground">@null</item>
+    </style>
+
+    <!-- 退出按钮样式-->
+    <style name="LogoutButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:paddingStart">35dp</item>
+        <item name="android:paddingEnd">35dp</item>
+        <item name="android:paddingTop">15.5dp</item>
+        <item name="android:paddingBottom">15.5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorMiddle</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/selector_logout_button</item>
+        <item name="android:foreground">@null</item>
+    </style>
+
+
     <!-- default EditText 样式-->
     <style name="DateEditText" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/gray20</item>
+        <item name="colorControlNormal">@color/labelColor2</item>
         <item name="colorControlActivated">@color/green05</item>
         <item name="android:textSize">17sp</item>
-        <item name="android:textColorHint">@color/gray20</item>
+        <item name="android:textColorHint">@color/labelColor2</item>
         <item name="editTextColor">@color/green05</item>
     </style>
 
+    <!-- 默认文本框样式 -->
+    <style name="EditTextStyle">
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/labelColor</item>
+        <item name="android:textColor">@color/fontColor</item>
+    </style>
 
     <style name="CustomDialog" parent="android:style/Theme.Dialog">
         <!--你的layout背景颜色及和透明程度-->

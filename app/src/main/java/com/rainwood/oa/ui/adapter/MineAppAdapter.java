@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.adapter;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.TempAppMine;
+import com.rainwood.oa.utils.AppCacheManager;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.toast.ToastUtils;
@@ -64,7 +65,25 @@ public final class MineAppAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //ToastUtils.setGravity(Gravity.BOTTOM, 0, 0);
-                ToastUtils.show("点击了：" + getItem(position).getName());
+                switch (position) {
+                    case 0:         // 修改密码
+                        ToastUtils.show("点击了：" + getItem(position).getName());
+                        break;
+                    case 1:         // 清除缓存
+                        try {
+                            LogUtils.d("sxs", "缓存大小 ----> " + AppCacheManager.getTotalCacheSize(parent.getContext()));
+                            String totalCacheSize = AppCacheManager.getTotalCacheSize(parent.getContext());
+                            getItem(position).setNote(totalCacheSize);
+                            notifyDataSetChanged();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 2:         // 版本更新
+                        // 升级对话框
+                        ToastUtils.show("点击了：" + getItem(position).getName());
+                        break;
+                }
             }
         });
         return convertView;
@@ -79,6 +98,5 @@ public final class MineAppAdapter extends BaseAdapter {
         private TextView name;
         @ViewInject(R.id.tv_label)
         private TextView label;
-
     }
 }

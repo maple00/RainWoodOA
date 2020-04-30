@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray15"
+    android:background="@color/assistColor15"
     tools:context=".ui.fragment.HomeFragment"
     tools:ignore="HardcodedText">
 
@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/bg_monkey_king" />
+                android:src="@drawable/bg_monkey_king" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/t_test_title"
@@ -89,9 +89,9 @@
                     android:id="@+id/mgv_home_salary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:numColumns="4"
+                    android:layout_marginTop="21dp"
                     android:gravity="center"
-                    android:layout_marginTop="21dp"/>
+                    android:numColumns="4" />
 
                 <com.rainwood.oa.ui.widget.LineChartView
                     android:id="@+id/lcv_salary"

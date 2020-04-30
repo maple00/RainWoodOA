@@ -11,6 +11,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RWNestedScrollView extends NestedScrollView {
+
     private static final String TAG = "TbNestedScrollView";
     private int mHeaderHeight = 0;
     private int originScroll = 0;

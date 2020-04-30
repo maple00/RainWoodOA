@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- wifi访问权限-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- 获取安装包大小权限-->
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
 
     <application
         android:name=".base.BaseApplication"

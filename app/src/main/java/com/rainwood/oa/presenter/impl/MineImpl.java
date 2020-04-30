@@ -7,6 +7,7 @@ import com.rainwood.oa.model.domain.TempMineAccount;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.presenter.IMinePresenter;
+import com.rainwood.oa.utils.AppCacheManager;
 import com.rainwood.oa.view.IMineCallbacks;
 
 import java.util.ArrayList;
@@ -55,13 +56,13 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         mAppMineList = new ArrayList<>();
         for (int i = 0; i < appData.length; i++) {
             TempAppMine appMine = new TempAppMine();
-            appMine.setIcon(R.mipmap.bg_monkey_king);
+            appMine.setIcon(R.drawable.bg_monkey_king);
             appMine.setName(appData[i]);
             appMine.setNote(appLabel[i]);
             mAppMineList.add(appMine);
         }
 
-        mCallback.getMenuData(mAccountList, mFontList, mAppMineList);
+         mCallback.getMenuData(mAccountList, mFontList, mAppMineList);
     }
 
     @Override

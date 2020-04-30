@@ -3,7 +3,6 @@ package com.rainwood.oa.ui.fragment;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -14,7 +13,7 @@ import com.rainwood.oa.model.domain.ChartEntity;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
-import com.rainwood.oa.ui.widget.DateDialog;
+import com.rainwood.oa.ui.dialog.DateDialog;
 import com.rainwood.oa.ui.widget.LineChartView;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
@@ -27,7 +26,6 @@ import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -134,50 +132,27 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
             case R.id.iv_home_top:
                 LogUtils.d(TAG, "点击了头部");
                 // 自定义日期控件
-                // DateGroupView groupView = new DateGroupView(getContext());
-                // groupView.show();
-//                DateGroupView groupView = new DateGroupView(getContext());
-//                groupView.setTouchOutCancel(true);
-//                groupView.show();
-                // TODO: 时间自定义控件
-                new DateDialog.Builder(getActivity())
-                        .setTitle(getString(R.string.date_title))
-                        // 确定文本
+                new DateDialog.Builder(getContext())
+                        .setTitle(null)
+                        // 确定按钮文本
                         .setConfirm(getString(R.string.common_text_confirm))
-                        // 设置为null 时表示不显示取消按钮
+                        // 设置 null 表示不显示取消按钮
                         .setCancel(getString(R.string.common_text_clear_screen))
-                        .setGravity(Gravity.CENTER_VERTICAL)
-                        // 设置日期(可支持2019-12-03， 20191203， 时间戳)
-                        // .setDate(20191203)
-                        // 设置年份
-                        //.setYear(2019)
-                        // 设置月份
-                        //.setMonth(12)
-                        // 设置天数
-                        //.setDay(3)
-                        // 不选择天数
-                        //.setIgnoreDay()
+                        .setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
                         .setListener(new DateDialog.OnListener() {
                             @Override
-                            public void onSelected(BaseDialog dialog, int year, int month, int day) {
-                                toast(year + "-" + "-" + month + "-" + day);
-
-                                // 如果不指定时分秒则默认为现在的时间
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.set(Calendar.YEAR, year);
-                                // 月份从零开始，所以需要减 1
-                                calendar.set(Calendar.MONTH, month - 1);
-                                calendar.set(Calendar.DAY_OF_MONTH, day);
-                                // toast("时间戳：" + calendar.getTimeInMillis());
-                                //toast(new SimpleDateFormat("yyyy年MM月dd日 kk:mm:ss").format(calendar.getTime()));
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                dialog.dismiss();
+                                toast("选中的时间段：" + startTime + "至" + endTime);
                             }
 
                             @Override
                             public void onCancel(BaseDialog dialog) {
-                                toast("取消了");
+                                dialog.dismiss();
                             }
-                        }).show();
-
+                        })
+                        .show();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());

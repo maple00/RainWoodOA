@@ -6,8 +6,11 @@ import android.widget.LinearLayout;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
+import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.wheel.BaseDialog;
 
 /**
  * @Author: a797s
@@ -18,6 +21,7 @@ public final class BlockLogFragment extends BaseFragment {
 
     @ViewInject(R.id.sxs_status_bar)
     private View statusBar;
+
 
     @Override
     protected int getRootViewResId() {
@@ -33,4 +37,30 @@ public final class BlockLogFragment extends BaseFragment {
         statusBar.setLayoutParams(layoutParams);
     }
 
+    @OnClick(R.id.btn_dialog_pay)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_dialog_pay:
+                // 支付密码输入对话框
+                new PayPasswordDialog.Builder(view.getContext())
+                        .setTitle(getString(R.string.pay_title))
+                        .setSubTitle(null)
+                        .setMoney("￥ 100.00")
+                        .setAutoDismiss(false) // 设置点击按钮后不关闭对话框
+                        .setListener(new PayPasswordDialog.OnListener() {
+
+                            @Override
+                            public void onCompleted(BaseDialog dialog, String password) {
+                                toast(password);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+        }
+    }
 }

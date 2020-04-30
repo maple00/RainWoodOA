@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- 流式布局-->
     <declare-styleable name="FlowTextStyle">
         <attr name="horizontalSpace" format="dimension" />
         <attr name="verticalSpace" format="dimension" />
     </declare-styleable>
 
+    <!-- 轮播图-->
     <declare-styleable name="AutoLoopStyle">
         <attr name="duration" format="integer" />
     </declare-styleable>
+    
 
 </resources>

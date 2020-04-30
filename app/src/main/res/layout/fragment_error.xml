@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@color/gray05"
+    android:background="@color/assistColor10"
     android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:id="@+id/network_error_tips"
+        android:id="@+id/ll_network_error_tips"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">

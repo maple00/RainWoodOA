@@ -17,25 +17,25 @@ public class LogUtils {
 
     public static void d(Object object, String log) {
         if (currentLev >= DEBUG_LEV) {
-            Log.d(object.getClass().getSimpleName(), log);
+            Log.d(object instanceof String ? object.toString() :object.getClass().getSimpleName() , log);
         }
     }
 
     public static void i(Object object, String log) {
         if (currentLev >= INFO_LEV) {
-            Log.d(object.getClass().getSimpleName(), log);
+            Log.d(object instanceof String ? object.toString() :object.getClass().getSimpleName(), log);
         }
     }
 
     public static void w(Object object, String log) {
         if (currentLev >= WARNING_LEV) {
-            Log.d(object.getClass().getSimpleName(), log);
+            Log.d(object instanceof String ? object.toString() :object.getClass().getSimpleName(), log);
         }
     }
 
     public static void e(Object object, String log) {
         if (currentLev >= ERROR_LEV) {
-            Log.d(object.getClass().getSimpleName(), log);
+            Log.d(object instanceof String ? object.toString() :object.getClass().getSimpleName(), log);
         }
     }
 }

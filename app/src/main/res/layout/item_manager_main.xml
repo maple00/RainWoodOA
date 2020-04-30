@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:horizontalSpacing="25dp"
-        android:numColumns="4"
+        android:numColumns="5"
         android:scrollbars="none"
         android:verticalSpacing="25dp" />
 

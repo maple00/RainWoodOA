@@ -56,7 +56,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(R.mipmap.bg_monkey_king)
+        Glide.with(convertView).load(R.drawable.bg_monkey_king)
                // .error(R.mipmap.bg_monkey_king)
                // .placeholder(R.mipmap.bg_monkey_king)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white00">
+    android:background="@color/white00"
+    android:orientation="vertical">
 
     <View
         android:id="@+id/sxs_status_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/statusbar_view_height"
-        android:background="@color/white00"/>
+        android:background="@color/white00" />
+
+    <!--    <include layout="@layout/include_search_click_view" />-->
+    <include layout="@layout/include_search_default_view" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_dialog_pay"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="弹出支付对话框" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="主要按钮" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/SecondaryButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="次要按钮" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:enabled="false"
+        android:text="禁用按钮" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@null"
+            android:button="@drawable/selector_checkbox" />
+
+        <com.rainwood.tools.wheel.view.SwitchButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="true" />
+
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"
@@ -17,4 +73,5 @@
         android:gravity="center"
         android:text="待办事项"
         android:textColor="@color/black00" />
+
 </LinearLayout>

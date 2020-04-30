@@ -52,7 +52,7 @@ public final class MineAccountAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.verticalLine.setVisibility(position % 2 == 1 ? View.VISIBLE : View.GONE);
+        holder.verticalLine.setVisibility(position % 2 == 0 ? View.VISIBLE : View.GONE);
         holder.title.setText(getItem(position).getTitle());
         holder.content.setText(getItem(position).getLabel());
         return convertView;

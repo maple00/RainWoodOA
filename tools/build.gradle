@@ -21,6 +21,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
 }
 
@@ -32,6 +36,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
-
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    // AOP 插件库：https://mvnrepository.com/artifact/org.aspectj/aspectjrt
+    implementation 'org.aspectj:aspectjrt:1.9.5'
 
 }
