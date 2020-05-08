@@ -99,6 +99,7 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
         Message msg = new Message();
         msg.what = INITIAL_LINE_SALARY_SIZE;
         mHandler.sendMessage(msg);
+        // TODO: 自定义线性表的属性(线条，颜色，间距等)
     }
 
     /**
