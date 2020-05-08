@@ -47,7 +47,7 @@ public final class SwitchButton extends View {
     /**
      * 按钮宽高形状比率(0,1] 不推荐大幅度调整
      */
-    protected final float mAspectRatio = 0.68f;
+    protected final float mAspectRatio = 0.58f;
     /**
      * (0,1]
      */

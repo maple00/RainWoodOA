@@ -17,6 +17,9 @@
     <string name="common_year">年</string>
     <string name="common_month">月</string>
     <string name="common_day">日</string>
+    <string name="common_hour">时</string>
+    <string name="common_minute">分</string>
+    <string name="common_second">秒</string>
     <string name="common_text_confirm">确定</string>
     <string name="common_text_clear_screen">清空筛选</string>
     <string name="text_choose_please">请选择</string>

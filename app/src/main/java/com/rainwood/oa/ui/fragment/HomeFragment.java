@@ -17,13 +17,13 @@ import com.rainwood.oa.ui.dialog.DateDialog;
 import com.rainwood.oa.ui.widget.LineChartView;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +62,11 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
         //设置渐变监听
         mCollapsingToolbarLayout.setOnScrimsListener(this);
         mScrimsShown = mCollapsingToolbarLayout.isScrimsShown();
+       /* if (mScrimsShown){
+            LogUtils.d(TAG, "11111111");
+        }else {
+            LogUtils.d(TAG, "22222222");
+        }*/
         // 创建工资曲线适配器
         mSalaryAdapter = new HomeSalaryAdapter();
         // 设置适配器
@@ -89,8 +94,8 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
     public void getSalariesData(List<FontAndFont> salaries) {
         // 加载返回的数据
         mSalaryAdapter.setList(salaries);
-
-        // 工资曲线
+        // setUpState(State.ERROR);
+        // 工资曲线 -- V1.0
         Message msg = new Message();
         msg.what = INITIAL_LINE_SALARY_SIZE;
         mHandler.sendMessage(msg);
@@ -116,29 +121,31 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
             switch (msg.what) {
                 case INITIAL_LINE_SALARY_SIZE:
                     List<ChartEntity> datas1 = new ArrayList<>();
+                    List<ChartEntity> datas2 = new ArrayList<>();
                     for (int i = 0; i < 20; i++) {
-                        datas1.add(new ChartEntity("item" + String.valueOf(i), (float) (Math.random() * 1000)));
+                        datas1.add(new ChartEntity("sxs" + String.valueOf(i), (float) (Math.random() * 1000)));
+                        datas2.add(new ChartEntity("sxs" + String.valueOf(i), (float) (Math.random() * 1000)));
                     }
                     mLineChartSalary.setData(datas1, true, true);
+                    mLineChartSalary.setData(datas2, true, true);
                     mLineChartSalary.startAnimation(6000);
                     break;
             }
         }
     };
 
+    @SingleClick
     @OnClick(R.id.iv_home_top)
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_home_top:
-                LogUtils.d(TAG, "点击了头部");
                 // 自定义日期控件
-                new DateDialog.Builder(getContext())
+                new DateDialog.Builder(getContext(), false)
                         .setTitle(null)
-                        // 确定按钮文本
                         .setConfirm(getString(R.string.common_text_confirm))
-                        // 设置 null 表示不显示取消按钮
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
+                        //.setIgnoreDay()
                         .setCanceledOnTouchOutside(false)
                         .setListener(new DateDialog.OnListener() {
                             @Override
@@ -172,5 +179,19 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
     @Override
     public void onEmpty() {
 
+    }
+
+    public class StatisticsBean {
+
+        private double mValue;
+
+
+        public double getmValue() {
+            return mValue;
+        }
+
+        public void setmValue(double mValue) {
+            this.mValue = mValue;
+        }
     }
 }

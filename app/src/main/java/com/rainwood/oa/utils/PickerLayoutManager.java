@@ -198,6 +198,7 @@ public class PickerLayoutManager extends LinearLayoutManager {
 
         // 设置默认显示最大的子项个数
         private int mMaxItem = 3;
+        // 设置默认缩小放大的刻度
         private float mScale = 0.6f;
         private boolean mAlpha = true;
 

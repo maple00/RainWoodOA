@@ -12,8 +12,6 @@ import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.text.Layout;
-import android.text.StaticLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -36,11 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 作者：chs on 2016/9/6 14:17
- * 邮箱：657083984@qq.com
- * 线形图表
+ * @Author: a797s
+ * @Date: 2020/4/27 17:45
+ * @Desc: 线性图表
  */
 public class LineChartView extends View {
+
     private Context mContext;
     /**
      * 背景的颜色
@@ -69,8 +68,11 @@ public class LineChartView extends View {
     /**
      * 原点的半径
      */
-    private static final float RADIUS = 8;
+    private static final float RADIUS = 10;
+    // 一条线
     private List<ChartEntity> mData;
+    // 每条线
+    private List<List<ChartEntity>> mLineDataList = new ArrayList<>();
     /**
      * 右边的最大和最小值
      */
@@ -104,7 +106,7 @@ public class LineChartView extends View {
     /**
      * 保存点的x坐标
      */
-    private List<Point> mLinePoints = new ArrayList<>();
+    private List<List<Point>> mLinePoints = new ArrayList<>();
     /**
      * 左后一次的x坐标
      */
@@ -139,6 +141,10 @@ public class LineChartView extends View {
      * 点击的点的位置
      */
     private int mSelectIndex;
+    /**
+     * 点击的线
+     */
+    private int selectedLine;
     /**
      * 是否绘制提示文字
      */
@@ -220,7 +226,12 @@ public class LineChartView extends View {
         mLinePath = new Path();
     }
 
+    private int tempCount = 0;
+
     public void setData(List<ChartEntity> list, boolean isCurve, boolean isDottedLine) {
+        mLineDataList.add(tempCount++, list);
+        LogUtils.d("sxs", "count计数器：" + (tempCount));
+        LogUtils.d("sxs", "数据：" + list.toString());
         this.mData = list;
         this.isCurve = isCurve;
         this.isMiddleDottedLine = isDottedLine;
@@ -301,20 +312,22 @@ public class LineChartView extends View {
 
     //获取滑动范围和指定区域
     private void getArea() {
-        if (mData != null) {
-            mMaxRight = (int) (mStartX + mSpace * mData.size());
-            mMinRight = mTotalWidth - mLeftMargin - mRightMargin;
-            mStartY = mTotalHeight - mBottomMargin - mPaddingBottom;
-            mDrawArea = new RectF(mStartX, mPaddingTop, mTotalWidth - mPaddingRight - mRightMargin, mTotalHeight - mPaddingBottom);
-            mHintArea = new RectF(mDrawArea.right - mDrawArea.right / 4, mDrawArea.top + mTopMargin / 2,
-                    mDrawArea.right, mDrawArea.top + mDrawArea.height() / 4 + mTopMargin / 2);
+        for (List<ChartEntity> entityList : mLineDataList) {
+            if (entityList != null) {
+                mMaxRight = (int) (mStartX + mSpace * entityList.size());
+                mMinRight = mTotalWidth - mLeftMargin - mRightMargin;
+                mStartY = mTotalHeight - mBottomMargin - mPaddingBottom;
+                mDrawArea = new RectF(mStartX, mPaddingTop, mTotalWidth - mPaddingRight - mRightMargin, mTotalHeight - mPaddingBottom);
+                mHintArea = new RectF(mDrawArea.right - mDrawArea.right / 4, mDrawArea.top + mTopMargin / 2,
+                        mDrawArea.right, mDrawArea.top + mDrawArea.height() / 4 + mTopMargin / 2);
+            }
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mData == null || mData.isEmpty()) return;
+        if (mLineDataList == null || mLineDataList.isEmpty()) return;
         if (!mNeedEdgeEffect) return;
         if (!mEdgeEffectLeft.isFinished()) {
             canvas.save();
@@ -352,7 +365,7 @@ public class LineChartView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mData == null || mData.isEmpty()) return;
+        if (mLineDataList == null || mLineDataList.isEmpty()) return;
         getArea();
         mLinePoints.clear();
         canvas.drawColor(BG_COLOR);
@@ -368,7 +381,6 @@ public class LineChartView extends View {
         canvas.drawText(mLeftAxisUnit, mStartX, mTopMargin / 2 - 14, mTextPaint);
         //画右边的Y轴
 //        canvas.drawLine(mTotalWidth - mLeftMargin * 2, mStartY, mTotalWidth - mLeftMargin * 2, mTopMargin / 2, mAxisPaint);
-
         //画X轴 下面的和上面
         canvas.drawLine(mStartX, mStartY, mTotalWidth - mLeftMargin * 2, mStartY, mAxisPaint);
 //        canvas.drawLine(mStartX, mTopMargin / 2, mTotalWidth - mLeftMargin * 2, mTopMargin / 2, mAxisPaint);
@@ -396,19 +408,22 @@ public class LineChartView extends View {
 
     private void drawXAxisText(Canvas canvas) {
         //这里设置 x 轴的字一条最多显示3个，大于三个就换行
-        for (int i = 0; i < mData.size(); i++) {
-            String text = mData.get(i).getxLabel();
-            //当在可见的范围内才绘制
-            if (mLinePoints.get(i).x >= mStartX - (mTextPaint.measureText(text)) / 2 && mLinePoints.get(i).x < (mTotalWidth - mLeftMargin * 2)) {
-                // LogUtils.d(this, "x轴上的距离：" + (mLinePoints.get(i).x - (mTextPaint.measureText(text)) / 2 ));
-                if (text.length() <= 4) {
-                    // if (text.length() <= text.length()) {
-                    canvas.drawText(text, mLinePoints.get(i).x - (mTextPaint.measureText(text)) / 2, mTotalHeight - mBottomMargin * 2 / 3, mTextPaint);
-                } else {
-                    String text1 = text.substring(0, text.length());
-                    String text2 = text.substring(text.length(), text.length());
-                    canvas.drawText(text1, mLinePoints.get(i).x - (mTextPaint.measureText(text1)) / 2, mTotalHeight - mBottomMargin * 2 / 3, mTextPaint);
-                    canvas.drawText(text2, mLinePoints.get(i).x - (mTextPaint.measureText(text2)) / 2, mTotalHeight - mBottomMargin / 3, mTextPaint);
+        // for (List<ChartEntity> entityList : mLineDataList) {
+        for (int j = 0; j < mLineDataList.size(); j++) {
+            for (int i = 0; i < mLineDataList.get(j).size(); i++) {
+                String text = mLineDataList.get(j).get(i).getxLabel();
+                //当在可见的范围内才绘制
+                if (mLinePoints.get(j).get(i).x >= mStartX - (mTextPaint.measureText(text)) / 2 && mLinePoints.get(j).get(i).x < (mTotalWidth - mLeftMargin * 2)) {
+                    // LogUtils.d(this, "x轴上的距离：" + (mLinePoints.get(i).x - (mTextPaint.measureText(text)) / 2 ));
+                    if (text.length() <= 4) {
+                        // if (text.length() <= text.length()) {
+                        canvas.drawText(text, mLinePoints.get(j).get(i).x - (mTextPaint.measureText(text)) / 2, mTotalHeight - mBottomMargin * 2 / 3, mTextPaint);
+                    } else {
+                        String text1 = text.substring(0, text.length());
+                        String text2 = text.substring(text.length(), text.length());
+                        canvas.drawText(text1, mLinePoints.get(j).get(i).x - (mTextPaint.measureText(text1)) / 2, mTotalHeight - mBottomMargin * 2 / 3, mTextPaint);
+                        canvas.drawText(text2, mLinePoints.get(j).get(i).x - (mTextPaint.measureText(text2)) / 2, mTotalHeight - mBottomMargin / 3, mTextPaint);
+                    }
                 }
             }
         }
@@ -441,13 +456,10 @@ public class LineChartView extends View {
         ValueAnimator mAnimator = ValueAnimator.ofFloat(0f, 1);
         mAnimator.setDuration(duration);
         mAnimator.setInterpolator(pointInterpolator);
-        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float percent = (float) animation.getAnimatedValue();
-                mLinePaint.setPathEffect(new DashPathEffect(new float[]{pathLength, pathLength}, pathLength - pathLength * percent));
-                invalidate();
-            }
+        mAnimator.addUpdateListener(animation -> {
+            float percent = (float) animation.getAnimatedValue();
+            mLinePaint.setPathEffect(new DashPathEffect(new float[]{pathLength, pathLength}, pathLength - pathLength * percent));
+            invalidate();
         });
         mAnimator.start();
     }
@@ -461,39 +473,49 @@ public class LineChartView extends View {
         float distance = 0;
 //        float lineStart = mStartX + mTextPaint.measureText(mData.get(0).getxLabel()) / 2 + 20;
         float lineStart = mStartX;
-        for (int i = 0; i < mData.size(); i++) {
-            distance = mSpace * i - mLeftMoving;
-            float lineHeight = mData.get(i).getyValue() * maxHeight / mMaxYDivisionValue;
-            if (i == 0) {
-                mLinePath.moveTo(lineStart + distance, (mStartY - lineHeight) * percent);
-            } else {
-                if (!isCurve) {
-                    mLinePath.lineTo(lineStart + distance, (mStartY - lineHeight) * percent);
+        // for (List<ChartEntity> entityList : mLineDataList) {
+        for (int j = 0; j < mLineDataList.size(); j++) {
+            List<Point> mSubPoint = new ArrayList<>();
+            for (int i = 0; i < mLineDataList.get(j).size(); i++) {
+                distance = mSpace * i - mLeftMoving;
+                float lineHeight = mLineDataList.get(j).get(i).getyValue() * maxHeight / mMaxYDivisionValue;
+                if (i == 0) {
+                    mLinePath.moveTo(lineStart + distance, (mStartY - lineHeight) * percent);
                 } else {
-                    float lineHeightPre = mData.get(i - 1).getyValue() * maxHeight / mMaxYDivisionValue;
-                    mLinePath.cubicTo(lineStart + distance - mSpace / 2, (mStartY - lineHeightPre) * percent,
-                            lineStart + distance - mSpace / 2, (mStartY - lineHeight) * percent,
-                            lineStart + distance, (mStartY - lineHeight) * percent);
-                }
+                    if (!isCurve) {
+                        mLinePath.lineTo(lineStart + distance, (mStartY - lineHeight) * percent);
+                    } else {
+                        float lineHeightPre = mLineDataList.get(j).get(i - 1).getyValue() * maxHeight / mMaxYDivisionValue;
+                        mLinePath.cubicTo(lineStart + distance - mSpace / 2, (mStartY - lineHeightPre) * percent,
+                                lineStart + distance - mSpace / 2, (mStartY - lineHeight) * percent,
+                                lineStart + distance, (mStartY - lineHeight) * percent);
+                    }
 
+                }
+                Point point = new Point((int) (lineStart + distance), (int) (mStartY - lineHeight));
+                mSubPoint.add(point);
             }
-            mLinePoints.add(new Point((int) (lineStart + distance), (int) (mStartY - lineHeight)));
+            mLinePoints.add(mSubPoint);
+            PathMeasure measure = new PathMeasure(mLinePath, false);
+            pathLength = measure.getLength();
+            canvas.drawPath(mLinePath, mLinePaint);
         }
-        PathMeasure measure = new PathMeasure(mLinePath, false);
-        pathLength = measure.getLength();
-        canvas.drawPath(mLinePath, mLinePaint);
     }
 
     /**
      * 画线上的点
      */
     private void drawCircles(Canvas canvas) {
-        for (int i = 0; i < mData.size(); i++) {
-            // mPointPaint.setColor(Color.parseColor("#EF6868"));
-            mPointPaint.setColor(getResources().getColor(R.color.green10));
-//            canvas.drawCircle(mLinePoints.get(i), (mStartY - mData.get(i).getyValue() * maxHeight / mMaxYDivisionValue) * percent, RADIUS, mPointPaint);
-            if (mLinePoints.get(i).x >= mStartX && mLinePoints.get(i).x < (mTotalWidth - mLeftMargin * 2)) {
-                canvas.drawCircle(mLinePoints.get(i).x, mLinePoints.get(i).y * percent, RADIUS, mPointPaint);
+        for (int j = 0; j < mLineDataList.size(); j++) {
+            for (int i = 0; i < mLineDataList.get(j).size(); i++) {
+                // 设置点的颜色j
+                mPointPaint.setColor(getResources().getColor(R.color.green10));
+                // 画点
+                if (mLinePoints.get(j).get(i).x >= mStartX
+                        && mLinePoints.get(j).get(i).x
+                        < (mTotalWidth - mLeftMargin * 2)) {
+                    canvas.drawCircle(mLinePoints.get(j).get(i).x, mLinePoints.get(j).get(i).y * percent, RADIUS, mPointPaint);
+                }
             }
         }
     }
@@ -640,16 +662,22 @@ public class LineChartView extends View {
      */
     private void drawHint(Canvas canvas) {
         //竖线
-        canvas.drawLine(mLinePoints.get(mSelectIndex).x, mStartY, mLinePoints.get(mSelectIndex).x, mTopMargin / 2, mHintPaint);
+        for (int i = 0; i < mLinePoints.size(); i++) {
+            for (int j = 0; j < mLinePoints.get(i).size(); j++) {
+                canvas.drawLine(mLinePoints.get(i).get(mSelectIndex).x, mStartY, mLinePoints.get(i).get(mSelectIndex).x, mTopMargin / 2, mHintPaint);
+            }
+        }
         //横线
-        canvas.drawLine(mStartX, mLinePoints.get(mSelectIndex).y, mTotalWidth - mLeftMargin * 2, mLinePoints.get(mSelectIndex).y, mHintPaint);
+        for (int i = 0; i < mLinePoints.size(); i++) {
+            canvas.drawLine(mStartX, mLinePoints.get(i).get(mSelectIndex).y, mTotalWidth - mLeftMargin * 2, mLinePoints.get(i).get(mSelectIndex).y, mHintPaint);
+        }
         mHintPaint.setAlpha(90);
         canvas.drawRect(mHintArea, mHintPaint);
         // 设置提示文字颜色
         mHintPaint.setTextSize(FontSwitchUtil.dip2px(mContext, 10.f));
         mHintPaint.setColor(mContext.getResources().getColor(R.color.fontColor));
-        canvas.drawText("x : " + mData.get(mSelectIndex).getxLabel(), mHintArea.centerX(), mHintArea.centerY() - 12, mHintPaint);
-        canvas.drawText("y : " + mData.get(mSelectIndex).getyValue(), mHintArea.centerX(),
+        canvas.drawText("x : " + mLineDataList.get(selectedLine).get(mSelectIndex).getxLabel(), mHintArea.centerX(), mHintArea.centerY() - 12, mHintPaint);
+        canvas.drawText("y : " + mLineDataList.get(selectedLine).get(mSelectIndex).getyValue(), mHintArea.centerX(),
                 mHintArea.centerY() + 12 - mHintPaint.ascent() - mHintPaint.descent(), mHintPaint);
         // 设置背景颜色
         mHintPaint.setColor(getResources().getColor(R.color.colorGrey));
@@ -666,17 +694,21 @@ public class LineChartView extends View {
         int range = FontSwitchUtil.dip2px(getContext(), 8);
         float eventX = event.getX();
         float eventY = event.getY();
-        for (int i = 0; i < mLinePoints.size(); i++) {
-            //节点
-            int x = mLinePoints.get(i).x;
-            int y = mLinePoints.get(i).y;
-            if (eventX >= x - range && eventX <= x + range &&
-                    eventY >= y - range && eventY <= y + range) {//每个节点周围4dp都是可点击区域
-                mSelectIndex = i;
-                isDrawHint = true;
-                removeCallbacks(mRunnable);//移除掉上次点击的runnable
-                invalidate();
-                return;
+        for (int j = 0; j < mLinePoints.size(); j++) {
+            for (int i = 0; i < mLinePoints.get(j).size(); i++) {
+                //节点
+                int x = mLinePoints.get(j).get(i).x;
+                int y = mLinePoints.get(j).get(i).y;
+                if (eventX >= x - range && eventX <= x + range &&
+                        eventY >= y - range && eventY <= y + range) {//每个节点周围4dp都是可点击区域
+                    mSelectIndex = i;
+                    selectedLine = j;
+                    LogUtils.d("sxs", "点击的位置：" + i);
+                    isDrawHint = true;
+                    removeCallbacks(mRunnable);//移除掉上次点击的runnable
+                    invalidate();
+                    return;
+                }
             }
         }
     }

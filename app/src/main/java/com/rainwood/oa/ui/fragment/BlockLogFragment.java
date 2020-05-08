@@ -4,9 +4,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
+import com.rainwood.oa.ui.dialog.DateDialog;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.oa.ui.dialog.TimerDialog;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
@@ -33,11 +38,12 @@ public final class BlockLogFragment extends BaseFragment {
         setUpState(State.SUCCESS);
         super.initView(rootView);
         // 设置状态栏高度
-        ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, StatusBarUtil.getStatusBarHeight(getContext()));
+        ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                StatusBarUtil.getStatusBarHeight(getContext()));
         statusBar.setLayoutParams(layoutParams);
     }
 
-    @OnClick(R.id.btn_dialog_pay)
+    @OnClick({R.id.btn_dialog_pay, R.id.btn_date_timer})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_dialog_pay:
@@ -52,6 +58,31 @@ public final class BlockLogFragment extends BaseFragment {
                             @Override
                             public void onCompleted(BaseDialog dialog, String password) {
                                 toast(password);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+            case R.id.btn_date_timer:
+                // 自定义日期时间控件
+                LogUtils.d(TAG, "点击了日期时间组合控件");
+                new TimerDialog.Builder(getContext(), true)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        //.setIgnoreDay()
+                        .setIgnoreSecond()
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new TimerDialog.OnListener() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, int year, int month, int day, int hour, int minutes, int second) {
+                                dialog.dismiss();
+                                toast("选中了：" + year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + second);
                             }
 
                             @Override

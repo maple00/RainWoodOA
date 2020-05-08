@@ -40,10 +40,14 @@ public abstract class BaseFragment extends Fragment {
     private FrameLayout mBaseContainer;
 
     @OnClick(R.id.ll_network_error_tips)
-    public void retry() {
-        //点击了重新加载内容
-        LogUtils.d("sxs", "on retry...");
-        onRetryClick();
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                //点击了重新加载内容
+                LogUtils.d("sxs", "on retry...");
+                onRetryClick();
+                break;
+        }
     }
 
     /**
@@ -56,7 +60,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 点击事件管理
      */
-    protected void onClickManager(){
+    protected void onClickManager() {
 
     }
 
@@ -68,6 +72,7 @@ public abstract class BaseFragment extends Fragment {
         mBaseContainer = rootView.findViewById(R.id.base_container);
         loadStatesView(inflater, container);
         ViewBind.inject(this, rootView);
+        ViewBind.inject(this);
         initView(rootView);
         initListener();
         initPresenter();
