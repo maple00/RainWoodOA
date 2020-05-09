@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 
 /**
@@ -11,7 +12,7 @@ public final class AttendanceActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.activity_attendance;
     }
 
     @Override

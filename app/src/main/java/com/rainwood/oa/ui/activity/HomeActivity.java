@@ -1,5 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.KeyEvent;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -7,6 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.base.BaseFragment;
+import com.rainwood.oa.network.app.App;
 import com.rainwood.oa.ui.fragment.BlockLogFragment;
 import com.rainwood.oa.ui.fragment.HomeFragment;
 import com.rainwood.oa.ui.fragment.ManagerFragment;
@@ -110,5 +113,25 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void setStatusBar() {
          StatusBarUtil.setTranslucentStatus(this);
+    }
+
+    /**
+     * 返回到桌面
+     */
+    private long mExitTime;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                toast("再按一次退出到桌面");
+                mExitTime = System.currentTimeMillis();
+                return false;
+            } else {
+                App.backHome(this);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

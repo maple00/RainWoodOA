@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.IconAndFont;
+import com.rainwood.oa.ui.activity.AttendanceActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.toast.ToastUtils;
@@ -65,7 +67,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                 .into(holder.moduleImg);
         holder.moduleName.setText(getItem(position).getDesc());
         // 点击事件
-        onItemClickValues(position, holder);
+        onItemClickValues(position, holder, convertView, parent);
         return convertView;
     }
 
@@ -83,15 +85,17 @@ public final class ItemModuleAdapter extends BaseAdapter {
      * @param position
      * @param holder
      */
-    private void onItemClickValues(int position, ViewHolder holder) {
+    private void onItemClickValues(int position, ViewHolder holder, View convertView, ViewGroup parent) {
         holder.moduleItem.setOnClickListener(v -> {
             switch (getItem(position).getDesc()) {
                 case "我的考勤":
                     // ToastUtils.show("点击了-- " + getItem(position).getDesc());
-
+                    parent.getContext().startActivity(new Intent(convertView.getContext(), AttendanceActivity.class));
                     break;
                 case "补卡记录":
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + getItem(position).getDesc());
             }
             ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
         });

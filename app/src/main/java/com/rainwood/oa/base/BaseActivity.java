@@ -1,16 +1,13 @@
 package com.rainwood.oa.base;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.rainwood.oa.R;
-import com.rainwood.oa.network.app.App;
 import com.rainwood.tools.annotation.ViewBind;
-import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 
 /**
@@ -20,7 +17,7 @@ import com.rainwood.tools.toast.ToastUtils;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-   // public String TAG = this.getClass().getSimpleName();
+    // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
 
     @Override
@@ -42,8 +39,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         setStatusBar();
     }
 
+    /**
+     * 设置默认的状态栏背景颜色
+     */
     protected void setStatusBar() {
-        StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.white00));
+        // StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.white));
+        StatusBarUtils.darkMode(this);
     }
 
     /**
@@ -75,6 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 覆写子类布局
+     *
      * @return
      */
     protected abstract int getLayoutResId();
@@ -99,24 +101,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         ToastUtils.show(object);
     }
 
-
-    /**
-     * 返回到桌面
-     */
-    private long mExitTime;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                toast("再按一次退出到桌面");
-                mExitTime = System.currentTimeMillis();
-                return false;
-            } else {
-                App.backHome(this);
-                return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 }
