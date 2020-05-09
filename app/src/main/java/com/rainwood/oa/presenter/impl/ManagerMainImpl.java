@@ -41,7 +41,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
             for (int j = 0; j < personnels.length; j++) {
                 IconAndFont andFont = new IconAndFont();
                 andFont.setDesc(personnels[j]);
-                andFont.setLocalMipmap(R.mipmap.ic_temp_module + "");
+                andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                 moduleItemList.add(andFont);
             }
             managerMain.setIconAndFontList(moduleItemList);

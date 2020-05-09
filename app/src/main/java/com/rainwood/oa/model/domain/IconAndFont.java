@@ -7,14 +7,14 @@ package com.rainwood.oa.model.domain;
  */
 public final class IconAndFont {
 
-    private String localMipmap;
     private String desc;
+    private int localMipmap;
 
-    public String getLocalMipmap() {
+    public int getLocalMipmap() {
         return localMipmap;
     }
 
-    public void setLocalMipmap(String localMipmap) {
+    public void setLocalMipmap(int localMipmap) {
         this.localMipmap = localMipmap;
     }
 

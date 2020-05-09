@@ -2,34 +2,36 @@ package com.rainwood.oa.ui.fragment;
 
 import android.graphics.Typeface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.lcodecore.tkrefreshlayout.views.RWNestedScrollView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.IconAndFont;
-import com.rainwood.oa.model.domain.TempAppMine;
 import com.rainwood.oa.model.domain.TempMineAccount;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.ItemModuleAdapter;
 import com.rainwood.oa.ui.adapter.MineAccountAdapter;
-import com.rainwood.oa.ui.adapter.MineAppAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
-import com.rainwood.oa.ui.widget.MeasureListView;
-import com.rainwood.oa.ui.widget.RWNestedScrollView;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.SmartUtil;
 
 import java.util.List;
 
@@ -40,8 +42,6 @@ import java.util.List;
  */
 public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
-    @ViewInject(R.id.sxs_status_bar)
-    private View statusBar;
     // @ViewInject(R.id.trl_pager_refresh)
     // private TwinklingRefreshLayout pagerRefresh;
     // 个人信息
@@ -61,8 +61,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     @ViewInject(R.id.mgv_mine_manager)
     private MeasureGridView mineManager;
     // app应用信息
-    @ViewInject(R.id.mlv_app)
-    private MeasureListView appData;
+    //@ViewInject(R.id.mlv_app)
+    // private MeasureListView appData;
     @ViewInject(R.id.btn_logout)
     private Button logout;
 
@@ -70,11 +70,19 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     private LinearLayout mineParent;
     @ViewInject(R.id.rns_scroll)
     private RWNestedScrollView mScrollView;
+    @ViewInject(R.id.tb_mine_bar)
+    private Toolbar mineBar;
+    @ViewInject(R.id.bl_mine_top_layout)
+    private AppBarLayout mBarLayout;
+    @ViewInject(R.id.fl_mine_content)
+    private FrameLayout mineContentFL;
 
     private IMinePresenter mMinePresenter;
     private MineAccountAdapter mMineAccountAdapter;
     private ItemModuleAdapter mModuleAdapter;
-    private MineAppAdapter mAppAdapter;
+
+    private int mOffset = 0;
+    private int mScrollY = 0;
 
     @Override
     protected int getRootViewResId() {
@@ -85,22 +93,19 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     protected void initView(View rootView) {
         setUpState(State.SUCCESS);
         super.initView(rootView);
-        // 设置状态栏高度 140 - 96
-        // LogUtils.d(this, "bar height ---- > " + StatusBarUtil.getStatusBarHeight(getContext()));
-        ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                StatusBarUtil.getStatusBarHeight(rootView.getContext()));
-        statusBar.setLayoutParams(layoutParams);
+
+        StatusBarUtils.immersive(this.getActivity());
+        StatusBarUtils.setPaddingSmart(this.getContext(), mineBar);
+        StatusBarUtils.setMargin(this.getContext(), mScrollView);
         // 字体设置(苹方字体)
         Typeface typeface = Typeface.createFromAsset(rootView.getContext().getAssets(), "pingfang.ttf");
         accountBalance.setTypeface(typeface);
         // 创建适配器--- 账户管理、我的管理
         mMineAccountAdapter = new MineAccountAdapter();
         mModuleAdapter = new ItemModuleAdapter();
-        mAppAdapter = new MineAppAdapter();
         // 设置适配器
         accountGv.setAdapter(mMineAccountAdapter);
         mineManager.setAdapter(mModuleAdapter);
-        appData.setAdapter(mAppAdapter);
         // refresh
         // pagerRefresh.setEnableRefresh(false);
         // pagerRefresh.setEnableLoadmore(false);
@@ -118,24 +123,33 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
             @Override
             public void onGlobalLayout() {
                 int measuredHeight = mineParent.getMeasuredHeight();
-                // 账户信息高度
-                ViewGroup.LayoutParams layoutParams = accountGv.getLayoutParams();
-                layoutParams.height = measuredHeight;
-                accountGv.setLayoutParams(layoutParams);
-                // 我的管理- 高度
-                ViewGroup.LayoutParams managerLayoutParams = mineManager.getLayoutParams();
-                managerLayoutParams.height = measuredHeight;
-                mineManager.setLayoutParams(layoutParams);
-                // app信息高度
-                ViewGroup.LayoutParams appDataLayoutParams = appData.getLayoutParams();
-                appDataLayoutParams.height = measuredHeight;
-                appData.setLayoutParams(layoutParams);
+                // 滑动高度
+                int mineFLHeight = mineContentFL.getMeasuredHeight();
+                mScrollView.setHeaderHeight(mineFLHeight);
                 if (measuredHeight != 0) {
                     mineParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             }
         });
-        // TODO: 处理滑动卡顿冲突问题；自定义组合控件
+        // 滑动监听
+        mScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            private int lastScrollY = 0;
+            private int h = SmartUtil.dp2px(170);
+            private int color = ContextCompat.getColor(getActivity().getApplicationContext(), R.color.white) & 0x00ffffff;
+
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (lastScrollY < h) {
+                    scrollY = Math.min(h, scrollY);
+                    mScrollY = scrollY > h ? h : scrollY;
+                    mBarLayout.setAlpha(0.9f * mScrollY / h);
+                    mineBar.setBackgroundColor(((255 * mScrollY / h) << 24) | color);
+                }
+                lastScrollY = scrollY;
+            }
+        });
+        mBarLayout.setAlpha(0);
+        mineBar.setBackgroundColor(0);
     }
 
     @Override
@@ -145,15 +159,12 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     }
 
     @Override
-    public void getMenuData(List<TempMineAccount> accounts, List<IconAndFont> iconAndFonts, List<TempAppMine> appMines) {
+    public void getMenuData(List<TempMineAccount> accounts, List<IconAndFont> iconAndFonts) {
         // 从这里拿到数据
         // 账户信息
         mMineAccountAdapter.setList(accounts);
         // 我的module
         mModuleAdapter.setList(iconAndFonts);
-        // app
-        mAppAdapter.setAppMines(appMines);
-        //
         Glide.with(this).load(R.drawable.bg_monkey_king)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);

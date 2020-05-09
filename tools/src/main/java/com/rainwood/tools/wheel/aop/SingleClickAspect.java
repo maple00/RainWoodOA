@@ -31,7 +31,7 @@ public class SingleClickAspect {
     /**
      * 方法切入点
      */
-    @Pointcut("execution(@com.hjq.demo.aop.SingleClick * *(..))")
+    @Pointcut("execution(@com.rainwood.tools.wheel.aop.SingleClick * *(..))")
     public void method() {}
 
     /**

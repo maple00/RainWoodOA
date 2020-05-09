@@ -76,7 +76,7 @@ public final class SwitchButton extends View {
     /**
      * 开启状态背景色
      */
-    protected int mAccentColor = 0xFF4BD763;
+    protected int mAccentColor = 0xFF11CA8D;
     /**
      * 开启状态按钮描边色
      */

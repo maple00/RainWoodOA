@@ -20,6 +20,5 @@ public interface IMineCallbacks  extends IBaseCallback {
     // 模拟
     // 账户信息、我的管理、application信息
     void getMenuData(List<TempMineAccount> accounts,
-                     List<IconAndFont> iconAndFonts,
-                     List<TempAppMine> appMines);
+                     List<IconAndFont> iconAndFonts);
 }

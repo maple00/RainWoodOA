@@ -24,12 +24,9 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
 
     private List<TempMineAccount> mAccountList;
     private List<IconAndFont> mFontList;
-    private List<TempAppMine> mAppMineList;
     private String[] accountTitle = {"结算账户(元)", "团队基金(元)", "基本工资(元)", "岗位津贴(元)"};
     private String[] accountData = {"0", "600.42", "2000", "1000"};
     private String[] mineManager = {"我的考勤", "补卡记录", "请假记录", "加班记录", "外出记录","费用报销", "开票记录"};
-    private String[] appData = {"修改密码", "清除缓存", "版本更新"};
-    private String[] appLabel = {"", "60.5M", "已是最新版本"};
 
     @Override
     public void getMineData() {
@@ -50,19 +47,11 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         for (int i = 0; i < mineManager.length; i++) {
             IconAndFont iconAndFont = new IconAndFont();
             iconAndFont.setDesc(mineManager[i]);
+            iconAndFont.setLocalMipmap(R.drawable.bg_monkey_king);
             mFontList.add(iconAndFont);
         }
-        // app应用列表
-        mAppMineList = new ArrayList<>();
-        for (int i = 0; i < appData.length; i++) {
-            TempAppMine appMine = new TempAppMine();
-            appMine.setIcon(R.drawable.bg_monkey_king);
-            appMine.setName(appData[i]);
-            appMine.setNote(appLabel[i]);
-            mAppMineList.add(appMine);
-        }
 
-         mCallback.getMenuData(mAccountList, mFontList, mAppMineList);
+         mCallback.getMenuData(mAccountList, mFontList);
     }
 
     @Override

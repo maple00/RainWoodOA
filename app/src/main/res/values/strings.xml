@@ -40,4 +40,8 @@
     <string name="update_background">后台更新</string>
     <string name="text_common_search">搜索</string>
     <string name="text_mine_logout">退出登录</string>
+
+    <!-- 考勤-->
+    <string name="attendance_title">考勤</string>
+
 </resources>

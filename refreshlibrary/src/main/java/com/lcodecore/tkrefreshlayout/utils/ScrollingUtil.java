@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.lcodecore.tkrefreshlayout.views.TbNestedScrollView;
+import com.lcodecore.tkrefreshlayout.views.RWNestedScrollView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -47,20 +47,20 @@ public class ScrollingUtil {
      * 手指在屏幕上该方法才有效
      */
     public static boolean canChildScrollUp(View mChildView) {
-        if(mChildView == null) {
+        if (mChildView == null) {
             return false;
         }
-        if(Build.VERSION.SDK_INT < 14) {
-            if(mChildView instanceof AbsListView) {
+        if (Build.VERSION.SDK_INT < 14) {
+            if (mChildView instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mChildView;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
                         .getTop() < absListView.getPaddingTop());
             } else {
-                return ViewCompat.canScrollVertically(mChildView,-1) || mChildView.getScrollY() > 0;
+                return ViewCompat.canScrollVertically(mChildView, -1) || mChildView.getScrollY() > 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(mChildView,-1);
+            return ViewCompat.canScrollVertically(mChildView, -1);
         }
     }
 
@@ -69,17 +69,17 @@ public class ScrollingUtil {
      * 判断是否可以上拉
      */
     public static boolean canChildScrollDown(View mChildView) {
-        if(Build.VERSION.SDK_INT < 14) {
-            if(mChildView instanceof AbsListView) {
+        if (Build.VERSION.SDK_INT < 14) {
+            if (mChildView instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mChildView;
                 return absListView.getChildCount() > 0
                         && (absListView.getLastVisiblePosition() < absListView.getChildCount() - 1
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom() > absListView.getPaddingBottom());
             } else {
-                return ViewCompat.canScrollVertically(mChildView,1) || mChildView.getScrollY() < 0;
+                return ViewCompat.canScrollVertically(mChildView, 1) || mChildView.getScrollY() < 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(mChildView,1);
+            return ViewCompat.canScrollVertically(mChildView, 1);
         }
     }
 
@@ -87,40 +87,40 @@ public class ScrollingUtil {
         return view != null && view.getScrollY() == 0;
     }
 
-    public static boolean isViewToTop(View view,int mTouchSlop) {
-        if(view instanceof AbsListView)
+    public static boolean isViewToTop(View view, int mTouchSlop) {
+        if (view instanceof AbsListView)
             return isAbsListViewToTop((AbsListView) view);
-        if(view instanceof RecyclerView)
+        if (view instanceof RecyclerView)
             return isRecyclerViewToTop((RecyclerView) view);
         return (view != null && Math.abs(view.getScrollY()) <= 2 * mTouchSlop);
     }
 
-    public static boolean isViewToBottom(View view,int mTouchSlop) {
-        if(view instanceof AbsListView)
+    public static boolean isViewToBottom(View view, int mTouchSlop) {
+        if (view instanceof AbsListView)
             return isAbsListViewToBottom((AbsListView) view);
-        if(view instanceof RecyclerView)
+        if (view instanceof RecyclerView)
             return isRecyclerViewToBottom((RecyclerView) view);
-        if(view instanceof WebView)
-            return isWebViewToBottom((WebView) view,mTouchSlop);
-        if(view instanceof TbNestedScrollView)
-            return isTbNestScrollViewToBottom((TbNestedScrollView) view);
-        if(view instanceof ViewGroup)
+        if (view instanceof WebView)
+            return isWebViewToBottom((WebView) view, mTouchSlop);
+        if (view instanceof RWNestedScrollView)
+            return isTbNestScrollViewToBottom((RWNestedScrollView) view);
+        if (view instanceof ViewGroup)
             return isViewGroupToBottom((ViewGroup) view);
         return false;
     }
 
-    private static boolean isTbNestScrollViewToBottom(TbNestedScrollView view) {
+    private static boolean isTbNestScrollViewToBottom(RWNestedScrollView view) {
         return view.isInBottom();
     }
 
     public static boolean isAbsListViewToTop(AbsListView absListView) {
-        if(absListView != null) {
+        if (absListView != null) {
             int firstChildTop = 0;
-            if(absListView.getChildCount() > 0) {
+            if (absListView.getChildCount() > 0) {
                 // 如果AdapterView的子控件数量不为0，获取第一个子控件的top
                 firstChildTop = absListView.getChildAt(0).getTop() - absListView.getPaddingTop();
             }
-            if(absListView.getFirstVisiblePosition() == 0 && firstChildTop == 0) {
+            if (absListView.getFirstVisiblePosition() == 0 && firstChildTop == 0) {
                 return true;
             }
         }
@@ -128,24 +128,24 @@ public class ScrollingUtil {
     }
 
     public static boolean isRecyclerViewToTop(RecyclerView recyclerView) {
-        if(recyclerView != null) {
+        if (recyclerView != null) {
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if(manager == null) {
+            if (manager == null) {
                 return true;
             }
-            if(manager.getItemCount() == 0) {
+            if (manager.getItemCount() == 0) {
                 return true;
             }
 
             int firstChildTop = 0;
-            if(recyclerView.getChildCount() > 0) {
+            if (recyclerView.getChildCount() > 0) {
                 // 处理item高度超过一屏幕时的情况
                 View firstVisibleChild = recyclerView.getChildAt(0);
-                if(firstVisibleChild != null && firstVisibleChild.getMeasuredHeight() >= recyclerView.getMeasuredHeight()) {
-                    if(android.os.Build.VERSION.SDK_INT < 14) {
-                        return !(ViewCompat.canScrollVertically(recyclerView,-1) || recyclerView.getScrollY() > 0);
+                if (firstVisibleChild != null && firstVisibleChild.getMeasuredHeight() >= recyclerView.getMeasuredHeight()) {
+                    if (android.os.Build.VERSION.SDK_INT < 14) {
+                        return !(ViewCompat.canScrollVertically(recyclerView, -1) || recyclerView.getScrollY() > 0);
                     } else {
-                        return !ViewCompat.canScrollVertically(recyclerView,-1);
+                        return !ViewCompat.canScrollVertically(recyclerView, -1);
                     }
                 }
 
@@ -156,15 +156,15 @@ public class ScrollingUtil {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) firstChild.getLayoutParams();
                 firstChildTop = firstChild.getTop() - layoutParams.topMargin - getRecyclerViewItemTopInset(layoutParams) - recyclerView.getPaddingTop();
             }
-            if(manager instanceof LinearLayoutManager) {
+            if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) manager;
-                if(layoutManager.findFirstCompletelyVisibleItemPosition() < 1 && firstChildTop == 0) {
+                if (layoutManager.findFirstCompletelyVisibleItemPosition() < 1 && firstChildTop == 0) {
                     return true;
                 }
-            } else if(manager instanceof StaggeredGridLayoutManager) {
+            } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) manager;
                 int[] out = layoutManager.findFirstCompletelyVisibleItemPositions(null);
-                if(out[0] < 1 && firstChildTop == 0) {
+                if (out[0] < 1 && firstChildTop == 0) {
                     return true;
                 }
             }
@@ -185,14 +185,14 @@ public class ScrollingUtil {
             // 开发者自定义的滚动监听器
             Rect decorInsets = (Rect) field.get(layoutParams);
             return decorInsets.top;
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
 
-    public static boolean isWebViewToBottom(WebView webview,int mTouchSlop) {
+    public static boolean isWebViewToBottom(WebView webview, int mTouchSlop) {
         return webview != null && ((webview.getContentHeight() * webview.getScale() - (webview.getHeight() + webview.getScrollY())) <= 2 * mTouchSlop);
     }
 
@@ -202,10 +202,10 @@ public class ScrollingUtil {
     }
 
     public static boolean isScrollViewToBottom(ScrollView scrollView) {
-        if(scrollView != null) {
+        if (scrollView != null) {
             int scrollContentHeight = scrollView.getScrollY() + scrollView.getMeasuredHeight() - scrollView.getPaddingTop() - scrollView.getPaddingBottom();
             int realContentHeight = scrollView.getChildAt(0).getMeasuredHeight();
-            if(scrollContentHeight == realContentHeight) {
+            if (scrollContentHeight == realContentHeight) {
                 return true;
             }
         }
@@ -213,7 +213,7 @@ public class ScrollingUtil {
     }
 
     public static boolean isAbsListViewToBottom(AbsListView absListView) {
-        if(absListView != null && absListView.getAdapter() != null && absListView.getChildCount() > 0 && absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1) {
+        if (absListView != null && absListView.getAdapter() != null && absListView.getChildCount() > 0 && absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1) {
             View lastChild = absListView.getChildAt(absListView.getChildCount() - 1);
 
             return lastChild.getBottom() <= absListView.getMeasuredHeight();
@@ -222,34 +222,34 @@ public class ScrollingUtil {
     }
 
     public static boolean isRecyclerViewToBottom(RecyclerView recyclerView) {
-        if(recyclerView != null) {
+        if (recyclerView != null) {
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if(manager == null || manager.getItemCount() == 0) {
+            if (manager == null || manager.getItemCount() == 0) {
                 return false;
             }
 
-            if(manager instanceof LinearLayoutManager) {
+            if (manager instanceof LinearLayoutManager) {
                 // 处理item高度超过一屏幕时的情况
                 View lastVisibleChild = recyclerView.getChildAt(recyclerView.getChildCount() - 1);
-                if(lastVisibleChild != null && lastVisibleChild.getMeasuredHeight() >= recyclerView.getMeasuredHeight()) {
-                    if(android.os.Build.VERSION.SDK_INT < 14) {
-                        return !(ViewCompat.canScrollVertically(recyclerView,1) || recyclerView.getScrollY() < 0);
+                if (lastVisibleChild != null && lastVisibleChild.getMeasuredHeight() >= recyclerView.getMeasuredHeight()) {
+                    if (android.os.Build.VERSION.SDK_INT < 14) {
+                        return !(ViewCompat.canScrollVertically(recyclerView, 1) || recyclerView.getScrollY() < 0);
                     } else {
-                        return !ViewCompat.canScrollVertically(recyclerView,1);
+                        return !ViewCompat.canScrollVertically(recyclerView, 1);
                     }
                 }
 
                 LinearLayoutManager layoutManager = (LinearLayoutManager) manager;
-                if(layoutManager.findLastCompletelyVisibleItemPosition() == layoutManager.getItemCount() - 1) {
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == layoutManager.getItemCount() - 1) {
                     return true;
                 }
-            } else if(manager instanceof StaggeredGridLayoutManager) {
+            } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) manager;
 
                 int[] out = layoutManager.findLastCompletelyVisibleItemPositions(null);
                 int lastPosition = layoutManager.getItemCount() - 1;
-                for(int position : out) {
-                    if(position == lastPosition) {
+                for (int position : out) {
+                    if (position == lastPosition) {
                         return true;
                     }
                 }
@@ -258,26 +258,26 @@ public class ScrollingUtil {
         return false;
     }
 
-    public static void scrollAViewBy(View view,int height) {
-        if(view instanceof RecyclerView)
-            ((RecyclerView) view).scrollBy(0,height);
-        else if(view instanceof ScrollView)
-            ((ScrollView) view).smoothScrollBy(0,height);
-        else if(view instanceof AbsListView)
-            ((AbsListView) view).smoothScrollBy(height,0);
+    public static void scrollAViewBy(View view, int height) {
+        if (view instanceof RecyclerView)
+            ((RecyclerView) view).scrollBy(0, height);
+        else if (view instanceof ScrollView)
+            ((ScrollView) view).smoothScrollBy(0, height);
+        else if (view instanceof AbsListView)
+            ((AbsListView) view).smoothScrollBy(height, 0);
         else {
             try {
-                Method method = view.getClass().getDeclaredMethod("smoothScrollBy",Integer.class,Integer.class);
-                method.invoke(view,0,height);
-            } catch(Exception e) {
-                view.scrollBy(0,height);
+                Method method = view.getClass().getDeclaredMethod("smoothScrollBy", Integer.class, Integer.class);
+                method.invoke(view, 0, height);
+            } catch (Exception e) {
+                view.scrollBy(0, height);
             }
         }
     }
 
 
     public static void scrollToBottom(final ScrollView scrollView) {
-        if(scrollView != null) {
+        if (scrollView != null) {
             scrollView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -288,8 +288,8 @@ public class ScrollingUtil {
     }
 
     public static void scrollToBottom(final AbsListView absListView) {
-        if(absListView != null) {
-            if(absListView.getAdapter() != null && absListView.getAdapter().getCount() > 0) {
+        if (absListView != null) {
+            if (absListView.getAdapter() != null && absListView.getAdapter().getCount() > 0) {
                 absListView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -301,8 +301,8 @@ public class ScrollingUtil {
     }
 
     public static void scrollToBottom(final RecyclerView recyclerView) {
-        if(recyclerView != null) {
-            if(recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() > 0) {
+        if (recyclerView != null) {
+            if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() > 0) {
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -314,11 +314,11 @@ public class ScrollingUtil {
     }
 
     public static void scrollToBottom(View view) {
-        if(view instanceof RecyclerView)
+        if (view instanceof RecyclerView)
             scrollToBottom((RecyclerView) view);
-        if(view instanceof AbsListView)
+        if (view instanceof AbsListView)
             scrollToBottom((AbsListView) view);
-        if(view instanceof ScrollView)
+        if (view instanceof ScrollView)
             scrollToBottom((ScrollView) view);
     }
 

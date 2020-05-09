@@ -19,8 +19,6 @@
     <color name="colorStockLine">#E1E1E1</color>
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#AAAAAA</color>
-    <!-- 透明色 -->
-    <color name="transparent">#00000000</color>
 
     <!-- 一般文字颜色-->
     <color name="tipsColor">#FFA627</color>
@@ -48,5 +46,6 @@
     <color name="green05">#11CA8D</color>
     <color name="green10">#3AD7A9</color>
     <color name="green15">#2AE3DC</color>
+    <color name="green20">#E8FFF7</color>
 
 </resources>

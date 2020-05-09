@@ -4,8 +4,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.ui.dialog.DateDialog;
@@ -16,6 +14,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 /**
  * @Author: a797s
@@ -43,7 +42,8 @@ public final class BlockLogFragment extends BaseFragment {
         statusBar.setLayoutParams(layoutParams);
     }
 
-    @OnClick({R.id.btn_dialog_pay, R.id.btn_date_timer})
+    @SingleClick
+    @OnClick({R.id.btn_dialog_pay, R.id.btn_date_timer, R.id.btn_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_dialog_pay:
@@ -83,6 +83,29 @@ public final class BlockLogFragment extends BaseFragment {
                             public void onSelected(BaseDialog dialog, int year, int month, int day, int hour, int minutes, int second) {
                                 dialog.dismiss();
                                 toast("选中了：" + year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + second);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+            case R.id.btn_date:
+                // 自定义日期控件
+                new DateDialog.Builder(getContext(), false)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        //.setIgnoreDay()
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new DateDialog.OnListener() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                dialog.dismiss();
+                                toast("选中的时间段：" + startTime + "至" + endTime);
                             }
 
                             @Override

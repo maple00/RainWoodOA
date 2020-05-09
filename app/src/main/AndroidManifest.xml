@@ -8,20 +8,38 @@
     <!-- wifi访问权限-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- 获取安装包大小权限-->
-    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
 
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTop"
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".ui.activity.HomeActivity">
+
+        <!-- 适配 Android 7.0 文件意图 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 启动页面-->
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -30,7 +48,13 @@
             </intent-filter>
         </activity>
 
-
+        <!-- 考勤模块 AttendanceActivity-->
+        <activity
+            android:name=".ui.activity.AttendanceActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
 
     </application>
 

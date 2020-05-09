@@ -11,9 +11,9 @@ import com.rainwood.oa.ui.fragment.BlockLogFragment;
 import com.rainwood.oa.ui.fragment.HomeFragment;
 import com.rainwood.oa.ui.fragment.ManagerFragment;
 import com.rainwood.oa.ui.fragment.MineFragment;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 
@@ -57,16 +57,20 @@ public class HomeActivity extends BaseActivity {
     private void initListener() {
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
-               // StatusBarUtil.setStatusBarDarkTheme(this, false);
+                // StatusBarUtil.setStatusBarDarkTheme(this, false);
+                StatusBarUtils.darkMode(this, false);
                 switchFragment(mHomeFragment);
             } else if (item.getItemId() == R.id.navigation_manager) {
-               // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                StatusBarUtils.darkMode(this, true);
                 switchFragment(mManagerFragment);
             } else if (item.getItemId() == R.id.navigation_backlog) {
-               // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                StatusBarUtils.darkMode(this, true);
                 switchFragment(mBlockLogFragment);
             } else if (item.getItemId() == R.id.navigation_mine) {
-               // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                // StatusBarUtil.setStatusBarDarkTheme(this, true);
+                StatusBarUtils.darkMode(this, true);
                 switchFragment(mMineFragment);
             }
             return true;
@@ -88,9 +92,6 @@ public class HomeActivity extends BaseActivity {
         if (lastOneFragment == targetFragment) {
             return;
         }
-        if (!(targetFragment instanceof HomeFragment)) {
-            StatusBarUtil.setStatusBarDarkTheme(this, true);
-        }
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         if (!targetFragment.isAdded()) {
@@ -108,6 +109,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setTranslucentStatus(this);
+         StatusBarUtil.setTranslucentStatus(this);
     }
 }

@@ -1,2 +1,2 @@
-include ':app', ':tools', 'refreshlibrary'
+include ':app', ':tools', 'refreshlibrary','bannerLibrary'
 rootProject.name='RainWoodOA'

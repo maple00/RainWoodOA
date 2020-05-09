@@ -1,4 +1,4 @@
-package com.rainwood.oa.ui.widget;
+package com.lcodecore.tkrefreshlayout.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,7 +11,6 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RWNestedScrollView extends NestedScrollView {
-
     private static final String TAG = "TbNestedScrollView";
     private int mHeaderHeight = 0;
     private int originScroll = 0;
@@ -63,7 +62,7 @@ public class RWNestedScrollView extends NestedScrollView {
     public boolean isInBottom() {
         if(mRecyclerView != null) {
             boolean isBottom = !mRecyclerView.canScrollVertically(1);
-            //            Log.d(TAG,"isBottom == > " + isBottom);
+           // Log.d(TAG,"isBottom == > " + isBottom);
             return isBottom;
         }
         return false;

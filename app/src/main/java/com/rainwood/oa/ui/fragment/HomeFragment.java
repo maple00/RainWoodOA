@@ -4,39 +4,43 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.ChartEntity;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
-import com.rainwood.oa.ui.dialog.DateDialog;
 import com.rainwood.oa.ui.widget.LineChartView;
 import com.rainwood.oa.ui.widget.MeasureGridView;
-import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
-import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.statusbar.StatusBarUtil;
-import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.rawinwood.bgabanner.BGABanner;
+import cn.rawinwood.bgabanner.transformer.TransitionEffect;
 
 /**
  * @Author: a797s
  * @Date: 2020/4/27 17:45
  * @Desc: 首页
  */
-public final class HomeFragment extends BaseFragment implements XCollapsingToolbarLayout.OnScrimsListener, IHomeCallbacks {
+public final class HomeFragment extends BaseFragment implements
+        BGABanner.Delegate<ImageView, String>, BGABanner.Adapter<ImageView, String>, IHomeCallbacks {
 
-    @ViewInject(R.id.ctl_test_bar)
-    private XCollapsingToolbarLayout mCollapsingToolbarLayout;
+    //    @ViewInject(R.id.ctl_test_bar)
+//    private XCollapsingToolbarLayout mCollapsingToolbarLayout;
     public boolean mScrimsShown;
 
     @ViewInject(R.id.lcv_salary)
@@ -44,6 +48,8 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
 
     @ViewInject(R.id.mgv_home_salary)
     private MeasureGridView homeSalary;
+    @ViewInject(R.id.banner_home_top)
+    private BGABanner mStackBanner;
 
     // mHandler
     private final int INITIAL_LINE_SALARY_SIZE = 0x101;     // 工资曲线图
@@ -59,14 +65,6 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
     protected void initView(View rootView) {
         setUpState(State.SUCCESS);
         super.initView(rootView);
-        //设置渐变监听
-        mCollapsingToolbarLayout.setOnScrimsListener(this);
-        mScrimsShown = mCollapsingToolbarLayout.isScrimsShown();
-       /* if (mScrimsShown){
-            LogUtils.d(TAG, "11111111");
-        }else {
-            LogUtils.d(TAG, "22222222");
-        }*/
         // 创建工资曲线适配器
         mSalaryAdapter = new HomeSalaryAdapter();
         // 设置适配器
@@ -100,19 +98,46 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
         msg.what = INITIAL_LINE_SALARY_SIZE;
         mHandler.sendMessage(msg);
         // TODO: 自定义线性表的属性(线条，颜色，间距等)
+
+        // 模拟加载返回的图片
+        mStackBanner.setTransitionEffect(TransitionEffect.Default);
+        loadBannerData(mStackBanner, 3);
+        // mStackBanner.setAnimation();
     }
 
-    /**
-     * @param layout
-     * @param shown  渐变开关
-     */
-    @Override
-    public void onScrimsStateChange(XCollapsingToolbarLayout layout, boolean shown) {
-        if (shown) {
-            StatusBarUtil.setStatusBarDarkTheme(getActivity(), true);
-        } else {
-            StatusBarUtil.setStatusBarDarkTheme(getActivity(), false);
+    private void loadBannerData(final BGABanner banner, final int count) {
+        // 模拟图片
+        List<String> modelImages = new ArrayList<>();
+        List<String> imageTips = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            modelImages.add("加载的banner");
+            imageTips.add("这是第" + (i + 1) + "张图片");
         }
+        /**
+         * 设置是否开启自动轮播，需要在 setData 方法之前调用，并且调了该方法后必须再调用一次 setData 方法
+         * 例如根据图片当图片数量大于 1 时开启自动轮播，等于 1 时不开启自动轮播
+         */
+        banner.setAutoPlayAble(modelImages.size() > 1);
+        banner.setAdapter(HomeFragment.this);
+        banner.setData(modelImages, imageTips);
+        banner.setIsNeedShowIndicatorOnOnlyOnePage(false);
+    }
+
+    @Override
+    public void onBannerItemClick(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+        LogUtils.d("sxs", "点击了 + " + position);
+        toast("点击了第 " + (position + 1) + " + 页");
+    }
+
+    @Override
+    public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+      //  LogUtils.d("sxs", "model---> " + model + " -- position ---> " + position);
+        Glide.with(itemView.getContext())
+                .load(model)
+                .apply(new RequestOptions().placeholder(R.drawable.bg_monkey_king)
+                        .error(R.drawable.bg_monkey_king)
+                        .dontAnimate().centerCrop())
+                .into(itemView);
     }
 
     @SuppressLint("HandlerLeak")
@@ -135,38 +160,6 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
         }
     };
 
-    @SingleClick
-    @OnClick(R.id.iv_home_top)
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_home_top:
-                // 自定义日期控件
-                new DateDialog.Builder(getContext(), false)
-                        .setTitle(null)
-                        .setConfirm(getString(R.string.common_text_confirm))
-                        .setCancel(getString(R.string.common_text_clear_screen))
-                        .setAutoDismiss(false)
-                        //.setIgnoreDay()
-                        .setCanceledOnTouchOutside(false)
-                        .setListener(new DateDialog.OnListener() {
-                            @Override
-                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
-                            }
-
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + view.getId());
-        }
-    }
-
     @Override
     public void onError() {
 
@@ -182,17 +175,5 @@ public final class HomeFragment extends BaseFragment implements XCollapsingToolb
 
     }
 
-    public class StatisticsBean {
 
-        private double mValue;
-
-
-        public double getmValue() {
-            return mValue;
-        }
-
-        public void setmValue(double mValue) {
-            this.mValue = mValue;
-        }
-    }
 }

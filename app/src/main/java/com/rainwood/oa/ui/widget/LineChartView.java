@@ -32,6 +32,7 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @Author: a797s
@@ -201,10 +202,13 @@ public class LineChartView extends View {
         mTextPaint.setTextSize(FontSwitchUtil.dip2px(getContext(), 9));
         mTextPaint.setColor(getResources().getColor(R.color.labelColor));
 
+        // 线
         mLinePaint = new Paint();
         mLinePaint.setAntiAlias(true);
         mLinePaint.setStrokeWidth(FontSwitchUtil.dip2px(context, 2));
-        mLinePaint.setColor(getResources().getColor(R.color.green10));
+        Random random = new Random();
+        int color = 0xff000000 | random.nextInt(0xffffff);
+        mLinePaint.setColor(color);
         mLinePaint.setStyle(Paint.Style.STROKE);
 
         mPointPaint = new Paint();
@@ -230,8 +234,6 @@ public class LineChartView extends View {
 
     public void setData(List<ChartEntity> list, boolean isCurve, boolean isDottedLine) {
         mLineDataList.add(tempCount++, list);
-        LogUtils.d("sxs", "count计数器：" + (tempCount));
-        LogUtils.d("sxs", "数据：" + list.toString());
         this.mData = list;
         this.isCurve = isCurve;
         this.isMiddleDottedLine = isDottedLine;
