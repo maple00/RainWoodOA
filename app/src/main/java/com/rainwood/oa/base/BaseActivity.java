@@ -36,7 +36,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initEvent();
         initPresenter();
+        initData();
         setStatusBar();
+    }
+
+    /**
+     * 初始化数据
+     */
+    protected void initData() {
+
     }
 
     /**

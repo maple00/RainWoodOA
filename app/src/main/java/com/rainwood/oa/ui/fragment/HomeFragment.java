@@ -39,10 +39,6 @@ import cn.rawinwood.bgabanner.transformer.TransitionEffect;
 public final class HomeFragment extends BaseFragment implements
         BGABanner.Delegate<ImageView, String>, BGABanner.Adapter<ImageView, String>, IHomeCallbacks {
 
-    //    @ViewInject(R.id.ctl_test_bar)
-//    private XCollapsingToolbarLayout mCollapsingToolbarLayout;
-    public boolean mScrimsShown;
-
     @ViewInject(R.id.lcv_salary)
     private LineChartView mLineChartSalary;
 

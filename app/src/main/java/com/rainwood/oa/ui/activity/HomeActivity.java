@@ -20,7 +20,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 
-public class HomeActivity extends BaseActivity {
+public final class HomeActivity extends BaseActivity {
 
     @ViewInject(R.id.main_navigation_bar)
     private BottomNavigationView mBottomNavigationView;
