@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.necer.enumeration.CheckModel;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
@@ -24,14 +25,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
-        //==========================================
-        //ColorMatrix cm = new ColorMatrix();
-        //cm.setSaturation(0);
-        //Paint paint = new Paint();
-        //paint.setColorFilter(new ColorMatrixColorFilter(cm));
-        //View contentContainer = getWindow().getDecorView();
-        //contentContainer.setLayerType(View.LAYER_TYPE_SOFTWARE,paint);
-        //===========================================
         ViewBind.inject(this);
         initView();
         initEvent();

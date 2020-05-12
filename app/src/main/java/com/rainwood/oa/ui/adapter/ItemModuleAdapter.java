@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
+import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
 import com.rainwood.tools.annotation.ViewBind;
@@ -29,6 +31,11 @@ import java.util.List;
 public final class ItemModuleAdapter extends BaseAdapter {
 
     private List<IconAndFont> mList;
+    private Context mContext;
+
+    public void setContext(Context context) {
+        mContext = context;
+    }
 
     public void setList(List<IconAndFont> list) {
         mList = list;
@@ -71,7 +78,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         @ViewInject(R.id.iv_module_img)
         private ImageView moduleImg;
         @ViewInject(R.id.tv_module_name)
@@ -82,24 +89,34 @@ public final class ItemModuleAdapter extends BaseAdapter {
 
     /**
      * 点击不同模块的点击事件
+     *
      * @param position
      * @param holder
      */
     private void onItemClickValues(int position, ViewHolder holder, View convertView, ViewGroup parent) {
+        setContext(convertView.getContext());
         holder.moduleItem.setOnClickListener(v -> {
+            try {
+                ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
+            } catch (Exception e) {
+                ToastUtils.show("点击了-- " + position);
+            }
             switch (getItem(position).getDesc()) {
                 case "我的考勤":
-                    // ToastUtils.show("点击了-- " + getItem(position).getDesc());
-                    parent.getContext().startActivity(new Intent(convertView.getContext(), AttendanceActivity.class));
+                    convertView.getContext().startActivity(getNewIntent(AttendanceActivity.class, "我的考勤"));
                     break;
                 case "补卡记录":
                     break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + getItem(position).getDesc());
             }
-            ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
         });
     }
 
+
+    /**
+     * startActivity 优化
+     */
+    private Intent getNewIntent(Class<? extends BaseActivity> clazz, Object... obj) {
+        return new Intent(mContext, clazz);
+    }
 
 }

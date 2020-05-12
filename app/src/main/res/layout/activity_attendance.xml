@@ -16,11 +16,11 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/iv_lastMonth"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="50dp"
-            android:background="@mipmap/last"
-            android:onClick="lastMonth" />
+            android:background="@mipmap/last" />
 
         <TextView
             android:id="@+id/tv_current_month"
@@ -31,27 +31,44 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/iv_next_month"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="50dp"
-            android:background="@mipmap/next"
-            android:onClick="nextMonth" />
+            android:background="@mipmap/next"/>
 
     </RelativeLayout>
 
-    <com.othershe.calendarview.weiget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="35dp" />
 
-    <com.othershe.calendarview.weiget.CalendarView
-        android:id="@+id/cv_calendar"
+    <!-- 周视图-->
+    <com.necer.view.WeekBar
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        calendarview:choose_type="single"
-        calendarview:show_holiday="true"
-        calendarview:show_lunar="true"
-        calendarview:show_term="false"
-        calendarview:switch_choose="false" />
+        android:layout_height="wrap_content" />
+
+    <!-- emui 类型日历-->
+    <com.necer.calendar.EmuiCalendar
+        android:id="@+id/ec_emui_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_lunar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="#f5f5f5"
+                android:textColor="#333333"
+                android:text="测试"
+                android:gravity="center"
+                android:textSize="13sp" />
+
+        </androidx.core.widget.NestedScrollView>
+    </com.necer.calendar.EmuiCalendar>
+
 
 </LinearLayout>
