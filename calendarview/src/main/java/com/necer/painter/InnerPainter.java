@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -219,20 +218,23 @@ public class InnerPainter implements CalendarPainter {
             int[] holidayLocation = getHolidayWorkdayLocation(rectF.centerX(), rectF.centerY());
             //mDayList
             int count = 0;
-            int countPlus = 0;
             for (Map.Entry<String, List<LocalDate>> entry : mDayList.entrySet()) {
                 if (entry.getValue().contains(localDate)) {
                     if (holidayDrawable == null) {
                         mTextPaint.setTextSize(mAttrs.holidayWorkdayTextSize);
                         mTextPaint.setColor(holidayTextColor);
+                        //mTextPaint.set
+                        //mTextPaint.
                         /*
                          * 状态、X轴的距离、Y轴的距离、画笔
+                         * 设置状态最多显示3个
                          */
                         //Log.d("sxs ---- " + count, entry.getKey());
                         canvas.drawText(entry.getKey(), holidayLocation[0],
-                                getTextBaseLineY(holidayLocation[1]) + ((count > 0) ? mTextPaint.measureText(entry.getKey()) : 0),
+                                getTextBaseLineY(holidayLocation[1])
+                                        + ((count > 0) ? mTextPaint.measureText(entry.getKey()) * count : 0),
                                 mTextPaint);
-                        /**
+                        /*
                          * 记录不同的状态
                          */
                         ++count;
@@ -241,7 +243,6 @@ public class InnerPainter implements CalendarPainter {
                         holidayDrawable.setBounds(drawableBounds);
                         holidayDrawable.setAlpha(alphaColor);
                         holidayDrawable.draw(canvas);
-                        ++countPlus;
                     }
                 }
             }
@@ -359,7 +360,10 @@ public class InnerPainter implements CalendarPainter {
     }
 
     //设置法定节假日和补班
-    public void setTagDayCopy(Map<String, List<String>> allDayList) {
+    private int statusCount = 0;
+
+    public void setTagDayCopy(Map<String, List<String>> allDayList, int minShow) {
+
         for (String key : allDayList.keySet()) {
             // 进入之前先置空
             if (mDayList.get(key) != null) {
@@ -377,7 +381,12 @@ public class InnerPainter implements CalendarPainter {
                 dayLocalList.add(holidayLocalDate);
                 //mDayList.get(key).add(holidayLocalDate);
             }
-            mDayList.put(key, dayLocalList);
+             /*
+              设定最多显示的状态
+            */
+            statusCount++;
+            if (statusCount < minShow)
+                mDayList.put(key, dayLocalList);
         }
         mCalendar.notifyCalendar();
     }

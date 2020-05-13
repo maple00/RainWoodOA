@@ -1,12 +1,13 @@
 package com.rainwood.oa.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.necer.enumeration.CheckModel;
+import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
@@ -29,6 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initEvent();
         initPresenter();
+        loadData();
         initData();
         setStatusBar();
     }
@@ -62,6 +64,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    protected void loadData() {
+        //加载数据
+    }
+
     /**
      * 子类需要释放资源，覆盖即可
      */
@@ -86,6 +92,36 @@ public abstract class BaseActivity extends AppCompatActivity {
      * presenter 管理
      */
     protected abstract void initPresenter();
+
+    /**
+     * 获取当前 Activity 对象
+     */
+    public BaseActivity getActivity() {
+        return this;
+    }
+
+  /*  @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    protected void openActivity(Class clazz) {
+        Intent intent = new Intent(this, clazz);
+        startActivity(intent);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }*/
 
     /**
      * 显示吐司

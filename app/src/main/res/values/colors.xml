@@ -15,7 +15,7 @@
     <color name="labelColor">#999999</color>
     <color name="labelColor2">#CCCCCC</color>
     <!-- 分割线的颜色 -->
-    <color name="colorLine">#ECECEC</color>
+    <color name="colorLine">#F2F2F2</color>
     <color name="colorStockLine">#E1E1E1</color>
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#AAAAAA</color>
@@ -32,8 +32,6 @@
     <color name="assistColor15">#F8F8F8</color>
 
     <!-- common color-->
-    <!-- 白色-->
-    <color name="white00">#FFFFFF</color>
     <!-- 黑色-->
     <color name="black00">#000000</color>
     <color name="black5">#0D000000</color>

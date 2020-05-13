@@ -40,8 +40,15 @@
     <string name="update_background">后台更新</string>
     <string name="text_common_search">搜索</string>
     <string name="text_mine_logout">退出登录</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
 
     <!-- 考勤-->
-    <string name="attendance_title">考勤</string>
+    <string name="attendance_title">我的考勤</string>
+    <string name="attendance_current_day">当日考勤</string>
+    <string name="attendance_current_month">本月考勤</string>
+    <string name="salary_current_day">本月工资</string>
+    <string name="back_today">回到今天</string>
+
 
 </resources>

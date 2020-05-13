@@ -31,11 +31,11 @@ import java.util.List;
 public final class ItemModuleAdapter extends BaseAdapter {
 
     private List<IconAndFont> mList;
-    private Context mContext;
+   /* private Context mContext;
 
     public void setContext(Context context) {
         mContext = context;
-    }
+    }*/
 
     public void setList(List<IconAndFont> list) {
         mList = list;
@@ -90,11 +90,11 @@ public final class ItemModuleAdapter extends BaseAdapter {
     /**
      * 点击不同模块的点击事件
      *
-     * @param position
-     * @param holder
+     * @param position 点击的模块
+     * @param holder   ViewHolder
      */
     private void onItemClickValues(int position, ViewHolder holder, View convertView, ViewGroup parent) {
-        setContext(convertView.getContext());
+        //setContext(convertView.getContext());
         holder.moduleItem.setOnClickListener(v -> {
             try {
                 ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
@@ -103,7 +103,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
             }
             switch (getItem(position).getDesc()) {
                 case "我的考勤":
-                    convertView.getContext().startActivity(getNewIntent(AttendanceActivity.class, "我的考勤"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(),AttendanceActivity.class, "我的考勤"));
                     break;
                 case "补卡记录":
                     break;
@@ -115,8 +115,8 @@ public final class ItemModuleAdapter extends BaseAdapter {
     /**
      * startActivity 优化
      */
-    private Intent getNewIntent(Class<? extends BaseActivity> clazz, Object... obj) {
-        return new Intent(mContext, clazz);
+    private Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, Object... obj) {
+        return new Intent(context, clazz);
     }
 
 }

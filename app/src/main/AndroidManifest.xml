@@ -34,12 +34,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- App首页 singleTask， 其余singleTop -->
         <!-- 启动页面-->
         <activity
             android:name=".ui.activity.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:launchMode="singleTask"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -54,7 +55,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="fullSensor" />
 
     </application>
 

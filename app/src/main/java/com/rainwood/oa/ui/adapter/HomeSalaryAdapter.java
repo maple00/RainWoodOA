@@ -57,7 +57,7 @@ public final class HomeSalaryAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ViewHolder{
+    private static class ViewHolder{
         @ViewInject(R.id.tv_salary)
         private TextView salary;
         @ViewInject(R.id.tv_desc)

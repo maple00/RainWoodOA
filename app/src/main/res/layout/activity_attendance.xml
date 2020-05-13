@@ -1,74 +1,88 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidElementNotAllowed -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:calendarview="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/assistColor15"
     android:orientation="vertical"
-    tools:ignore="RtlHardcoded,HardcodedText,RtlSymmetry,SmallSp">
+    tools:ignore="ContentDescription,RtlHardcoded,RelativeOverlap,SmallSp,UselessParent，HardcodedText">
 
     <!-- title-->
-    <include layout="@layout/include_title_bar" />
-
-    <RelativeLayout
+    <include
+        layout="@layout/include_title_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="10dp" />
 
-        <ImageView
-            android:id="@+id/iv_lastMonth"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="50dp"
-            android:background="@mipmap/last" />
-
-        <TextView
-            android:id="@+id/tv_current_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/iv_next_month"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="50dp"
-            android:background="@mipmap/next"/>
-
-    </RelativeLayout>
-
-
-    <!-- 周视图-->
-    <com.necer.view.WeekBar
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/shape_default_white_bg"
+        android:orientation="vertical">
 
-    <!-- emui 类型日历-->
-    <com.necer.calendar.EmuiCalendar
-        android:id="@+id/ec_emui_calendar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.core.widget.NestedScrollView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/white">
 
             <TextView
-                android:id="@+id/tv_lunar"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_current_month"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:background="#f5f5f5"
-                android:textColor="#333333"
-                android:text="测试"
-                android:gravity="center"
-                android:textSize="13sp" />
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:textSize="20sp" />
 
-        </androidx.core.widget.NestedScrollView>
-    </com.necer.calendar.EmuiCalendar>
+            <ImageView
+                android:id="@+id/iv_next_month"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:background="@mipmap/next" />
+
+            <ImageView
+                android:id="@+id/iv_lastMonth"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="25dp"
+                android:layout_toStartOf="@+id/iv_next_month"
+                android:background="@mipmap/last" />
 
 
+        </RelativeLayout>
+
+        <View
+            style="@style/HorizontalLineStyle"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- 周视图-->
+        <com.necer.view.WeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white" />
+
+
+        <com.necer.calendar.Miui10Calendar
+            android:id="@+id/mc_calendar_10"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:showNumberBackground="true"
+            app:solarTextBold="true">
+
+            <include layout="@layout/include_attendance_record" />
+
+        </com.necer.calendar.Miui10Calendar>
+
+    </LinearLayout>
 </LinearLayout>

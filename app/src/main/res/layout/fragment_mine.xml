@@ -5,7 +5,7 @@
     android:id="@+id/ll_mine_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white00"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <FrameLayout
@@ -84,7 +84,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="15dp"
                         android:text="@string/text_mine_account"
-                        android:textColor="@color/white00"
+                        android:textColor="@color/white"
                         android:textSize="11sp"
                         tools:ignore="SmallSp" />
 
@@ -98,7 +98,7 @@
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="13dp"
                         android:text="5200.3"
-                        android:textColor="@color/white00"
+                        android:textColor="@color/white"
                         android:textSize="24sp" />
                 </RelativeLayout>
 

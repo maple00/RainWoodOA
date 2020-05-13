@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -27,6 +28,7 @@ public final class UIDialog {
             extends BaseDialog.Builder<B> {
 
         private boolean mAutoDismiss = true;
+        private boolean mConfirmShow = false;
 
         private final ViewGroup mContainerLayout;
         private final TextView mTitleView;
@@ -35,6 +37,7 @@ public final class UIDialog {
         private final View mLineView;
         private final TextView mConfirmView;
         private final ImageView mDialogClose;
+        private final LinearLayout mConfirmHasShow;
 
         public Builder(Context context) {
             super(context);
@@ -50,6 +53,7 @@ public final class UIDialog {
             mLineView = findViewById(R.id.v_ui_line);
             mConfirmView = findViewById(R.id.tv_ui_confirm);
             mDialogClose = findViewById(R.id.iv_dialog_close);
+            mConfirmHasShow = findViewById(R.id.ll_confirm);
 
             setOnClickListener(R.id.tv_ui_cancel, R.id.tv_ui_confirm,R.id.iv_dialog_close);
         }
@@ -78,7 +82,7 @@ public final class UIDialog {
 
         public B setCancel(CharSequence text) {
             mCancelView.setText(text);
-            mLineView.setVisibility((text == null || "".equals(text.toString())) ? View.GONE : View.VISIBLE);
+            mLineView.setVisibility((text == null || "".equals(text.toString())) ? View.INVISIBLE : View.VISIBLE);
             return (B) this;
         }
 

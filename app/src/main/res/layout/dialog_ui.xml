@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.dialog.UIDialog">
+    tools:context=".ui.dialog.UIDialog"
+    tools:ignore="ContentDescription">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_main_depart"
@@ -13,7 +14,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        app:cardBackgroundColor="@color/white00"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/dialog_ui_round_size"
         app:cardElevation="0px">
 
@@ -29,9 +30,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textColor="#666666"
+                android:textSize="14sp"
                 tools:text="标题" />
 
             <View
@@ -41,6 +41,7 @@
                 android:background="@color/colorLine" />
             <!-- 确认取消-->
             <LinearLayout
+                android:id="@+id/ll_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:orientation="horizontal"

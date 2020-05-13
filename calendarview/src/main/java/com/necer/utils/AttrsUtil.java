@@ -23,7 +23,7 @@ public class AttrsUtil {
         attrs.todayCheckedBackground = ta.getResourceId(R.styleable.NCalendar_todayCheckedBackground, R.drawable.n_bg_checked_today);
         attrs.defaultCheckedBackground = ta.getResourceId(R.styleable.NCalendar_defaultCheckedBackground, R.drawable.n_bg_checked_default);
 
-        attrs.todayCheckedSolarTextColor = ta.getColor(R.styleable.NCalendar_todayCheckedSolarTextColor, ContextCompat.getColor(context, R.color.N_white));
+        attrs.todayCheckedSolarTextColor = ta.getColor(R.styleable.NCalendar_todayCheckedSolarTextColor, ContextCompat.getColor(context, R.color.daySelectedColor));
         attrs.todayUnCheckedSolarTextColor = ta.getColor(R.styleable.NCalendar_todayUnCheckedSolarTextColor, ContextCompat.getColor(context, R.color.N_todaySolarUnCheckedTextColor));
         attrs.defaultCheckedSolarTextColor = ta.getColor(R.styleable.NCalendar_defaultCheckedSolarTextColor, ContextCompat.getColor(context, R.color.N_defaultSolarTextColor));
         attrs.defaultUnCheckedSolarTextColor = ta.getColor(R.styleable.NCalendar_defaultUnCheckedSolarTextColor, ContextCompat.getColor(context, R.color.N_defaultSolarTextColor));
@@ -54,6 +54,7 @@ public class AttrsUtil {
         attrs.defaultUnCheckedHoliday = ta.getDrawable(R.styleable.NCalendar_defaultUnCheckedHoliday);
         attrs.todayCheckedWorkday = ta.getDrawable(R.styleable.NCalendar_todayCheckedWorkday);
         attrs.todayUnCheckedWorkday = ta.getDrawable(R.styleable.NCalendar_todayUnCheckedWorkday);
+
         attrs.defaultCheckedWorkday = ta.getDrawable(R.styleable.NCalendar_defaultCheckedWorkday);
         attrs.defaultUnCheckedWorkday = ta.getDrawable(R.styleable.NCalendar_defaultUnCheckedWorkday);
 
@@ -63,7 +64,9 @@ public class AttrsUtil {
         attrs.holidayWorkdayLocation = ta.getInt(R.styleable.NCalendar_holidayWorkdayLocation, Attrs.TOP_RIGHT);
         attrs.holidayText = ta.getString(R.styleable.NCalendar_holidayText);
         attrs.workdayText = ta.getString(R.styleable.NCalendar_workdayText);
-        attrs.todayCheckedHolidayTextColor = ta.getColor(R.styleable.NCalendar_todayCheckedHolidayTextColor, ContextCompat.getColor(context, R.color.N_white));
+
+        // 设置节假日的字体颜色
+        attrs.todayCheckedHolidayTextColor = ta.getColor(R.styleable.NCalendar_todayCheckedHolidayTextColor, ContextCompat.getColor(context, R.color.N_holidayTextColor));
         attrs.todayUnCheckedHolidayTextColor = ta.getColor(R.styleable.NCalendar_todayUnCheckedHolidayTextColor, ContextCompat.getColor(context, R.color.N_holidayTextColor));
         attrs.defaultCheckedHolidayTextColor = ta.getColor(R.styleable.NCalendar_defaultCheckedHolidayTextColor, ContextCompat.getColor(context, R.color.N_holidayTextColor));
         attrs.defaultUnCheckedHolidayTextColor = ta.getColor(R.styleable.NCalendar_defaultUnCheckedHolidayTextColor, ContextCompat.getColor(context, R.color.N_holidayTextColor));

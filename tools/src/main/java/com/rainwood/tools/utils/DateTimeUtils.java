@@ -104,7 +104,7 @@ public final class DateTimeUtils {
     /**
      * 获取当前时间
      *
-     * @return 返回当前时间，格式2017-05-04    10:54:21
+     * @return 返回当前时间，格式2017-05-04 10:54:21
      */
     public static String getNowDate(DatePattern pattern) {
         String dateString = null;

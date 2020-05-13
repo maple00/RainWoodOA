@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <!-- 覆写导航栏图标大小和文字大小 -->
     <dimen name="design_navigation_icon_padding" tools:override="true">11dp</dimen>
     <dimen name="design_navigation_icon_size" tools:override="true">23dp</dimen>
@@ -12,6 +13,11 @@
     <!-- 默认按钮的圆角大小 -->
     <dimen name="button_round_size">3dp</dimen>
 
+    <!-- 背景默认圆角大小-->
+    <dimen name="shape_radius_size">8dp</dimen>
+
     <!-- 通用对话框圆角大小 -->
     <dimen name="dialog_ui_round_size">15dp</dimen>
+
+
 </resources>

@@ -13,5 +13,7 @@
     <color name="N_stretchTextColor">#666666</color>
     <color name="N_hollowCircleColor">#B2B2B2</color>
 
+    <color name="daySelectedColor">#11CA8D</color>
+    <color name="daySelectedBGColor">#E8FFF7</color>
 
 </resources>

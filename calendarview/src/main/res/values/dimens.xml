@@ -12,9 +12,11 @@
     <dimen name="N_numberBackgroundTextSize">260sp</dimen>
     <dimen name="N_calendarHeight">300dp</dimen>
     <dimen name="N_stretchCalendarHeight">450dp</dimen>
-    <dimen name="N_checkedCircleRadius">44dp</dimen>
+    <dimen name="N_checkedCircleRadius">49dp</dimen>
     <dimen name="N_checkedHollowCircleStroke">1dp</dimen>
     <dimen name="N_pointSize">5dp</dimen>
+    <dimen name="N_holidayCircleRadius">3dp</dimen>
+    <dimen name="N_holidayCircleSize">11dp</dimen>
 
 
 </resources>

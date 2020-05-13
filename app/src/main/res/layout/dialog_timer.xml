@@ -138,7 +138,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_default_button"
             android:text="@string/common_text_confirm"
-            android:textColor="@color/white00" />
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
