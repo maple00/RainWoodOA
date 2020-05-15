@@ -44,9 +44,9 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         }
         // 我的管理
         mFontList = new ArrayList<>();
-        for (int i = 0; i < mineManager.length; i++) {
+        for (String s : mineManager) {
             IconAndFont iconAndFont = new IconAndFont();
-            iconAndFont.setDesc(mineManager[i]);
+            iconAndFont.setDesc(s);
             iconAndFont.setLocalMipmap(R.drawable.bg_monkey_king);
             mFontList.add(iconAndFont);
         }

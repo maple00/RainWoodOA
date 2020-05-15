@@ -5,20 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:elevation="0dp"
+    android:gravity="center_vertical"
     android:paddingStart="12dp"
     android:paddingEnd="15dp"
-    tools:ignore="ContentDescription">
+    android:background="@color/white"
+    tools:ignore="ContentDescription,RelativeOverlap">
 
     <ImageView
         android:id="@+id/iv_page_back"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:scaleType="fitXY"
         android:paddingStart="5dp"
-        android:paddingEnd="5dp"
         android:paddingTop="4dp"
+        android:paddingEnd="5dp"
         android:paddingBottom="4dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_page_back" />
 
     <TextView

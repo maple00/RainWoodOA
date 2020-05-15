@@ -17,9 +17,9 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
+import com.rainwood.oa.ui.activity.CustomNewActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.toast.ToastUtils;
 
 import java.util.List;
 
@@ -31,11 +31,6 @@ import java.util.List;
 public final class ItemModuleAdapter extends BaseAdapter {
 
     private List<IconAndFont> mList;
-   /* private Context mContext;
-
-    public void setContext(Context context) {
-        mContext = context;
-    }*/
 
     public void setList(List<IconAndFont> list) {
         mList = list;
@@ -97,15 +92,22 @@ public final class ItemModuleAdapter extends BaseAdapter {
         //setContext(convertView.getContext());
         holder.moduleItem.setOnClickListener(v -> {
             try {
-                ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
+                //ToastUtils.show("点击了-- " + position + " -- module ---- " + getItem(position).getDesc());
             } catch (Exception e) {
-                ToastUtils.show("点击了-- " + position);
+                // ToastUtils.show("点击了-- " + position);
             }
             switch (getItem(position).getDesc()) {
                 case "我的考勤":
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(),AttendanceActivity.class, "我的考勤"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AttendanceActivity.class, "我的考勤"));
                     break;
                 case "补卡记录":
+                    break;
+                // 客户管理模块
+                case "新建客户":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomNewActivity.class, "新建客户"));
+                    break;
+                case "客户附件":
+
                     break;
             }
         });
@@ -115,8 +117,10 @@ public final class ItemModuleAdapter extends BaseAdapter {
     /**
      * startActivity 优化
      */
-    private Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, Object... obj) {
-        return new Intent(context, clazz);
+    private Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title) {
+        Intent intent = new Intent(context, clazz);
+        intent.putExtra("title", title);
+        return intent;
     }
 
 }

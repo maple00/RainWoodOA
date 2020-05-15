@@ -51,8 +51,7 @@ public final class BlockLogFragment extends BaseFragment {
                 new PayPasswordDialog.Builder(view.getContext())
                         .setTitle(getString(R.string.pay_title))
                         .setSubTitle(null)
-                        .setMoney("￥ 100.00")
-                        .setAutoDismiss(false) // 设置点击按钮后不关闭对话框
+                        .setAutoDismiss(false)
                         .setListener(new PayPasswordDialog.OnListener() {
 
                             @Override

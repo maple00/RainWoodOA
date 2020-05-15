@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.necer.calendar.Miui10Calendar;
+import com.necer.calendar.Miui9Calendar;
 import com.necer.enumeration.CheckModel;
 import com.necer.painter.InnerPainter;
 import com.rainwood.oa.R;
@@ -15,6 +15,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CalendarStatics;
 import com.rainwood.oa.ui.adapter.CalendarStaticsAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
@@ -44,8 +45,8 @@ public final class AttendanceActivity extends BaseActivity {
     // content
     @ViewInject(R.id.tv_current_month)
     private TextView currentMonth;
-    @ViewInject(R.id.mc_calendar_10)
-    private Miui10Calendar mMiui10Calendar;
+    @ViewInject(R.id.mc_calendar_9)
+    private Miui9Calendar mMiui9Calendar;
     // 本月平均工作小时数
     @ViewInject(R.id.tv_current_average_hour)
     private TextView averageHour;
@@ -101,9 +102,9 @@ public final class AttendanceActivity extends BaseActivity {
         StatusBarUtils.setPaddingSmart(this, pageTop);
         StatusBarUtil.setStatusBarColor(this, this.getColor(R.color.assistColor15));
         // 设置日历选中当前日期
-        mMiui10Calendar.setCheckMode(CheckModel.SINGLE_DEFAULT_CHECKED);  // 设置当前选中
+        mMiui9Calendar.setCheckMode(CheckModel.SINGLE_DEFAULT_CHECKED);  // 设置当前选中
         //只在selectedMode==SINGLE_SELECTED有效
-        mMiui10Calendar.setDefaultCheckedFirstDate(true);
+        mMiui9Calendar.setDefaultCheckedFirstDate(true);
         //
         mDayDescList = new ArrayList<>();
         mMonthDescOneList = new ArrayList<>();
@@ -132,7 +133,7 @@ public final class AttendanceActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mPageTitle.setText(this.getString(R.string.attendance_title));
+        mPageTitle.setText(title);
         mPageRightTitle.setText(this.getString(R.string.back_today));
         averageHour.setText(monthAvgWorkHours);
         // 当日考勤
@@ -194,7 +195,7 @@ public final class AttendanceActivity extends BaseActivity {
         /*
         模拟日历信息
          */
-        InnerPainter innerPainter = (InnerPainter) mMiui10Calendar.getCalendarPainter();
+        InnerPainter innerPainter = (InnerPainter) mMiui9Calendar.getCalendarPainter();
         Map<String, List<String>> statusMap = new HashMap<>();
         List<String> holidayList = new ArrayList<>();
         holidayList.add("2020-05-10");
@@ -237,7 +238,7 @@ public final class AttendanceActivity extends BaseActivity {
     protected void initEvent() {
         super.initEvent();
         // 设置日历单选
-        mMiui10Calendar.setOnCalendarChangedListener((baseCalendar, year, month, localDate, dateChangeBehavior) -> {
+        mMiui9Calendar.setOnCalendarChangedListener((baseCalendar, year, month, localDate, dateChangeBehavior) -> {
             currentMonth.setText(year + "年" + month + "月");
             Log.d(TAG, "当前页面选中：：" + localDate);
         });
@@ -249,16 +250,16 @@ public final class AttendanceActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_lastMonth:
-                mMiui10Calendar.toLastPager();
+                mMiui9Calendar.toLastPager();
                 // 上个月
                 break;
             case R.id.iv_next_month:
                 // 下个月
-                mMiui10Calendar.toNextPager();
+                mMiui9Calendar.toNextPager();
                 break;
             case R.id.tv_page_right_title:
                 // 回到今天
-                mMiui10Calendar.toToday();
+                mMiui9Calendar.toToday();
                 break;
             case R.id.iv_page_back:
                 finish();

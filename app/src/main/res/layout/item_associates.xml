@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/iv_head_photo"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_monkey_king" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        android:text="吴磊"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_depart_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_name"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        android:text="市场部-销售顾问"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/iv_clear"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:padding="5dp"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_waste_clear" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/iv_head_photo"
+        android:layout_marginTop="20dp"/>
+
+</RelativeLayout>

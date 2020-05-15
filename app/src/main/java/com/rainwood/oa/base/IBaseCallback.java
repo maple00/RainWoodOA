@@ -7,9 +7,18 @@ package com.rainwood.oa.base;
  */
 public interface IBaseCallback {
 
+    /**
+     * 数据错误
+     */
     void onError();
 
+    /**
+     * 加载中
+     */
     void onLoading();
 
+    /**
+     * 空数据
+     */
     void onEmpty();
 }

@@ -21,8 +21,14 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
     private IManagerCallbacks mCallback;
     private String[] data = {"行政人事", "财务管理", "客户管理", "系统设置"};
     // 行政人事
-    private String[] personnels = {"职位管理", "员工管理", "工作日", "通讯录", "管理制度", "加班记录",
+    private String[] personals = {"职位管理", "员工管理", "工作日", "通讯录", "管理制度", "加班记录",
             "请假记录", "外出记录", "考勤记录", "补卡记录", "行政处罚"};
+    //财务管理
+    private String[] financialManager = {"收支平衡", "费用报销", "开票记录", "团队基金"};
+    // 客户管理
+    private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建列表", "订单列表", "跟进记录", "沟通技巧"};
+    // 系统设置
+    private String[] systemSetting = {"系统日志", "办公文件", "帮助中心"};
 
     @Override
     public void getManagerData() {
@@ -34,17 +40,52 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
         for (int i = 0; i < data.length; i++) {
             ManagerMain managerMain = new ManagerMain();
             managerMain.setTitle(data[i]);
-            if (i == 0){
+            // 设置默认打开
+            if (i == 2) {
                 managerMain.setHasSelected(true);
             }
-            List<IconAndFont> moduleItemList = new ArrayList<>();
-            for (int j = 0; j < personnels.length; j++) {
-                IconAndFont andFont = new IconAndFont();
-                andFont.setDesc(personnels[j]);
-                andFont.setLocalMipmap(R.mipmap.ic_temp_module);
-                moduleItemList.add(andFont);
+            switch (i){
+                case 0:     // 行政人事
+                    List<IconAndFont> moduleItemList = new ArrayList<>();
+                    for (String personal : personals) {
+                        IconAndFont andFont = new IconAndFont();
+                        andFont.setDesc(personal);
+                        andFont.setLocalMipmap(R.mipmap.ic_temp_module);
+                        moduleItemList.add(andFont);
+                    }
+                    managerMain.setIconAndFontList(moduleItemList);
+                    break;
+                case 1:     // 财务管理
+                    List<IconAndFont> financialList = new ArrayList<>();
+                    for (String financial : financialManager) {
+                        IconAndFont andFont = new IconAndFont();
+                        andFont.setDesc(financial);
+                        andFont.setLocalMipmap(R.mipmap.ic_temp_module);
+                        financialList.add(andFont);
+                    }
+                    managerMain.setIconAndFontList(financialList);
+                    break;
+                case 2:     // 客户管理
+                    List<IconAndFont> customList = new ArrayList<>();
+                    for (String custom : customManager) {
+                        IconAndFont andFont = new IconAndFont();
+                        andFont.setDesc(custom);
+                        andFont.setLocalMipmap(R.mipmap.ic_temp_module);
+                        customList.add(andFont);
+                    }
+                    managerMain.setIconAndFontList(customList);
+                    break;
+                case 3:     // 系统设置
+                    List<IconAndFont> systemList = new ArrayList<>();
+                    for (String system : systemSetting) {
+                        IconAndFont andFont = new IconAndFont();
+                        andFont.setDesc(system);
+                        andFont.setLocalMipmap(R.mipmap.ic_temp_module);
+                        systemList.add(andFont);
+                    }
+                    managerMain.setIconAndFontList(systemList);
+                    break;
             }
-            managerMain.setIconAndFontList(moduleItemList);
             mainList1.add(managerMain);
         }
         mCallback.getMainManagerData(mainList1);

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_white_8dp"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="15dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="20dp"
+    tools:ignore="RelativeOverlap,SmallSp,ContentDescription">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="小晨晨"
+            android:textColor="@color/fontColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="6dp"
+            android:layout_toEndOf="@+id/tv_name"
+            android:text="市场部主管"
+            android:textColor="@color/labelColor"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="@string/text_edit"
+            android:textColor="@color/blue05"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_tel_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/fontColor"
+            android:text="15847251880"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机"
+            android:layout_below="@+id/tv_tel_number"
+            android:layout_marginTop="10dp"
+            android:textSize="12sp"
+            android:textColor="@color/labelColor" />
+
+        <ImageView
+            android:id="@+id/iv_play_phone"
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_play_phone"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_special_plane"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_special_plane"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/fontColor"
+            android:text="15847251880"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="座机"
+            android:layout_below="@+id/tv_special_plane"
+            android:layout_marginTop="10dp"
+            android:textSize="12sp"
+            android:textColor="@color/labelColor" />
+
+        <ImageView
+            android:id="@+id/iv_play_special_plane"
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_play_phone"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_wx"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_wx_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/fontColor"
+                android:text="chen0074"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="微信号"
+                android:layout_below="@+id/tv_wx_number"
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:textColor="@color/labelColor"/>
+
+            <TextView
+                android:id="@+id/tv_copy_wx_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="5dp"
+                android:paddingStart="8dp"
+                android:text="@string/text_copy"
+                android:textSize="12sp"
+                android:textColor="@color/colorMiddle"
+                android:background="@drawable/shape_copy_bg"
+                android:layout_toEndOf="@+id/tv_wx_number"
+                android:layout_marginStart="15dp"
+                android:paddingEnd="9dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_qq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_qq_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/fontColor"
+                android:text="1175039036"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QQ号"
+                android:layout_below="@+id/tv_qq_number"
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:textColor="@color/labelColor"/>
+
+            <TextView
+                android:id="@+id/tv_copy_qq_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="5dp"
+                android:paddingStart="8dp"
+                android:text="@string/text_copy"
+                android:textSize="12sp"
+                android:textColor="@color/colorMiddle"
+                android:background="@drawable/shape_copy_bg"
+                android:layout_toEndOf="@+id/tv_qq_number"
+                android:layout_marginStart="15dp"
+                android:paddingEnd="9dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textSize="13sp"
+        android:text="李经理专门负责和乙方公司的对接，上午9点到晚上11都
+可以随时联系，每周五下午例会时间不能及时回复..."
+        android:layout_marginTop="20dp"
+        android:textColor="@color/colorMiddle"
+        android:lineSpacingExtra="11dp"/>
+
+</LinearLayout>

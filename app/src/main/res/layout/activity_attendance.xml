@@ -73,16 +73,16 @@
             android:background="@color/white" />
 
 
-        <com.necer.calendar.Miui10Calendar
-            android:id="@+id/mc_calendar_10"
+        <com.necer.calendar.Miui9Calendar
+            android:id="@+id/mc_calendar_9"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:showNumberBackground="true"
+            app:showNumberBackground="false"
             app:solarTextBold="true">
 
             <include layout="@layout/include_attendance_record" />
 
-        </com.necer.calendar.Miui10Calendar>
+        </com.necer.calendar.Miui9Calendar>
 
     </LinearLayout>
 </LinearLayout>

@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- 获取安装包大小权限-->
     <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
+    <!-- 网络权限-->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".base.BaseApplication"
@@ -54,6 +56,47 @@
             android:name=".ui.activity.AttendanceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+
+
+        <!--
+            客户管理模块
+        -->
+        <!-- 新建客户 CustomNewActivity-->
+        <activity
+            android:name=".ui.activity.CustomNewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 填写需求 DemandWriteActivity-->
+        <activity
+            android:name=".ui.activity.DemandWriteActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 客户详情 CustomDetailActivity-->
+        <activity
+            android:name=".ui.activity.CustomDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 联系人 ContactActivity-->
+        <activity
+            android:name=".ui.activity.ContactActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 添加联系人 AddContactActivity-->
+        <activity
+            android:name=".ui.activity.AddContactActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 

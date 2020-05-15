@@ -57,7 +57,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/shape_home_salary_bg">
+            android:background="@drawable/shape_white_8dp">
 
             <com.rainwood.oa.ui.widget.MeasureGridView
                 android:id="@+id/mgv_home_salary"

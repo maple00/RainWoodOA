@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <include layout="@layout/include_title_bar" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="25dp">
+
+            <!-- 公司名称and logo-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_company_logo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_monkey_king" />
+
+                <TextView
+                    android:id="@+id/tv_company_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="重庆正南齐北科技有限公司"
+                    android:textColor="@color/fontColor"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- module-->
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_custom_detail_module"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="27dp"
+                android:nestedScrollingEnabled="false"
+                android:scrollbars="none"
+                android:verticalSpacing="25dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/assistColor10" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="所属员工"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <!-- 客户-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_employees"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_monkey_king" />
+
+                <TextView
+                    android:id="@+id/tv_employees_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/iv_employees"
+                    android:text="韩梅梅"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_depart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_employees_name"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@+id/iv_employees"
+                    android:text="市场部-销售顾问"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_transfer_custom"
+                    style="@style/SecondaryButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/selector_assist_button"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="转让客户"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <!-- 公客-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_princess"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_monkey_king" />
+
+                <TextView
+                    android:id="@+id/tv_princess_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/iv_princess"
+                    android:text="公客"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp" />
+
+                <Button
+                    style="@style/SecondaryButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/selector_assist_button"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="转让客户"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <!-- 介绍人-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/assistColor10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="介绍人"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="15dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_references"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_centerVertical="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bg_monkey_king" />
+
+                    <TextView
+                        android:id="@+id/tv_references_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/iv_references"
+                        android:text="李雷"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_references_name"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_toEndOf="@+id/iv_references"
+                        android:text="技术部-Android工程师"
+                        android:textColor="@color/labelColor"
+                        android:textSize="12sp" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/assistColor10" />
+
+            </LinearLayout>
+
+            <!-- 协作人-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="协作人"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_add_associates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:text="@string/text_plus"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/iv_add_associates"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/tv_add_associates"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_plus" />
+
+            </RelativeLayout>
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <TextView
+                android:id="@+id/tv_none_associates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:text="暂无协作人"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp"
+                android:visibility="gone"/>
+
+            <com.rainwood.oa.ui.widget.MeasureListView
+                android:id="@+id/mlv_associates_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:divider="@color/transparent"
+                android:dividerHeight="20dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/assistColor10" />
+
+            <!-- 联系人-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="联系人"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_query_all_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="15dp"
+                    android:text="查看全部"
+                    android:textColor="@color/labelColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <com.rainwood.oa.ui.widget.MeasureListView
+                android:id="@+id/mlv_contact_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="20dp"
+                android:divider="@color/transparent"
+                android:dividerHeight="40dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/assistColor10" />
+
+            <!-- 客户需求-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="客户需求"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_requested_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="15dp"
+                    android:text="@string/text_edit"
+                    android:textColor="@color/labelColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="跟进状态"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_follow_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="13dp"
+                android:text="优质"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="客户来源"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_custom_origin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="13dp"
+                android:lineSpacingExtra="22dp"
+                android:text="官网 · 该客户是通过百度推荐从官网找到我们的"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="项目预算"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_item_budget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="13dp"
+                android:text="￥50000.00"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="所在行业"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_industry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="13dp"
+                android:text="汽车制造业"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="需求详情"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_demand_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="13dp"
+                android:lineSpacingExtra="22dp"
+                android:text="需要一套制造业ERP软件，它是根据生产计划、预测和客户订单的输入来安排将来的各周期中提供的产品种类和数量，它将生产计划转为产品计划，在平衡了物料和能力的需要后，精确..."
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/assistColor10" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="客户ID"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_create_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="15dp"
+                    android:text="2019.11.27 17:50创建"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <View style="@style/HorizontalLineStyle" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="25dp"
+                android:gravity="center_vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_custom_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="k77z8hm6e1y2"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/btn_copy_custom_id"
+                    style="@style/SecondaryButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/selector_button_copy_bg"
+                    android:paddingStart="8dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="9dp"
+                    android:paddingBottom="4dp"
+                    android:text="复制"
+                    android:textColor="@color/colorMiddle" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/assistColor10" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

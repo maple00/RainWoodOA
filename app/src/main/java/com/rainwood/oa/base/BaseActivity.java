@@ -1,13 +1,15 @@
 package com.rainwood.oa.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
@@ -21,12 +23,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
+    protected String title;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
         ViewBind.inject(this);
+        title = getIntent().getStringExtra("title") == null ? "" : getIntent().getStringExtra("title");
         initView();
         initEvent();
         initPresenter();
@@ -100,6 +104,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         return this;
     }
 
+    /**
+     * startActivity 优化
+     */
+    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title) {
+        Intent intent = new Intent(context, clazz);
+        intent.putExtra("title", title);
+        return intent;
+    }
+
+
   /*  @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
@@ -136,6 +150,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void toast(Object object) {
         ToastUtils.show(object);
+    }
+
+    /**
+     * 设置软键盘自动调起
+     */
+    protected void showSoftInputFromWindow(EditText editText) {
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
 }

@@ -200,13 +200,11 @@ public abstract class MyAdapter<T> extends BaseAdapter<MyAdapter.ViewHolder> {
         public ViewHolder(@LayoutRes int id) {
             super(id);
             ViewBind.inject(this, itemView);
-            //ButterKnife.bind(this, itemView);
         }
 
         public ViewHolder(View itemView) {
             super(itemView);
             ViewBind.inject(this, itemView);
-           // ButterKnife.bind(this, itemView);
         }
     }
 

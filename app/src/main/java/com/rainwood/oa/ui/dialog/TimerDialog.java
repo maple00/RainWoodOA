@@ -276,7 +276,7 @@ public final class TimerDialog {
         }
 
         public Builder setDate(long date) {
-            LogUtils.d(this, "-----> " + date);
+            //LogUtils.d(this, "-----> " + date);
             if (date > 0) {
                 setDate(new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(date)));
             }

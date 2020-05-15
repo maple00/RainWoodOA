@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <include layout="@layout/include_title_bar" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <include
+        layout="@layout/include_empty_page"
+        android:visibility="gone"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_post"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="职位"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_post"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="姓名"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_name"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_tel_number"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="手机号"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_tel_number"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="座机"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_special_plane"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="QQ号"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_qqNumber"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="微信号"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_wxNumber"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="备注"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_note"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/custom_input_please"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    app:regexType="name" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_confirm"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:text="@string/common_confirm" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -65,7 +65,7 @@ public final class ManagerMainAdapter extends RecyclerView.Adapter<ManagerMainAd
         return mData == null ? 0 : mData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         @ViewInject(R.id.rl_manager_top)
         private RelativeLayout managerTop;
         @ViewInject(R.id.tv_title)
