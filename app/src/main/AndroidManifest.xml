@@ -88,7 +88,7 @@
 
         <!-- 联系人 ContactActivity-->
         <activity
-            android:name=".ui.activity.ContactActivity"
+            android:name=".ui.activity.CommonActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
@@ -96,6 +96,13 @@
         <!-- 添加联系人 AddContactActivity-->
         <activity
             android:name=".ui.activity.AddContactActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 介绍客户 CustomIntroduceActivity-->
+        <activity
+            android:name=".ui.activity.CustomIntroduceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />

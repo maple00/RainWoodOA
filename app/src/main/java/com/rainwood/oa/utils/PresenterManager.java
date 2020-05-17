@@ -1,10 +1,12 @@
 package com.rainwood.oa.utils;
 
+import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.presenter.IContactPresenter;
 import com.rainwood.oa.presenter.ICustomDetailPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
+import com.rainwood.oa.presenter.impl.AttachmentImpl;
 import com.rainwood.oa.presenter.impl.ContactImpl;
 import com.rainwood.oa.presenter.impl.CustomDetailImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
@@ -24,6 +26,7 @@ public final class PresenterManager {
     private final IHomePresenter mIHomePresenter;
     private final ICustomDetailPresenter mCustomDetailPresenter;
     private final IContactPresenter mIContactPresenter;
+    private final IAttachmentPresenter mAttachmentPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -49,11 +52,16 @@ public final class PresenterManager {
         return mIContactPresenter;
     }
 
+    public IAttachmentPresenter getAttachmentPresenter() {
+        return mAttachmentPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
         mIHomePresenter = new HomeMainImpl();
         mCustomDetailPresenter = new CustomDetailImpl();
         mIContactPresenter = new ContactImpl();
+        mAttachmentPresenter = new AttachmentImpl();
     }
 }

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -13,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Contact;
-import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.toast.ToastUtils;
@@ -30,9 +31,19 @@ import java.util.List;
 public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
 
     private List<Contact> mList;
+    // 控制checkBox显示, 默认不显示
+    private boolean checkShow = false;
+
+    private int selectedCount = 0;
 
     public void setList(List<Contact> list) {
         mList = list;
+    }
+
+    public void setCheckShow(boolean checkShow) {
+        this.checkShow = checkShow;
+        // 设置全选与全不选数量
+        selectedCount = (checkShow ? ListUtils.getSize(mList) : 0);
     }
 
     @NonNull
@@ -47,6 +58,10 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
         holder.name.setText(mList.get(position).getName());
         holder.post.setText(mList.get(position).getPost());
         holder.telNumber.setText(mList.get(position).getTelNum());
+        // 控制显示
+        holder.mCheckBox.setVisibility(checkShow ? View.VISIBLE : View.GONE);
+        // 控制选择
+        holder.mCheckBox.setChecked(mList.get(position).isSelected());
         // 非必填项
         if (TextUtils.isEmpty(mList.get(position).getSpecialPlane())) {
             holder.planeRL.setVisibility(View.GONE);
@@ -100,6 +115,31 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
                 ToastUtils.show("复制QQ");
             }
         });
+        // 单选选中回调
+        holder.mCheckBox.setOnClickListener(v -> {
+            boolean hasChecked = holder.mCheckBox.isChecked();
+            if (hasChecked) {
+                selectedCount++;
+            } else {
+                selectedCount--;
+            }
+            mOnClickSelected.onSelectedSwitch(hasChecked, position, selectedCount);
+        });
+    }
+
+    public interface OnClickSelected {
+        /**
+         * @param position      被选中的item
+         * @param selectedCount 被选中的总数
+         * @param status 被选择的状态
+         */
+        void onSelectedSwitch(boolean status, int position, int selectedCount);
+    }
+
+    private OnClickSelected mOnClickSelected;
+
+    public void setOnClickSelected(OnClickSelected onClickSelected) {
+        mOnClickSelected = onClickSelected;
     }
 
     @Override
@@ -109,6 +149,8 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @ViewInject(R.id.cb_checked)
+        private CheckBox mCheckBox;
         @ViewInject(R.id.tv_name)
         private TextView name;
         @ViewInject(R.id.tv_post)

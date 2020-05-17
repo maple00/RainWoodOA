@@ -33,7 +33,6 @@ public final class AddContactActivity extends BaseActivity {
     @ViewInject(R.id.tv_tel_number)
     private TextView telNumber;
 
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_append_contact;
@@ -72,7 +71,7 @@ public final class AddContactActivity extends BaseActivity {
     public void onClick(View view){
         switch (view.getId()){
             case R.id.btn_confirm:
-                startActivity(getNewIntent(this, ContactActivity.class, "联系人"));
+                startActivity(getNewIntent(this, CommonActivity.class, "联系人"));
                 break;
         }
     }

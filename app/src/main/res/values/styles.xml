@@ -68,8 +68,8 @@
     <style name="SecondaryButtonStyle" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:paddingStart">35dp</item>
         <item name="android:paddingEnd">35dp</item>
-        <item name="android:paddingTop">15.5dp</item>
-        <item name="android:paddingBottom">15.5dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:gravity">center</item>

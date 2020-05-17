@@ -47,10 +47,19 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="15dp"
         android:layout_toStartOf="@+id/iv_menu"
         android:gravity="center_vertical"
-        android:text="右标题"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/fontColor"
         android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/iv_plus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/tv_page_right_title"
+        android:src="@drawable/ic_plus_new" />
+
 </RelativeLayout>

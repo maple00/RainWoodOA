@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_empty_contact_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray25"
+    tools:ignore="ContentDescription"
     android:visibility="gone">
 
     <TextView
@@ -22,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_none_contact" />
+        android:src="@mipmap/ic_none_contact"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_plus"

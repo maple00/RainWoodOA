@@ -9,6 +9,10 @@ package com.rainwood.oa.model.domain;
 public final class Contact {
 
     /**
+     * 该联系人是否被选择
+     */
+    private boolean selected;
+    /**
      * 姓名
      */
     private String name;
@@ -42,6 +46,14 @@ public final class Contact {
      * 备注
      */
     private String note;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     public String getName() {
         return name;

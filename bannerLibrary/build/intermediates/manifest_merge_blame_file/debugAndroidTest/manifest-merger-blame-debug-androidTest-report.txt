@@ -3,31 +3,31 @@
 3    package="cn.rawinwood.bgabanner.test" >
 4
 5    <uses-sdk
-5-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:5:5-74
+5-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:5:5-74
 6        android:minSdkVersion="23"
-6-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:5:15-41
+6-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:5:15-41
 7        android:targetSdkVersion="29" />
-7-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:5:42-71
+7-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:5:42-71
 8
 9    <instrumentation
-9-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:11:5-15:77
+9-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:11:5-15:77
 10        android:name="android.test.InstrumentationTestRunner"
-10-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:11:22-75
+10-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:11:22-75
 11        android:functionalTest="false"
-11-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:14:22-52
+11-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:14:22-52
 12        android:handleProfiling="false"
-12-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:13:22-53
+12-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:13:22-53
 13        android:label="Tests for cn.rawinwood.bgabanner.test"
-13-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:15:22-75
+13-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:15:22-75
 14        android:targetPackage="cn.rawinwood.bgabanner.test" />
-14-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:12:22-73
+14-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:12:22-73
 15
 16    <application android:debuggable="true" >
-16-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:7:5-9:19
-16-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:7:18-43
+16-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:7:5-9:19
+16-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:7:18-43
 17        <uses-library android:name="android.test.runner" />
-17-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:8:9-60
-17-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger355266884156942648.xml:8:23-57
+17-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:8:9-60
+17-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger2867713565045511978.xml:8:23-57
 18    </application>
 19
 20</manifest>

@@ -17,6 +17,8 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
+import com.rainwood.oa.ui.activity.CommonActivity;
+import com.rainwood.oa.ui.activity.CustomIntroduceActivity;
 import com.rainwood.oa.ui.activity.CustomNewActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -107,7 +109,10 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomNewActivity.class, "新建客户"));
                     break;
                 case "客户附件":
-
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), CommonActivity.class, "客户附件"));
+                    break;
+                case "介绍客户":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomIntroduceActivity.class, "介绍客户"));
                     break;
             }
         });

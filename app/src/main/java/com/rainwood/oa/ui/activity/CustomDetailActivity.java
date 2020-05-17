@@ -144,7 +144,6 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
                 break;
             case R.id.btn_transfer_custom:
                 // 转让客户
-                // toast("转让客户");
                 new BottomCustomDialog.Builder(this)
                         .setTitle("转让给")
                         .setAutoDismiss(false)
@@ -241,7 +240,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
                 break;
             case R.id.tv_query_all_contact:
                 // 查看全部联系人
-                startActivity(getNewIntent(this, ContactActivity.class, "联系人"));
+                startActivity(getNewIntent(this, CommonActivity.class, "联系人"));
                 break;
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑
