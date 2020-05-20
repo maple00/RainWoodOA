@@ -42,6 +42,14 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
 
     private int count = 0;
 
+    @Override
+    public int getItemViewType(int position) {
+        // TODO : 完美解决方式：采用多布局，让recyclerview上面的控件作为一个item加载进recyclerview上的第一个item，
+        //  下面的item放list数据，这样就解决了~
+        // 设置多个item
+        return super.getItemViewType(position);
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
