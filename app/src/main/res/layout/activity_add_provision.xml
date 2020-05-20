@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp">
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="109dp"
+            android:src="@drawable/ic_money_round" />
+
+        <com.rainwood.tools.wheel.view.ClearEditText
+            android:id="@+id/cet_provision_money"
+            style="@style/EditTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_weight="1"
+            android:inputType="number"
+            app:regexType="count"
+            android:hint="@string/text_input_provision_money"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:id="@+id/tv_fee_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/text_fee_desc"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
+
+    <com.rainwood.tools.wheel.view.ClearEditText
+        android:id="@+id/cet_fee_desc"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:hint="@string/custom_input_please" />
+
+</LinearLayout>

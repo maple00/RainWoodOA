@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingTop="20dp"
+    tools:ignore="ContentDescription">
+
+    <TextView
+        android:id="@+id/tv_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UI设计完成，客户今天确认"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_record"
+        android:layout_marginTop="13dp"
+        android:text="2020.04.10 13:37"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/iv_waste_clear"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:padding="2dp"
+        android:src="@drawable/ic_waste_clear" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/tv_time"
+        android:layout_marginTop="20dp" />
+
+</RelativeLayout>

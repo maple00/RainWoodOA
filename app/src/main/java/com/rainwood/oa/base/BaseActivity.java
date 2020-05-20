@@ -1,18 +1,25 @@
 package com.rainwood.oa.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 
 /**
  * @Author: a797s
@@ -113,7 +120,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return intent;
     }
 
-
   /*  @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
@@ -160,6 +166,50 @@ public abstract class BaseActivity extends AppCompatActivity {
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
+    /**
+     * startActivity 方法简化
+     */
+    public void startActivity(Class<? extends Activity> clazz) {
+        startActivity(new Intent(this, clazz));
+    }
+
+    /**
+     * startActivityForResult 方法优化
+     */
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode, @Nullable Bundle options) {
+        hideSoftKeyboard();
+        // 查看源码得知 startActivity 最终也会调用 startActivityForResult
+        super.startActivityForResult(intent, requestCode, options);
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    private void hideSoftKeyboard() {
+        // 隐藏软键盘，避免软键盘引发的内存泄露
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (manager != null) {
+                manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    /**
+     * 设置必填信息
+     *
+     * @param requestedText text
+     * @param s             value
+     */
+    public void setRequiredValue(TextView requestedText, String s) {
+        requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
+                + " size=" + FontSwitchUtil.dip2px(this, 16f) + s +
+                "<font color=" + this.getColor(R.color.red05) + " size= "
+                + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
     }
 
 }

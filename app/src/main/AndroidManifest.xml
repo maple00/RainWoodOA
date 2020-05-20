@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
     <!-- 网络权限-->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 读取手机权限-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".base.BaseApplication"
@@ -23,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:targetApi="n">
+        tools:targetApi="n"
+        tools:ignore="AllowBackup">
 
         <!-- 适配 Android 7.0 文件意图 -->
         <provider
@@ -39,7 +42,7 @@
         <!-- App首页 singleTask， 其余singleTop -->
         <!-- 启动页面-->
         <activity
-            android:name=".ui.activity.HomeActivity"
+            android:name=".ui.activity.LoginActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor">
@@ -51,6 +54,22 @@
             </intent-filter>
         </activity>
 
+        <!-- 忘记密码 ForgetPasswordActivity-->
+        <activity
+            android:name=".ui.activity.ForgetPasswordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 首页 HomeActivity-->
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 考勤模块 AttendanceActivity-->
         <activity
             android:name=".ui.activity.AttendanceActivity"
@@ -58,8 +77,6 @@
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
-
-
 
         <!--
             客户管理模块
@@ -106,6 +123,57 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
+
+        <!-- 客户管理成功页面 CustomSuccessActivity-->
+        <activity
+            android:name=".ui.activity.CustomSuccessActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 客户列表 CustomListActivity-->
+        <activity
+            android:name=".ui.activity.CustomListActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 新建订单 OrderNewActivity-->
+        <activity
+            android:name=".ui.activity.OrderNewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 订单编辑 OrderEditActivity-->
+        <activity
+            android:name=".ui.activity.OrderActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:hardwareAccelerated="false"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 添加费用计提 AddProvisionActivity-->
+        <activity
+            android:name=".ui.activity.AddProvisionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 新增跟进记录 AddFollowRecordActivity-->
+        <activity
+            android:name=".ui.activity.AddFollowRecordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 订单列表 OrderListActivity-->
+        <activity
+            android:name=".ui.activity.OrderListActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
 
     </application>
 

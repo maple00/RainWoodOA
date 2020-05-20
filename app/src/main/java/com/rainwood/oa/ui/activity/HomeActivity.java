@@ -1,7 +1,9 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
 import android.view.KeyEvent;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -14,6 +16,8 @@ import com.rainwood.oa.ui.fragment.BlockLogFragment;
 import com.rainwood.oa.ui.fragment.HomeFragment;
 import com.rainwood.oa.ui.fragment.ManagerFragment;
 import com.rainwood.oa.ui.fragment.MineFragment;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -110,9 +114,30 @@ public final class HomeActivity extends BaseActivity {
         fragmentTransaction.commit();
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //
+        LogUtils.d("sxs", "结果码：" + resultCode);
+        if (requestCode == Constants.HOME_FRAGMENT_RESULT_SIZE && resultCode == Constants.HOME_FRAGMENT_RESULT_SIZE) {
+            switchFragment(mHomeFragment);
+        }
+        if (requestCode == Constants.MANAGER_FRAGMENT_RESULT_SIZE && resultCode == Constants.MANAGER_FRAGMENT_RESULT_SIZE) {
+            switchFragment(mManagerFragment);
+        }
+        if (requestCode == Constants.BLOCK_FRAGMENT_RESULT_SIZE && resultCode == Constants.BLOCK_FRAGMENT_RESULT_SIZE) {
+            switchFragment(mBlockLogFragment);
+        }
+        if (requestCode == Constants.MINE_FRAGMENT_RESULT_SIZE && resultCode == Constants.MINE_FRAGMENT_RESULT_SIZE) {
+            switchFragment(mMineFragment);
+        }
+    }
+
+
     @Override
     protected void setStatusBar() {
-         StatusBarUtil.setTranslucentStatus(this);
+        StatusBarUtil.setTranslucentStatus(this);
     }
 
     /**

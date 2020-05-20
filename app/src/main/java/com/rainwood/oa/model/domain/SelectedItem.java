@@ -26,4 +26,12 @@ public final class SelectedItem {
     public void setHasSelected(boolean hasSelected) {
         this.hasSelected = hasSelected;
     }
+
+    @Override
+    public String toString() {
+        return "SelectedItem{" +
+                "data='" + data + '\'' +
+                ", hasSelected=" + hasSelected +
+                '}';
+    }
 }

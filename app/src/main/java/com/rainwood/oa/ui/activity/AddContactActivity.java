@@ -49,19 +49,6 @@ public final class AddContactActivity extends BaseActivity {
         setRequiredValue(telNumber, ">手机号</font>");
     }
 
-    /**
-     * 设置必填信息
-     *
-     * @param requestedText text
-     * @param s             value
-     */
-    private void setRequiredValue(TextView requestedText, String s) {
-        requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
-                + " size=" + FontSwitchUtil.dip2px(this, 16f) + s +
-                "<font color=" + this.getColor(R.color.red05) + " size= "
-                + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
-    }
-
     @Override
     protected void initPresenter() {
 

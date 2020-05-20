@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rw="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_custom_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="26dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:paddingBottom="25dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="优质"
+            android:textColor="@color/colorPrimary"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:layout_toStartOf="@+id/tv_status"
+            android:text="重庆佰仕合达企业佰仕合达企业营销策划有限公司"
+            android:textColor="@color/fontColor"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <com.rainwood.oa.ui.widget.GroupIconText
+            android:id="@+id/git_custom_head"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            rw:icon="@drawable/ic_custom_head"
+            rw:text="李雷" />
+
+        <com.rainwood.oa.ui.widget.GroupIconText
+            android:id="@+id/git_origin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            rw:icon="@drawable/ic_custom_origin"
+            rw:text="官网" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <com.rainwood.oa.ui.widget.GroupIconText
+            android:id="@+id/git_trade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            rw:icon="@drawable/ic_custom_trade"
+            rw:text="汽车制造业" />
+
+        <com.rainwood.oa.ui.widget.GroupIconText
+            android:id="@+id/git_budget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            rw:icon="@drawable/ic_custom_budget"
+            rw:text="预算" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_demand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="需要一套制造业ERP软件需要一套制造业ERP软件"
+        android:textColor="@color/labelColor"
+        android:textSize="13sp" />
+
+</LinearLayout>

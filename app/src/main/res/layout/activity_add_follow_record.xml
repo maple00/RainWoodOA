@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="UselessLeaf,ContentDescription">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_follow_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="26dp"
+                android:horizontalSpacing="12dp"
+                android:verticalSpacing="10dp" />
+
+            <com.rainwood.tools.wheel.view.ClearEditText
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minLines="5"
+                android:hint="@string/text_follow_tips"
+                android:textSize="17sp" />
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_follow_next_time"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_choose_time"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:hint="@string/custom_choose_please" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_right_arrow" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_confirm"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/common_confirm" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

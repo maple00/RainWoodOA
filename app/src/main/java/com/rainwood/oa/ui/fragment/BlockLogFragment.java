@@ -1,19 +1,16 @@
 package com.rainwood.oa.ui.fragment;
 
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
-import com.rainwood.oa.ui.dialog.DateDialog;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
 import com.rainwood.oa.ui.dialog.TimerDialog;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
@@ -92,14 +89,14 @@ public final class BlockLogFragment extends BaseFragment {
                 break;
             case R.id.btn_date:
                 // 自定义日期控件
-                new DateDialog.Builder(getContext(), false)
+                new StartEndDateDialog.Builder(getContext(), false)
                         .setTitle(null)
                         .setConfirm(getString(R.string.common_text_confirm))
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
                         .setCanceledOnTouchOutside(false)
-                        .setListener(new DateDialog.OnListener() {
+                        .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                                 dialog.dismiss();

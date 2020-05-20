@@ -1,2 +1,3 @@
 include ':app', ':tools', 'refreshlibrary','bannerLibrary','calendarview'
 rootProject.name='RainWoodOA'
+include ':verification'

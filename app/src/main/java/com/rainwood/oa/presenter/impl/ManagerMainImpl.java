@@ -26,7 +26,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
     //财务管理
     private String[] financialManager = {"收支平衡", "费用报销", "开票记录", "团队基金"};
     // 客户管理
-    private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建列表", "订单列表", "跟进记录", "沟通技巧"};
+    private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建订单", "订单列表", "跟进记录", "沟通技巧"};
     // 系统设置
     private String[] systemSetting = {"系统日志", "办公文件", "帮助中心"};
 

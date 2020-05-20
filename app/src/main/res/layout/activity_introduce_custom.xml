@@ -162,10 +162,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/custom_input_please"
-                    android:inputType="text"
+                    android:inputType="phone"
                     android:singleLine="true"
                     android:textSize="16sp"
-                    app:regexType="name" />
+                    app:regexType="mobile" />
 
             </LinearLayout>
 
@@ -193,6 +193,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="false"
                     android:hint="去填写"
                     android:inputType="text"
                     android:singleLine="true"
@@ -231,6 +232,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="false"
                     android:hint="@string/custom_choose_please"
                     android:inputType="text"
                     android:singleLine="true"
@@ -269,6 +271,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="false"
                     android:hint="@string/custom_choose_please"
                     android:inputType="text"
                     android:singleLine="true"
@@ -307,6 +310,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="false"
                     android:hint="@string/custom_choose_please"
                     android:inputType="text"
                     android:singleLine="true"

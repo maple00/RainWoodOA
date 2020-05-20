@@ -21,6 +21,7 @@ import com.rainwood.oa.ui.adapter.ItemModuleAdapter;
 import com.rainwood.oa.ui.dialog.BottomCustomDialog;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICustomDetailCallbacks;
 import com.rainwood.tools.annotation.OnClick;
@@ -118,7 +119,13 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
         customDetailModule.setNumColumns(5);
         associatesMLV.setAdapter(mAssociatesAdapter);
         contactMLV.setAdapter(mContactAdapter);
+    }
 
+    @Override
+    protected void initData() {
+        // 这里接收页面跳转数据
+        Custom custom = (Custom) getIntent().getSerializableExtra("customData");
+        LogUtils.d("客户详情----> ", custom + "");
     }
 
     @Override
@@ -245,7 +252,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑
                 //toast("编辑客户需求");
-                finish();
+                startActivity(getNewIntent(this, CustomNewActivity.class, "新建客户"));
                 break;
             case R.id.btn_copy_custom_id:
                 // 复制客户id

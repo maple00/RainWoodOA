@@ -6,7 +6,8 @@
     <color name="colorGrey">#7B7B7B</color>
     <color name="windowBackground">#F4F4F4</color>
     <color name="light_gray">#bfbfbf</color>
-
+    <!-- 按钮按压时的颜色 -->
+    <color name="colorButtonPressed">#11CA8D</color>
     <!-- 重要字体颜色-->
     <color name="fontColor">#333333</color>
     <!-- 普通文字颜色-->
@@ -42,6 +43,7 @@
     <color name="gray10">#F3F3F3</color>
     <color name="gray25">#F6F6F6</color>
     <color name="gray30">#F3F3F4</color>
+    <color name="gray35">#D6D6D6</color>
     <!-- 绿色-->
     <color name="green05">#11CA8D</color>
     <color name="green10">#3AD7A9</color>
@@ -49,7 +51,11 @@
     <color name="green20">#E8FFF7</color>
     <!-- 红色-->
     <color name="red05">#FF686D</color>
+    <color name="red10">#FF3E18</color>
     <!-- 蓝色-->
     <color name="blue05">#4575AA</color>
+    <!-- 橙色-->
+    <color name="orange5">#FFB500</color>
+    <color name="orange10">#FDE2C3</color>
 
 </resources>

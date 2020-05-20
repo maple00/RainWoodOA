@@ -146,7 +146,7 @@ public final class HomeFragment extends BaseFragment implements
                     List<ChartEntity> datas2 = new ArrayList<>();
                     for (int i = 0; i < 20; i++) {
                         datas1.add(new ChartEntity("sxs" + String.valueOf(i), (float) (Math.random() * 1000)));
-                        datas2.add(new ChartEntity("sxs" + String.valueOf(i), (float) (Math.random() * 1000)));
+                        //datas2.add(new ChartEntity("sxs" + String.valueOf(i), (float) (Math.random() * 1000)));
                     }
                     mLineChartSalary.setData(datas1, true, true);
                     mLineChartSalary.setData(datas2, true, true);

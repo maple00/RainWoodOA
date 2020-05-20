@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="center_vertical"
     android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:id="@+id/rl_search_click"
+    android:paddingBottom="10dp"
+    tools:ignore="ContentDescription">
 
     <ImageView
         android:id="@+id/iv_page_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:padding="10dp"
+        android:padding="8dp"
         android:src="@drawable/ic_page_return" />
 
     <TextView
@@ -23,14 +26,14 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
         android:padding="10dp"
-        android:text="@string/text_common_search"
+        android:text="@string/custom_text_manager"
         android:textColor="@color/fontColor"
         android:textSize="20sp" />
 
     <LinearLayout
         android:id="@+id/ll_search_view"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="7dp"
@@ -40,19 +43,18 @@
         android:gravity="center_vertical">
 
         <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginStart="15dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_search" />
 
         <com.rainwood.tools.wheel.view.ClearEditText
             android:id="@+id/tv_search_tips"
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="5dp"
-            android:paddingEnd="10dp"
-            android:text="请输入搜索内容"
+            android:layout_height="wrap_content"
+            android:hint="请输入搜索内容"
             android:textColor="@color/labelColor"
             android:textSize="16sp" />
     </LinearLayout>

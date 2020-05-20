@@ -15,4 +15,9 @@ public interface ICustomDetailPresenter extends IBasePresenter<ICustomDetailCall
      * 获取详情数据
      */
     void getDetailData();
+
+    /**
+     * 根据客户id查询客户详情
+     */
+    void getCustomDetailById(String id);
 }

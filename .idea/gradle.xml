@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/calendarview" />
             <option value="$PROJECT_DIR$/refreshlibrary" />
             <option value="$PROJECT_DIR$/tools" />
+            <option value="$PROJECT_DIR$/verification" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

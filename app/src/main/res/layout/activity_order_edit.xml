@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="DisableBaselineAlignment,UselessLeaf,ContentDescription,UseCompoundDrawables,RelativeOverlap">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="60dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="27dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_upload_attach"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_custom_attachment" />
+
+                        <TextView
+                            android:id="@+id/tv_upload_attach"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/text_upload_attach"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_provision"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_provision" />
+
+                        <TextView
+                            android:id="@+id/tv_provision"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/text_add_provision"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_follow_record"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_follow_record" />
+
+                        <TextView
+                            android:id="@+id/tv_follow_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/text_add_follow"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="@string/text_order_data"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_custom_name"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_custom_name"
+                        android:textColor="@color/colorMiddle"
+                        android:textSize="16sp" />
+
+                    <com.rainwood.tools.wheel.view.ClearEditText
+                        android:id="@+id/cet_custom_name"
+                        style="@style/EditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/custom_input_please"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="16sp"
+                        app:regexType="name" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_order_name"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_order_name"
+                        android:textColor="@color/colorMiddle"
+                        android:textSize="16sp" />
+
+                    <com.rainwood.tools.wheel.view.ClearEditText
+                        android:id="@+id/cet_order_name"
+                        style="@style/EditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/custom_input_please"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="16sp"
+                        app:regexType="name" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_money"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_contract_money"
+                        android:textColor="@color/colorMiddle"
+                        android:textSize="16sp" />
+
+                    <com.rainwood.tools.wheel.view.ClearEditText
+                        android:id="@+id/cet_contract_money"
+                        style="@style/EditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/custom_input_please"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="16sp"
+                        app:regexType="name" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_note"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_note"
+                        android:textColor="@color/colorMiddle"
+                        android:textSize="16sp" />
+
+                    <com.rainwood.tools.wheel.view.ClearEditText
+                        android:id="@+id/cet_note"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:focusable="false"
+                        android:hint="@string/custom_input_please"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="16sp"
+                        app:regexType="name" />
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_right_arrow" />
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/assistColor10" />
+
+                <!-- 订单附件-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/text_order_attach"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_add_attach"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="15dp"
+                        android:text="@string/text_plus"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_add_attach"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/tv_add_attach"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_plus" />
+
+                </RelativeLayout>
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <TextView
+                    android:id="@+id/tv_none_contract_attach"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/text_none_contract_attach"
+                    android:textColor="@color/labelColor2"
+                    android:textSize="12sp" />
+
+                <!-- 附件列表-->
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_contact_attach"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="15dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <!-- 费用计提-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/text_follow_record"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_add_follow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="15dp"
+                        android:text="@string/text_plus"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_add_follow"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/tv_add_follow"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_plus" />
+
+                </RelativeLayout>
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <TextView
+                    android:id="@+id/tv_none_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/text_none_follow"
+                    android:textColor="@color/labelColor2"
+                    android:textSize="12sp" />
+
+                <!-- 跟进记录列表-->
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_follow_record"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="15dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <!-- 跟进记录-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/text_provision_money"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_add_provision"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="15dp"
+                        android:text="@string/text_plus"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_add_provision"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/tv_add_provision"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_plus" />
+
+                </RelativeLayout>
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <TextView
+                    android:id="@+id/tv_none_provision"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/text_none_provision"
+                    android:textColor="@color/labelColor2"
+                    android:textSize="12sp" />
+
+                <!-- 费用计提列表-->
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_provision_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="15dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <!-- 审批人-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/text_provision_man"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_add_approver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="15dp"
+                        android:text="@string/text_plus"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_add_approver"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/tv_add_approver"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_plus" />
+
+                </RelativeLayout>
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <TextView
+                    android:id="@+id/tv_none_approver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/text_none_approver"
+                    android:textColor="@color/labelColor2"
+                    android:textSize="12sp" />
+
+                <!-- 审批人列表、审批执行图-->
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_examination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="0dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="18dp"
+                    android:text="@string/text_order_desc"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_order_desc"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:hint="@string/custom_input_please"
+                    android:minLines="3" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_order_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="订单号"
+                    app:values="3475769017" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_create_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="创建时间"
+                    app:values="2020.05.09 13:38" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_pig_order_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="猪八戒单号"
+                    app:values="3475769017" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_contract_money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="合同金额"
+                    app:values="￥50000" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_provision_money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="费用计提"
+                    app:values="0" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_contract_worth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="合同净值"
+                    app:values="￥50000" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_contract_receivable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="合同应收"
+                    app:values="￥50000" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_remain_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    app:title="剩余净值"
+                    app:values="￥50000" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+        <Button
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/text_commit" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

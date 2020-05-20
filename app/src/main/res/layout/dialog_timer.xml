@@ -9,7 +9,7 @@
     android:paddingStart="20dp"
     android:paddingEnd="20dp"
     android:paddingBottom="30dp"
-    tools:context=".ui.dialog.DateDialog">
+    tools:context=".ui.dialog.StartEndDateDialog">
 
 
     <LinearLayout

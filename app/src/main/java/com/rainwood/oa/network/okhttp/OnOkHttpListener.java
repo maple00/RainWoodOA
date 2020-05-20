@@ -1,6 +1,6 @@
 package com.rainwood.oa.network.okhttp;
 
-import com.rainwood.oa.utils.Contants;
+import com.rainwood.oa.utils.Constants;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class OnOkHttpListener implements Callback {
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         if (!response.isSuccessful()) {
-            httpHandler.sendExceptionMsg(params, url, response.code(), new IOException(Contants.HTTP_MSG_RESPONSE_FAILED + response.code()), listener);
+            httpHandler.sendExceptionMsg(params, url, response.code(), new IOException(Constants.HTTP_MSG_RESPONSE_FAILED + response.code()), listener);
             return;
         }
         try {

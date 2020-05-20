@@ -45,6 +45,8 @@
     <string name="common_cancel">取消</string>
     <string name="common_clear">清空</string>
     <string name="common_delete">删除</string>
+    <string name="common_code_send">发送验证码</string>
+    <string name="common_code_send_hint">验证码已发送，请注意查收</string>
 
     <!-- 考勤-->
     <string name="attendance_title">我的考勤</string>
@@ -54,9 +56,9 @@
     <string name="back_today">回到今天</string>
 
 
-    <!-- 客户管理-->
     <string name="custom_input_please">请输入</string>
     <string name="custom_choose_please">请选择</string>
+    <string name="custom_text_manager">管理</string>
     <string name="custom_demand_write_detail">请填写需求详情</string>
     <string name="text_plus">添加</string>
     <string name="text_edit">编辑</string>
@@ -64,5 +66,34 @@
     <string name="text_manager">管理</string>
     <string name="text_preview">预览</string>
     <string name="text_download">下载</string>
+    <string name="text_login">登录</string>
+    <string name="text_account">请输入用户名</string>
+    <string name="text_password">请输入密码</string>
+    <string name="text_verification_hint">请输入图片验证码</string>
+    <string name="text_forget_password">忘记密码？</string>
+    <string name="text_login_account">账号密码登录</string>
+    <string name="text_next_step">下一步</string>
+    <string name="text_upload_attach">上传附件</string>
+    <string name="text_add_provision">添加费用计提</string>
+    <string name="text_add_follow">新增跟进</string>
+    <string name="text_order_data">订单信息</string>
+    <string name="text_custom_name">客户名称</string>
+    <string name="text_order_name">订单名称</string>
+    <string name="text_contract_money">合同金额</string>
+    <string name="text_note">备注信息</string>
+    <string name="text_none_contract_attach">还没有合同附件</string>
+    <string name="text_none_follow">还没有跟进记录</string>
+    <string name="text_none_provision">还没有费用计提</string>
+    <string name="text_none_approver">还没有审批人</string>
+    <string name="text_commit">提交</string>
+    <string name="text_order_desc">订单说明</string>
+    <string name="text_provision_man">审批人</string>
+    <string name="text_provision_money">费用计提</string>
+    <string name="text_follow_record">跟进记录</string>
+    <string name="text_order_attach">订单附件</string>
+    <string name="text_fee_desc">费用说明</string>
+    <string name="text_input_provision_money">请输入计提金额</string>
+    <string name="text_follow_tips">点击上方标签或填写跟进情况</string>
+    <string name="text_follow_next_time">下次跟进时间</string>
 
 </resources>

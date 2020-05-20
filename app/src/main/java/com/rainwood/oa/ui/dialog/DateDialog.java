@@ -1,27 +1,19 @@
 package com.rainwood.oa.ui.dialog;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PickerLayoutManager;
-import com.rainwood.tools.annotation.ViewBind;
-import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.MyAdapter;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,8 +21,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * author : a797s
- * time   : 2020/04/29
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2018/12/17
  * desc   : 日期选择对话框
  */
 public final class DateDialog {
@@ -41,7 +34,6 @@ public final class DateDialog {
 
         private final int mStartYear = Calendar.getInstance().get(Calendar.YEAR) - 100;
         private final int mEndYear = Calendar.getInstance().get(Calendar.YEAR) + 100;
-        private boolean hasIgnoreDay = false;       // 是否忽略了天
 
         private final RecyclerView mYearView;
         private final RecyclerView mMonthView;
@@ -55,22 +47,12 @@ public final class DateDialog {
         private final PickerAdapter mMonthAdapter;
         private final PickerAdapter mDayAdapter;
 
-        @ViewInject(R.id.btn_clear_screen)
-        private Button clearScreen;
-        @ViewInject(R.id.btn_confirm)
-        private Button confirm;
-        @ViewInject(R.id.et_start_time)
-        private EditText startTime;
-        @ViewInject(R.id.et_end_time)
-        private EditText endTime;
-
         private OnListener mListener;
 
-        @SuppressLint("SetTextI18n")
-        public Builder(Context context, boolean hasIgnoreDay) {
+        public Builder(Context context) {
             super(context);
+
             setCustomView(R.layout.dialog_date);
-            ViewBind.inject(this);
             setTitle(R.string.time_title);
 
             mYearView = findViewById(R.id.rv_date_year);
@@ -80,10 +62,6 @@ public final class DateDialog {
             mYearAdapter = new PickerAdapter(context);
             mMonthAdapter = new PickerAdapter(context);
             mDayAdapter = new PickerAdapter(context);
-
-            // 设置自动聚焦
-            startTime.setFocusable(true);
-            startTime.setFocusableInTouchMode(true);
 
             // 生产年份
             ArrayList<String> yearData = new ArrayList<>(10);
@@ -111,13 +89,10 @@ public final class DateDialog {
             mDayAdapter.setData(dayData);
 
             mYearManager = new PickerLayoutManager.Builder(context)
-                    .setMaxItem(5)
                     .build();
             mMonthManager = new PickerLayoutManager.Builder(context)
-                    .setMaxItem(5)
                     .build();
             mDayManager = new PickerLayoutManager.Builder(context)
-                    .setMaxItem(5)
                     .build();
 
             mYearView.setLayoutManager(mYearManager);
@@ -134,53 +109,6 @@ public final class DateDialog {
 
             mYearManager.setOnPickerListener(this);
             mMonthManager.setOnPickerListener(this);
-            mDayManager.setOnPickerListener(this);
-            clearScreen.setOnClickListener(this);
-            confirm.setOnClickListener(this);
-
-            // 设置EditText出现光标但是不调用软件盘
-            try {
-                Class<EditText> cls = EditText.class;
-                Method setSoftInputShownOnFocus;
-                setSoftInputShownOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
-                setSoftInputShownOnFocus.setAccessible(true);
-                setSoftInputShownOnFocus.invoke(startTime, false);
-                setSoftInputShownOnFocus.invoke(endTime, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // 设置开始时间默认聚焦（UI初始化时设置默认的日期）
-            int index = startTime.getHint().toString().length();
-            if (index > 0) {
-                startTime.requestFocus();
-                // startTime.setSelection(index);
-                startTime.setText(calendar.get(Calendar.YEAR) + "-"
-                        + (calendar.get(Calendar.MONTH) + 1)
-                        + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
-            }
-            // 结束时间焦点监听
-            endTime.setOnFocusChangeListener((v, hasFocus) -> {
-                if (hasFocus) {
-                    endTime.setText(calendar.get(Calendar.YEAR) + "-"
-                            + (calendar.get(Calendar.MONTH) + 1)
-                            + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
-                    endTime.setTextColor(getResources().getColor(R.color.colorPrimary));
-                } else {
-                    endTime.setTextColor(getResources().getColor(R.color.fontColor));
-                }
-            });
-            // 开始时间焦点监听
-            startTime.setOnFocusChangeListener((v, hasFocus) -> {
-                if (hasFocus) {
-                    startTime.setText(calendar.get(Calendar.YEAR) + "-"
-                            + (calendar.get(Calendar.MONTH) + 1)
-                            + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
-                    startTime.setTextColor(getResources().getColor(R.color.colorPrimary));
-                } else {
-                    startTime.setTextColor(getResources().getColor(R.color.fontColor));
-                }
-            });
         }
 
         public Builder setListener(OnListener listener) {
@@ -193,12 +121,10 @@ public final class DateDialog {
          */
         public Builder setIgnoreDay() {
             mDayView.setVisibility(View.GONE);
-            hasIgnoreDay = true;
             return this;
         }
 
         public Builder setDate(long date) {
-            LogUtils.d(this, "-----> " + date);
             if (date > 0) {
                 setDate(new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(date)));
             }
@@ -267,12 +193,10 @@ public final class DateDialog {
 
         /**
          * {@link PickerLayoutManager.OnPickerListener}
-         * recyclerView滑动监听
          *
          * @param recyclerView RecyclerView 对象
          * @param position     当前滚动的位置
          */
-        @SuppressLint("SetTextI18n")
         @Override
         public void onPicked(RecyclerView recyclerView, int position) {
             // 获取这个月最多有多少天
@@ -281,8 +205,6 @@ public final class DateDialog {
                 calendar.set(mStartYear + position, mMonthManager.getPickedPosition(), 1);
             } else if (recyclerView == mMonthView) {
                 calendar.set(mStartYear + mYearManager.getPickedPosition(), position, 1);
-            } else if (recyclerView == mDayView) {
-                calendar.set(mStartYear + mYearManager.getPickedPosition(), mMonthManager.getPickedPosition(), position);
             }
 
             int day = calendar.getActualMaximum(Calendar.DATE);
@@ -293,17 +215,7 @@ public final class DateDialog {
                 }
                 mDayAdapter.setData(dayData);
             }
-            // 有焦点则说明值需更改，没有焦点的时候保留之前的（滚动改变值）
-            startTime.setText(startTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
-                    + "-" + (mMonthManager.getPickedPosition() + 1)
-                    + (hasIgnoreDay ? "" : "-" + (mDayManager.getPickedPosition() + 1)))
-                    : (TextUtils.isEmpty(startTime.getText()) ? "" : startTime.getText().toString().trim()));
-            endTime.setText(endTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
-                    + "-" + (mMonthManager.getPickedPosition() + 1)
-                    + (hasIgnoreDay ? "" : "-" + (mDayManager.getPickedPosition() + 1)))
-                    : (TextUtils.isEmpty(endTime.getText()) ? "" : endTime.getText().toString().trim()));
         }
-
 
         @SingleClick
         @Override
@@ -317,29 +229,6 @@ public final class DateDialog {
                     break;
                 case R.id.tv_ui_cancel:
                     autoDismiss();
-                    if (mListener != null) {
-                        mListener.onCancel(getDialog());
-                    }
-                    break;
-                case R.id.btn_clear_screen:         // 清空筛选
-                    autoDismiss();
-                    LogUtils.d("sxs", "清空筛选....");
-                    if (!TextUtils.isEmpty(startTime.getText())) {
-                        startTime.setText("");
-                    }
-                    if (!TextUtils.isEmpty(endTime.getText())) {
-                        endTime.setText("");
-                    }
-                    break;
-                case R.id.btn_confirm:          // 确定选择
-                    autoDismiss();
-                    LogUtils.d("sxs", "确定选择....");
-                    if (mListener != null) {
-                        mListener.onSelected(getDialog(), startTime.getText().toString().trim(), endTime.getText().toString().trim());
-                    }
-                    break;
-                case R.id.iv_dialog_close:      // dialog关闭
-                    // autoDismiss();
                     if (mListener != null) {
                         mListener.onCancel(getDialog());
                     }
@@ -387,22 +276,12 @@ public final class DateDialog {
          * @param month 月
          * @param day   日
          */
-        default void onSelected(BaseDialog dialog, int year, int month, int day) {
-        }
+        void onSelected(BaseDialog dialog, int year, int month, int day);
 
         /**
          * 点击取消时回调
          */
         default void onCancel(BaseDialog dialog) {
         }
-
-        /**
-         * 选择完成后的日期段回调
-         *
-         * @param startTime 开始时间
-         * @param endTime   结束时间
-         */
-        void onSelected(BaseDialog dialog, String startTime, String endTime);
-
     }
 }

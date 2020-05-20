@@ -55,7 +55,7 @@ public final class UIDialog {
             mDialogClose = findViewById(R.id.iv_dialog_close);
             mConfirmHasShow = findViewById(R.id.ll_confirm);
 
-            setOnClickListener(R.id.tv_ui_cancel, R.id.tv_ui_confirm,R.id.iv_dialog_close);
+            setOnClickListener(R.id.tv_ui_cancel, R.id.tv_ui_confirm, R.id.iv_dialog_close);
         }
 
         public B setCustomView(@LayoutRes int id) {
@@ -104,6 +104,16 @@ public final class UIDialog {
             if (mAutoDismiss) {
                 dismiss();
             }
+        }
+
+        public B setShowConfirm(boolean showConfirm) {
+            mConfirmHasShow.setVisibility(showConfirm ? View.VISIBLE : View.GONE);
+            return (B) this;
+        }
+
+        public B setShowImageClose(boolean showImageClose) {
+            mDialogClose.setVisibility(showImageClose ? View.VISIBLE : View.GONE);
+            return (B) this;
         }
     }
 }

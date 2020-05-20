@@ -7,10 +7,13 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.BaseDialog;
 
 /**
  * @Author: sxs
@@ -60,19 +63,6 @@ public final class CustomIntroduceActivity extends BaseActivity {
 
     }
 
-    /**
-     * 设置必填信息
-     *
-     * @param requestedText text
-     * @param s             value
-     */
-    private void setRequiredValue(TextView requestedText, String s) {
-        requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
-                + " size=" + FontSwitchUtil.dip2px(this, 16f) + s +
-                "<font color=" + this.getColor(R.color.red05) + " size= "
-                + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
-    }
-
     @Override
     protected void initPresenter() {
 
@@ -87,10 +77,12 @@ public final class CustomIntroduceActivity extends BaseActivity {
                 break;
             case R.id.iv_warn_prompt:
             case R.id.tv_warm_prompt:
+                // 温馨提示
                 toast("温馨提示");
                 break;
             case R.id.cet_demand_desc:
-                toast("填写需求描述");
+                // 填写需求详情
+                startActivity(getNewIntent(this, DemandWriteActivity.class, "需求详情"));
                 break;
             case R.id.cet_follow_status:
                 toast("跟进状态");
@@ -102,7 +94,28 @@ public final class CustomIntroduceActivity extends BaseActivity {
                 toast("介绍客户给....");
                 break;
             case R.id.btn_confirm:
-                toast("确定");
+                // toast("确定");
+                // 支付密码输入对话框
+                new PayPasswordDialog.Builder(view.getContext())
+                        .setTitle(getString(R.string.pay_title))
+                        .setSubTitle(null)
+                        .setAutoDismiss(false)
+                        .setListener(new PayPasswordDialog.OnListener() {
+
+                            @Override
+                            public void onCompleted(BaseDialog dialog, String password) {
+                                dialog.dismiss();
+                                // toast(password);
+                                startActivityForResult(getNewIntent(CustomIntroduceActivity.this, CustomSuccessActivity.class, "提示"),
+                                        Constants.MANAGER_FRAGMENT_RESULT_SIZE);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
         }
     }

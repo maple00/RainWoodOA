@@ -17,4 +17,6 @@ public interface ICustomDetailCallbacks extends IBaseCallback {
      * 客户详情数据回调
      */
     void getCustomDetailData(Map<String, List> contentMap);
+
+
 }

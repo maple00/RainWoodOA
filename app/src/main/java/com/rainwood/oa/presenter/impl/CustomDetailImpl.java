@@ -84,6 +84,12 @@ public final class CustomDetailImpl implements ICustomDetailPresenter {
     }
 
     @Override
+    public void getCustomDetailById(String id) {
+        // TODO: 根据客户id查询客户详情
+
+    }
+
+    @Override
     public void registerViewCallback(ICustomDetailCallbacks callback) {
         this.mCallbacks = callback;
     }

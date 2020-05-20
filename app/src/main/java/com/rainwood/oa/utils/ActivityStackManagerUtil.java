@@ -12,7 +12,7 @@ import java.util.Stack;
  * @time: 2019/11/27 11:36
  * @des: Activity 管理类
  */
-public class ActivityStackManagerUtil implements Application.ActivityLifecycleCallbacks {
+public final class ActivityStackManagerUtil implements Application.ActivityLifecycleCallbacks {
 
     private Stack<Activity> stack;
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="20dp"
+    tools:ignore="ContentDescription">
+
+    <TextView
+        android:id="@+id/tv_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="￥5000.00"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_used"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_money"
+        android:layout_marginTop="13dp"
+        android:text="域名3年的费用193元，服务器3年的费用5507元服..."
+        android:textColor="@color/labelColor"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/iv_waste_clear"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:padding="2dp"
+        android:src="@drawable/ic_waste_clear" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/tv_used"
+        android:layout_marginTop="20dp" />
+
+</RelativeLayout>

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.rainwood.oa.utils.ActivityStackManagerUtil;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.DeviceIdUtil;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -33,6 +35,8 @@ public final class BaseApplication extends Application {
         initActivity();
         // 初始化三方的框架
         initSDK();
+        // 初始化工具类
+        initUtil();
     }
 
     private void initSDK() {
@@ -52,6 +56,14 @@ public final class BaseApplication extends Application {
         // 吐司工具类
         ToastUtils.init(this);
 
+    }
+
+    /**
+     * 初始化工具类
+     */
+    private void initUtil() {
+        // 获取IMEI
+        Constants.IMEI = DeviceIdUtil.getDeviceId(this);
     }
 
     private void initActivity() {

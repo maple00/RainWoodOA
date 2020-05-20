@@ -7,7 +7,7 @@ import android.util.Log;
  * @Date: 2020/4/17 11:58
  * @Desc: 日志管理
  */
-public class LogUtils {
+public final class LogUtils {
 
     private static int currentLev = 4;
     private static final int DEBUG_LEV = 4;

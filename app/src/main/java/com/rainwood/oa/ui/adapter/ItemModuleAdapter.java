@@ -19,7 +19,10 @@ import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
 import com.rainwood.oa.ui.activity.CommonActivity;
 import com.rainwood.oa.ui.activity.CustomIntroduceActivity;
+import com.rainwood.oa.ui.activity.CustomListActivity;
 import com.rainwood.oa.ui.activity.CustomNewActivity;
+import com.rainwood.oa.ui.activity.OrderListActivity;
+import com.rainwood.oa.ui.activity.OrderNewActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -113,6 +116,16 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "介绍客户":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomIntroduceActivity.class, "介绍客户"));
+                    break;
+                case "客户列表":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomListActivity.class, "客户列表"));
+                    break;
+                // 订单模块
+                case "新建订单":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderNewActivity.class, "新建订单"));
+                    break;
+                case "订单列表":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderListActivity.class, "订单列表"));
                     break;
             }
         });
