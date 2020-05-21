@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_search_click"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    tools:ignore="ContentDescription,UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/iv_page_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="8dp"
+        android:src="@drawable/ic_page_return" />
+
+    <!-- <LinearLayout
+         android:id="@+id/ll_screen"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentEnd="true"
+         android:layout_centerVertical="true"
+         android:layout_marginEnd="15dp"
+         android:gravity="center_vertical"
+         android:orientation="horizontal">
+
+         <TextView
+             android:id="@+id/tv_search_right_title"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/text_screen_type"
+             android:textColor="@color/fontColor"
+             android:textSize="15sp" />
+
+         <ImageView
+             android:id="@+id/iv_icon"
+             android:layout_width="18dp"
+             android:layout_height="15dp"
+             android:layout_marginStart="5dp"
+             android:src="@drawable/ic_triangle_down" />
+
+     </LinearLayout>-->
+
+    <com.rainwood.oa.ui.widget.GroupTextIcon
+        android:id="@+id/gti_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
+        app:right_icon="@drawable/ic_triangle_down"
+        app:status_text="筛选分类" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/gti_screen"
+        android:layout_toEndOf="@+id/iv_page_back"
+        android:background="@drawable/shape_search_view"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="15dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_search" />
+
+        <com.rainwood.tools.wheel.view.ClearEditText
+            android:id="@+id/tv_search_tips"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/labelColor"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

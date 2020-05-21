@@ -1,23 +1,29 @@
 package com.rainwood.oa.utils;
 
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.presenter.ICommunicationPresenter;
 import com.rainwood.oa.presenter.IContactPresenter;
 import com.rainwood.oa.presenter.ICustomDetailPresenter;
 import com.rainwood.oa.presenter.ICustomListPresenter;
+import com.rainwood.oa.presenter.IDepartPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.presenter.IOrderPresenter;
+import com.rainwood.oa.presenter.IRoleManagerPresenter;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
+import com.rainwood.oa.presenter.impl.CommunicationImpl;
 import com.rainwood.oa.presenter.impl.ContactImpl;
 import com.rainwood.oa.presenter.impl.CustomDetailImpl;
 import com.rainwood.oa.presenter.impl.CustomListImpl;
+import com.rainwood.oa.presenter.impl.DepartImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
 import com.rainwood.oa.presenter.impl.LoginAboutImpl;
 import com.rainwood.oa.presenter.impl.ManagerMainImpl;
 import com.rainwood.oa.presenter.impl.MineImpl;
 import com.rainwood.oa.presenter.impl.OrderImpl;
+import com.rainwood.oa.presenter.impl.RoleManagerImpl;
 
 /**
  * @Author: a797s
@@ -36,6 +42,9 @@ public final class PresenterManager {
     private final ICustomListPresenter mCustomListPresenter;
     private final ILoginAboutPresenter mLoginAboutPresenter;
     private final IOrderPresenter mOrderPresenter;
+    private final ICommunicationPresenter mSkillPresenter;
+    private final IRoleManagerPresenter mRoleManagerPresenter;
+    private final IDepartPresenter mDepartPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -77,6 +86,18 @@ public final class PresenterManager {
         return mOrderPresenter;
     }
 
+    public ICommunicationPresenter getSkillPresenter() {
+        return mSkillPresenter;
+    }
+
+    public IRoleManagerPresenter getRoleManagerPresenter() {
+        return mRoleManagerPresenter;
+    }
+
+    public IDepartPresenter getDepartPresenter() {
+        return mDepartPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
@@ -87,5 +108,8 @@ public final class PresenterManager {
         mCustomListPresenter = new CustomListImpl();
         mLoginAboutPresenter = new LoginAboutImpl();
         mOrderPresenter = new OrderImpl();
+        mSkillPresenter = new CommunicationImpl();
+        mRoleManagerPresenter = new RoleManagerImpl();
+        mDepartPresenter = new DepartImpl();
     }
 }

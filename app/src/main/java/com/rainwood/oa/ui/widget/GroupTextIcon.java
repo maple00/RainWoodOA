@@ -35,6 +35,8 @@ public final class GroupTextIcon extends LinearLayout {
     private onItemClick mOnItemClick;
     private int mRightIcon;
 
+    private String text;
+
     public GroupTextIcon(Context context) {
         this(context, null);
     }
@@ -82,7 +84,7 @@ public final class GroupTextIcon extends LinearLayout {
      * 说明被点击了
      *
      * @param rightIcon 右边图标、
-     * @param color 字体颜色
+     * @param color     字体颜色
      */
     public void setRightIcon(int rightIcon, int color) {
         mRightIcon = rightIcon;
@@ -92,9 +94,22 @@ public final class GroupTextIcon extends LinearLayout {
         }
     }
 
+    /**
+     * 设置文本文字
+     *
+     * @param text
+     */
+    public void setText(String text) {
+        this.text = text;
+        if (!TextUtils.isEmpty(text)) {
+            textName.setText(text);
+        }
+    }
+
     public void setOnItemClick(onItemClick onItemClick) {
         mOnItemClick = onItemClick;
     }
+
 
     public interface onItemClick {
         void onItemClick(String text);

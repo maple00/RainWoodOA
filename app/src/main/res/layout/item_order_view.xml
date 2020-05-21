@@ -85,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
+        android:verticalSpacing="16dp"
         android:horizontalSpacing="15dp" />
 
     <LinearLayout

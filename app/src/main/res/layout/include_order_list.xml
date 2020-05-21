@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:ignore="ContentDescription">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:elevation="0px">
+
+        <com.rainwood.oa.ui.widget.XCollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimVisibleHeightTrigger="100dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 统计列表-->
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_statics_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="25dp" />
+
+                <ImageView
+                    android:id="@+id/iv_show_hide"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_down_arrow" />
+
+                <View
+                    style="@style/HorizontalLineStyle"
+                    android:layout_height="10dp" />
+            </LinearLayout>
+
+        </com.rainwood.oa.ui.widget.XCollapsingToolbarLayout>
+
+        <!-- 吸附部分-->
+        <LinearLayout
+            android:id="@+id/ll_status_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingBottom="16dp">
+
+            <com.rainwood.oa.ui.widget.GroupTextIcon
+                android:id="@+id/gti_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:right_icon="@drawable/ic_triangle_down"
+                app:status_text="订单状态"
+                app:text_color="@color/fontColor"
+                app:text_size="15" />
+
+            <com.rainwood.oa.ui.widget.GroupTextIcon
+                android:id="@+id/gti_stuff"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:right_icon="@drawable/ic_triangle_down"
+                app:status_text="部门员工"
+                app:text_color="@color/fontColor"
+                app:text_size="15" />
+
+
+            <com.rainwood.oa.ui.widget.GroupTextIcon
+                android:id="@+id/gti_sorting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:right_icon="@drawable/ic_triangle_down"
+                app:status_text="默认排序"
+                app:text_color="@color/fontColor"
+                app:text_size="15" />
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_order"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/assistColor10" />
+
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -50,8 +50,9 @@ public final class OrderImpl implements IOrderPresenter {
             staticsList.add(statics);
         }
         // 模拟所有的订单
+        // 订单中所有为空得字段，都不会显示出来
         List<Order> orderList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Order order = new Order();
             order.setNo("6345001937");
             order.setStatus("开发中");

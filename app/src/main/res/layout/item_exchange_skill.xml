@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="SmallSp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="10dp"
+        android:text="如果文章标题像这样比较长的也要展示完换行显示如果文章标题像这样比较长的也要展示完换行显示"
+        android:textColor="@color/fontColor"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:lineSpacingExtra="6dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:text="一、说话必须简明扼要。1、当我们和客户见面时，无论是自我介绍还是介绍产品，都要简明，最好在两句话内完成，语速一定要缓慢不拖沓，说话时一定要看着对方的眼睛面..."
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/tv_screen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="229浏览 · NO.18"
+            android:textColor="@color/labelColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="2019.04.20 15:30"
+            android:textColor="@color/labelColor"
+            android:textSize="11sp" />
+    </RelativeLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+</LinearLayout>

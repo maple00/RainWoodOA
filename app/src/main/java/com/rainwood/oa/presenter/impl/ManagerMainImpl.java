@@ -21,14 +21,14 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
     private IManagerCallbacks mCallback;
     private String[] data = {"行政人事", "财务管理", "客户管理", "系统设置"};
     // 行政人事
-    private String[] personals = {"职位管理", "员工管理", "工作日", "通讯录", "管理制度", "加班记录",
+    private String[] personals = {"角色管理", "部门管理", "职位管理", "员工管理", "工作日", "通讯录", "管理制度", "加班记录",
             "请假记录", "外出记录", "考勤记录", "补卡记录", "行政处罚"};
     //财务管理
     private String[] financialManager = {"收支平衡", "费用报销", "开票记录", "团队基金"};
     // 客户管理
-    private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建订单", "订单列表", "跟进记录", "沟通技巧"};
+    private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建订单", "订单列表", "沟通技巧"};
     // 系统设置
-    private String[] systemSetting = {"系统日志", "办公文件", "帮助中心"};
+    private String[] systemSetting = {"系统日志", "办公文件", "帮助中心", "跟进记录"};
 
     @Override
     public void getManagerData() {
@@ -41,10 +41,10 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
             ManagerMain managerMain = new ManagerMain();
             managerMain.setTitle(data[i]);
             // 设置默认打开
-            if (i == 2) {
+            if (i == 0) {
                 managerMain.setHasSelected(true);
             }
-            switch (i){
+            switch (i) {
                 case 0:     // 行政人事
                     List<IconAndFont> moduleItemList = new ArrayList<>();
                     for (String personal : personals) {

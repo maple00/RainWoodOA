@@ -1,16 +1,14 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.views.RWNestedScrollView;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Order;
@@ -60,16 +58,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private GroupTextIcon sorting;
     @ViewInject(R.id.rv_order)
     private RecyclerView orderView;
-    // 算高度，优化卡顿现象
-    @ViewInject(R.id.order_pager_nested_scroller)
-    private RWNestedScrollView pagerNestedScroller;
-    @ViewInject(R.id.ll_order_pager_parent)
-    private LinearLayout orderPagerParent;
-    @ViewInject(R.id.rl_search_click)
-    private RelativeLayout searchViewPager;
-    @ViewInject(R.id.ll_status_top)
-    private LinearLayout statusTop;
-
+    @ViewInject(R.id.trl_pager_refresh)
+    private TwinklingRefreshLayout pagerRefresh;
     // 收起或展开-- 默认收起
     private boolean isShowHide = false;
 
@@ -80,9 +70,15 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
 
     private List<OrderStatics> mOrderStatics;
 
+    // 选中标记
+    private boolean selectedStatusFlag = false;
+    private boolean selectedDepartFlag = false;
+    private boolean selectedSortingFlag = false;
+
+
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_order_list;
+        return R.layout.activity_order_pager;
     }
 
     @Override
@@ -100,37 +96,49 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         mOrderListAdapter = new OrderListAdapter();
         // 设置适配器
         staticsOrder.setAdapter(mStaticsAdapter);
-         orderView.setAdapter(mOrderListAdapter);
+        orderView.setAdapter(mOrderListAdapter);
         mOrderListAdapter.setContext(this);
+        // 设置刷新相关属性 -- 可加载不可刷新
+        pagerRefresh.setEnableLoadmore(true);
+        pagerRefresh.setEnableRefresh(false);
     }
 
     @Override
     protected void initEvent() {
-        orderPagerParent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (searchViewPager == null) {
-                    return;
-                }
-                // 头部搜索框
-                int headerHeight = searchViewPager.getMeasuredHeight();
-                int staticsHeight = staticsOrder.getMeasuredHeight();
-                int statusTopHeight = statusTop.getMeasuredHeight();
-                int hideViewHeight = showHideView.getMeasuredHeight();
-                // nestScrollView
-                pagerNestedScroller.setHeaderHeight(headerHeight + staticsHeight + statusTopHeight
-                        + StatusBarUtils.getStatusBarHeight(OrderListActivity.this) + hideViewHeight);
-                // parentPager
-                int measuredHeight = orderPagerParent.getMeasuredHeight();
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) orderView.getLayoutParams();
-                layoutParams.height = measuredHeight;
-                // 滑动高度
-                orderView.setLayoutParams(layoutParams);
-                if (measuredHeight != 0) {
-                    orderPagerParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
+        // 订单状态
+        orderStatus.setOnItemClick(text -> {
+            selectedStatusFlag = !selectedStatusFlag;
+            orderStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedStatusFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
+            // TODO: 查询状态
+            if (selectedStatusFlag) {
+
             }
         });
+        // 部门员工
+        departStuff.setOnItemClick(text -> {
+            selectedDepartFlag = !selectedDepartFlag;
+            departStuff.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedDepartFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
+            // TODO: 查询状态
+            if (selectedDepartFlag) {
+
+            }
+        });
+        // 排序状态
+        sorting.setOnItemClick(text -> {
+            selectedSortingFlag = !selectedSortingFlag;
+            sorting.setRightIcon(selectedSortingFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedSortingFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
+            // TODO: 查询状态
+            if (selectedSortingFlag) {
+
+            }
+        });
+        /*
+        recyclerView 滑动优化
+         */
+
     }
 
     @Override
@@ -177,6 +185,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         // 订单列表
         List<Order> orderList = (List<Order>) orderListData.get("order");
         mOrderListAdapter.setList(orderList);
+        // mContentListAdapter.setList(orderList);
     }
 
     @Override

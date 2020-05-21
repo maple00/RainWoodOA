@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <TextView
+        android:id="@+id/tv_depart_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="技术部-项目一组"
+        android:textColor="@color/fontColor"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_duty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="24dp"
+        android:lineSpacingExtra="9dp"
+        android:text="技术部项目小组负责产品部原型实现，项目经理以项目为单位领导各职能岗位完成项目，项目一组归项目经理邵秋胜管辖。"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp" />
+
+</LinearLayout>

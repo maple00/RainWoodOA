@@ -120,7 +120,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         return intent;
     }
 
-  /*  @Override
+  /*
+    // 设置动画
+  @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);

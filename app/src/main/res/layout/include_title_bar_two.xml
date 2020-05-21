@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:orientation="vertical">
+    android:id="@+id/rl_action_top"
+    android:layout_height="?attr/actionBarSize"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <ImageView
         android:id="@+id/iv_return"
@@ -10,15 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:src="@drawable/ic_page_return" />
+        android:src="@drawable/ic_page_return_white" />
 
     <TextView
         android:id="@+id/tv_page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="中间标题"
-        android:textColor="@color/black00"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
     <TextView
@@ -28,8 +30,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="15dp"
-        android:text="右边标题"
-        android:textColor="@color/black00"
+        android:textColor="@color/white"
         android:textSize="14sp" />
 
 </RelativeLayout>
