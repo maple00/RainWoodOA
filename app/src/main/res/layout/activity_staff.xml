@@ -4,18 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.HomeActivity">
+    tools:context=".ui.activity.StaffMainActivity">
+
 
     <FrameLayout
-        android:id="@+id/fl_main_container"
+        android:id="@+id/fl_staff_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="49dp"
-        android:background="@color/assistColor10" />
+        android:background="@color/white" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/main_navigation_bar"
+        android:id="@+id/staff_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="49dp"
         android:layout_marginEnd="0dp"
@@ -25,5 +26,6 @@
         app:itemIconSize="23dp"
         app:itemIconTint="@drawable/navigation_bar_color"
         app:itemTextColor="@drawable/navigation_bar_color"
-        app:menu="@menu/home_navigation" />
+        app:menu="@menu/staff_navigation" />
+
 </RelativeLayout>

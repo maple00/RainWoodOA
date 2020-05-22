@@ -72,7 +72,6 @@ public abstract class BaseFragment extends Fragment {
         mBaseContainer = rootView.findViewById(R.id.base_container);
         loadStatesView(inflater, container);
         ViewBind.inject(this, rootView);
-        ViewBind.inject(this);
         initView(rootView);
         initListener();
         initPresenter();

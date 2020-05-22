@@ -25,14 +25,14 @@ import java.lang.reflect.Method;
  * @Author: shearson
  * @time: 2019/11/28 13:17
  * @des: 沉浸透明状态栏的兼容类  兼容Android4.4 以上
- * Class to manage status and navigation bar tint effects when using KitKat
+ * Class to manage status and home_navigation bar tint effects when using KitKat
  * translucent system UI modes.
  */
 
 public class SystemBarTintManager {
 
     static {
-        // Android allows a system property to override the presence of the navigation bar.
+        // Android allows a system property to override the presence of the home_navigation bar.
         // Used by the emulator.
         // See https://github.com/android/platform_frameworks_base/blob/master/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java#L1076
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -103,7 +103,7 @@ public class SystemBarTintManager {
         }
 
         mConfig = new SystemBarConfig(activity, mStatusBarAvailable, mNavBarAvailable);
-        // device might not have virtual navigation keys
+        // device might not have virtual home_navigation keys
         if (!mConfig.hasNavigtionBar()) {
             mNavBarAvailable = false;
         }
@@ -134,9 +134,9 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Enable tinting of the system navigation bar.
+     * Enable tinting of the system home_navigation bar.
      * <p>
-     * If the platform does not have soft navigation keys, is running Jelly Bean
+     * If the platform does not have soft home_navigation keys, is running Jelly Bean
      * or earlier, or translucent system UI modes have not been enabled in either
      * the theme or via window flags, then this method does nothing.
      *
@@ -236,7 +236,7 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Apply the specified color tint to the system navigation bar.
+     * Apply the specified color tint to the system home_navigation bar.
      *
      * @param color The color of the background tint.
      */
@@ -247,7 +247,7 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Apply the specified drawable or color resource to the system navigation bar.
+     * Apply the specified drawable or color resource to the system home_navigation bar.
      *
      * @param res The identifier of the resource.
      */
@@ -258,7 +258,7 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Apply the specified drawable to the system navigation bar.
+     * Apply the specified drawable to the system home_navigation bar.
      *
      * @param drawable The drawable to use as the background, or null to remove it.
      */
@@ -270,7 +270,7 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Apply the specified alpha to the system navigation bar.
+     * Apply the specified alpha to the system home_navigation bar.
      *
      * @param alpha The alpha to use
      */
@@ -300,7 +300,7 @@ public class SystemBarTintManager {
     }
 
     /**
-     * Is tinting enabled for the system navigation bar?
+     * Is tinting enabled for the system home_navigation bar?
      *
      * @return True if enabled, False otherwise.
      */
@@ -454,11 +454,11 @@ public class SystemBarTintManager {
         }
 
         /**
-         * Should a navigation bar appear at the bottom of the screen in the current
-         * device configuration? A navigation bar may appear on the right side of
+         * Should a home_navigation bar appear at the bottom of the screen in the current
+         * device configuration? A home_navigation bar may appear on the right side of
          * the screen in certain configurations.
          *
-         * @return True if navigation should appear at the bottom of the screen, False otherwise.
+         * @return True if home_navigation should appear at the bottom of the screen, False otherwise.
          */
         public boolean isNavigationAtBottom() {
             return (mSmallestWidthDp >= 600 || mInPortrait);
@@ -483,29 +483,29 @@ public class SystemBarTintManager {
         }
 
         /**
-         * Does this device have a system navigation bar?
+         * Does this device have a system home_navigation bar?
          *
-         * @return True if this device uses soft key navigation, False otherwise.
+         * @return True if this device uses soft key home_navigation, False otherwise.
          */
         public boolean hasNavigtionBar() {
             return mHasNavigationBar;
         }
 
         /**
-         * Get the height of the system navigation bar.
+         * Get the height of the system home_navigation bar.
          *
-         * @return The height of the navigation bar (in pixels). If the device does not have
-         * soft navigation keys, this will always return 0.
+         * @return The height of the home_navigation bar (in pixels). If the device does not have
+         * soft home_navigation keys, this will always return 0.
          */
         public int getNavigationBarHeight() {
             return mNavigationBarHeight;
         }
 
         /**
-         * Get the width of the system navigation bar when it is placed vertically on the screen.
+         * Get the width of the system home_navigation bar when it is placed vertically on the screen.
          *
-         * @return The width of the navigation bar (in pixels). If the device does not have
-         * soft navigation keys, this will always return 0.
+         * @return The width of the home_navigation bar (in pixels). If the device does not have
+         * soft home_navigation keys, this will always return 0.
          */
         public int getNavigationBarWidth() {
             return mNavigationBarWidth;

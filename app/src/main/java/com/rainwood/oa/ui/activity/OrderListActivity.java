@@ -52,8 +52,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private MeasureListView staticsOrder;
     @ViewInject(R.id.gti_status)
     private GroupTextIcon orderStatus;
-    @ViewInject(R.id.gti_stuff)
-    private GroupTextIcon departStuff;
+    @ViewInject(R.id.gti_staff)
+    private GroupTextIcon departstaff;
     @ViewInject(R.id.gti_sorting)
     private GroupTextIcon sorting;
     @ViewInject(R.id.rv_order)
@@ -116,9 +116,9 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             }
         });
         // 部门员工
-        departStuff.setOnItemClick(text -> {
+        departstaff.setOnItemClick(text -> {
             selectedDepartFlag = !selectedDepartFlag;
-            departStuff.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+            departstaff.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedDepartFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
             // TODO: 查询状态
             if (selectedDepartFlag) {

@@ -46,10 +46,17 @@ public final class GroupIconText extends LinearLayout {
         ViewBind.inject(this, view);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.GroupIconText);
+        // text
         String valueStr = typedArray.getString(R.styleable.GroupIconText_text);
-        if (TextUtils.isEmpty(valueStr)) {
+        if (!TextUtils.isEmpty(valueStr)) {
             values.setText(valueStr);
         }
+        // textColor
+        int color = typedArray.getColor(R.styleable.GroupIconText_textColor, context.getColor(R.color.labelColor));
+        if (color != 0){
+            values.setTextColor(color);
+        }
+        // icon
         int icon = typedArray.getResourceId(R.styleable.GroupIconText_icon, R.drawable.ic_custom_head);
         if (icon != -1) {
             iconIV.setImageResource(icon);
@@ -64,4 +71,5 @@ public final class GroupIconText extends LinearLayout {
             values.setText(value);
         }
     }
+
 }

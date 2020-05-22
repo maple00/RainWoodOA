@@ -21,7 +21,6 @@
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:gravity="center_vertical"
-        android:text="李雷"
         android:textColor="@color/fontColor"
         android:textSize="14sp" />
 

@@ -25,7 +25,9 @@ import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
 import com.rainwood.oa.ui.activity.OrderListActivity;
 import com.rainwood.oa.ui.activity.OrderNewActivity;
+import com.rainwood.oa.ui.activity.PostManagerActivity;
 import com.rainwood.oa.ui.activity.RoleManagerActivity;
+import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -139,6 +141,12 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "部门管理":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), DepartManagerActivity.class, "部门管理"));
+                    break;
+                case "职位管理":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), PostManagerActivity.class, "职位管理"));
+                    break;
+                case "员工管理":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), StaffManagerActivity.class, "员工管理"));
                     break;
             }
         });

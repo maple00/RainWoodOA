@@ -68,7 +68,7 @@
                 app:text_size="15" />
 
             <com.rainwood.oa.ui.widget.GroupTextIcon
-                android:id="@+id/gti_stuff"
+                android:id="@+id/gti_staff"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

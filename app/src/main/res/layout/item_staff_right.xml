@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_item_staff"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingStart="10dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="15dp"
+    android:paddingBottom="20dp"
+    tools:ignore="ContentDescription,SmallSp">
+
+    <ImageView
+        android:id="@+id/iv_head_photo"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default_head" />
+
+    <TextView
+        android:id="@+id/tv_staff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        android:text="邵雪松"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_salary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="基2000+津1500"
+        android:textColor="@color/fontColor"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/tv_depart_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_staff"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        android:text="研发部-Android研发工程师" />
+
+    <com.rainwood.oa.ui.widget.GroupIconText
+        android:id="@+id/git_tel_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_depart_post"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        app:icon="@drawable/ic_staff_phone_num"
+        app:text="15847251880"
+        app:textColor="@color/labelColor" />
+
+</RelativeLayout>

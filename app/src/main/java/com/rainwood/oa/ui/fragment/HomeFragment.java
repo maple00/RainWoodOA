@@ -130,8 +130,8 @@ public final class HomeFragment extends BaseFragment implements
       //  LogUtils.d("sxs", "model---> " + model + " -- position ---> " + position);
         Glide.with(itemView.getContext())
                 .load(model)
-                .apply(new RequestOptions().placeholder(R.drawable.bg_monkey_king)
-                        .error(R.drawable.bg_monkey_king)
+                .apply(new RequestOptions().placeholder(R.drawable.ic_banner)
+                        .error(R.drawable.ic_banner)
                         .dontAnimate().centerCrop())
                 .into(itemView);
     }

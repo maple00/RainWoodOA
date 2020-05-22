@@ -96,5 +96,10 @@
     <string name="text_follow_tips">点击上方标签或填写跟进情况</string>
     <string name="text_follow_next_time">下次跟进时间</string>
     <string name="text_screen_type">筛选分类</string>
+    <string name="text_post_allowance">津贴说明</string>
+    <string name="text_post_desc">职位描述</string>
+    <string name="navigation_staff_data">员工资料</string>
+    <string name="navigation_staff_account">会计账户</string>
+    <string name="navigation_staff_settle_account">结算账户</string>
 
 </resources>
