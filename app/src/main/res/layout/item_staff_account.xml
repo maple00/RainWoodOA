@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_item_account"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingTop="20dp">
+
+    <TextView
+        android:id="@+id/tv_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="25dp"
+        android:text="+200.00"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/tv_money"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="奖金拨付，订单【秦工设备秦工设备...奖金拨付，订单【秦工设备秦工设备..."
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_event"
+        android:layout_marginTop="12dp"
+        android:text="2020.03.17 15:56"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/tv_time"
+        android:layout_marginTop="20dp" />
+
+</RelativeLayout>

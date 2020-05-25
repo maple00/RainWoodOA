@@ -23,13 +23,16 @@ import com.rainwood.oa.ui.activity.CustomListActivity;
 import com.rainwood.oa.ui.activity.CustomNewActivity;
 import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
+import com.rainwood.oa.ui.activity.ManagerSystemActivity;
 import com.rainwood.oa.ui.activity.OrderListActivity;
 import com.rainwood.oa.ui.activity.OrderNewActivity;
 import com.rainwood.oa.ui.activity.PostManagerActivity;
+import com.rainwood.oa.ui.activity.RecordManagerActivity;
 import com.rainwood.oa.ui.activity.RoleManagerActivity;
 import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.toast.ToastUtils;
 
 import java.util.List;
 
@@ -110,7 +113,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                 case "我的考勤":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AttendanceActivity.class, "我的考勤"));
                     break;
-                case "补卡记录":
+                case "我的补卡记录":
                     break;
                 // 客户管理模块
                 case "新建客户":
@@ -147,6 +150,27 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "员工管理":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), StaffManagerActivity.class, "员工管理"));
+                    break;
+                case "工作日":
+                    ToastUtils.show("工作日");
+                    break;
+                case "通讯录":
+                    ToastUtils.show("通讯录");
+                    break;
+                case "管理制度":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), ManagerSystemActivity.class, "管理制度"));
+                    break;
+                case "加班记录":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "加班记录"));
+                    break;
+                case "请假记录":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "请假记录"));
+                    break;
+                case "外出记录":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "外出记录"));
+                    break;
+                case "补卡记录":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "补卡记录"));
                     break;
             }
         });

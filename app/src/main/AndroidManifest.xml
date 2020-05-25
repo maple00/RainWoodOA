@@ -39,6 +39,14 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- 查看大图 ImageActivity-->
+        <activity
+            android:name=".ui.activity.ImageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- App首页 singleTask， 其余singleTop -->
         <!-- 启动页面-->
         <activity
@@ -236,6 +244,41 @@
         <!-- 员工 staffMainActivity-->
         <activity
             android:name=".ui.activity.StaffMainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 工作经历详情 ExperienceDetailActivity-->
+        <activity
+            android:name=".ui.activity.ExperienceDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 收支详情 PaymentDetailActivity-->
+        <activity
+            android:name=".ui.activity.PaymentDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 管理制度 ManagerSystemActivity-->
+        <activity
+            android:name=".ui.activity.ManagerSystemActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 管理制度详情 SystemDetailActivity-->
+        <activity
+            android:name=".ui.activity.SystemDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 记录管理 RecordManagerActivity-->
+        <activity
+            android:name=".ui.activity.RecordManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />

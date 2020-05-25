@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_search_click"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="center_vertical"
     android:paddingTop="10dp"
-    android:id="@+id/rl_search_click"
     android:paddingBottom="10dp"
     tools:ignore="ContentDescription">
 
@@ -26,7 +26,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
         android:padding="10dp"
-        android:text="@string/custom_text_manager"
+        android:text="@string/text_common_search"
         android:textColor="@color/fontColor"
         android:textSize="20sp" />
 
@@ -54,6 +54,7 @@
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="false"
             android:hint="请输入搜索内容"
             android:textColor="@color/labelColor"
             android:textSize="16sp" />

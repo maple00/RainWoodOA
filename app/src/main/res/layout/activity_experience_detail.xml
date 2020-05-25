@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+
+    <TextView
+        android:id="@+id/tv_company"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="重庆雨木科技有限公司"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/fontColor"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tv_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="11dp"
+        android:text="UI设计师"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_entry_out_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="13dp"
+        android:text="2019.07.10-2019.12.24"
+        android:textColor="@color/labelColor"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_duty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="15dp"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        android:lineSpacingExtra="12dp"
+        android:maxLines="3"
+        android:text="负责公司移动客户端UI界面设计，为公司新产品与新功能提供创意及设计方案，参与设计讨论，和开发团队共同创建用户界面，跟踪设计效果，提出设计优化方案..." />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/text_leaving_reason"
+        android:textColor="@color/labelColor"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
+        android:text="公司离家太远，无法照顾家庭"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+</LinearLayout>

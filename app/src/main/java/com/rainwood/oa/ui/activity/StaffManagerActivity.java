@@ -185,7 +185,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void onClickStaff(int position) {
-        toast("查看员工详情---" + mStaffList.get(position).getName());
+        // toast("查看员工详情---" + mStaffList.get(position).getName());
         startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
     }
 }

@@ -101,5 +101,9 @@
     <string name="navigation_staff_data">员工资料</string>
     <string name="navigation_staff_account">会计账户</string>
     <string name="navigation_staff_settle_account">结算账户</string>
+    <string name="text_assist_data">辅助信息</string>
+    <string name="text_work_experience">工作经历</string>
+    <string name="text_leaving_reason">离职原因</string>
+    <string name="text_common_time">时间</string>
 
 </resources>

@@ -9,6 +9,7 @@ import com.rainwood.oa.presenter.IDepartPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.presenter.IManagerPresenter;
+import com.rainwood.oa.presenter.IManagerSystemPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.presenter.IPostPresenter;
@@ -23,6 +24,7 @@ import com.rainwood.oa.presenter.impl.DepartImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
 import com.rainwood.oa.presenter.impl.LoginAboutImpl;
 import com.rainwood.oa.presenter.impl.ManagerMainImpl;
+import com.rainwood.oa.presenter.impl.ManagerSystemImpl;
 import com.rainwood.oa.presenter.impl.MineImpl;
 import com.rainwood.oa.presenter.impl.OrderImpl;
 import com.rainwood.oa.presenter.impl.PostImpl;
@@ -51,6 +53,7 @@ public final class PresenterManager {
     private final IDepartPresenter mDepartPresenter;
     private final IPostPresenter mPostPresenter;
     private final IStaffPresenter mStaffPresenter;
+    private final IManagerSystemPresenter mSystemPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -112,6 +115,10 @@ public final class PresenterManager {
         return mStaffPresenter;
     }
 
+    public IManagerSystemPresenter getSystemPresenter() {
+        return mSystemPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
@@ -127,5 +134,6 @@ public final class PresenterManager {
         mDepartPresenter = new DepartImpl();
         mPostPresenter = new PostImpl();
         mStaffPresenter = new StaffImpl();
+        mSystemPresenter = new ManagerSystemImpl();
     }
 }

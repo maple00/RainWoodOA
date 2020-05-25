@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_item_system"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="第一章：岗位职责"
+        android:textColor="@color/fontColor"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="20dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="11dp"
+        android:maxLines="2"
+        android:text="第一条、产品经理。1、通过公客池、招聘网站、猪八戒网、百度360搜狗搜索引擎客户咨询下发、同行业等渠道获取商..."
+        android:textColor="@color/labelColor"
+        android:textSize="13sp" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+</LinearLayout>

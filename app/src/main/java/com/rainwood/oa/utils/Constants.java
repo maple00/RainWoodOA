@@ -26,8 +26,32 @@ public final class Constants {
     public static String IMEI = "";
 
     /**
+     * 图片
+     */
+    public static final String PICTURE = "picture";
+
+    /**
+     * 音频
+     */
+    public static final String VOICE = "voice";
+    /**
+     * 视频
+     */
+    public static final String VIDEO = "video";
+
+    /**
+     * 索引
+     */
+    public static final String INDEX = "index";
+
+    /**
      * 后台请求BaseURL
      */
     public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp";
+
+
+    //home pager fragment bundle key.
+    public static final String KEY_STAFF_ACCOUNT_TITLE = "key_home_pager_title";
+    public static final String KEY_STAFF_ACCOUNT_TYPE_ID = "key_home_pager_material_id";
 
 }

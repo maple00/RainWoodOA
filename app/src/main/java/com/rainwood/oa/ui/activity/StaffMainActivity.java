@@ -10,10 +10,8 @@ import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.ui.fragment.StaffAccountFragment;
 import com.rainwood.oa.ui.fragment.StaffDataFragment;
 import com.rainwood.oa.ui.fragment.StaffSettleFragment;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
-import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 

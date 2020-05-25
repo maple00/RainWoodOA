@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="第一章：岗位职责"
+        android:textColor="@color/fontColor"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
+        android:text="229浏览   NO.18"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="15dp"
+        android:lineSpacingExtra="15dp"
+        android:text="第一条、产品经理
+1、通过公客池、招聘网站、猪八戒网、百度360搜狗搜索引擎客户咨询下发、同行业等渠道获取商机。
+2、通过电话、微信、QQ、邮件和面谈等方式采集甲方软件开发需求，制作软件需求文档、思维导图、流程图。
+3、根据甲方需求制作报价清单和开发合同，提交技术部和总经理审核，并促成签约。
+4、与甲方沟通，在合同范围内制作详细的项目原型图，并交由技术部经理和测试工程师评审。如原型超出合同范围，应与甲方签订补充协议。
+5、接受技术部和测试工程师的合同细节和原型设计咨询。
+6、催收合同每个阶段的款项。
+7、对技术部和测试工程师提交的与合同和原型不符的功能编写补充协议，并与甲方积极协商，促成签约及原型的调整。"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="15dp"
+        android:text="2019.04.20 15:30"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+</LinearLayout>

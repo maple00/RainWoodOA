@@ -1,5 +1,7 @@
 package com.rainwood.oa.base;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -187,6 +189,15 @@ public abstract class BaseFragment extends Fragment {
 
     public void toast(Object object) {
         ToastUtils.show(object);
+    }
+
+    /**
+     * startActivity 优化
+     */
+    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title) {
+        Intent intent = new Intent(context, clazz);
+        intent.putExtra("title", title);
+        return intent;
     }
 
 

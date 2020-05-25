@@ -26,7 +26,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     private List<IconAndFont> mFontList;
     private String[] accountTitle = {"结算账户(元)", "团队基金(元)", "基本工资(元)", "岗位津贴(元)"};
     private String[] accountData = {"0", "600.42", "2000", "1000"};
-    private String[] mineManager = {"我的考勤", "补卡记录", "请假记录", "加班记录", "外出记录","费用报销", "开票记录"};
+    private String[] mineManager = {"我的考勤", "我的补卡记录", "我的请假记录", "我的加班记录", "我的外出记录","我的费用报销", "我的开票记录"};
 
     @Override
     public void getMineData() {
