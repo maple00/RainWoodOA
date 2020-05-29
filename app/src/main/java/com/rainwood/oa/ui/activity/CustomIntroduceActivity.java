@@ -53,13 +53,13 @@ public final class CustomIntroduceActivity extends BaseActivity {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setPaddingSmart(this, mPageTop);
         mPageTitle.setText(title);
-        setRequiredValue(companyNameTV, ">公司名称</font>");
-        setRequiredValue(contactTV, ">联系人</font>");
-        setRequiredValue(telNumberTV, ">手机号</font>");
-        setRequiredValue(demandDescTV, ">需求描述</font>");
-        setRequiredValue(followStatusTV, ">跟进状态</font>");
-        setRequiredValue(customOriginTV, ">客户来源</font>");
-        setRequiredValue(introduceToTV, ">介绍给</font>");
+        setRequiredValue(companyNameTV, "公司名称");
+        setRequiredValue(contactTV, "联系人");
+        setRequiredValue(telNumberTV, "手机号");
+        setRequiredValue(demandDescTV, "需求描述");
+        setRequiredValue(followStatusTV, "跟进状态");
+        setRequiredValue(customOriginTV, "客户来源");
+        setRequiredValue(introduceToTV, "介绍给");
 
     }
 

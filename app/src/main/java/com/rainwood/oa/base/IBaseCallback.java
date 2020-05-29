@@ -13,6 +13,11 @@ public interface IBaseCallback {
     void onError();
 
     /**
+     * 数据错误提示
+     */
+    default void onError(String tips){}
+
+    /**
      * 加载中
      */
     void onLoading();

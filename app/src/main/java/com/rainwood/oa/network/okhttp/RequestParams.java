@@ -1,6 +1,5 @@
 package com.rainwood.oa.network.okhttp;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,8 +7,8 @@ import android.util.Log;
 import com.rainwood.oa.network.io.IOUtils;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by 请求参数
@@ -101,22 +100,22 @@ public class RequestParams {
     /**
      * 文件参数
      */
-    private Map<String, File> fileParams;
+    private TreeMap<String, File> fileParams;
 
     /**
      * 文字参数
      */
-    private Map<String, String> stringParams;
+    private TreeMap<String, String> stringParams;
 
     /**
      * Header参数
      */
-    private Map<String, String> headerParams;
+    private TreeMap<String, String> headerParams;
 
     /**
      * 工具参数
      */
-    private Map<Integer, String> optionParams;
+    private TreeMap<Integer, String> optionParams;
 
     /**
      * 字符串参数
@@ -128,7 +127,6 @@ public class RequestParams {
 
     }
 
-
     /**
      * 添加文字参数
      * Add String Params
@@ -138,7 +136,7 @@ public class RequestParams {
      */
     public void add(String key, String value) {
         if (stringParams == null) {
-            stringParams = new HashMap<>();
+            stringParams = new TreeMap<>();
         }
         stringParams.put(key, value == null ? "" : value);
     }
@@ -156,7 +154,7 @@ public class RequestParams {
             return;
         }
         if (fileParams == null) {
-            fileParams = new HashMap<>();
+            fileParams = new TreeMap<>();
         }
         if (!value.exists()) {
             Log.e(this.getClass().getSimpleName(), "addParams file is not exist!" + value.getAbsolutePath());
@@ -196,7 +194,7 @@ public class RequestParams {
      */
     public void addHeader(String key, String value) {
         if (headerParams == null) {
-            headerParams = new HashMap<>();
+            headerParams = new TreeMap<>();
         }
         if (value == null) {
             return;
@@ -257,7 +255,7 @@ public class RequestParams {
      */
     public void add(int key, String value) {
         if (optionParams == null) {
-            optionParams = new HashMap<>();
+            optionParams = new TreeMap<>();
         }
         if (value == null) {
             return;
@@ -270,11 +268,10 @@ public class RequestParams {
      *
      * @return
      */
-    @SuppressLint("UseSparseArrays")
     public Map<Integer, String> getOptionParams() {
         //设置默认为表单类型
         if (optionParams == null) {
-            optionParams = new HashMap<>();
+            optionParams = new TreeMap<>();
             optionParams.put(REQUEST_CONTENT_TYPE, REQUEST_CONTENT_FORM);
             optionParams.put(COOKIE_EXPIRES_SECONDS, DEFAULT_COOKIE_EXPIRES + "");
         }

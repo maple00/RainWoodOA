@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.FontSwitchUtil;
 
 /**
  * @Author: a797s
@@ -53,8 +54,12 @@ public final class GroupIconText extends LinearLayout {
         }
         // textColor
         int color = typedArray.getColor(R.styleable.GroupIconText_textColor, context.getColor(R.color.labelColor));
-        if (color != 0){
+        if (color != 0) {
             values.setTextColor(color);
+        }
+        int spacing = typedArray.getInteger(R.styleable.GroupIconText_spacing, 8);
+        if (spacing != 0){
+            values.setPadding(FontSwitchUtil.dip2px(context, spacing), 0, 0, 0);
         }
         // icon
         int icon = typedArray.getResourceId(R.styleable.GroupIconText_icon, R.drawable.ic_custom_head);
@@ -67,7 +72,7 @@ public final class GroupIconText extends LinearLayout {
 
     public void setValue(String value) {
         this.value = value;
-        if (!TextUtils.isEmpty(value)){
+        if (!TextUtils.isEmpty(value)) {
             values.setText(value);
         }
     }

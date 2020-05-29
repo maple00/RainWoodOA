@@ -12,12 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.Custom;
-import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseAdapter;
@@ -51,7 +49,7 @@ public final class BottomCustomDialog {
         private final TextView mTitle;
         private final TextView mTips;
 
-        private List<Custom> mData;
+        private List<CustomStaff> mData;
 
         public Builder(Context context) {
             super(context);
@@ -67,11 +65,9 @@ public final class BottomCustomDialog {
             mAdapter = new MenuAdapter(getContext());
             mAdapter.setOnItemClickListener(this);
             //    GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
-            GridLayoutManager layoutManager = new GridLayoutManager(context, 4,
-                    LinearLayoutManager.VERTICAL, false);
             recyclerView.addItemDecoration(new SpacesItemDecoration(FontSwitchUtil.dip2px(context, 10f)));
             recyclerView.setAdapter(mAdapter);
-            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setLayoutManager(new GridLayoutManager(context, 4));
 
             setOnClickListener(R.id.iv_cancel, R.id.btn_confirm);
         }
@@ -131,13 +127,13 @@ public final class BottomCustomDialog {
             return this;
         }
 
-        public Builder setTipsVisibility(CharSequence text){
+        public Builder setTipsVisibility(CharSequence text) {
             mTips.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
             mTips.setText(text);
             return this;
         }
 
-        public Builder setTitle(CharSequence text){
+        public Builder setTitle(CharSequence text) {
             mTitle.setText(text);
             return this;
         }
@@ -160,13 +156,13 @@ public final class BottomCustomDialog {
             if (v == mConfirmView) {
                 if (mListener != null) {
                     if (mListener != null) {
-                        mListener.onSelected(getDialog(), tempPos, mAdapter.getItem(tempPos));
+                        mListener.onSelected(getDialog(), tempPos, mAdapter.getItem(tempPos == -1 ? 0 : tempPos));
                     }
                 }
             }
         }
 
-        private int tempPos = 0;
+        private int tempPos = -1;
 
         /**
          * {@link BaseAdapter.OnItemClickListener}
@@ -177,7 +173,7 @@ public final class BottomCustomDialog {
                 dismiss();
             }
 
-            for (Custom selectedItem : mData) {
+            for (CustomStaff selectedItem : mData) {
                 selectedItem.setSelected(false);
             }
             mData.get(position).setSelected(true);
@@ -186,7 +182,7 @@ public final class BottomCustomDialog {
         }
     }
 
-    private static final class MenuAdapter extends MyAdapter<Custom> {
+    private static final class MenuAdapter extends MyAdapter<CustomStaff> {
 
         private MenuAdapter(Context context) {
             super(context);
@@ -210,6 +206,7 @@ public final class BottomCustomDialog {
             @Override
             public void onBindView(int position) {
                 mTextView.setText(getItem(position).getName());
+                mTextView.setHint(getItem(position).getStid());
                 if (getItem(position).isSelected()) {
                     mTextView.setBackgroundResource(R.drawable.selector_selected);
                     mTextView.setTextColor(getResources().getColor(R.color.colorPrimary));

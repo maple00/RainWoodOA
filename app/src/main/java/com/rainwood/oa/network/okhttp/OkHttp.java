@@ -1,15 +1,22 @@
 package com.rainwood.oa.network.okhttp;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.rainwood.oa.base.BaseApplication;
-import com.rainwood.oa.network.json.JsonEscape;
 import com.rainwood.oa.network.json.JsonParser;
+import com.rainwood.oa.network.sqlite.SQLiteHelper;
+import com.rainwood.oa.network.utils.Null;
+import com.rainwood.oa.network.utils.Number;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +44,12 @@ import okhttp3.RequestBody;
  */
 public class OkHttp {
 
+    public static String TAG = "Cache";
+
+    /**
+     * 是否缓存数据
+     */
+    public static boolean cache;
     /**
      * Http异步请求数据处理
      */
@@ -63,7 +76,7 @@ public class OkHttp {
     }
 
     /**
-     * 清内存
+     * 青内存
      */
     public static void destroy() {
         if (httpHandler != null) {
@@ -79,52 +92,54 @@ public class OkHttp {
      * @param params
      */
     public static void get(final String url, final RequestParams params, final OnHttpListener listener) {
-        if (BaseApplication.app.isDetermineNetwork() && !NetworkUtils.isAvailable(BaseApplication.app)) {
-            sendNoNetworkMessage(url, params, listener);
+        if (checkCache(url, params, listener)) {
             return;
         }
-        executorService.execute(() -> {
-            OkHttpClient okHttpClient = buildOkHttpClient(params);
-            String getUrl = "";
-            StringBuffer requestUrl = new StringBuffer();
-            requestUrl.append(url);
-            requestUrl.append("?");
-            if (params != null && params.getStringParams() != null) {
-                Map<String, String> stringParams = params.getStringParams();
-                for (String key : stringParams.keySet()) {
-                    String value = stringParams.get(key);
-                    requestUrl.append(key);
-                    requestUrl.append("=");
-                    requestUrl.append(value);
-                    requestUrl.append("&");
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                okhttp3.OkHttpClient okHttpClient = buildOkHttpClient(params);
+                String getUrl = "";
+                StringBuffer requestUrl = new StringBuffer();
+                requestUrl.append(url);
+                requestUrl.append("?");
+                if (params != null && params.getStringParams() != null) {
+                    Map<String, String> stringParams = params.getStringParams();
+                    for (String key : stringParams.keySet()) {
+                        String value = stringParams.get(key);
+                        requestUrl.append(key);
+                        requestUrl.append("=");
+                        requestUrl.append(value);
+                        requestUrl.append("&");
+                    }
+                    getUrl = requestUrl.toString().substring(0, requestUrl.lastIndexOf("&"));
                 }
-                getUrl = requestUrl.toString().substring(0, requestUrl.lastIndexOf("&"));
-            }
-            //创建一个请求
-            Request.Builder requestBuilder = new Request.Builder();
-            String agent = params.getOptionParams().get(RequestParams.USER_AGENT);
-            requestBuilder.addHeader("User-Agent", TextUtils.isEmpty(agent) ? "Android" : agent);
-            requestBuilder.addHeader("Connection", "close");
-            //添加头文件
-            if (params != null && params.getHeaderParams() != null) {
-                Map<String, String> headerParams = params.getHeaderParams();
-                for (String key : headerParams.keySet()) {
-                    String value = headerParams.get(key);
-                    requestBuilder.addHeader(key, value);
+                //创建一个请求
+                Request.Builder requestBuilder = new Request.Builder();
+                String agent = params.getOptionParams().get(RequestParams.USER_AGENT);
+                requestBuilder.addHeader("User-Agent", TextUtils.isEmpty(agent) ? "Android" : agent);
+                requestBuilder.addHeader("Connection", "close");
+                //添加头文件
+                if (params != null && params.getHeaderParams() != null) {
+                    Map<String, String> headerParams = params.getHeaderParams();
+                    for (String key : headerParams.keySet()) {
+                        String value = headerParams.get(key);
+                        requestBuilder.addHeader(key, value);
+                    }
                 }
+                requestBuilder.url(getUrl);
+                //如果没有网络就使用缓存
+                if (!NetworkUtils.isAvailable(BaseApplication.app)) {
+                    requestBuilder.cacheControl(CacheControl.FORCE_CACHE);
+                } else {
+                    requestBuilder.cacheControl(CacheControl.FORCE_NETWORK);
+                }
+                String tag = params.getOptionParams().get(RequestParams.REQUEST_TAG);
+                Request request = requestBuilder.tag(TextUtils.isEmpty(tag) ? url : tag).build();
+                //请求加入调度
+                okhttp3.Call call = okHttpClient.newCall(request);
+                call.enqueue(new OnOkHttpListener(httpHandler, params, url, listener));
             }
-            requestBuilder.url(getUrl);
-            //如果没有网络就使用缓存
-            if (!NetworkUtils.isAvailable(BaseApplication.app)) {
-                requestBuilder.cacheControl(CacheControl.FORCE_CACHE);
-            } else {
-                requestBuilder.cacheControl(CacheControl.FORCE_NETWORK);
-            }
-            String tag = params.getOptionParams().get(RequestParams.REQUEST_TAG);
-            Request request = requestBuilder.tag(TextUtils.isEmpty(tag) ? url : tag).build();
-            //请求加入调度
-            okhttp3.Call call = okHttpClient.newCall(request);
-            call.enqueue(new OnOkHttpListener(httpHandler, params, url, listener));
         });
 
     }
@@ -132,12 +147,11 @@ public class OkHttp {
     /**
      * Post请求方式
      *
-     * @param url
-     * @param params
+     * @param url    地址
+     * @param params 参数
      */
     public static void post(final String url, final RequestParams params, final OnHttpListener listener) {
-        if (BaseApplication.app.isDetermineNetwork() && !NetworkUtils.isAvailable(BaseApplication.app)) {
-            sendNoNetworkMessage(url, params, listener);
+        if (checkCache(url, params, listener)) {
             return;
         }
         executorService.execute(new Runnable() {
@@ -195,7 +209,41 @@ public class OkHttp {
                 }
             }
         });
+    }
 
+    /**
+     * 检查缓存
+     *
+     * @param url      地址
+     * @param params   参数
+     * @param listener 回调
+     * @return
+     */
+    protected static boolean checkCache(final String url, final RequestParams params, final OnHttpListener listener) {
+        if (!isCache() && !NetworkUtils.isAvailable(BaseApplication.app)) {
+            sendNoNetworkMessage(url, params, listener);
+            return false;
+        }
+        if (isCache() && !NetworkUtils.isAvailable(BaseApplication.app)) {
+            List<HttpCacheBody> cacheBodies = queryCache(url, params.getStringParams() == null ? "" : params.getStringParams().toString());
+            if (ListUtils.getSize(cacheBodies) != 0) {
+                HttpCacheBody cacheBody = cacheBodies.get(0);
+                HttpResponse response = new HttpResponse();
+                response.setCache(true);
+                response.url(url);
+                response.body(cacheBody.getBody());
+                response.code(Number.formatInt(cacheBody.getCode()));
+                response.requestParams(params);
+                response.exception(new Exception(cacheBody.getException()));
+                if (Number.formatInt(cacheBody.getCode()) == 200) {
+                    httpHandler.sendSuccessfulMsg(params, url, response.code(), response.body(), listener);
+                } else {
+                    httpHandler.sendExceptionMsg(params, url, response.code(), new IOException(Constants.HTTP_MSG_RESPONSE_FAILED + response.code()), listener);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -212,7 +260,13 @@ public class OkHttp {
         }
         OkHttpClient okHttpClient = buildOkHttpClient(params);
         MediaType mediaType = params.getOptionParams().get(RequestParams.REQUEST_CONTENT_TYPE).equals(RequestParams.REQUEST_CONTENT_JSON) ? MediaType.parse("application/json; charset=utf-8") : MediaType.parse("application/octet-stream; charset=utf-8");
-        String stringParams = JsonEscape.escape(JsonParser.parseMap(params.getStringParams()));
+        String stringParams;
+        String jsonContent = params.getStringBody();
+        if (Null.isNull(jsonContent)) {
+            stringParams = JsonEscape.escape(JsonParser.parseMap(params.getStringParams()));
+        } else {
+            stringParams = JsonEscape.escape(jsonContent);
+        }
         RequestBody body = RequestBody.create(mediaType, stringParams);
         Request.Builder requestBuilder = new Request.Builder();
         //添加Header
@@ -286,7 +340,7 @@ public class OkHttp {
      *
      * @param okBuilder
      */
-    private static void setHttpsSetting(okhttp3.OkHttpClient.Builder okBuilder) {
+    public static void setHttpsSetting(okhttp3.OkHttpClient.Builder okBuilder) {
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
                     @Override
@@ -322,6 +376,72 @@ public class OkHttp {
                 return true;
             }
         });
+    }
+
+
+    /**
+     * 是否缓存
+     *
+     * @return
+     */
+    public static boolean isCache() {
+        return cache;
+    }
+
+    /**
+     * 设置缓存标识
+     *
+     * @param isCache
+     */
+    public static void setCache(boolean isCache) {
+        OkHttp.cache = isCache;
+    }
+
+    /**
+     * 插入缓存
+     *
+     * @param body
+     */
+    public static void insertCache(HttpCacheBody body) {
+        List<HttpCacheBody> bodies = queryCache(body.getUrl(), body.getParams());
+        int cacheSize = ListUtils.getSize(bodies);
+        Log.i(TAG, "->insertCache cacheSize:" + cacheSize + ",url:" + body.getUrl());
+        if (cacheSize == 0) {
+            SQLiteHelper.with(BaseApplication.app).insert(body);
+        } else {
+            updateCache(body);
+        }
+    }
+
+    /**
+     * 更新缓存
+     *
+     * @param body
+     */
+    public static void updateCache(HttpCacheBody body) {
+        Log.i(TAG, "->updateCache " + "url:" + body.getUrl());
+        SQLiteHelper.with(BaseApplication.app).update(body, " url=? and params=? ", new String[]{body.getUrl(), body.getParams()});
+    }
+
+    /**
+     * 获取缓存
+     *
+     * @param url    服务器地址
+     * @param params 参数
+     * @return
+     */
+    public static List<HttpCacheBody> queryCache(String url, String params) {
+        List<HttpCacheBody> items = SQLiteHelper.with(BaseApplication.app).query(HttpCacheBody.class, "select * from " + HttpCacheBody.class.getSimpleName() + " where params = \'" + params + "\' and url = \'" + url + "\'");
+        Log.i(TAG, "->queryCache size:" + ListUtils.getSize(items) + ",url:" + url);
+        return items;
+    }
+
+    /**
+     * 清除缓存
+     */
+    public static void deleteCache() {
+        Log.i(TAG, "->deleteCache");
+        SQLiteHelper.with(BaseApplication.app).deleteTable(HttpCacheBody.class.getSimpleName());
     }
 
 }

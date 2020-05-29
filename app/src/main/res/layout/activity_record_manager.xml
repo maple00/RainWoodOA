@@ -6,9 +6,10 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_title_bar_none_menu" />
+    <include layout="@layout/include_title_bar" />
 
     <LinearLayout
+        android:id="@+id/ll_top_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="18dp"
@@ -46,9 +47,15 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_record_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_record_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

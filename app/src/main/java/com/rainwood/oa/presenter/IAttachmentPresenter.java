@@ -6,7 +6,7 @@ import com.rainwood.oa.view.IAttachmentCallbacks;
 /**
  * @Author: sxs
  * @Time: 2020/5/16 19:11
- * @Desc: 客户附件
+ * @Desc: 附件
  */
 public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallbacks> {
 
@@ -14,4 +14,10 @@ public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallback
      * 获取客户附件数据
      */
     void getAttachmentData();
+
+    /**
+     * 通过客户id查询客户附件
+     * @param customId 客户id
+     */
+    void requestCustomAttachData(String customId);
 }

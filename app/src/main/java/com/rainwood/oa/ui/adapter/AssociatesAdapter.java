@@ -13,11 +13,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.Associates;
-import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
 
@@ -29,10 +27,21 @@ import java.util.List;
  **/
 public final class AssociatesAdapter extends BaseAdapter {
 
-    private List<Associates> mList;
+    private List<CustomValues> mList;
 
-    public void setList(List<Associates> list) {
+    private String managerId;
+
+    /**
+     * 控制不能删除自己直属上级
+     * @param managerId
+     */
+    public void setManagerId(String managerId) {
+        this.managerId = managerId;
+    }
+
+    public void setList(List<CustomValues> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -41,7 +50,7 @@ public final class AssociatesAdapter extends BaseAdapter {
     }
 
     @Override
-    public Associates getItem(int position) {
+    public CustomValues getItem(int position) {
         return mList.get(position);
     }
 
@@ -62,22 +71,19 @@ public final class AssociatesAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(getItem(position).getHeadSrc())
-                .error(R.drawable.bg_monkey_king)
-                .placeholder(R.drawable.bg_monkey_king)
+        Glide.with(convertView).load(getItem(position).getIco())
+                .error(R.drawable.ic_default_head)
+                .placeholder(R.drawable.ic_default_head)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
         holder.name.setText(TextUtils.isEmpty(getItem(position).getName()) ? "" : getItem(position).getName());
-        holder.departPost.setText(getItem(position).getDepart() + "-" + getItem(position).getPost());
+        holder.departPost.setText(getItem(position).getJob());
+        holder.delete.setVisibility(managerId.equals(mList.get(position).getId()) ? View.GONE : View.VISIBLE);
+
         // 点击删除事件
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @SingleClick
-            @Override
-            public void onClick(View v) {
-                LogUtils.d("sxs", "删除了协作人: " + getItem(position).getName());
-                mList.remove(position);
-                notifyDataSetChanged();
-            }
+        holder.delete.setOnClickListener(v -> {
+            mAssociatesListener.onItemDelete(getItem(position), position);
+            notifyDataSetChanged();
         });
         return convertView;
     }
@@ -91,5 +97,20 @@ public final class AssociatesAdapter extends BaseAdapter {
         private TextView departPost;
         @ViewInject(R.id.iv_clear)
         private ImageView delete;
+    }
+
+    public interface OnItemAssociatesListener {
+        /**
+         * 删除协作人
+         *
+         * @param associates
+         */
+        void onItemDelete(CustomValues associates, int position);
+    }
+
+    private OnItemAssociatesListener mAssociatesListener;
+
+    public void setAssociatesListener(OnItemAssociatesListener associatesListener) {
+        mAssociatesListener = associatesListener;
     }
 }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <TextView
+        android:id="@+id/tv_punish_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/orange15"
+        android:lineSpacingExtra="9dp"
+        android:paddingStart="15dp"
+        android:paddingTop="11dp"
+        android:paddingEnd="13dp"
+        android:paddingBottom="11dp"
+        android:text="员工因为违反公司制度，行政人员可以在此做出罚款。操作过程不可逆，请谨慎操作。"
+        android:textColor="@color/orange20"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_choose_staff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/colorMiddle"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.rainwood.tools.wheel.view.ClearEditText
+            android:id="@+id/cet_choose_staff"
+            style="@style/EditTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:hint="@string/text_choose_please" />
+
+        <ImageView
+            android:id="@+id/iv_choose_staff"
+            android:layout_width="10dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_right_arrow" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_punish_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
+
+    <com.rainwood.tools.wheel.view.ClearEditText
+        android:id="@+id/cet_punish_money"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:hint="@string/custom_input_please" />
+
+    <TextView
+        android:id="@+id/tv_punish_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
+
+    <com.rainwood.tools.wheel.view.ClearEditText
+        android:id="@+id/cet_punish_reason"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:hint="@string/custom_input_please" />
+
+
+    <Button
+        android:id="@+id/btn_confirm"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/common_confirm" />
+
+</LinearLayout>

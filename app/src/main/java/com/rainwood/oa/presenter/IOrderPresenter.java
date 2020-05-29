@@ -20,4 +20,9 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
      * 请求所有订单的统计信息
      */
     void requestOrderData();
+
+    /**
+     * 请求客户下的订单列表
+     */
+    void requestCustomOrderList(String customId);
 }

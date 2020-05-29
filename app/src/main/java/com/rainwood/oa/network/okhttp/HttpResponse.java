@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class HttpResponse implements Serializable {
 
+    private boolean isCache;
     //返回的数据
     private String body;
     //请求地址
@@ -20,6 +21,14 @@ public class HttpResponse implements Serializable {
     private Exception exception;
     //回调接口
     private OnHttpListener httpListener;
+
+    public boolean isCache() {
+        return isCache;
+    }
+
+    public void setCache(boolean cache) {
+        isCache = cache;
+    }
 
     public String body() {
         return body;
@@ -67,17 +76,5 @@ public class HttpResponse implements Serializable {
 
     public void code(int code) {
         this.code = code;
-    }
-
-    @Override
-    public String toString() {
-        return "HttpResponse{" +
-                "body='" + body + '\'' +
-                ", url='" + url + '\'' +
-                ", code=" + code +
-                ", requestParams=" + requestParams +
-                ", exception=" + exception +
-                ", httpListener=" + httpListener +
-                '}';
     }
 }

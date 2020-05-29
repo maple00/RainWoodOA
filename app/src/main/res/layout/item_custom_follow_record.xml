@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_item_follow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="15dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="15dp">
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:button="@drawable/selector_checkbox"
+        android:gravity="start|top" />
+
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/cb_checked"
+        android:ellipsize="end"
+        android:lineSpacingExtra="12dp"
+        android:maxLines="4"
+        android:text="UI设计完成，客户今天确认"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_name_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="21dp"
+        android:layout_toEndOf="@+id/cb_checked"
+        android:text="韩梅梅  2020.04.10 13:37"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/tv_name_time" />
+
+</RelativeLayout>

@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingTop="26dp"
     android:paddingStart="15dp"
+    android:paddingTop="26dp"
     android:paddingEnd="15dp"
     android:paddingBottom="25dp">
 
@@ -25,11 +25,12 @@
             android:textSize="13sp" />
 
         <TextView
-            android:id="@+id/tv_item_name"
+            android:id="@+id/tv_company_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="30dp"
             android:layout_toStartOf="@+id/tv_status"
+            android:layout_alignParentStart="true"
             android:text="重庆佰仕合达企业佰仕合达企业营销策划有限公司"
             android:textColor="@color/fontColor"
             android:textSize="17sp"
@@ -48,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             rw:icon="@drawable/ic_custom_head"
-            rw:text="李雷" />
+            rw:text="负责人" />
 
         <com.rainwood.oa.ui.widget.GroupIconText
             android:id="@+id/git_origin"
@@ -56,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             rw:icon="@drawable/ic_custom_origin"
-            rw:text="官网" />
+            rw:text="协作人" />
 
     </LinearLayout>
 
@@ -72,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             rw:icon="@drawable/ic_custom_trade"
-            rw:text="汽车制造业" />
+            rw:text="联系人" />
 
         <com.rainwood.oa.ui.widget.GroupIconText
             android:id="@+id/git_budget"
@@ -80,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             rw:icon="@drawable/ic_custom_budget"
-            rw:text="预算" />
+            rw:text="联系人电话" />
 
     </LinearLayout>
 
@@ -89,7 +90,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="需要一套制造业ERP软件需要一套制造业ERP软件"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="这是一个需求：需要一套制造业ERP软件需要一套aaa制造业ERP软件"
         android:textColor="@color/labelColor"
         android:textSize="13sp" />
 

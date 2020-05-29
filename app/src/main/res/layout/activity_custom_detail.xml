@@ -34,14 +34,13 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/bg_monkey_king" />
+                    android:src="@drawable/ic_custom_detail_company" />
 
                 <TextView
                     android:id="@+id/tv_company_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
-                    android:text="重庆正南齐北科技有限公司"
                     android:textColor="@color/fontColor"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -94,7 +93,7 @@
                     android:layout_height="45dp"
                     android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/bg_monkey_king" />
+                    android:src="@drawable/ic_default_head" />
 
                 <TextView
                     android:id="@+id/tv_employees_name"
@@ -102,7 +101,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@+id/iv_employees"
-                    android:text="韩梅梅"
                     android:textColor="@color/fontColor"
                     android:textSize="16sp" />
 
@@ -114,7 +112,6 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@+id/iv_employees"
-                    android:text="市场部-销售顾问"
                     android:textColor="@color/labelColor"
                     android:textSize="12sp" />
 
@@ -217,7 +214,7 @@
                         android:layout_height="45dp"
                         android:layout_centerVertical="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/bg_monkey_king" />
+                        android:src="@drawable/ic_default_head" />
 
                     <TextView
                         android:id="@+id/tv_references_name"
@@ -225,7 +222,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_toEndOf="@+id/iv_references"
-                        android:text="李雷"
                         android:textColor="@color/fontColor"
                         android:textSize="16sp" />
 
@@ -237,7 +233,6 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_toEndOf="@+id/iv_references"
-                        android:text="技术部-Android工程师"
                         android:textColor="@color/labelColor"
                         android:textSize="12sp" />
 
@@ -263,7 +258,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="15dp"
-                    android:text="协作人"
+                    android:text="@string/text_custom_associates"
                     android:textColor="@color/fontColor"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -297,6 +292,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:gravity="center_horizontal"
                 android:text="暂无协作人"
                 android:textColor="@color/labelColor"
@@ -349,6 +345,17 @@
             </RelativeLayout>
 
             <View style="@style/HorizontalLineStyle" />
+
+            <TextView
+                android:id="@+id/tv_none_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:text="暂无联系人"
+                android:textColor="@color/labelColor"
+                android:textSize="13sp"
+                android:visibility="gone"/>
 
             <com.rainwood.oa.ui.widget.MeasureListView
                 android:id="@+id/mlv_contact_list"

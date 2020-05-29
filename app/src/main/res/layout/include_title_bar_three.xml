@@ -51,7 +51,8 @@
         android:layout_toStartOf="@+id/iv_menu"
         android:gravity="center_vertical"
         android:textColor="@color/fontColor"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/iv_plus"

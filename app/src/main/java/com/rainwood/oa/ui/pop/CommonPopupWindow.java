@@ -10,6 +10,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import com.rainwood.oa.utils.LogUtils;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/18 15:27
@@ -194,7 +196,6 @@ public class CommonPopupWindow extends PopupWindow {
                 popupWindow.setHeight(height);
             }
         }
-
 
         /**
          * 设置背景灰色程度

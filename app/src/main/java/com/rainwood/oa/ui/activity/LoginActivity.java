@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.activity;
 
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,10 +12,15 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ILoginAboutCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.permission.OnPermission;
+import com.rainwood.tools.permission.Permission;
+import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.aop.SingleClick;
 import com.sxs.verification.CheckUtil;
 import com.sxs.verification.VerificationView;
+
+import java.util.List;
 
 /**
  * @Author: a797s
@@ -62,7 +66,6 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     @Override
     protected void initData() {
         initVerification();
-
     }
 
     /**
@@ -80,7 +83,6 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
         account.setOnFocusChangeListener((v, hasFocus) -> accountBG.setImageResource(hasFocus ? R.drawable.ic_account_focus : R.drawable.ic_account));
         password.setOnFocusChangeListener(((v, hasFocus) -> passwordBG.setImageResource(hasFocus ? R.drawable.ic_password_focus : R.drawable.ic_password)));
         verification.setOnFocusChangeListener((v, hasFocus) -> verificationBG.setImageResource(hasFocus ? R.drawable.ic_verification_focus : R.drawable.ic_verification));
-
     }
 
     @Override
@@ -99,8 +101,9 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                 break;
             case R.id.btn_login:
                 // 登录
-                startActivity(HomeActivity.class);
-                /*if (TextUtils.isEmpty(account.getText())) {
+                account.setText("邵雪松");
+                password.setText("ds1124+0929");
+               /* if (TextUtils.isEmpty(account.getText())) {
                     toast("请输入用户名");
                     return;
                 }
@@ -116,7 +119,31 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                     toast("请核对验证码");
                     return;
                 }*/
-                // mLoginAboutPresenter.Login(account.getText().toString().trim(), password.getText().toString().trim());
+                XXPermissions.with(this)
+                        // 可设置被拒绝后继续申请，直到用户授权或者永久拒绝
+                        .constantRequest()
+                        .permission(Permission.Group.STORAGE)    // 读写权限
+                        .request(new OnPermission() {
+                            @Override
+                            public void hasPermission(List<String> granted, boolean isAll) {
+                                if (isAll) {
+                                    startActivity(HomeActivity.class);
+                                    // mLoginAboutPresenter.Login(account.getText().toString().trim(),
+                                    // password.getText().toString().trim());
+                                }
+                            }
+
+                            @Override
+                            public void noPermission(List<String> denied, boolean quick) {
+                                if (quick) {
+                                    toast("被永久拒绝授权，请手动授予权限");
+                                    //如果是被永久拒绝就跳转到应用权限系统设置页面
+                                    XXPermissions.gotoPermissionSettings(getActivity());
+                                } else {
+                                    toast("获取权限失败");
+                                }
+                            }
+                        });
                 break;
             case R.id.tv_forget_password:
                 //toast("忘记密码");
@@ -127,7 +154,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
 
     @Override
     public void Login() {
-        // 登录之后的参数
+        // 登录之后的参数 -- 默认得id：pyj7y98y9juq
         startActivity(HomeActivity.class);
     }
 

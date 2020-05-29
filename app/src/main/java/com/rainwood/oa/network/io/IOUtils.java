@@ -35,8 +35,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.os.Environment.DIRECTORY_DOCUMENTS;
-
 /**
  * Created by Relin
  * on 2017/4/7.
@@ -80,7 +78,7 @@ public class IOUtils {
      * @return
      */
     public static String getSDCardPath() {
-        File file = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS);
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Documents");
         if (!file.exists()) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         }

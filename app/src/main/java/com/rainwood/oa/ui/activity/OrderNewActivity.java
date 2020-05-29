@@ -19,7 +19,7 @@ import com.rainwood.tools.wheel.aop.SingleClick;
  */
 public final class OrderNewActivity extends BaseActivity {
     // actionBar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -51,10 +51,10 @@ public final class OrderNewActivity extends BaseActivity {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setPaddingSmart(this, pageTop);
         pageTitle.setText(title);
-        setRequiredValue(customNameTV, ">客户名称</font>");
-        setRequiredValue(orderNameTV, ">订单名称</font>");
-        setRequiredValue(moneyTV, ">合同金额</font>");
-        setRequiredValue(noteTV, ">备注</font>");
+        setRequiredValue(customNameTV, "客户名称");
+        setRequiredValue(orderNameTV, "订单名称");
+        setRequiredValue(moneyTV, "合同金额");
+        setRequiredValue(noteTV, "备注");
 
     }
 

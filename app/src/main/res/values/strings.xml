@@ -105,5 +105,25 @@
     <string name="text_work_experience">工作经历</string>
     <string name="text_leaving_reason">离职原因</string>
     <string name="text_common_time">时间</string>
+    <string name="record_apply_man">申请人</string>
+    <string name="record_overtime_obj">加班对象</string>
+    <string name="record_pre_time">预计加班时间</string>
+    <string name="record_overtime_reason">加班事由</string>
+    <string name="text_common_reject">驳回</string>
+    <string name="text_common_through">通过</string>
+    <string name="text_common_close">关闭</string>
+    <string name="text_common_draft">草稿</string>
+    <string name="text_passed">已通过</string>
+    <string name="text_common_reject_to">驳回到</string>
+    <string name="text_record_depart_post">部门职位</string>
+    <string name="text_record_leave_time">请假时间</string>
+    <string name="text_record_leave_type">请假类型</string>
+    <string name="text_record_leave_content">请假事由</string>
+    <string name="text_record_out_obj">外出对象</string>
+    <string name="text_record_pre_out_time">预计外出时间</string>
+    <string name="text_record_out_reason">外出事由</string>
+    <string name="text_record_reissue_time">补卡时间</string>
+    <string name="text_record_reissue_reason">补卡事由</string>
+    <string name="text_custom_associates">协作人</string>
 
 </resources>

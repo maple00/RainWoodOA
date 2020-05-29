@@ -8,9 +8,62 @@ package com.rainwood.oa.utils;
 public final class Constants {
 
     /**
-     * 网络请求失败
+     * 后台请求BaseURL
+     */
+    // public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp";
+    public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
+
+
+    /**
+     * 无网络-What
+     */
+    public static final int WHAT_MSG_NET_OFFLINE = 0xa2;
+
+    /**
+     * 请求失败-What
+     */
+    public static final int WHAT_MSG_RESPONSE_FAILED = 0xa3;
+
+    /**
+     * 授权-请求码
+     */
+    public static final int REQUEST_CODE_PERMISSIONS = 0xa4;
+
+    /**
+     * Handler-消息Key
+     */
+    public static final String MSG_KEY = "0x1";
+
+    /**
+     * Handler-消息Code
+     */
+    public static final String MSG_CODE = "0x2";
+
+    /**
+     * 无网络的提示
+     */
+    public static final String EXCEPTION_MSG_NET_OFFLINE = "连网失败";
+
+    /**
+     * 请求失败的提示
+     */
+    public static final String EXCEPTION_MSG_RESPONSE_FAILED = "请求失败";
+
+    /**
+     * 请求失败的提示
+     */
+    public static final String EXCEPTION_MSG_REQUEST_TIMEOUT = "请求超时";
+
+    /**
+     * 没有网络
+     */
+    public static final String HTTP_MSG_NET_OFFLINE = "Network connection failed,please check the mobile network.";
+
+    /**
+     * 请求失败
      */
     public static final String HTTP_MSG_RESPONSE_FAILED = "The request data failed and the response code is not 200,code = ";
+
 
     /**
      * activity、fragment 之间相互跳转请求码
@@ -19,6 +72,11 @@ public final class Constants {
     public static final int MANAGER_FRAGMENT_RESULT_SIZE = 0x102;
     public static final int BLOCK_FRAGMENT_RESULT_SIZE = 0x103;
     public static final int MINE_FRAGMENT_RESULT_SIZE = 0x104;
+
+    /**
+     * 需求填写请求码
+     */
+    public static final int CUSTOM_DEMAND_WRITE_SIZE = 0x1001;
 
     /**
      * IMEI
@@ -45,13 +103,8 @@ public final class Constants {
     public static final String INDEX = "index";
 
     /**
-     * 后台请求BaseURL
+     * 当前选中的客户
      */
-    public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp";
-
-
-    //home pager fragment bundle key.
-    public static final String KEY_STAFF_ACCOUNT_TITLE = "key_home_pager_title";
-    public static final String KEY_STAFF_ACCOUNT_TYPE_ID = "key_home_pager_material_id";
+    public static String CUSTOM_ID;
 
 }

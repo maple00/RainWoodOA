@@ -1,7 +1,9 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.Attachment;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,5 +17,10 @@ public interface IAttachmentCallbacks extends IBaseCallback {
      * 获取所有的附件数据
      * @param attachMap
      */
-    void getAllAttachment(Map attachMap);
+    default void getAllAttachment(Map attachMap){};
+
+    /**
+     * 客户下的附件
+     */
+    default void getCustomAttachments(List<Attachment> attachmentList){};
 }

@@ -13,62 +13,99 @@ public final class Custom implements Serializable {
     /**
      * 客户id
      */
-    private String id;
+    private String khid;
 
     /**
      * 客户负责人名字
      */
-    private String name;
+    private String staff;
+
+    /**
+     * 协作人
+     */
+    private String edit;
 
     /**
      * 客户公司名称
      */
-    private String company;
+    private String companyName;
 
     /**
      * 签约状态
      */
-    private String status;
+    private String workFlow;
 
     /**
-     * 客户来源
+     * 联系人
      */
-    private String origin;
+    private String contactName;
 
     /**
-     * 客户所属行业
+     * 联系人电话
      */
-    private String trade;
-
-    /**
-     * 客户预算
-     */
-    private int budget;
+    private String contactTel;
 
     /**
      * 客户需求大概描述
      */
-    private String demand;
+    private String text;
+
+    /**
+     * 创建时间
+     */
+    private String time;
 
     /**
      * 选中
      */
     private boolean selected;
 
-    public String getId() {
-        return id;
+    public String getTime() {
+        return time;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public String getName() {
-        return name;
+    public String getContactName() {
+        return contactName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactTel() {
+        return contactTel;
+    }
+
+    public void setContactTel(String contactTel) {
+        this.contactTel = contactTel;
+    }
+
+    public String getEdit() {
+        return edit;
+    }
+
+    public void setEdit(String edit) {
+        this.edit = edit;
+    }
+
+    public String getKhid() {
+        return khid;
+    }
+
+    public void setKhid(String khid) {
+        this.khid = khid;
+    }
+
+    public String getStaff() {
+        return staff;
+    }
+
+    public void setStaff(String staff) {
+        this.staff = staff;
     }
 
     public boolean isSelected() {
@@ -79,65 +116,42 @@ public final class Custom implements Serializable {
         this.selected = selected;
     }
 
-    public String getCompany() {
-        return company;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public String getStatus() {
-        return status;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
     }
 
-    public String getOrigin() {
-        return origin;
+    public String getText() {
+        return text;
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public String getTrade() {
-        return trade;
-    }
-
-    public void setTrade(String trade) {
-        this.trade = trade;
-    }
-
-    public int getBudget() {
-        return budget;
-    }
-
-    public void setBudget(int budget) {
-        this.budget = budget;
-    }
-
-    public String getDemand() {
-        return demand;
-    }
-
-    public void setDemand(String demand) {
-        this.demand = demand;
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
     public String toString() {
         return "Custom{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", company='" + company + '\'' +
-                ", status='" + status + '\'' +
-                ", origin='" + origin + '\'' +
-                ", trade='" + trade + '\'' +
-                ", budget=" + budget +
-                ", demand='" + demand + '\'' +
+                "khid='" + khid + '\'' +
+                ", staff='" + staff + '\'' +
+                ", edit='" + edit + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", workFlow='" + workFlow + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", contactTel='" + contactTel + '\'' +
+                ", text='" + text + '\'' +
+                ", time='" + time + '\'' +
                 ", selected=" + selected +
                 '}';
     }

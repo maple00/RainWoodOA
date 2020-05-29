@@ -27,23 +27,32 @@ public class OnOkHttpListener implements Callback {
         this.httpHandler = httpHandler;
     }
 
-
     @Override
-    public void onFailure(okhttp3.Call call, IOException e) {
+    public void onFailure(Call call, IOException e) {
         httpHandler.sendExceptionMsg(params, url, -1, e, listener);
     }
 
     @Override
-    public void onResponse(Call call, Response response) throws IOException {
-        if (!response.isSuccessful()) {
-            httpHandler.sendExceptionMsg(params, url, response.code(), new IOException(Constants.HTTP_MSG_RESPONSE_FAILED + response.code()), listener);
-            return;
-        }
+    public void onResponse(Call call, Response response) {
         try {
-            httpHandler.sendSuccessfulMsg(params, url, response.code(), response.body().string(), listener);
+            String bod = response.body().string();
+            //添加缓存
+            if (OkHttp.isCache()) {
+                HttpCacheBody cacheBody = new HttpCacheBody();
+                cacheBody.setUrl(url);
+                cacheBody.setCode(response.code() + "");
+                cacheBody.setBody(bod);
+                cacheBody.setException(!response.isSuccessful() ? new IOException(Constants.HTTP_MSG_RESPONSE_FAILED + response.code()).toString() : "");
+                cacheBody.setParams(params == null || params.getStringParams() == null ? "" : params.getStringParams().toString());
+                OkHttp.insertCache(cacheBody);
+            }
+            if (!response.isSuccessful()) {
+                httpHandler.sendExceptionMsg(params, url, response.code(), new IOException(Constants.HTTP_MSG_RESPONSE_FAILED + response.code()), listener);
+                return;
+            }
+            httpHandler.sendSuccessfulMsg(params, url, response.code(), bod, listener);
         } catch (IOException e) {
             e.printStackTrace();
-            httpHandler.sendExceptionMsg(params, url, response.code(), e, listener);
         }
     }
 }

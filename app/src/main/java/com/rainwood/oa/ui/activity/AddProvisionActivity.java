@@ -46,7 +46,7 @@ public final class AddProvisionActivity extends BaseActivity {
         pageRightTitle.setText(getString(R.string.common_confirm));
 
         showSoftInputFromWindow(provisionMoney);
-        setRequiredValue(feeDescTV, ">费用说明</font>");
+        setRequiredValue(feeDescTV, "费用说明");
     }
 
     @Override

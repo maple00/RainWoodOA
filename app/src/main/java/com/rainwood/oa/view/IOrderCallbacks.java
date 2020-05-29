@@ -1,7 +1,10 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomOrder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,4 +29,9 @@ public interface IOrderCallbacks extends IBaseCallback {
      */
     default void getAllOrderPage(Map orderListData) {
     }
+
+    /**
+     * 获取客户下的订单列表
+     */
+    default void getCustomOrderList(List<CustomOrder> customOrderList){};
 }

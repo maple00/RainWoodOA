@@ -1,10 +1,24 @@
 package com.rainwood.oa.presenter.impl;
 
+import android.text.TextUtils;
+
+import com.rainwood.oa.model.domain.CustomOrder;
+import com.rainwood.oa.model.domain.CustomOrderValues;
 import com.rainwood.oa.model.domain.Examination;
+import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.Order;
 import com.rainwood.oa.model.domain.OrderStatics;
+import com.rainwood.oa.network.json.JsonParser;
+import com.rainwood.oa.network.okhttp.HttpResponse;
+import com.rainwood.oa.network.okhttp.OkHttp;
+import com.rainwood.oa.network.okhttp.OnHttpListener;
+import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IOrderPresenter;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IOrderCallbacks;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +30,7 @@ import java.util.Map;
  * @Date: 2020/5/19 16:52
  * @Desc: 订单逻辑类
  */
-public final class OrderImpl implements IOrderPresenter {
+public final class OrderImpl implements IOrderPresenter, OnHttpListener {
 
     private IOrderCallbacks mOrderEditCallbacks;
 
@@ -67,7 +81,7 @@ public final class OrderImpl implements IOrderPresenter {
                 OrderStatics statics = new OrderStatics();
                 statics.setTitle(staticsTitle);
                 statics.setValues("￥7669646.86");
-                if ("已回款".equals(staticsTitle)){
+                if ("已回款".equals(staticsTitle)) {
                     statics.setValues(null);
                 }
                 natureList.add(statics);
@@ -82,6 +96,14 @@ public final class OrderImpl implements IOrderPresenter {
     }
 
     @Override
+    public void requestCustomOrderList(String customId) {
+        // 请求客户下的订单列表
+        RequestParams params = new RequestParams();
+        params.add("khid", customId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=orderLi", params, this);
+    }
+
+    @Override
     public void registerViewCallback(IOrderCallbacks callback) {
         mOrderEditCallbacks = callback;
     }
@@ -89,5 +111,130 @@ public final class OrderImpl implements IOrderPresenter {
     @Override
     public void unregisterViewCallback(IOrderCallbacks callback) {
         mOrderEditCallbacks = null;
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    /**
+     * response
+     *
+     * @param result response succeed information
+     *               success : response flag
+     */
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        LogUtils.d("sxs", "result ---- " + result.body());
+        if (!(result.code() == 200)) {
+            mOrderEditCallbacks.onError();
+            return;
+        }
+        try {
+            String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+            if (!"success".equals(warn)) {
+                mOrderEditCallbacks.onError(warn);
+                return;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (result.url().contains("cla=client&fun=orderLi")) {
+            // 订单列表
+            try {
+                List<CustomOrderValues> customOrderValuesList = JsonParser.parseJSONArray(CustomOrderValues.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("order"));
+                // 处理数据 --- 对订单中的空置进行判断，为空则不显示
+                // CustomOrderValues -- 与CustomOrder 一一对应
+                List<CustomOrder> customOrderList = new ArrayList<>();
+                for (CustomOrderValues values : customOrderValuesList) {
+                    CustomOrder customOrder = new CustomOrder();
+                    customOrder.setId(values.getId());
+                    customOrder.setWorkFlow(values.getWorkFlow());
+                    customOrder.setName(values.getName());
+                    customOrder.setMoney(values.getMoney());
+                    customOrder.setSignDay(values.getSignDay());
+                    customOrder.setEndDay(values.getEndDay());
+                    customOrder.setCycle(values.getCycle());
+                    // 处理空数据
+                    List<FontAndFont> valuesList = new ArrayList<>();
+                    if (!TextUtils.isEmpty(values.getCost())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("费用计提");
+                        value.setDesc("￥" + values.getCost());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getNetWorth())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("合同净值");
+                        value.setDesc("￥" + values.getNetWorth());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getReceivable())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("合同应收");
+                        value.setDesc("￥" + values.getReceivable());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getNetWorthWait())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("剩余净值");
+                        value.setDesc("￥" + values.getNetWorthWait());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getRatio())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("拨付比例");
+                        value.setDesc(values.getRatio() + "%");
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getBuyCarAllotMoney())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("预计奖金");
+                        value.setDesc("￥" + values.getBuyCarAllotMoney());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getBuyCarAllotPay())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("已拨付");
+                        value.setDesc("￥" + values.getBuyCarAllotPay());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getBuyCarAllotSurplus())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("奖金余额");
+                        value.setDesc("￥" + values.getNetWorthWait());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getMoneyIn())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("已回款");
+                        value.setDesc("￥" + values.getMoneyIn());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getMoneyOut())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("已付费用");
+                        value.setDesc("￥" + values.getMoneyOut());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(values.getNetWorthIn())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("净回款");
+                        value.setDesc("￥" + values.getNetWorthIn());
+                        valuesList.add(value);
+                    }
+                    customOrder.setValueList(valuesList);
+                    customOrderList.add(customOrder);
+                }
+
+
+                mOrderEditCallbacks.getCustomOrderList(customOrderList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

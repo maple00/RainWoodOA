@@ -1,5 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -7,6 +9,7 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -58,8 +61,13 @@ public final class DemandWriteActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_page_right_title:
-                // 保存
-                toast("保存了");
+                if (TextUtils.isEmpty(demandContent.getText())){
+                    toast("请填写需求");
+                    return;
+                }
+                Intent demandIntent = new Intent();
+                demandIntent.putExtra("demand", demandContent.getText().toString().trim());
+                setResult(Constants.CUSTOM_DEMAND_WRITE_SIZE, demandIntent);
                 finish();
                 break;
         }

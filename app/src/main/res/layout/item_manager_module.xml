@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/iv_module_img"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_temp_module" />
 

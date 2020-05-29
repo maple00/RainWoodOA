@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:background="@drawable/shape_white_top_8dp"
+    android:orientation="vertical"
+    tools:ignore="RelativeOverlap,ContentDescription">
+
+    <RelativeLayout
+        android:id="@+id/rl_depart_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp">
+
+        <TextView
+            android:id="@+id/tv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/text_common_close"
+            android:textColor="@color/fontColor"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/text_common_reject"
+            android:textColor="@color/fontColor"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/shape_commit_bg"
+            android:paddingStart="17dp"
+            android:paddingTop="9dp"
+            android:paddingEnd="17dp"
+            android:paddingBottom="9dp"
+            android:text="@string/text_commit"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <!-- 驳回到的位置（默认为草稿）-->
+    <LinearLayout
+        android:id="@+id/ll_reject_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_common_reject_to"
+            android:textColor="@color/colorMiddle"
+            android:textSize="15sp" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_draft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:background="@null"
+            android:button="@drawable/selector_checkbox"
+            android:checked="true" />
+
+        <TextView
+            android:id="@+id/tv_draft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:text="@string/text_common_draft"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_passed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:background="@null"
+            android:button="@drawable/selector_checkbox" />
+
+        <TextView
+            android:id="@+id/tv_passed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:text="@string/text_passed"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <com.rainwood.tools.wheel.view.ClearEditText
+        android:id="@+id/cet_reject_reason"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="start"
+        android:hint="请填写驳回原因"
+        android:minLines="3" />
+
+</LinearLayout>

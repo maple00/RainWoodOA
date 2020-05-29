@@ -31,7 +31,7 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
         // 手机厂商-手机型号-系统版本
         params.add("deviceName", SystemUtil.getDeviceBrand() + SystemUtil.getSystemModel() + SystemUtil.getSystemVersion());
         params.add("deviceID", Constants.IMEI);
-        OkHttp.post(Constants.BASE_URL + "/app.php?cla=login", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=login", params, this);
     }
 
     @Override
@@ -54,6 +54,5 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
         LogUtils.d("sxs", result.body());
         mLoginAboutCallback.Login();
     }
-
 
 }

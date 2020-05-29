@@ -1,6 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
@@ -14,18 +15,27 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
-import com.rainwood.oa.presenter.IContactPresenter;
+import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AttachAdapter;
 import com.rainwood.oa.ui.adapter.ContactListAdapter;
+import com.rainwood.oa.utils.ClipboardUtil;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
+import com.rainwood.oa.utils.PhoneCallUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IAttachmentCallbacks;
-import com.rainwood.oa.view.IContactCallbacks;
+import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.permission.OnPermission;
+import com.rainwood.tools.permission.Permission;
+import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
@@ -38,7 +48,7 @@ import java.util.Map;
  * @Description : 共用module
  * @Usage : 联系人列表、客户附件
  **/
-public final class CommonActivity extends BaseActivity implements IContactCallbacks, IAttachmentCallbacks {
+public final class CommonActivity extends BaseActivity implements ICustomCallbacks, IAttachmentCallbacks {
 
     // actionBar
     @ViewInject(R.id.rl_title_top)
@@ -66,13 +76,14 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
 
     // 联系人adapter
     private ContactListAdapter mContactListAdapter;
-    private IContactPresenter mContactPresenter;
+    private ICustomPresenter mCustomPresenter;
     private List<Contact> mContactList;
     private boolean selectedAll = false;        // 设置全选，默认不全选
     // 附件adapter
     private AttachAdapter mAttachAdapter;
     private IAttachmentPresenter mAttachmentPresenter;
     private List<Attachment> mAttachmentList;
+    private String mCustomId;
 
     @Override
     protected int getLayoutResId() {
@@ -108,14 +119,26 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
     }
 
     @Override
+    protected void initData() {
+        switch (title){
+            case "联系人":
+                mCustomId = getIntent().getStringExtra("customId");
+                break;
+            case "客户附件":
+                mCustomId = Constants.CUSTOM_ID;
+                break;
+        }
+    }
+
+    @Override
     protected void loadData() {
         // 请求数据
         switch (title) {
             case "联系人":
-                mContactPresenter.getAllContact();
+                mCustomPresenter.requestContactListByCustomId(mCustomId);
                 break;
             case "客户附件":
-                mAttachmentPresenter.getAttachmentData();
+                mAttachmentPresenter.requestCustomAttachData(mCustomId);
                 break;
         }
     }
@@ -123,8 +146,8 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
     @Override
     protected void initPresenter() {
         // 联系人
-        mContactPresenter = PresenterManager.getOurInstance().getIContactPresenter();
-        mContactPresenter.registerViewCallback(this);
+        mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
+        mCustomPresenter.registerViewCallback(this);
         // 客户附件
         mAttachmentPresenter = PresenterManager.getOurInstance().getAttachmentPresenter();
         mAttachmentPresenter.registerViewCallback(this);
@@ -166,7 +189,7 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
                         }
                         mContactListAdapter.setList(mContactList);
                         mContactListAdapter.setCheckShow(selectedAll);
-                        mContactListAdapter.notifyDataSetChanged();
+                        //mContactListAdapter.notifyDataSetChanged();
                         break;
                     case "客户附件":
                         for (Attachment attachment : mAttachmentList) {
@@ -213,16 +236,18 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
     /**
      * 获取所有的联系人
      *
-     * @param contactData
+     * @param contactList 联系人列表
      */
-    @SuppressWarnings("all")
+    @SuppressLint("SetTextI18n")
     @Override
-    public void getAllContact(Map<String, List> contactData) {
-        mContactList = contactData.get("contact");
-        emptyPage.setVisibility(ListUtils.getSize(mContactList) == 0 ? View.VISIBLE : View.GONE);
+    public void getCustomContactList(List<Contact> contactList) {
+        mContactList = contactList;
+        // 空页面
+        emptyPage.setVisibility(ListUtils.getSize(contactList) == 0 ? View.VISIBLE : View.GONE);
+        pageRightTitle.setVisibility(ListUtils.getSize(contactList) != 0 ? View.VISIBLE : View.GONE);
         // 设置数据
-        LogUtils.d("sxs", "联系人数据:" + mContactList);
-        mContactListAdapter.setList(mContactList);
+        //LogUtils.d("sxs", "联系人数据:" + contactList);
+        mContactListAdapter.setList(contactList);
         // 选中回调
         mContactListAdapter.setOnClickSelected(new ContactListAdapter.OnClickSelected() {
             @Override
@@ -232,24 +257,47 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
                     selectedAllCB.setChecked(false);
                 }
                 selectedNum.setText("全选(" + (selectedAllCB.isChecked()
-                        ? selectedCount : selectedCount - ListUtils.getSize(mContactList)) + ")");
+                        ? selectedCount : selectedCount - ListUtils.getSize(contactList)) + ")");
+            }
+
+            @Override
+            public void copyWxNum2Board(String content) {
+                ClipboardUtil.clipFormat2Board(CommonActivity.this, "wxNum", content);
+                toast("已复制");
+            }
+
+            @Override
+            public void copyQQNum2Board(String content) {
+                ClipboardUtil.clipFormat2Board(CommonActivity.this, "QqNum", content);
+                toast("已复制");
+            }
+
+            @Override
+            public void playPhone(String tel) {
+                PhoneCallUtil.callPhoneDump(CommonActivity.this, tel);
+            }
+
+            @Override
+            public void editContactData(Contact contact) {
+                // 编辑 AddContactActivity
+                PageJumpUtil.contact2Edit(CommonActivity.this, AddContactActivity.class, contact, mCustomId);
             }
         });
     }
 
     /**
-     * 获取所有的客户附件
-     *
-     * @param attachMap
+     * 客户附件列表
+     * @param attachmentList 附件列表
      */
-    @SuppressWarnings("all")
+    @SuppressLint("SetTextI18n")
     @Override
-    public void getAllAttachment(Map attachMap) {
-        mAttachmentList = (List<Attachment>) attachMap.get("attachment");
-        emptyPage.setVisibility(ListUtils.getSize(mAttachmentList) == 0 ? View.VISIBLE : View.GONE);
-        LogUtils.d("sxs", "所有客户附件========= " + mAttachmentList);
+    public void getCustomAttachments(List<Attachment> attachmentList) {
+        mAttachmentList = attachmentList;
+        emptyPage.setVisibility(ListUtils.getSize(attachmentList) == 0 ? View.VISIBLE : View.GONE);
+        pageRightTitle.setVisibility(ListUtils.getSize(attachmentList) != 0 ? View.VISIBLE : View.GONE);
+        LogUtils.d("sxs", "所有客户附件========= " + attachmentList);
         // 设置适配器数据源
-        mAttachAdapter.setList(mAttachmentList);
+        mAttachAdapter.setList(attachmentList);
         mAttachAdapter.setClickCheckBox(new AttachAdapter.OnClickCheckBox() {
             @Override
             public void onSelectedSwitch(boolean status, int position, int selectedCount) {
@@ -258,7 +306,20 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
                     selectedAllCB.setChecked(false);
                 }
                 selectedNum.setText("全选(" + (selectedAllCB.isChecked()
-                        ? selectedCount : selectedCount - ListUtils.getSize(mAttachmentList)) + ")");
+                        ? selectedCount : selectedCount - ListUtils.getSize(attachmentList)) + ")");
+            }
+
+            @Override
+            public void fileDownload(Attachment attachment, int position) {
+
+                FileManagerUtil.fileDownload(CommonActivity.this, TbsActivity.class, attachment.getSrc(),
+                        attachment.getName(), attachment.getFormat());
+            }
+
+            @Override
+            public void filePreview(Attachment attachment, int position) {
+                FileManagerUtil.filePreview(CommonActivity.this, TbsActivity.class, attachment.getSrc(),
+                        attachment.getName(), attachment.getFormat());
             }
         });
     }
@@ -280,8 +341,8 @@ public final class CommonActivity extends BaseActivity implements IContactCallba
 
     @Override
     protected void release() {
-        if (mContactPresenter != null) {
-            mContactPresenter.unregisterViewCallback(this);
+        if (mCustomPresenter != null) {
+            mCustomPresenter.unregisterViewCallback(this);
         }
     }
 

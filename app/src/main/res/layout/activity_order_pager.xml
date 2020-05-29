@@ -5,8 +5,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/include_search_click_view"/>
+    <include layout="@layout/include_search_click_view"/>
 
     <View style="@style/HorizontalLineStyle" />
 

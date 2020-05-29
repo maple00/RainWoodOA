@@ -67,10 +67,17 @@
         style="@style/HorizontalLineStyle" />
 
     <!-- 客户列表-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_custom_list"
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/assistColor10" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_custom_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/assistColor10" />
+
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 
 </LinearLayout>

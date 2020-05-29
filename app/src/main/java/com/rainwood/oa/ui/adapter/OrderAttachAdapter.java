@@ -57,8 +57,8 @@ public final class OrderAttachAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.attachName.setText(TextUtils.isEmpty(getItem(position).getAttachmentName()) ? "" : getItem(position).getAttachmentName());
-        holder.nameTime.setText((TextUtils.isEmpty(getItem(position).getCustomName()) ? "" : getItem(position).getCustomName()) +
+        holder.attachName.setText(TextUtils.isEmpty(getItem(position).getName()) ? "" : getItem(position).getName());
+        holder.nameTime.setText((TextUtils.isEmpty(getItem(position).getStaffName()) ? "" : getItem(position).getStaffName()) +
                 (TextUtils.isEmpty(getItem(position).getTime()) ? "" : getItem(position).getTime()));
         // 点击事件
         holder.wasteClear.setOnClickListener(v -> mClickWasteClear.onClickClear(position));

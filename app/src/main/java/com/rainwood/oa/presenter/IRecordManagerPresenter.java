@@ -13,7 +13,7 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 请求加班记录
      */
-    void requestOvertimeRecord();
+    void requestOvertimeRecord(String customId);
 
     /**
      * 请求请假记录
@@ -23,10 +23,15 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 请求外出记录
      */
-    void requestGoOutRecord();
+    void requestGoOutRecord(String customId);
 
     /**
      * 请求补卡记录
      */
     void requestReissueRecord();
+
+    /**
+     * 请求客户的跟进记录
+     */
+    void requestCustomFollowRecords(String customId);
 }

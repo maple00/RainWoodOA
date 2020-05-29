@@ -1,26 +1,28 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/25 19:56
  * @Desc: 加班记录
  */
-public final class OvertimeRecord {
+public final class OvertimeRecord implements Serializable {
 
     /**
      * 加班申请人
      */
-    private String name;
+    private String staffName;
 
     /**
      * 记录状态
      */
-    private String status;
+    private String workFlow;
 
     /**
      * 加班预计时间
      */
-    private String preTime;
+    private String time;
 
     /**
      * 加班类型
@@ -30,30 +32,30 @@ public final class OvertimeRecord {
     /**
      * 加班内容
      */
-    private String content;
+    private String text;
 
-    public String getName() {
-        return name;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
-    public String getStatus() {
-        return status;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
     }
 
-    public String getPreTime() {
-        return preTime;
+    public String getTime() {
+        return time;
     }
 
-    public void setPreTime(String preTime) {
-        this.preTime = preTime;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getType() {
@@ -64,11 +66,11 @@ public final class OvertimeRecord {
         this.type = type;
     }
 
-    public String getContent() {
-        return content;
+    public String getText() {
+        return text;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setText(String text) {
+        this.text = text;
     }
 }

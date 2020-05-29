@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -29,6 +31,20 @@ public final class CustomListAdapter extends RecyclerView.Adapter<CustomListAdap
 
     public void setList(List<Custom> list) {
         mList = list;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加
+     *
+     * @param loadList
+     */
+    public void addData(List<Custom> loadList) {
+        //添加之前拿到原来的size
+        int olderSize = ListUtils.getSize(mList);
+        mList.addAll(loadList);
+        // 局部更新
+        notifyItemChanged(olderSize, ListUtils.getSize(loadList));
     }
 
     @NonNull
@@ -40,14 +56,17 @@ public final class CustomListAdapter extends RecyclerView.Adapter<CustomListAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.status.setText(mList.get(position).getStatus());
-        holder.itemName.setText(mList.get(position).getCompany());
+        holder.companyName.setText(mList.get(position).getCompanyName());
+        holder.status.setText(TextUtils.isEmpty(mList.get(position).getWorkFlow()) ? "" : mList.get(position).getWorkFlow());
         // 负责人 -- 自定义组合控件
-        holder.customHead.setValue(mList.get(position).getName());
-        holder.customOrigin.setValue(mList.get(position).getOrigin());
-        holder.customTrade.setValue(mList.get(position).getTrade());
-        holder.customBudget.setValue(R.drawable.ic_money_logo + "" + mList.get(position).getBudget());
-        holder.demand.setText(mList.get(position).getDemand());
+        holder.customHead.setValue(TextUtils.isEmpty(mList.get(position).getStaff()) ? "暂无负责人" : mList.get(position).getStaff());
+        // 协作人
+        holder.customOrigin.setValue(TextUtils.isEmpty(mList.get(position).getEdit()) ? "暂无协作人" : mList.get(position).getEdit());
+        // 联系人
+        holder.customTrade.setValue(TextUtils.isEmpty(mList.get(position).getContactName()) ? "暂无联系人" : mList.get(position).getContactName());
+        // 联系人电话
+        holder.customBudget.setValue(TextUtils.isEmpty(mList.get(position).getContactTel()) ? "暂无联系人电话" : mList.get(position).getContactTel());
+        holder.demand.setText(TextUtils.isEmpty(mList.get(position).getText()) ? "暂无需求" : mList.get(position).getText());
         // 点击事件，-- 查看客户详情
         holder.customItem.setOnClickListener(v -> mItemClickListener.onItemClick(mList.get(position)));
     }
@@ -63,8 +82,8 @@ public final class CustomListAdapter extends RecyclerView.Adapter<CustomListAdap
         private LinearLayout customItem;
         @ViewInject(R.id.tv_status)
         private TextView status;
-        @ViewInject(R.id.tv_item_name)
-        private TextView itemName;
+        @ViewInject(R.id.tv_company_name)
+        private TextView companyName;
         @ViewInject(R.id.git_custom_head)
         private GroupIconText customHead;
         @ViewInject(R.id.git_origin)

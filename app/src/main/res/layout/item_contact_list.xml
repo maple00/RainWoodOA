@@ -102,7 +102,7 @@
         android:id="@+id/rl_special_plane"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp">
+        android:layout_marginBottom="16dp">
 
         <TextView
             android:id="@+id/tv_special_plane"

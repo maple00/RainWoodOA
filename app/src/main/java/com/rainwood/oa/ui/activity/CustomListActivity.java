@@ -1,24 +1,34 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.SelectedItem;
-import com.rainwood.oa.presenter.ICustomListPresenter;
+import com.rainwood.oa.presenter.ICustomPresenter;
+import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.CustomListAdapter;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.ICustomListCallbacks;
+import com.rainwood.oa.utils.TransactionUtil;
+import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -33,7 +43,7 @@ import java.util.Map;
  * @Date: 2020/5/18 11:31
  * @Desc: 客户列表
  */
-public final class CustomListActivity extends BaseActivity implements ICustomListCallbacks, CustomListAdapter.OnItemClickListener {
+public final class CustomListActivity extends BaseActivity implements ICustomCallbacks, CustomListAdapter.OnItemClickListener {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -55,6 +65,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
     private View divider;
     @ViewInject(R.id.rv_custom_list)
     private RecyclerView customView;
+    @ViewInject(R.id.trl_pager_refresh)
+    private TwinklingRefreshLayout pagerRefresh;
 
     // 选中标记
     private boolean selectedStatusFlag = false;
@@ -64,7 +76,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
 
     private CustomListAdapter mCustomAdapter;
 
-    private ICustomListPresenter mCustomListPresenter;
+    private ICustomPresenter mCustomListPresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -83,6 +95,23 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
         mCustomAdapter = new CustomListAdapter();
         // 设置适配器
         customView.setAdapter(mCustomAdapter);
+        // 设置刷新属性
+        pagerRefresh.setEnableRefresh(false);
+        pagerRefresh.setEnableLoadmore(true);
+    }
+
+    @Override
+    protected void initPresenter() {
+        mCustomListPresenter = PresenterManager.getOurInstance().getCustomPresenter();
+        mCustomListPresenter.registerViewCallback(this);
+    }
+
+    private int pageCount = 0;
+
+    @Override
+    protected void loadData() {
+        // 从这里请求数据 -------- 默认从第一页开始加载
+        mCustomListPresenter.getALlCustomData(pageCount);
     }
 
     @Override
@@ -92,6 +121,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
             selectedStatusFlag = !selectedStatusFlag;
             mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedStatusFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
+            LogUtils.d("sxs", "选中状态---- " + selectedStatusFlag);
             // TODO: 查询状态
             if (selectedStatusFlag)
                 mCustomListPresenter.getStatus();
@@ -117,6 +147,16 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
 
         // 查看详情
         mCustomAdapter.setItemClickListener(this);
+
+        // 去加载更多的内容
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                if (mCustomListPresenter != null) {
+                    mCustomListPresenter.getALlCustomData(++pageCount);
+                }
+            }
+        });
     }
 
     @SingleClick
@@ -129,56 +169,105 @@ public final class CustomListActivity extends BaseActivity implements ICustomLis
         }
     }
 
-    @Override
-    protected void initPresenter() {
-        mCustomListPresenter = PresenterManager.getOurInstance().getCustomListPresenter();
-        mCustomListPresenter.registerViewCallback(this);
-    }
-
-    @Override
-    protected void loadData() {
-        // 从这里请求数据
-        mCustomListPresenter.getALlCustomData();
-    }
-
     @SuppressWarnings("all")
     @Override
-    public void getAllCustomList(Map customListValues) {
-        // 拿到返回数据
-        List<Custom> customList = (List<Custom>) customListValues.get("customList");
-        // LogUtils.d("sxs", "客户列表数据" + customList);
+    public void getAllCustomList(List customList) {
+        // 拿到客户列表
         // 设置数据
-        mCustomAdapter.setList(customList);
+        if (pageCount != 0) {
+            if (pagerRefresh != null) {
+                pagerRefresh.finishLoadmore();
+            }
+            toast("加载了" + ListUtils.getSize(customList) + "条数据");
+            mCustomAdapter.addData(customList);
+        } else {
+            mCustomAdapter.setList(customList);
+        }
     }
+
+    private View mMaskLayer;
 
     @SuppressWarnings("all")
     @Override
     public void getALlStatus(Map statusMap) {
         // 获取到状态信息
         List<SelectedItem> selectedItems = (List<SelectedItem>) statusMap.get("selectedItem");
-        toast("状态--> " + selectedItems);
-        LogUtils.d("sxs", "状态-----> " + statusMap);
         // TODO: widget popwindow
-    }
+        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_grid_list)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener(new CommonPopupWindow.ViewInterface() {
+                    @Override
+                    public void getChildView(View view, int layoutResId) {
+                        MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                        contentList.setNumColumns(4);
+                        CommonGridAdapter gridAdapter = new CommonGridAdapter();
+                        contentList.setAdapter(gridAdapter);
+                        gridAdapter.setTextList(selectedItems);
 
+                        mMaskLayer = view.findViewById(R.id.mask_layer);
+                        TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                    }
+                })
+                .create();
+        mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mStatusPopWindow.dismiss();
+                selectedStatusFlag = false;
+                mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            }
+        });
+        mStatusPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                mStatusPopWindow.dismiss();
+                if (!mStatusPopWindow.isShowing()) {
+                    selectedStatusFlag = false;
+                    mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                            selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                }
+            }
+        });
+    }
 
     @Override
     public void onError() {
+        if (pagerRefresh != null) {
+            pagerRefresh.finishLoadmore();
+        }
+    }
 
+    @Override
+    public void onError(String tips) {
+        toast(tips);
+        if (pagerRefresh != null) {
+            pagerRefresh.finishLoadmore();
+        }
     }
 
     @Override
     public void onLoading() {
-
+        // toast("");
+        if (pagerRefresh != null) {
+            pagerRefresh.finishLoadmore();
+        }
     }
 
     @Override
     public void onEmpty() {
-
+        toast("没有更多的数据了");
+        if (pagerRefresh != null) {
+            pagerRefresh.finishLoadmore();
+        }
     }
 
     @Override
     public void onItemClick(Custom custom) {
         PageJumpUtil.listJump2CustomDetail(this, CustomDetailActivity.class, custom);
     }
+
 }

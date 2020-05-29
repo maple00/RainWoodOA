@@ -28,6 +28,7 @@ public final class ContactAdapter extends BaseAdapter {
 
     public void setList(List<Contact> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -57,14 +58,14 @@ public final class ContactAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.name.setText(getItem(position).getName());
-        holder.post.setText(getItem(position).getPost());
-        holder.phoneNum.setText(getItem(position).getTelNum());
+        holder.post.setText(getItem(position).getPosition());
+        holder.phoneNum.setText(getItem(position).getTel());
         // 点击拨打电话
         holder.playPhone.setOnClickListener(new View.OnClickListener() {
             @SingleClick
             @Override
             public void onClick(View v) {
-                LogUtils.d("sxs", "拨打电话里了：" + getItem(position).getTelNum());
+                LogUtils.d("sxs", "拨打电话里了：" + getItem(position).getTel());
             }
         });
         return convertView;

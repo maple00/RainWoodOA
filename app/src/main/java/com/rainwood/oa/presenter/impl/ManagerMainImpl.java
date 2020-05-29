@@ -19,7 +19,7 @@ import java.util.List;
 public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
 
     private IManagerCallbacks mCallback;
-    private String[] data = {"行政人事", "财务管理", "客户管理", "系统设置"};
+    private String[] data = {"行政人事", "财务管理", "客户管理", "知识管理", "系统设置"};
     // 行政人事
     private String[] personals = {"角色管理", "部门管理", "职位管理", "员工管理", "工作日", "通讯录", "管理制度", "加班记录",
             "请假记录", "外出记录", "考勤记录", "补卡记录", "行政处罚"};
@@ -27,8 +27,10 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
     private String[] financialManager = {"收支平衡", "费用报销", "开票记录", "团队基金"};
     // 客户管理
     private String[] customManager = {"新建客户", "介绍客户", "客户列表", "新建订单", "订单列表", "沟通技巧"};
+    // 知识管理
+    private String[] knowledgeManager = {"办公文件", "附件管理", "跟进记录"};
     // 系统设置
-    private String[] systemSetting = {"系统日志", "办公文件", "帮助中心", "跟进记录"};
+    private String[] systemSetting = {"系统日志", "帮助中心"};
 
     @Override
     public void getManagerData() {
@@ -75,7 +77,17 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     }
                     managerMain.setIconAndFontList(customList);
                     break;
-                case 3:     // 系统设置
+                case 3:     // 知识管理
+                    List<IconAndFont> knowledgeList = new ArrayList<>();
+                    for (String knowledge : knowledgeManager) {
+                        IconAndFont andFont = new IconAndFont();
+                        andFont.setDesc(knowledge);
+                        andFont.setLocalMipmap(R.mipmap.ic_temp_module);
+                        knowledgeList.add(andFont);
+                    }
+                    managerMain.setIconAndFontList(knowledgeList);
+                    break;
+                case 4:     // 系统设置
                     List<IconAndFont> systemList = new ArrayList<>();
                     for (String system : systemSetting) {
                         IconAndFont andFont = new IconAndFont();
@@ -111,4 +123,5 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
     public void onHttpSucceed(HttpResponse result) {
 
     }
+
 }

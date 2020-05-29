@@ -1,10 +1,13 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +21,7 @@ import com.rainwood.oa.ui.adapter.OrderListAdapter;
 import com.rainwood.oa.ui.adapter.OrderStaticsAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureListView;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -46,6 +50,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @ViewInject(R.id.tv_search)
     private TextView searchTV;
     // content
+    @ViewInject(R.id.cl_order_list_parent)
+    private CoordinatorLayout orderListParent;
     @ViewInject(R.id.iv_show_hide)
     private ImageView showHideView;
     @ViewInject(R.id.mlv_statics_order)
@@ -53,13 +59,14 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @ViewInject(R.id.gti_status)
     private GroupTextIcon orderStatus;
     @ViewInject(R.id.gti_staff)
-    private GroupTextIcon departstaff;
+    private GroupTextIcon departStaff;
     @ViewInject(R.id.gti_sorting)
     private GroupTextIcon sorting;
     @ViewInject(R.id.rv_order)
     private RecyclerView orderView;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+
     // 收起或展开-- 默认收起
     private boolean isShowHide = false;
 
@@ -85,6 +92,9 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
+        /*
+         *订单列表
+         */
         searchContent.setOnFocusChangeListener((v, hasFocus) -> searchTV.setText(hasFocus
                 ? getString(R.string.text_common_search) : getString(R.string.custom_text_manager)));
         // 布局管理器
@@ -116,9 +126,9 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             }
         });
         // 部门员工
-        departstaff.setOnItemClick(text -> {
+        departStaff.setOnItemClick(text -> {
             selectedDepartFlag = !selectedDepartFlag;
-            departstaff.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+            departStaff.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedDepartFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
             // TODO: 查询状态
             if (selectedDepartFlag) {
@@ -135,9 +145,16 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
 
             }
         });
+
         /*
-        recyclerView 滑动优化
+        滑动优化
          */
+        orderListParent.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            @Override
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+
+            }
+        });
 
     }
 

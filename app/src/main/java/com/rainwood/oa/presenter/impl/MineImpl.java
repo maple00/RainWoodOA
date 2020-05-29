@@ -2,12 +2,10 @@ package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.IconAndFont;
-import com.rainwood.oa.model.domain.TempAppMine;
 import com.rainwood.oa.model.domain.TempMineAccount;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.presenter.IMinePresenter;
-import com.rainwood.oa.utils.AppCacheManager;
 import com.rainwood.oa.view.IMineCallbacks;
 
 import java.util.ArrayList;
@@ -73,5 +71,4 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     public void onHttpSucceed(HttpResponse result) {
 
     }
-
 }

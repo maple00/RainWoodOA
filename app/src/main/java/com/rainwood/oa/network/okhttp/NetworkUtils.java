@@ -97,7 +97,6 @@ public class NetworkUtils {
 
     /**
      * 判断GPS是否开启，
-     *
      * @param context
      * @return true 表示开启
      */
@@ -108,7 +107,7 @@ public class NetworkUtils {
         // 通过WLAN或移动网络(3G/2G)确定的位置（也称作AGPS，辅助GPS定位。主要用于在室内或遮盖物（建筑群或茂密的深林等）密集的地方定位）
         boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         //GPS或者AGPS开启一个就认为是开启的
-        if (gps || network) {
+        if (gps||network) {
             return true;
         }
         if (gps) {
@@ -140,18 +139,18 @@ public class NetworkUtils {
         gpsIntent.setData(Uri.parse("custom:3"));
         try {
             PendingIntent.getBroadcast(context, 0, gpsIntent, 0).send();
-        } catch (PendingIntent.CanceledException e) {
+        }
+        catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
     }
 
     /**
      * Wifi开关
-     *
      * @param context
      * @param enabled
      */
-    public static void toggleWiFi(Context context, boolean enabled) {
+    public  static void toggleWiFi(Context context, boolean enabled) {
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wm.setWifiEnabled(enabled);
     }

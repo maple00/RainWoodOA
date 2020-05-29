@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.oa.base.BaseApplication;
 
 /**
  * Created by Relin
@@ -25,7 +25,7 @@ public class HttpHandler extends Handler {
         super.handleMessage(msg);
         HttpResponse httpResult = (HttpResponse) msg.obj;
         OnHttpListener listener = httpResult.listener();
-        //printDebugLog(httpResult);
+        printDebugLog(httpResult);
         switch (msg.what) {
             case WHAT_ON_FAILURE:
                 if (listener != null && httpResult != null && httpResult.body() != null) {
@@ -35,7 +35,6 @@ public class HttpHandler extends Handler {
             case WHAT_ON_SUCCEED:
                 if (listener != null && httpResult != null && httpResult.body() != null) {
                     listener.onHttpSucceed(httpResult);
-                    Log.d("sxs-api-interface", DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ALL_TIME));
                 }
                 break;
         }
@@ -83,6 +82,66 @@ public class HttpHandler extends Handler {
         msg.what = HttpHandler.WHAT_ON_SUCCEED;
         msg.obj = response;
         sendMessage(msg);
+    }
+
+    /**
+     * 打印调试日志
+     *
+     * @param httpResult
+     */
+    private void printDebugLog(HttpResponse httpResult) {
+        if (BaseApplication.app.isDebug()) {
+            StringBuffer logBuffer = new StringBuffer("Program interface debug mode");
+            logBuffer.append("\n");
+            logBuffer.append("┌──────────────────────────────────────");
+            logBuffer.append("\n");
+            logBuffer.append("│" + httpResult.url());
+            logBuffer.append("\n");
+            logBuffer.append("├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄");
+            StringBuffer paramsBuffer = new StringBuffer("");
+            if (httpResult.requestParams().getHeaderParams() != null) {
+                for (String key : httpResult.requestParams().getHeaderParams().keySet()) {
+                    paramsBuffer.append("│\"" + key + "\":" + "\"" + httpResult.requestParams().getHeaderParams().get(key) + "\"");
+                    paramsBuffer.append("\n");
+                }
+            }
+            if (httpResult.requestParams().getStringParams() != null) {
+                for (String key : httpResult.requestParams().getStringParams().keySet()) {
+                    paramsBuffer.append("│\"" + key + "\":" + "\"" + httpResult.requestParams().getStringParams().get(key) + "\"");
+                    paramsBuffer.append("\n");
+                }
+            }
+            if (httpResult.requestParams().getStringBody() != null) {
+                paramsBuffer.append(httpResult.requestParams().getStringBody());
+                paramsBuffer.append(",");
+                paramsBuffer.append("│\"" + httpResult.requestParams().getStringBody() + "\"");
+                paramsBuffer.append("\n");
+            }
+            if (httpResult.requestParams().getFileParams() != null) {
+                for (String key : httpResult.requestParams().getFileParams().keySet()) {
+                    paramsBuffer.append("│\"" + key + "\":" + "\"" + httpResult.requestParams().getFileParams().get(key).getAbsolutePath() + "\"");
+                    paramsBuffer.append("\n");
+                }
+            }
+            if (paramsBuffer.toString().length() != 0) {
+                logBuffer.append("\n");
+                logBuffer.append(paramsBuffer);
+                logBuffer.append("├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄");
+            }
+            if (httpResult != null) {
+                logBuffer.append("\n");
+                logBuffer.append("│\"" + "code:" + "\"" + httpResult.code() + "\"");
+                logBuffer.append("\n");
+                if (httpResult.exception() != null) {
+                    logBuffer.append("│  \"" + "exception:" + "\"" + httpResult.exception() + "\"");
+                    logBuffer.append("\n");
+                }
+            }
+            logBuffer.append("│\"" + "body:" + httpResult.body());
+            logBuffer.append("\n");
+            logBuffer.append("└──────────────────────────────────────");
+            Log.i("AkHttp", logBuffer.toString());
+        }
     }
 
 }

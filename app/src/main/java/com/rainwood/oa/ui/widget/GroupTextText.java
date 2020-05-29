@@ -43,13 +43,22 @@ public final class GroupTextText extends LinearLayout {
         ViewBind.inject(this, view);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.GroupTextText);
-        String valueStr = typedArray.getString(R.styleable.GroupTextText_values);
-        if (!TextUtils.isEmpty(valueStr)) {
-            values.setText(valueStr);
+
+        int titleColor = typedArray.getColor(R.styleable.GroupTextText_title_color, context.getColor(R.color.labelColor));
+        if (titleColor != -1) {
+            titleTV.setTextColor(titleColor);
         }
         String title = typedArray.getString(R.styleable.GroupTextText_title);
         if (!TextUtils.isEmpty(title)) {
             titleTV.setText(title);
+        }
+        int valueColor = typedArray.getColor(R.styleable.GroupTextText_value_color, context.getColor(R.color.fontColor));
+        if (valueColor != -1) {
+            values.setTextColor(valueColor);
+        }
+        String valueStr = typedArray.getString(R.styleable.GroupTextText_values);
+        if (!TextUtils.isEmpty(valueStr)) {
+            values.setText(valueStr);
         }
         // 回收
         typedArray.recycle();

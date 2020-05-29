@@ -27,12 +27,12 @@ public final class ContactImpl implements IContactPresenter {
         for (int i = 0; i < 3; i++) {
             Contact contact = new Contact();
             contact.setName("伊泽瑞尔");
-            contact.setPost("极限冒险家");
-            contact.setTelNum("135 1525 0074");
-            contact.setSpecialPlane("400 0000 0000");
-            contact.setWxNum("chen0074");
-            contact.setQqNum("1175039036");
-            contact.setNote("肖主管专门负责和乙方公司的对接，上午9点到晚上11点都可以随时联系，每周五下午例会时间不能及时回复。");
+            contact.setPosition("极限冒险家");
+            contact.setTel("135 1525 0074");
+            contact.setPhone("400 0000 0000");
+            contact.setWeChat("chen0074");
+            contact.setQq("1175039036");
+            contact.setText("肖主管专门负责和乙方公司的对接，上午9点到晚上11点都可以随时联系，每周五下午例会时间不能及时回复。");
             contactList.add(contact);
         }
 

@@ -38,12 +38,14 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
 
     public void setList(List<Contact> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     public void setCheckShow(boolean checkShow) {
         this.checkShow = checkShow;
         // 设置全选与全不选数量
         selectedCount = (checkShow ? ListUtils.getSize(mList) : 0);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -56,64 +58,56 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.name.setText(mList.get(position).getName());
-        holder.post.setText(mList.get(position).getPost());
-        holder.telNumber.setText(mList.get(position).getTelNum());
+        holder.post.setText(mList.get(position).getPosition());
+        holder.telNumber.setText(mList.get(position).getTel());
         // 控制显示
         holder.mCheckBox.setVisibility(checkShow ? View.VISIBLE : View.GONE);
         // 控制选择
         holder.mCheckBox.setChecked(mList.get(position).isSelected());
         // 非必填项
-        if (TextUtils.isEmpty(mList.get(position).getSpecialPlane())) {
+        if (TextUtils.isEmpty(mList.get(position).getPhone())) {
             holder.planeRL.setVisibility(View.GONE);
         } else {
-            holder.specialPlane.setText(mList.get(position).getSpecialPlane());
+            holder.specialPlane.setText(mList.get(position).getPhone());
         }
-        if (TextUtils.isEmpty(mList.get(position).getWxNum())) {
+        if (TextUtils.isEmpty(mList.get(position).getWeChat())) {
             holder.wxRl.setVisibility(View.GONE);
         } else {
-            holder.wxNumber.setText(mList.get(position).getWxNum());
+            holder.wxNumber.setText(mList.get(position).getWeChat());
         }
-        if (TextUtils.isEmpty(mList.get(position).getQqNum())) {
+        if (TextUtils.isEmpty(mList.get(position).getQq())) {
             holder.qqRl.setVisibility(View.GONE);
         } else {
-            holder.qqNumber.setText(mList.get(position).getQqNum());
+            holder.qqNumber.setText(mList.get(position).getQq());
         }
-        if (TextUtils.isEmpty(mList.get(position).getNote())) {
+        if (TextUtils.isEmpty(mList.get(position).getText())) {
             holder.note.setVisibility(View.GONE);
         } else {
-            holder.note.setText(mList.get(position).getNote());
+            holder.note.setText(mList.get(position).getText());
         }
         // 点击事件
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @SingleClick
             @Override
             public void onClick(View v) {
-                ToastUtils.show("点击编辑");
+               mOnClickSelected.editContactData(mList.get(position));
             }
         });
-        holder.playPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.show("拨打电话");
-            }
+        holder.playPhone.setOnClickListener(v -> {
+            // 拨打手机号
+            mOnClickSelected.playPhone(mList.get(position).getTel());
         });
-        holder.playPlane.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.show("拨打座机");
-            }
+        holder.playPlane.setOnClickListener(v -> {
+            // 拨打座机号
+            mOnClickSelected.playPhone(mList.get(position).getPhone());
         });
-        holder.copyWXNum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.show("复制微信");
-            }
+        holder.copyWXNum.setOnClickListener(v -> {
+            //ToastUtils.show("复制微信");
+            mOnClickSelected.copyWxNum2Board(mList.get(position).getWeChat());
         });
-        holder.copyQQNum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.show("复制QQ");
-            }
+        holder.copyQQNum.setOnClickListener(v -> {
+            //ToastUtils.show("复制QQ");
+            mOnClickSelected.copyQQNum2Board(mList.get(position).getQq());
         });
         // 单选选中回调
         holder.mCheckBox.setOnClickListener(v -> {
@@ -131,9 +125,35 @@ public final class ContactListAdapter extends RecyclerView.Adapter<ContactListAd
         /**
          * @param position      被选中的item
          * @param selectedCount 被选中的总数
-         * @param status 被选择的状态
+         * @param status        被选择的状态
          */
         void onSelectedSwitch(boolean status, int position, int selectedCount);
+
+        /**
+         * 复制微信号
+         *
+         * @param content 需要复制的内容
+         */
+        void copyWxNum2Board(String content);
+
+        /**
+         * 复制QQ号
+         *
+         * @param content
+         */
+        void copyQQNum2Board(String content);
+
+        /**
+         * 拨打号码
+         *
+         * @param tel
+         */
+        void playPhone(String tel);
+
+        /**
+         * 编辑
+         */
+        void editContactData(Contact contact);
     }
 
     private OnClickSelected mOnClickSelected;

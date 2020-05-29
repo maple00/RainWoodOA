@@ -25,7 +25,7 @@
             android:layout_width="13dp"
             android:layout_height="16dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/bg_monkey_king" />
+            android:src="@drawable/ic_attachment_logo" />
 
         <TextView
             android:id="@+id/tv_attach_name"

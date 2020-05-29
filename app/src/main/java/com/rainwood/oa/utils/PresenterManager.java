@@ -1,10 +1,10 @@
 package com.rainwood.oa.utils;
 
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.presenter.ICommonPresenter;
 import com.rainwood.oa.presenter.ICommunicationPresenter;
 import com.rainwood.oa.presenter.IContactPresenter;
-import com.rainwood.oa.presenter.ICustomDetailPresenter;
-import com.rainwood.oa.presenter.ICustomListPresenter;
+import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.presenter.IDepartPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
@@ -13,13 +13,15 @@ import com.rainwood.oa.presenter.IManagerSystemPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.presenter.IPostPresenter;
+import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.presenter.IRoleManagerPresenter;
 import com.rainwood.oa.presenter.IStaffPresenter;
+import com.rainwood.oa.presenter.ISystemSettingPresenter;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
+import com.rainwood.oa.presenter.impl.CommonImpl;
 import com.rainwood.oa.presenter.impl.CommunicationImpl;
 import com.rainwood.oa.presenter.impl.ContactImpl;
-import com.rainwood.oa.presenter.impl.CustomDetailImpl;
-import com.rainwood.oa.presenter.impl.CustomListImpl;
+import com.rainwood.oa.presenter.impl.CustomImpl;
 import com.rainwood.oa.presenter.impl.DepartImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
 import com.rainwood.oa.presenter.impl.LoginAboutImpl;
@@ -28,8 +30,10 @@ import com.rainwood.oa.presenter.impl.ManagerSystemImpl;
 import com.rainwood.oa.presenter.impl.MineImpl;
 import com.rainwood.oa.presenter.impl.OrderImpl;
 import com.rainwood.oa.presenter.impl.PostImpl;
+import com.rainwood.oa.presenter.impl.RecordManagerImpl;
 import com.rainwood.oa.presenter.impl.RoleManagerImpl;
 import com.rainwood.oa.presenter.impl.StaffImpl;
+import com.rainwood.oa.presenter.impl.SystemSettingImpl;
 
 /**
  * @Author: a797s
@@ -42,10 +46,9 @@ public final class PresenterManager {
     private final IManagerPresenter mIManagerPresenter;
     private final IMinePresenter mIMinePresenter;
     private final IHomePresenter mIHomePresenter;
-    private final ICustomDetailPresenter mCustomDetailPresenter;
     private final IContactPresenter mIContactPresenter;
     private final IAttachmentPresenter mAttachmentPresenter;
-    private final ICustomListPresenter mCustomListPresenter;
+    private final ICustomPresenter mCustomPresenter;
     private final ILoginAboutPresenter mLoginAboutPresenter;
     private final IOrderPresenter mOrderPresenter;
     private final ICommunicationPresenter mSkillPresenter;
@@ -54,6 +57,9 @@ public final class PresenterManager {
     private final IPostPresenter mPostPresenter;
     private final IStaffPresenter mStaffPresenter;
     private final IManagerSystemPresenter mSystemPresenter;
+    private final IRecordManagerPresenter mRecordManagerPresenter;
+    private final ICommonPresenter mCommonPresenter;
+    private final ISystemSettingPresenter mSystemSettingPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -71,9 +77,6 @@ public final class PresenterManager {
         return mIHomePresenter;
     }
 
-    public ICustomDetailPresenter getCustomDetailPresenter() {
-        return mCustomDetailPresenter;
-    }
 
     public IContactPresenter getIContactPresenter() {
         return mIContactPresenter;
@@ -83,8 +86,8 @@ public final class PresenterManager {
         return mAttachmentPresenter;
     }
 
-    public ICustomListPresenter getCustomListPresenter() {
-        return mCustomListPresenter;
+    public ICustomPresenter getCustomPresenter() {
+        return mCustomPresenter;
     }
 
     public ILoginAboutPresenter getLoginAboutPresenter() {
@@ -119,14 +122,25 @@ public final class PresenterManager {
         return mSystemPresenter;
     }
 
+    public IRecordManagerPresenter getRecordManagerPresenter() {
+        return mRecordManagerPresenter;
+    }
+
+    public ICommonPresenter getCommonPresenter() {
+        return mCommonPresenter;
+    }
+
+    public ISystemSettingPresenter getSystemSettingPresenter() {
+        return mSystemSettingPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
         mIHomePresenter = new HomeMainImpl();
-        mCustomDetailPresenter = new CustomDetailImpl();
         mIContactPresenter = new ContactImpl();
         mAttachmentPresenter = new AttachmentImpl();
-        mCustomListPresenter = new CustomListImpl();
+        mCustomPresenter = new CustomImpl();
         mLoginAboutPresenter = new LoginAboutImpl();
         mOrderPresenter = new OrderImpl();
         mSkillPresenter = new CommunicationImpl();
@@ -135,5 +149,8 @@ public final class PresenterManager {
         mPostPresenter = new PostImpl();
         mStaffPresenter = new StaffImpl();
         mSystemPresenter = new ManagerSystemImpl();
+        mRecordManagerPresenter = new RecordManagerImpl();
+        mCommonPresenter = new CommonImpl();
+        mSystemSettingPresenter = new SystemSettingImpl();
     }
 }

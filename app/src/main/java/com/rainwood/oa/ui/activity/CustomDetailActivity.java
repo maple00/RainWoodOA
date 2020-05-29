@@ -1,6 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -8,22 +10,30 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Associates;
-import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomDetail;
+import com.rainwood.oa.model.domain.CustomStaff;
+import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.oa.model.domain.IconAndFont;
-import com.rainwood.oa.presenter.ICustomDetailPresenter;
+import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AssociatesAdapter;
 import com.rainwood.oa.ui.adapter.ContactAdapter;
 import com.rainwood.oa.ui.adapter.ItemModuleAdapter;
 import com.rainwood.oa.ui.dialog.BottomCustomDialog;
-import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.oa.ui.dialog.MessageDialog;
+import com.rainwood.oa.utils.ClipboardUtil;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
-import com.rainwood.oa.view.ICustomDetailCallbacks;
+import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -39,10 +49,10 @@ import java.util.Map;
  * @Description : &#x5ba2;&#x6237;&#x8be6;&#x60c5;
  * @Usage :
  **/
-public final class CustomDetailActivity extends BaseActivity implements ICustomDetailCallbacks {
+public final class CustomDetailActivity extends BaseActivity implements ICustomCallbacks {
 
     // actionBar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -59,10 +69,12 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
     private TextView employeeName;
     @ViewInject(R.id.tv_depart)
     private TextView depart;
+    // 公客 start
     @ViewInject(R.id.iv_princess)
     private ImageView princess;
     @ViewInject(R.id.tv_princess_name)
     private TextView princessName;
+    // 公客 end
     @ViewInject(R.id.iv_references)
     private ImageView referHeadSrc;
     @ViewInject(R.id.tv_references_name)
@@ -73,6 +85,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
     private TextView noneAssociates;
     @ViewInject(R.id.mlv_associates_list)
     private ListView associatesMLV;
+    @ViewInject(R.id.tv_none_contact)
+    private TextView noneContact;
     @ViewInject(R.id.mlv_contact_list)
     private ListView contactMLV;
     // 客户需求
@@ -92,13 +106,18 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
     @ViewInject(R.id.tv_custom_id)
     private TextView customId;
 
-    private ICustomDetailPresenter mDetailPresenter;
+    private ICustomPresenter mCustomPresenter;
+
     private ItemModuleAdapter mModuleAdapter;
     private AssociatesAdapter mAssociatesAdapter;
     private ContactAdapter mContactAdapter;
 
     private List<Custom> mCustomList;
     private List<Associates> mAssociates;
+    // customId
+    private String mCustomId;
+    // 是转让还是添加协作人 -- 默认是转让
+    private boolean plusFlag = false;
 
     @Override
     protected int getLayoutResId() {
@@ -118,26 +137,35 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
         customDetailModule.setAdapter(mModuleAdapter);
         customDetailModule.setNumColumns(5);
         associatesMLV.setAdapter(mAssociatesAdapter);
+        //associatesMLV.setVisibility(View.GONE);
         contactMLV.setAdapter(mContactAdapter);
     }
 
     @Override
     protected void initData() {
         // 这里接收页面跳转数据
-        Custom custom = (Custom) getIntent().getSerializableExtra("customData");
-        LogUtils.d("客户详情----> ", custom + "");
+        mCustomId = getIntent().getStringExtra("customId");
+        Constants.CUSTOM_ID = mCustomId;
+        LogUtils.d("sxs", "客户详情----> " + mCustomId + "");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Constants.CUSTOM_ID = null;
     }
 
     @Override
     protected void initPresenter() {
-        mDetailPresenter = PresenterManager.getOurInstance().getCustomDetailPresenter();
-        mDetailPresenter.registerViewCallback(this);
+        mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
+        mCustomPresenter.registerViewCallback(this);
     }
 
     @Override
     protected void loadData() {
         // 从这里加载数据
-        mDetailPresenter.getDetailData();
+        mCustomPresenter.getDetailData();
+        mCustomPresenter.requestCustomDetailById(mCustomId);
     }
 
     @SingleClick
@@ -147,107 +175,24 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
         switch (view.getId()) {
             case R.id.iv_page_back:
                 // 此处返回到客户列表
+                // startActivity(getNewIntent(this, CustomListActivity.class, "客户列表"));
                 finish();
                 break;
             case R.id.btn_transfer_custom:
                 // 转让客户
-                new BottomCustomDialog.Builder(this)
-                        .setTitle("转让给")
-                        .setAutoDismiss(false)
-                        .setList(mCustomList)
-                        .setGravity(Gravity.BOTTOM)
-                        .setTipsVisibility(null)
-                        .setListener(new BottomCustomDialog.OnListener<Custom>() {
-
-                            @Override
-                            public void onSelected(BaseDialog dialog, int position, Custom custom) {
-                                dialog.dismiss();
-                                toast("选择了：" + position + "--- " + custom.getName());
-                                // 请输入登录密码
-                                new PayPasswordDialog.Builder(view.getContext())
-                                        .setTitle(getString(R.string.pay_title))
-                                        .setSubTitle(null)
-                                        .setAutoDismiss(false)
-                                        .setListener(new PayPasswordDialog.OnListener() {
-
-                                            @Override
-                                            public void onCompleted(BaseDialog dialog, String password) {
-                                                dialog.dismiss();
-                                                toast(password);
-                                                // TODO: 执行逻辑
-                                            }
-
-                                            @Override
-                                            public void onCancel(BaseDialog dialog) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                                dialog.dismiss();
-                            }
-
-                        })
-                        .show();
+                plusFlag = false;
+                mCustomPresenter.requestCustomStaff();
                 break;
             case R.id.tv_add_associates:
             case R.id.iv_add_associates:
                 // 添加协作人
-                new BottomCustomDialog.Builder(this)
-                        .setTitle("添加协作人")
-                        .setAutoDismiss(false)
-                        .setList(mCustomList)
-                        .setGravity(Gravity.BOTTOM)
-                        .setTipsVisibility("客户所有权属于您，协作人则拥有与您同样的客户编辑权限。")
-                        .setListener(new BottomCustomDialog.OnListener<Custom>() {
-
-                            @Override
-                            public void onSelected(BaseDialog dialog, int position, Custom custom) {
-                                dialog.dismiss();
-                                //toast("选择了：" + position + "--- " + custom.getName());
-                                // 请输入登录密码
-                                new PayPasswordDialog.Builder(view.getContext())
-                                        .setTitle("添加协作人-" + custom.getName())
-                                        .setSubTitle("请输入登录密码")
-                                        .setAutoDismiss(false)
-                                        .setListener(new PayPasswordDialog.OnListener() {
-
-                                            @Override
-                                            public void onCompleted(BaseDialog dialog, String password) {
-                                                dialog.dismiss();
-                                                toast(password);
-                                                // TODO: 执行逻辑
-                                                Associates associates = new Associates();
-                                                associates.setHeadSrc("");
-                                                associates.setDepart("研发部");
-                                                associates.setPost("Android工程师");
-                                                associates.setName(custom.getName());
-                                                mAssociates.add(associates);
-                                                mAssociatesAdapter.notifyDataSetChanged();
-                                            }
-
-                                            @Override
-                                            public void onCancel(BaseDialog dialog) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                                dialog.dismiss();
-                            }
-
-                        })
-                        .show();
+                plusFlag = true;
+                mCustomPresenter.requestCustomStaff();
                 break;
             case R.id.tv_query_all_contact:
                 // 查看全部联系人
-                startActivity(getNewIntent(this, CommonActivity.class, "联系人"));
+                // startActivity(getNewIntent(this, CommonActivity.class, "联系人"));
+                PageJumpUtil.CustomDetail2ContactList(this, CommonActivity.class, mCustomId);
                 break;
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑
@@ -256,7 +201,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
                 break;
             case R.id.btn_copy_custom_id:
                 // 复制客户id
-                toast("复制");
+                ClipboardUtil.clipFormat2Board(this, "customId", mCustomId);
+                toast("已复制");
                 break;
         }
     }
@@ -264,17 +210,131 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
     @SuppressWarnings("all")
     @Override
     public void getCustomDetailData(Map<String, List> contentMap) {
-        // 从这里获取返回数据
         List<IconAndFont> modules = contentMap.get("module");
-        mAssociates = contentMap.get("associates");
-        List<Contact> contacts = contentMap.get("contact");
-        mCustomList = contentMap.get("custom");
-        // 设置adapter
         mModuleAdapter.setList(modules);
-        // 协作人
-        noneAssociates.setVisibility(ListUtils.getSize(mAssociates) == 0 ? View.VISIBLE : View.GONE);
-        mAssociatesAdapter.setList(mAssociates);
-        mContactAdapter.setList(contacts);
+    }
+
+    @Override
+    public void getCustomDetailValues(Map dataMap) {
+        CustomDetail customDetail = (CustomDetail) dataMap.get("custom");
+        // setValues()
+        if (customDetail != null) {
+            setValues(customDetail);
+        }
+    }
+
+    /**
+     * setValue
+     *
+     * @param data
+     */
+    @SuppressLint("SetTextI18n")
+    private void setValues(CustomDetail data) {
+        Glide.with(this).load(data.getStaff().getIco())
+                .error(R.drawable.bg_monkey_king)
+                .placeholder(R.drawable.bg_monkey_king)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(employeeHeadSrc);
+        employeeName.setText(data.getStaff().getName());
+        depart.setText(data.getStaff().getJob());
+        Glide.with(this).load(data.getShare().getIco())
+                .error(R.drawable.bg_monkey_king)
+                .placeholder(R.drawable.bg_monkey_king)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(referHeadSrc);
+        referName.setText(data.getShare().getName());
+        referPost.setText(data.getShare().getJob());
+        noneAssociates.setVisibility(ListUtils.getSize(data.getEdit()) == 0 ? View.VISIBLE : View.GONE);
+        //协作人
+        mAssociatesAdapter.setList(data.getEdit());
+        mAssociatesAdapter.setManagerId(data.getStaff().getManager());
+        mAssociatesAdapter.setAssociatesListener(new AssociatesAdapter.OnItemAssociatesListener() {
+            @Override
+            @SingleClick
+            public void onItemDelete(CustomValues associates, int position) {
+                setAssociates(data.getEdit(), associates, position);
+            }
+        });
+        // 联系人
+        noneContact.setVisibility(ListUtils.getSize(data.getKehuStaff()) == 0 ? View.VISIBLE : View.GONE);
+        mContactAdapter.setList(data.getKehuStaff());
+        // 客户需求
+        followStatus.setText(data.getDemand().getWorkFlow());
+        customOrigin.setText(data.getDemand().getSource());
+        itemBudget.setText(data.getDemand().getBudget());
+        industry.setText(data.getDemand().getIndustry());
+        demand_detail.setText(data.getDemand().getText());
+        // 客户信息
+        companyName.setText(data.getKehu().getCompanyName());
+        createTime.setText(data.getKehu().getTime() + " 创建");
+        customId.setText(data.getKehu().getKhid());
+    }
+
+    /**
+     * 删除协作人
+     */
+    private void setAssociates(List<CustomValues> associateList, CustomValues associates, int position) {
+        new MessageDialog.Builder(this)
+                .setTitle("删除当前协作人")
+                .setMessage("【 " + associates.getName() + " 】")
+                .setConfirm(getString(R.string.common_confirm))
+                .setCancel(getString(R.string.common_cancel))
+                .setShowConfirm(false)
+                .setAutoDismiss(true)
+                .setListener(new MessageDialog.OnListener() {
+
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        mCustomPresenter.requestDeleteAssociates(Constants.CUSTOM_ID, associates.getId());
+                        associateList.remove(position);
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 客户员工列表
+     *
+     * @param customStaffList
+     */
+    @Override
+    public void getCustomOfStaff(List<CustomStaff> customStaffList) {
+
+        new BottomCustomDialog.Builder(this)
+                .setTitle(plusFlag ? "plusFlag" : "转让给")
+                .setList(customStaffList)
+                .setGravity(Gravity.BOTTOM)
+                .setAutoDismiss(false)
+                .setTipsVisibility(plusFlag ? "客户所有权属于您，协作人则拥有与您同样的客户编辑权限。" : null)
+                .setListener(new BottomCustomDialog.OnListener<CustomStaff>() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, int position, CustomStaff custom) {
+                        if (position == -1) {
+                            toast("请选择员工");
+                            return;
+                        }
+                        dialog.dismiss();
+                        if (plusFlag) {
+                            // 添加协作人
+                            mCustomPresenter.requestPlusAssociates(Constants.CUSTOM_ID, custom.getStid());
+                        } else {
+                            // 转让客户
+                            mCustomPresenter.requestRevCustom(Constants.CUSTOM_ID, custom.getStid());
+                        }
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                })
+                .show();
     }
 
     @Override
@@ -294,9 +354,17 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomD
 
     @Override
     protected void release() {
-        if (mDetailPresenter != null) {
-            mDetailPresenter.unregisterViewCallback(this);
+        if (mCustomPresenter != null) {
+            mCustomPresenter.unregisterViewCallback(this);
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK){
+//            startActivity(getNewIntent(this, CustomListActivity.class, "客户列表"));
+//            finish();
+//        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

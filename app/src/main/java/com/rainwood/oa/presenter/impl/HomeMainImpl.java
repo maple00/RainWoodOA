@@ -61,4 +61,5 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
     public void onHttpSucceed(HttpResponse result) {
 
     }
+
 }

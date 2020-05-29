@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.autofill.OnClickAction;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,7 +27,7 @@ import com.rainwood.tools.utils.FontSwitchUtil;
  * @Date: 2020/4/27 16:16
  * @Desc: activity基类
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements OnClickAction {
 
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
@@ -41,8 +42,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initEvent();
         initPresenter();
-        loadData();
         initData();
+        loadData();
         setStatusBar();
     }
 
@@ -120,8 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return intent;
     }
 
-  /*
-    // 设置动画
+  /*  // 设置动画
   @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
@@ -209,7 +209,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public void setRequiredValue(TextView requestedText, String s) {
         requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
-                + " size=" + FontSwitchUtil.dip2px(this, 16f) + s +
+                + " size=" + FontSwitchUtil.dip2px(this, 16f)+">" + s +"</font>" +
                 "<font color=" + this.getColor(R.color.red05) + " size= "
                 + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
     }

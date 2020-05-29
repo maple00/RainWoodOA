@@ -9,12 +9,12 @@ public final class Attachment {
     /**
      * 附件名称
      */
-    private String attachmentName;
+    private String name;
 
     /**
      * 客户名称
      */
-    private String customName;
+    private String staffName;
 
     /**
      * 附件时间
@@ -22,24 +22,57 @@ public final class Attachment {
     private String time;
 
     /**
+     * 是否保密
+     */
+    private String secret;
+
+    /**
+     * 文件大小
+     */
+    private String size;
+    /**
+     * 文件格式
+     */
+    private String format;
+
+    /**
+     * 附件地址
+     */
+    private String src;
+
+    /**
      * 附件选中
      */
     private boolean selected;
 
-    public String getAttachmentName() {
-        return attachmentName;
+    @Override
+    public String toString() {
+        return "Attachment{" +
+                "name='" + name + '\'' +
+                ", staffName='" + staffName + '\'' +
+                ", time='" + time + '\'' +
+                ", secret='" + secret + '\'' +
+                ", size='" + size + '\'' +
+                ", format='" + format + '\'' +
+                ", src='" + src + '\'' +
+                ", selected=" + selected +
+                '}';
     }
 
-    public void setAttachmentName(String attachmentName) {
-        this.attachmentName = attachmentName;
+    public String getName() {
+        return name;
     }
 
-    public String getCustomName() {
-        return customName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setCustomName(String customName) {
-        this.customName = customName;
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public String getTime() {
@@ -50,20 +83,43 @@ public final class Attachment {
         this.time = time;
     }
 
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
+    }
+
     public boolean isSelected() {
         return selected;
     }
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    @Override
-    public String toString() {
-        return "Attachment{" +
-                "attachmentName='" + attachmentName + '\'' +
-                ", customName='" + customName + '\'' +
-                ", time='" + time + '\'' +
-                '}';
     }
 }

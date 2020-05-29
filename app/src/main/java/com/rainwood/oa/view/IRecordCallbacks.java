@@ -1,7 +1,11 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.model.domain.LeaveOutRecord;
+import com.rainwood.oa.model.domain.OvertimeRecord;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,5 +18,25 @@ public interface IRecordCallbacks extends IBaseCallback {
     /**
      * 获取所有的加班记录
      */
-    void getOvertimeRecords(Map recordMap);
+    default void getOvertimeRecords(List<OvertimeRecord> overtimeRecords){}
+
+    /**
+     * 获取所有的请假记录
+     */
+    default void getLeaveRecords(Map recordMap){}
+
+    /**
+     * 获取所有的外出记录
+     */
+    default void getGoOutRecords(List<LeaveOutRecord> leaveOutList){}
+
+    /**
+     * 获取所有的补卡记录
+     */
+    default void getReissueRecords(Map reissueMap){}
+
+    /**
+     * 获取客户的跟进记录
+     */
+    default void getCustomFollowRecords(List<CustomFollowRecord> recordList){}
 }
