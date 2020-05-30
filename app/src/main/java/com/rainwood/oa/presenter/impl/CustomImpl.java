@@ -4,6 +4,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.CustomDetail;
+import com.rainwood.oa.model.domain.CustomInvoice;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.SelectedItem;
@@ -293,6 +294,17 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=move", params, this);
     }
 
+    /**
+     * 查询客户下的开票信息
+     * @param customId
+     */
+    @Override
+    public void requestCustomInvoice(String customId) {
+        RequestParams params = new RequestParams();
+        params.add("khid", customId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoice", params, this);
+    }
+
     @Override
     public void registerViewCallback(ICustomCallbacks callback) {
         this.mCustomCallback = callback;
@@ -420,6 +432,15 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
 
         } else if (result.url().contains("cla=client&fun=move")) {
             // 客户转让
+        }else if (result.url().contains("cla=client&fun=invoice")){
+            // 开票信息获取
+            try {
+                CustomInvoice customInvoice = JsonParser.parseJSONObject(CustomInvoice.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
+                mCustomCallback.getCustomInvoice(customInvoice);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

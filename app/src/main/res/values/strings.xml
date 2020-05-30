@@ -127,5 +127,7 @@
     <string name="text_custom_associates">协作人</string>
     <string name="text_custom_receivable">回款</string>
     <string name="text_custom_order_divided">本订单分得</string>
+    <string name="text_custom_copy_invoice">复制开票信息</string>
+    <string name="text_custom_tax_name">纳税人识别号</string>
 
 </resources>

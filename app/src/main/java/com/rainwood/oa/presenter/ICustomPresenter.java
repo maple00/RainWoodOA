@@ -83,4 +83,9 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      * @param staffId 被转让的员工ID
      */
     void requestRevCustom(String customId, String staffId);
+
+    /**
+     * 获取客户下的开票信息
+     */
+    void requestCustomInvoice(String customId);
 }

@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Contact;
+import com.rainwood.oa.model.domain.CustomInvoice;
 import com.rainwood.oa.model.domain.CustomStaff;
 
 import java.util.List;
@@ -70,4 +71,8 @@ public interface ICustomCallbacks extends IBaseCallback {
      */
     default void getCustomOfStaff(List<CustomStaff> customStaffList){}
 
+    /**
+     * 客户下的开票信息
+     */
+    default void getCustomInvoice(CustomInvoice invoice){}
 }

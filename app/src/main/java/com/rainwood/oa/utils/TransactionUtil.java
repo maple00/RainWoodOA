@@ -8,7 +8,7 @@ import androidx.annotation.FloatRange;
 /**
  * @Author: a797s
  * @Date: 2020/5/27 14:33
- * @Desc:
+ * @Desc: 设置View 透明度util
  */
 public final class TransactionUtil {
 

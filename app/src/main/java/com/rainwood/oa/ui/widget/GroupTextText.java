@@ -27,6 +27,10 @@ public final class GroupTextText extends LinearLayout {
     private TextView titleTV;
     @ViewInject(R.id.tv_values)
     private TextView values;
+    @ViewInject(R.id.v_placeholder)
+    private View placeholder;
+
+    private String value;
 
     public GroupTextText(Context context) {
         this(context, null);
@@ -48,25 +52,37 @@ public final class GroupTextText extends LinearLayout {
         if (titleColor != -1) {
             titleTV.setTextColor(titleColor);
         }
+
         String title = typedArray.getString(R.styleable.GroupTextText_title);
         if (!TextUtils.isEmpty(title)) {
             titleTV.setText(title);
         }
+
         int valueColor = typedArray.getColor(R.styleable.GroupTextText_value_color, context.getColor(R.color.fontColor));
         if (valueColor != -1) {
             values.setTextColor(valueColor);
         }
+
         String valueStr = typedArray.getString(R.styleable.GroupTextText_values);
         if (!TextUtils.isEmpty(valueStr)) {
             values.setText(valueStr);
         }
+
+        boolean endParent = typedArray.getBoolean(R.styleable.GroupTextText_endParent, false);
+        placeholder.setVisibility(endParent ? VISIBLE : GONE);
+
         // 回收
         typedArray.recycle();
     }
 
     public void setValue(String value) {
+        this.value = value;
         if (!TextUtils.isEmpty(value)) {
             values.setText(value);
         }
+    }
+
+    public String getValue() {
+        return value;
     }
 }

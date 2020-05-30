@@ -8,7 +8,7 @@ import android.content.Context;
 /**
  * @Author: a797s
  * @Date: 2020/5/28 13:44
- * @Desc:
+ * @Desc: 复制到剪切板工具类
  */
 public final class ClipboardUtil {
 

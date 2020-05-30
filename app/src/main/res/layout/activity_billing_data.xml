@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,99 +10,216 @@
 
     <include layout="@layout/include_title_bar_white" />
 
-    <Space
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="35dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:background="@drawable/shape_mine_account"
-        android:gravity="center_horizontal"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:text="重庆正南齐北科技有限公司"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:background="@drawable/shape_white_bottom_8dp"
-        android:orientation="vertical"
-        android:paddingTop="30dp"
-        android:paddingBottom="20dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="1547 5886 4887 5556"
-            android:textColor="@color/colorPrimary"
-            android:textSize="27sp" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="35dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_company_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="纳税人识别号"
-                android:textColor="@color/labelColor"
-                android:textSize="13sp" />
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/shape_mine_account"
+                android:gravity="center_horizontal"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:background="@drawable/shape_copy_label2_bg"
-                android:paddingStart="9dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="5dp"
-                android:text="@string/text_copy"
-                android:textColor="@color/colorMiddle"
-                android:textSize="12sp" />
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/shape_white_bottom_8dp"
+                android:orientation="vertical"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_tax_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="27sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_custom_tax_name"
+                        android:textColor="@color/labelColor"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_copy_tax_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/shape_copy_label2_bg"
+                        android:paddingStart="9dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="5dp"
+                        android:text="@string/text_copy"
+                        android:textColor="@color/colorMiddle"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/shape_right_semicircle" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="23dp"
+                        android:layout_marginEnd="23dp"
+                        android:src="@drawable/layer_horizontal_dotted_line" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/shape_left_semicircle" />
+
+                </RelativeLayout>
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_invoice_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="20dp"
+                    app:title="开票地址"
+                    app:endParent="false"
+                    app:title_color="@color/labelColor"
+                    app:value_color="@color/fontColor"
+                    app:values="湖南省长沙市岳麓区中南大学研究所南楼中南大学研究所南楼" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_email_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    app:title="邮寄地址"
+                    app:endParent="false"
+                    app:title_color="@color/labelColor"
+                    app:value_color="@color/fontColor"
+                    app:values="湖南省长沙市岳麓区中南大学研究所南楼中南大学研究所南楼" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_lineal_tel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    app:endParent="true"
+                    app:title="公司座机"
+                    app:title_color="@color/labelColor"
+                    app:value_color="@color/fontColor"
+                    app:values="400 0000 0000" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_open_bank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    app:endParent="true"
+                    app:title="开户行"
+                    app:title_color="@color/labelColor"
+                    app:value_color="@color/fontColor"
+                    app:values="中国农业银行" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_bank_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    app:endParent="true"
+                    app:title="对公账号"
+                    app:title_color="@color/labelColor"
+                    app:value_color="@color/fontColor"
+                    app:values="6228480000000000000" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/shape_right_semicircle" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="23dp"
+                        android:layout_marginEnd="23dp"
+                        android:src="@drawable/layer_horizontal_dotted_line" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/shape_left_semicircle" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btn_copy_invoice_data"
+                    style="@style/SecondaryButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="13dp"
+                    android:text="@string/text_custom_copy_invoice" />
+            </LinearLayout>
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:scaleType="fitStart"
-                android:src="@drawable/shape_right_semicircle" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/layer_horizontal_dotted_line" />
-
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_alignParentEnd="true"
-                android:scaleType="fitEnd"
-                android:src="@drawable/shape_left_semicircle" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

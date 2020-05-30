@@ -34,6 +34,7 @@
         <attr name="title_color" format="color"/>
         <attr name="values" format="string"/>
         <attr name="value_color" format="color"/>
+        <attr name="endParent" format="boolean"/>
     </declare-styleable>
 
 
