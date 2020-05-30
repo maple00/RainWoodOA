@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
@@ -50,4 +51,9 @@ public interface IRecordCallbacks extends IBaseCallback {
      * 获取客户回款记录详情
      */
     default void getCustomReceivableRecordDetail(ReceivableRecord receivableRecord){}
+
+    /**
+     * 客户下的开票记录
+     */
+    default void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList){};
 }

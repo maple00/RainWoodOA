@@ -181,6 +181,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 客户开票记录 InvoiceRecordActivity-->
+        <activity
+            android:name=".ui.activity.InvoiceRecordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 新建订单 OrderNewActivity-->
         <activity
             android:name=".ui.activity.OrderNewActivity"

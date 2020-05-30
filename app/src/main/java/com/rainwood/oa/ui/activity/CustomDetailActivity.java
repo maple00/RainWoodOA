@@ -112,8 +112,6 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     private AssociatesAdapter mAssociatesAdapter;
     private ContactAdapter mContactAdapter;
 
-    private List<Custom> mCustomList;
-    private List<Associates> mAssociates;
     // customId
     private String mCustomId;
     // 是转让还是添加协作人 -- 默认是转让
@@ -147,6 +145,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
         mCustomId = getIntent().getStringExtra("customId");
         Constants.CUSTOM_ID = mCustomId;
         LogUtils.d("sxs", "客户详情----> " + mCustomId + "");
+        // 客户详情页面如果要做局部刷新的话，则必须重新定义接口
     }
 
     @Override

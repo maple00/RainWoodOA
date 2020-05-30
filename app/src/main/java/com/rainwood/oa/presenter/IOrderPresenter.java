@@ -25,4 +25,9 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
      * 请求客户下的订单列表
      */
     void requestCustomOrderList(String customId);
+
+    /**
+     * 新建订单
+     */
+    void CreateNewOrder();
 }

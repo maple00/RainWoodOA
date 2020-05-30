@@ -25,6 +25,7 @@ import com.rainwood.oa.ui.activity.CustomOrderListActivity;
 import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
 import com.rainwood.oa.ui.activity.FollowRecordActivity;
+import com.rainwood.oa.ui.activity.InvoiceRecordActivity;
 import com.rainwood.oa.ui.activity.LogcatActivity;
 import com.rainwood.oa.ui.activity.ManagerSystemActivity;
 import com.rainwood.oa.ui.activity.OrderListActivity;
@@ -138,6 +139,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "开票信息":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), BillingDataActivity.class, "开票信息"));
+                    break;
+                case "开票记录":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), InvoiceRecordActivity.class, "开票记录"));
                     break;
                 // 订单模块
                 case "新建订单":

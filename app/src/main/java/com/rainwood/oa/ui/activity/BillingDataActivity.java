@@ -15,6 +15,7 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
@@ -57,6 +58,7 @@ public final class BillingDataActivity extends BaseActivity implements ICustomCa
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
+        StatusBarUtil.setStatusBarDarkTheme(this, false);
         pageTitle.setText(title);
         pageTitle.setTextColor(getColor(R.color.white));
     }

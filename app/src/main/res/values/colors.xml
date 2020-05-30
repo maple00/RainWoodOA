@@ -57,6 +57,8 @@
     <!-- 蓝色-->
     <color name="blue05">#4575AA</color>
     <color name="blue10">#E8EDF4</color>
+    <color name="blue15">#F2F4FF</color>
+    <color name="blue20">#5373FF</color>
     <!-- 橙色-->
     <color name="orange5">#FFB500</color>
     <color name="orange10">#FDE2C3</color>

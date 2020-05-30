@@ -39,12 +39,12 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         setContentView(getLayoutResId());
         ViewBind.inject(this);
         title = getIntent().getStringExtra("title") == null ? "" : getIntent().getStringExtra("title");
+        setStatusBar();
         initView();
         initEvent();
         initPresenter();
         initData();
         loadData();
-        setStatusBar();
     }
 
     /**

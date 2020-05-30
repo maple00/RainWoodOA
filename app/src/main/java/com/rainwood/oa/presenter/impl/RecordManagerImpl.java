@@ -2,6 +2,7 @@ package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
@@ -125,6 +126,17 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=collectionDetail", params, this);
     }
 
+    /**
+     * 请求客户下的开票记录
+     * @param customId
+     */
+    @Override
+    public void requestCustomInvoiceRecords(String customId) {
+        RequestParams params = new RequestParams();
+        params.add("id ", customId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi", params, this);
+    }
+
     @Override
     public void registerViewCallback(IRecordCallbacks callback) {
         mRecordCallbacks = callback;
@@ -204,6 +216,14 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 ReceivableRecord receivableRecord = JsonParser.parseJSONObject(ReceivableRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("collection"));
                 mRecordCallbacks.getCustomReceivableRecordDetail(receivableRecord);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else if (result.url().contains("cla=client&fun=invoiceLi")){
+            try {
+                List<InvoiceRecord> invoiceList = JsonParser.parseJSONArray(InvoiceRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
+                mRecordCallbacks.getCustomInvoiceRecords(invoiceList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

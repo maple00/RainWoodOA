@@ -95,12 +95,20 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         mOrderEditCallbacks.getAllOrderPage(orderMap);
     }
 
+    /**
+     * 请求客户下的订单列表
+     * @param customId
+     */
     @Override
     public void requestCustomOrderList(String customId) {
-        // 请求客户下的订单列表
         RequestParams params = new RequestParams();
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=orderLi", params, this);
+    }
+
+    @Override
+    public void CreateNewOrder() {
+
     }
 
     @Override
