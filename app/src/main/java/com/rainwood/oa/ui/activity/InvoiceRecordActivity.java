@@ -1,9 +1,12 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.core.widget.NestedScrollView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
@@ -12,11 +15,13 @@ import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.InvoiceRecordAdapter;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
@@ -44,8 +49,12 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private TextView rate;
     @ViewInject(R.id.mlv_invoice_records)
     private MeasureListView invoiceRecords;
+    @ViewInject(R.id.nsv_invoice_record)
+    private NestedScrollView invoiceRecordNest;
     @ViewInject(R.id.ll_apply_invoice)
     private LinearLayout applyInvoice;
+    @ViewInject(R.id.btn_apply_open)
+    private Button applyOpen;
 
     private InvoiceRecordAdapter mInvoiceRecordAdapter;
     private IRecordManagerPresenter mRecordManagerPresenter;
@@ -71,11 +80,11 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
 
     @Override
     protected void initEvent() {
-        int applyInvoiceHeight = applyInvoice.getMeasuredHeight();
-        /*ViewGroup.LayoutParams layoutParams = applyInvoice.getLayoutParams();
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(this, null);
-        layoutParams.setMargins(0, 0, 0, FontSwitchUtil.dip2px(this, applyInvoiceHeight));
-        applyInvoice.setLayoutParams(layoutParams);*/
+        int applyInvoiceHeight = applyInvoice.getMinimumHeight();
+        int measuredHeight = applyOpen.getMinHeight();
+        LogUtils.d("sxs", "applyInvoiceHeight---- " + applyInvoiceHeight);
+        LogUtils.d("sxs", "measuredHeight---- " + measuredHeight);
+        invoiceRecordNest.setPadding(0, 0, 0, measuredHeight + 70);
     }
 
     @Override
