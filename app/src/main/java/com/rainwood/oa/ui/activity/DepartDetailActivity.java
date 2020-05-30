@@ -19,7 +19,7 @@ import com.rainwood.tools.wheel.aop.SingleClick;
 public final class DepartDetailActivity extends BaseActivity {
 
     // actionBar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pagerTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;

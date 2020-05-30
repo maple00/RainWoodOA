@@ -34,4 +34,14 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      * 请求客户的跟进记录
      */
     void requestCustomFollowRecords(String customId);
+
+    /**
+     * 请求客户的回款记录
+     */
+    void requestCustomReceivableRecords(String customId);
+
+    /**
+     * 请求客户的回款记录详情
+     */
+    void requestCustomReceivableRecordDetail(String receivableId);
 }

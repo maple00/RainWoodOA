@@ -9,21 +9,22 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 
 /**
- * @Author: a797s
- * @Date: 2020/5/25 18:02
- * @Desc: 员工收支详情
+ * @Author: sxs
+ * @Time: 2020/5/30 14:07
+ * @Desc: 开票信息
  */
-public final class PaymentDetailActivity extends BaseActivity {
+public final class BillingDataActivity extends BaseActivity {
 
     // actionBar
-    @ViewInject(R.id.rl_page_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    //content
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.acitvity_payment_details;
+        return R.layout.activity_billing_data;
     }
 
     @Override
@@ -31,6 +32,12 @@ public final class PaymentDetailActivity extends BaseActivity {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
         pageTitle.setText(title);
+        pageTitle.setTextColor(getColor(R.color.white));
+    }
+
+    @Override
+    protected void loadData() {
+        // TODO：绘制开票信息UI
     }
 
     @Override

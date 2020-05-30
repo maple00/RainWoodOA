@@ -22,7 +22,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 public final class AddFollowRecordActivity extends BaseActivity {
 
     // actionBar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;

@@ -16,15 +16,17 @@ import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
+import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.CardRecordAdapter;
 import com.rainwood.oa.ui.adapter.LeaveAdapter;
 import com.rainwood.oa.ui.adapter.LeaveOutAdapter;
 import com.rainwood.oa.ui.adapter.OvertimeAdapter;
+import com.rainwood.oa.ui.adapter.ReceivableRecordAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IRecordCallbacks;
@@ -33,7 +35,6 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
-import com.tencent.smtt.utils.LogFileUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     private LeaveOutAdapter mOutAdapter;
     // 补卡记录
     private CardRecordAdapter mCardRecordAdapter;
+    // 回款记录
+    private ReceivableRecordAdapter mReceivableRecordAdapter;
 
     // 选择flag
     private boolean selectedTimeFlag = false;
@@ -116,8 +119,9 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         } else if (title.contains("补卡")) {
             mCardRecordAdapter = new CardRecordAdapter();
             recordList.setAdapter(mCardRecordAdapter);
-        }else if (title.contains("回款")){
-
+        } else if (title.contains("回款")) {
+            mReceivableRecordAdapter = new ReceivableRecordAdapter();
+            recordList.setAdapter(mReceivableRecordAdapter);
         }
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
@@ -135,6 +139,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
         } else if (title.contains("补卡")) {
             mRecordManagerPresenter.requestReissueRecord();
+        } else if (title.contains("回款")) {
+            mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID);
         }
     }
 
@@ -169,6 +175,9 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 toast("查看详情---" + cardRecord.getName());
                 startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "补卡详情"));
             });
+        } else if (title.contains("回款")) {
+            mReceivableRecordAdapter.setClickReceivable((record, position) ->
+                    PageJumpUtil.Receivable2Detail(RecordManagerActivity.this, ReceivableDetailActivity.class, record.getId()));
         }
 
         //选择时间段
@@ -245,6 +254,12 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         // 补卡记录
         List<CardRecord> cardList = (List<CardRecord>) reissueMap.get("cardRecord");
         mCardRecordAdapter.setLeaveOutRecordList(cardList);
+    }
+
+    @Override
+    public void getCustomReceivableRecords(List<ReceivableRecord> receivableRecordList) {
+        // 回款记录
+        mReceivableRecordAdapter.setRecordList(receivableRecordList);
     }
 
     @Override

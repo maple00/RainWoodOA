@@ -160,9 +160,12 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     }
 
     @SingleClick
-    @OnClick(R.id.tv_search_tips)
+    @OnClick({R.id.tv_search_tips, R.id.iv_page_back})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_page_back:
+                finish();
+                break;
             case R.id.tv_search_tips:
                 toast("搜索");
                 break;

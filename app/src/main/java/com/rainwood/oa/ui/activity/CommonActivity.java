@@ -1,7 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
@@ -31,16 +30,11 @@ import com.rainwood.oa.view.IAttachmentCallbacks;
 import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.permission.OnPermission;
-import com.rainwood.tools.permission.Permission;
-import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * create by a797s in 2020/5/15 14:55
@@ -51,7 +45,7 @@ import java.util.Map;
 public final class CommonActivity extends BaseActivity implements ICustomCallbacks, IAttachmentCallbacks {
 
     // actionBar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -120,7 +114,7 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
 
     @Override
     protected void initData() {
-        switch (title){
+        switch (title) {
             case "联系人":
                 mCustomId = getIntent().getStringExtra("customId");
                 break;
@@ -287,6 +281,7 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
 
     /**
      * 客户附件列表
+     *
      * @param attachmentList 附件列表
      */
     @SuppressLint("SetTextI18n")

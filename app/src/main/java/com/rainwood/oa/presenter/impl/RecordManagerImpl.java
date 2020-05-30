@@ -5,6 +5,7 @@ import com.rainwood.oa.model.domain.CustomFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
+import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * @Author: a797s
  * @Date: 2020/5/25 19:59
- * @Desc:
+ * @Desc: 记录管理逻辑类
  */
 public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpListener {
 
@@ -95,12 +96,34 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      */
     @Override
     public void requestCustomFollowRecords(String customId) {
-        // 请求客户下的订单列表
         RequestParams params = new RequestParams();
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=follow", params, this);
     }
 
+    /**
+     * 客户回款记录
+     *
+     * @param customId
+     */
+    @Override
+    public void requestCustomReceivableRecords(String customId) {
+        RequestParams params = new RequestParams();
+        params.add("khid", customId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=collection", params, this);
+    }
+
+    /**
+     * 客户回款记录详情
+     *
+     * @param receivableId
+     */
+    @Override
+    public void requestCustomReceivableRecordDetail(String receivableId) {
+        RequestParams params = new RequestParams();
+        params.add("id ", receivableId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=collectionDetail", params, this);
+    }
 
     @Override
     public void registerViewCallback(IRecordCallbacks callback) {
@@ -161,6 +184,26 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 List<OvertimeRecord> overtimeRecordList = JsonParser.parseJSONArray(OvertimeRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("add"));
                 mRecordCallbacks.getOvertimeRecords(overtimeRecordList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 回款记录
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=collection")) {
+            try {
+                List<ReceivableRecord> receivableList = JsonParser.parseJSONArray(ReceivableRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("collection"));
+                mRecordCallbacks.getCustomReceivableRecords(receivableList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 回款记录详情
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=collectionDetail")) {
+            try {
+                ReceivableRecord receivableRecord = JsonParser.parseJSONObject(ReceivableRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("collection"));
+                mRecordCallbacks.getCustomReceivableRecordDetail(receivableRecord);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -28,7 +28,7 @@
             android:layout_above="@+id/iv_oval_point"
             android:layout_marginStart="3dp"
             android:layerType="software"
-            android:src="@drawable/layer_list_dotted_line" />
+            android:src="@drawable/layer_vertical_dotted_line" />
 
 
         <ImageView
@@ -38,7 +38,7 @@
             android:layout_below="@+id/iv_oval_point"
             android:layout_marginStart="3dp"
             android:layerType="software"
-            android:src="@drawable/layer_list_dotted_line" />
+            android:src="@drawable/layer_vertical_dotted_line" />
 
     </RelativeLayout>
 

@@ -16,6 +16,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.ui.activity.AdminPunishActivity;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
+import com.rainwood.oa.ui.activity.BillingDataActivity;
 import com.rainwood.oa.ui.activity.CommonActivity;
 import com.rainwood.oa.ui.activity.CustomIntroduceActivity;
 import com.rainwood.oa.ui.activity.CustomListActivity;
@@ -134,6 +135,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "跟进记录":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录"));
+                    break;
+                case "开票信息":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BillingDataActivity.class, "开票信息"));
                     break;
                 // 订单模块
                 case "新建订单":

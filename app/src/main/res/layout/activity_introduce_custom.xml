@@ -10,7 +10,7 @@
 
     <!-- title-->
     <RelativeLayout
-        android:id="@+id/rl_title_top"
+        android:id="@+id/rl_page_top"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"

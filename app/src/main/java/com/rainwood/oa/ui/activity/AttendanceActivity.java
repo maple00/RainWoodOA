@@ -15,7 +15,6 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CalendarStatics;
 import com.rainwood.oa.ui.adapter.CalendarStaticsAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
@@ -36,7 +35,7 @@ import java.util.Map;
 public final class AttendanceActivity extends BaseActivity {
 
     // page
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView mPageTitle;

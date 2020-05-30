@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.activity;
 
-import android.text.Html;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 
 /**
@@ -23,7 +21,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 public final class CustomIntroduceActivity extends BaseActivity {
 
     // top action bar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout mPageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView mPageTitle;

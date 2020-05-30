@@ -20,7 +20,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 public final class CustomSuccessActivity extends BaseActivity {
 
     // action Bar
-    @ViewInject(R.id.rl_title_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;

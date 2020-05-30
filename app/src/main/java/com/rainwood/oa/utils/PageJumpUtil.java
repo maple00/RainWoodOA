@@ -32,8 +32,9 @@ public final class PageJumpUtil {
 
     /**
      * 客户详情页查询联系人列表
-     * @param context context
-     * @param clazz  target clazz
+     *
+     * @param context  context
+     * @param clazz    target clazz
      * @param customId 客户id
      */
     public static void CustomDetail2ContactList(Context context, Class<? extends BaseActivity> clazz, String customId) {
@@ -45,15 +46,28 @@ public final class PageJumpUtil {
 
     /**
      * 跳转到联系人信息编辑
+     *
      * @param context
      * @param clazz
      * @param contact
      */
-    public static void contact2Edit(Context context, Class<? extends BaseActivity> clazz, Contact contact, String customId){
+    public static void contact2Edit(Context context, Class<? extends BaseActivity> clazz, Contact contact, String customId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "编辑联系人");
         sIntent.putExtra("contact", contact);
         sIntent.putExtra("customId", customId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 回款记录列表跳转到汇款记录详情
+     * @param context
+     * @param clazz
+     */
+    public static void Receivable2Detail(Context context, Class<? extends BaseActivity> clazz, String receivableId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "回款记录详情");
+        sIntent.putExtra("receivableId", receivableId);
         context.startActivity(sIntent);
     }
 }

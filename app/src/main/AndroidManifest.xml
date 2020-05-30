@@ -167,6 +167,20 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 回款记录详情 ReceivableDetailActivity-->
+        <activity
+            android:name=".ui.activity.ReceivableDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 开票信息 BillingDataActivity-->
+        <activity
+            android:name=".ui.activity.BillingDataActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 新建订单 OrderNewActivity-->
         <activity
             android:name=".ui.activity.OrderNewActivity"

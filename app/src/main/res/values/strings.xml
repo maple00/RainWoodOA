@@ -125,5 +125,7 @@
     <string name="text_record_reissue_time">补卡时间</string>
     <string name="text_record_reissue_reason">补卡事由</string>
     <string name="text_custom_associates">协作人</string>
+    <string name="text_custom_receivable">回款</string>
+    <string name="text_custom_order_divided">本订单分得</string>
 
 </resources>

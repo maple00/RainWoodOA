@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_page_top"
+    android:id="@+id/rl_pager_top"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/white"
+    android:background="@color/transparent"
     android:elevation="0dp"
     android:gravity="center_vertical"
     android:paddingStart="12dp"
@@ -21,7 +21,7 @@
         android:paddingEnd="5dp"
         android:paddingBottom="4dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_page_back" />
+        android:src="@drawable/ic_page_back_white" />
 
     <TextView
         android:id="@+id/tv_page_title"
@@ -34,16 +34,22 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_menu_white" />
 
     <TextView
         android:id="@+id/tv_page_right_title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="15dp"
-        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_toStartOf="@+id/iv_menu"
         android:gravity="center_vertical"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/fontColor"
         android:textSize="18sp" />
-
 </RelativeLayout>

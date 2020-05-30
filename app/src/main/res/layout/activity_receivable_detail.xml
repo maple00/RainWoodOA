@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:gravity="center_horizontal"
+                android:text="回款/该订单分得"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_get_money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="48dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/fontColor"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                app:title="备注"
+                app:title_color="@color/labelColor"
+                app:value_color="@color/fontColor" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_pay_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="30dp"
+                app:title_color="@color/labelColor"
+                app:value_color="@color/fontColor"
+                app:values="2020.04.13" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="30dp">
+
+                <TextView
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:text="支付凭证"
+                    android:textColor="@color/labelColor"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/iv_pay_voucher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
