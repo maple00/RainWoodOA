@@ -48,7 +48,7 @@ public final class StaffPostAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sub_item_staff_depart, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sub_item_text_view, parent, false);
             ViewBind.inject(holder, convertView);
             convertView.setTag(holder);
         } else {
@@ -66,7 +66,7 @@ public final class StaffPostAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        @ViewInject(R.id.tv_staff_post)
+        @ViewInject(R.id.tv_text_value)
         private TextView post;
     }
 

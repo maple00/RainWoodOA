@@ -7,6 +7,7 @@ import com.rainwood.oa.model.domain.CustomOrderValues;
 import com.rainwood.oa.model.domain.Examination;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.Order;
+import com.rainwood.oa.model.domain.PrimaryKey;
 import com.rainwood.oa.model.domain.OrderStatics;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -106,9 +107,23 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=orderLi", params, this);
     }
 
+    /**
+     * 创建订单
+     */
     @Override
     public void CreateNewOrder() {
 
+    }
+
+    /**
+     * 通过关键字查询客户名称
+     * @param key
+     */
+    @Override
+    public void requestCustomName(String key) {
+        RequestParams params = new RequestParams();
+        params.add("key", key);
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=clientKey", params, this);
     }
 
     @Override
@@ -240,6 +255,17 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
 
 
                 mOrderEditCallbacks.getCustomOrderList(customOrderList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 通过关键字查询客户名称
+        else if (result.url().contains("cla=order&fun=clientKey")){
+            try {
+                List<PrimaryKey> orderCustomData = JsonParser.parseJSONArray(PrimaryKey.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("kehu"));
+
+                mOrderEditCallbacks.getCustomDataByKey(orderCustomData);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

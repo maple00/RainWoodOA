@@ -56,4 +56,15 @@ public interface IRecordCallbacks extends IBaseCallback {
      * 客户下的开票记录
      */
     default void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList){};
+
+    /**
+     * 客户新建开票记录的页面数据
+     */
+    default void getCustomNewInvoiceRecordsPageParams(Map pageMap){}
+
+    /**
+     * 创建客户开票记录
+     * @param flag
+     */
+    default void createInvoiceRecord(boolean flag){};
 }

@@ -15,9 +15,13 @@ import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tools.toast.ToastUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,7 +109,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     /**
      * 客户回款记录
      *
-     * @param customId
+     * @param customId 客户id
      */
     @Override
     public void requestCustomReceivableRecords(String customId) {
@@ -117,7 +121,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     /**
      * 客户回款记录详情
      *
-     * @param receivableId
+     * @param receivableId 汇款记录id
      */
     @Override
     public void requestCustomReceivableRecordDetail(String receivableId) {
@@ -128,13 +132,43 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     /**
      * 请求客户下的开票记录
-     * @param customId
+     *
+     * @param customId 客户id
      */
     @Override
     public void requestCustomInvoiceRecords(String customId) {
         RequestParams params = new RequestParams();
         params.add("id ", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi", params, this);
+    }
+
+    /**
+     * 请求客户下的开票记录中新建开票中的页面参数
+     */
+    @Override
+    public void requestCustomInvoiceParams() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoicePara", params, this);
+    }
+
+    /**
+     * 新建开票记录
+     * @param seller 销售方
+     * @param type 发票类型
+     * @param money 价税合计
+     * @param note 备注
+     * @param customId 客户id
+     */
+    @Override
+    public void CreateInvoiceRecord(String seller, String type, String money,  String note, String customId) {
+        RequestParams params = new RequestParams();
+        params.add("id", RandomUtil.getItemID(20));
+        params.add("company", seller);
+        params.add("type", type);
+        params.add("money", money);
+        params.add("text", note);
+        params.add("clientId", customId);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceAdd", params, this);
     }
 
     @Override
@@ -162,6 +196,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         try {
             String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
             if (!"success".equals(warn)) {
+                ToastUtils.show(warn);
                 mRecordCallbacks.onError(warn);
                 return;
             }
@@ -219,11 +254,42 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }else if (result.url().contains("cla=client&fun=invoiceLi")){
+        } else if (result.url().contains("cla=client&fun=invoiceLi")) {
             try {
                 List<InvoiceRecord> invoiceList = JsonParser.parseJSONArray(InvoiceRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
                 mRecordCallbacks.getCustomInvoiceRecords(invoiceList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 客户下开票记录中新建开票记录页面数据
+        else if (result.url().contains("cla=client&fun=invoicePara")) {
+            try {
+                JSONArray sellerArray = JsonParser.parseJSONArrayString(
+                        JsonParser.parseJSONObjectString(
+                                JsonParser.parseJSONObjectString(
+                                        result.body()).getString("para")).getString("company"));
+                String taxRate = JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(
+                                result.body()).getString("para")).getString("taxRate");
+                List<String> sellerList = new ArrayList<>();
+                for (int i = 0; i < sellerArray.length(); i++) {
+                    sellerList.add(sellerArray.getString(i));
+                }
+                Map<String, Object> invoiceNewPageParams = new HashMap<>();
+                invoiceNewPageParams.put("sellers", sellerList);
+                invoiceNewPageParams.put("rate", taxRate);
+                mRecordCallbacks.getCustomNewInvoiceRecordsPageParams(invoiceNewPageParams);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 新增开票记录
+        else if (result.url().contains("cla=client&fun=invoiceAdd")){
+            JSONObject jsonObject = JsonParser.parseJSONObjectString(result.body());
+            try {
+                mRecordCallbacks.createInvoiceRecord(jsonObject.get("warn").equals("success"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

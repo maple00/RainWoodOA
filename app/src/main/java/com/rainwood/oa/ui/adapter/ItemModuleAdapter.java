@@ -135,6 +135,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomListActivity.class, "客户列表"));
                     break;
                 case "跟进记录":
+                    LogUtils.d("sxs", "customId----" + Constants.CUSTOM_ID);
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录"));
                     break;
                 case "开票信息":
@@ -148,7 +149,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderNewActivity.class, "新建订单"));
                     break;
                 case "订单列表":
-                    LogUtils.d("sxs", "customId----" + Constants.CUSTOM_ID);
+
                     if (Constants.CUSTOM_ID != null){
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomOrderListActivity.class, "订单列表"));
                     }else {

@@ -195,7 +195,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     public void getALlStatus(Map statusMap) {
         // 获取到状态信息
         List<SelectedItem> selectedItems = (List<SelectedItem>) statusMap.get("selectedItem");
-        // TODO: widget popwindow
+        // popWindow
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
                 .setView(R.layout.pop_grid_list)

@@ -188,6 +188,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 开票申请  InvoiceApplyActivity-->
+        <activity
+            android:name=".ui.activity.InvoiceApplyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 新建订单 OrderNewActivity-->
         <activity
             android:name=".ui.activity.OrderNewActivity"

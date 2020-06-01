@@ -49,4 +49,15 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      * 请求客户下的开票记录
      */
     void requestCustomInvoiceRecords(String customId);
+
+    /**
+     * 请求客户下的开票记录中的开票参数
+     */
+    void requestCustomInvoiceParams();
+
+    /**
+     * 新建开票记录
+     */
+    void CreateInvoiceRecord(String seller, String type, String money,  String note,
+                             String customId);
 }

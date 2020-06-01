@@ -21,7 +21,6 @@ import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
@@ -110,7 +109,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 toast("menu");
                 break;
             case R.id.btn_apply_open:
-                toast("申请开通");
+                //toast("申请开通");
+                startActivity(getNewIntent(this, InvoiceApplyActivity.class, "开票记录"));
                 break;
         }
     }

@@ -1,11 +1,17 @@
 package com.rainwood.oa.base;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.service.autofill.OnClickAction;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +27,8 @@ import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+
+import java.lang.reflect.Method;
 
 /**
  * @Author: a797s
@@ -121,17 +129,16 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         return intent;
     }
 
-  /*  // 设置动画
-  @Override
+    @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
     }
 
     protected void openActivity(Class clazz) {
@@ -142,8 +149,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }*/
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
+    }
 
     /**
      * 显示吐司
@@ -158,6 +165,34 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
 
     public void toast(Object object) {
         ToastUtils.show(object);
+    }
+
+    /**
+     * 延迟执行
+     */
+    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    public final Object mHandlerToken = hashCode();
+
+    public final boolean post(Runnable r) {
+        return postDelayed(r, 0);
+    }
+
+    /**
+     * 延迟一段时间执行
+     */
+    public final boolean postDelayed(Runnable r, long delayMillis) {
+        if (delayMillis < 0) {
+            delayMillis = 0;
+        }
+        return postAtTime(r, SystemClock.uptimeMillis() + delayMillis);
+    }
+
+    /**
+     * 在指定的时间执行
+     */
+    public final boolean postAtTime(Runnable r, long uptimeMillis) {
+        // 发送和这个 Activity 相关的消息回调
+        return HANDLER.postAtTime(r, mHandlerToken, uptimeMillis);
     }
 
     /**
@@ -209,9 +244,39 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      */
     public void setRequiredValue(TextView requestedText, String s) {
         requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
-                + " size=" + FontSwitchUtil.dip2px(this, 16f)+">" + s +"</font>" +
+                + " size=" + FontSwitchUtil.dip2px(this, 16f) + ">" + s + "</font>" +
                 "<font color=" + this.getColor(R.color.red05) + " size= "
                 + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
+    }
+
+    /**
+     * 判断手机是否有底部虚拟键位
+     * @param context
+     * @return
+     */
+    public boolean checkDeviceHasNavigationBar(Context context) {
+        boolean hasNavigationBar = false;
+        Resources rs = context.getResources();
+        int id = rs.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (id > 0) {
+            hasNavigationBar = rs.getBoolean(id);
+        }
+        try {
+            @SuppressLint("PrivateApi")
+            Class systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            Method m = systemPropertiesClass.getMethod("get", String.class);
+            String navBarOverride = (String) m.invoke(systemPropertiesClass, "qemu.hw.mainkeys");
+            if ("0".equals(navBarOverride)) {
+                //不存在虚拟按键
+                hasNavigationBar = false;
+            } else if ("1".equals(navBarOverride)) {
+                //存在虚拟按键
+                hasNavigationBar = true;
+            }
+            Log.d(TAG, " 虚拟键位 ========== " + hasNavigationBar);
+        } catch (Exception e) {
+        }
+        return hasNavigationBar;
     }
 
 }

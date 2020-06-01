@@ -30,4 +30,9 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
      * 新建订单
      */
     void CreateNewOrder();
+
+    /**
+     * 通过客户关键字查询客户名称
+     */
+    void requestCustomName(String key);
 }

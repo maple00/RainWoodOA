@@ -98,6 +98,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
     @Override
     protected void loadData() {
+        // 跟进记录有问题- 没有传客户id的时候查询出来的数据跟传了客户id的时候一致
         mRecordPresenter.requestCustomFollowRecords(Constants.CUSTOM_ID);
     }
 
