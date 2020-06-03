@@ -305,7 +305,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     public void getCustomOfStaff(List<CustomStaff> customStaffList) {
 
         new BottomCustomDialog.Builder(this)
-                .setTitle(plusFlag ? "plusFlag" : "转让给")
+                .setTitle(plusFlag ? "添加协作人" : "转让给")
                 .setList(customStaffList)
                 .setGravity(Gravity.BOTTOM)
                 .setAutoDismiss(false)

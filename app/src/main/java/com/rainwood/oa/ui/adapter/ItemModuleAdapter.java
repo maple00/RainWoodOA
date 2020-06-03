@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
+import com.rainwood.oa.ui.activity.AddressBookActivity;
 import com.rainwood.oa.ui.activity.AdminPunishActivity;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
 import com.rainwood.oa.ui.activity.BillingDataActivity;
@@ -25,6 +26,7 @@ import com.rainwood.oa.ui.activity.CustomOrderListActivity;
 import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
 import com.rainwood.oa.ui.activity.FollowRecordActivity;
+import com.rainwood.oa.ui.activity.HelperActivity;
 import com.rainwood.oa.ui.activity.InvoiceRecordActivity;
 import com.rainwood.oa.ui.activity.LogcatActivity;
 import com.rainwood.oa.ui.activity.ManagerSystemActivity;
@@ -150,9 +152,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "订单列表":
 
-                    if (Constants.CUSTOM_ID != null){
+                    if (Constants.CUSTOM_ID != null) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomOrderListActivity.class, "订单列表"));
-                    }else {
+                    } else {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderListActivity.class, "订单列表"));
                     }
                     break;
@@ -176,7 +178,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     ToastUtils.show("工作日");
                     break;
                 case "通讯录":
-                    ToastUtils.show("通讯录");
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AddressBookActivity.class, "通讯录"));
                     break;
                 case "管理制度":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), ManagerSystemActivity.class, "管理制度"));
@@ -205,6 +207,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                 // 系统设置
                 case "系统日志":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), LogcatActivity.class, "系统日志"));
+                    break;
+                case "帮助中心":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), HelperActivity.class, "帮助中心"));
                     break;
             }
         });

@@ -1,5 +1,6 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,21 +8,21 @@ import java.util.List;
  * @Date: 2020/5/20 10:28
  * @Desc: 订单
  */
-public final class Order {
+public final class Order implements Serializable {
 
     /**
      * 订单编号
      */
-    private String no;
+    private String id;
     /**
      * 订单状态
      */
-    private String status;
+    private String workFlow;
 
     /**
      * 订单名称
      */
-    private String orderName;
+    private String name;
     /**
      * 订单金额
      */
@@ -30,12 +31,12 @@ public final class Order {
     /**
      * 订单属性
      */
-    private List<OrderStatics> natureList;
+    private List<FontAndFont> natureList;
 
     /**
      * 负责人姓名
      */
-    private String chargeName;
+    private String staffName;
 
     /**
      * 工期
@@ -52,28 +53,28 @@ public final class Order {
      */
     private String endTime;
 
-    public String getNo() {
-        return no;
+    public String getId() {
+        return id;
     }
 
-    public void setNo(String no) {
-        this.no = no;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
     }
 
-    public String getOrderName() {
-        return orderName;
+    public String getName() {
+        return name;
     }
 
-    public void setOrderName(String orderName) {
-        this.orderName = orderName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getMoney() {
@@ -84,12 +85,12 @@ public final class Order {
         this.money = money;
     }
 
-    public String getChargeName() {
-        return chargeName;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setChargeName(String chargeName) {
-        this.chargeName = chargeName;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public String getTimeLimit() {
@@ -116,23 +117,23 @@ public final class Order {
         this.endTime = endTime;
     }
 
-    public List<OrderStatics> getNatureList() {
+    public List<FontAndFont> getNatureList() {
         return natureList;
     }
 
-    public void setNatureList(List<OrderStatics> natureList) {
+    public void setNatureList(List<FontAndFont> natureList) {
         this.natureList = natureList;
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "no='" + no + '\'' +
-                ", status='" + status + '\'' +
-                ", orderName='" + orderName + '\'' +
+                "id='" + id + '\'' +
+                ", workFlow='" + workFlow + '\'' +
+                ", name='" + name + '\'' +
                 ", money='" + money + '\'' +
                 ", natureList=" + natureList +
-                ", chargeName='" + chargeName + '\'' +
+                ", staffName='" + staffName + '\'' +
                 ", timeLimit='" + timeLimit + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +

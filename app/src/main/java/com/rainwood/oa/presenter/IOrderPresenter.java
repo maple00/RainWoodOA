@@ -15,11 +15,10 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
      */
     void requestAllExaminationData();
 
-
     /**
      * 请求所有订单的统计信息
      */
-    void requestOrderData();
+   // void requestOrderData();
 
     /**
      * 请求客户下的订单列表
@@ -29,10 +28,16 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
     /**
      * 新建订单
      */
-    void CreateNewOrder();
-
+    void CreateNewOrder(String customId, String orderNameStr, String moneyStr, String noteStr);
     /**
      * 通过客户关键字查询客户名称
      */
     void requestCustomName(String key);
+
+    /**
+     * 请求订单列表
+     */
+    void requestOrderList();
+
+
 }

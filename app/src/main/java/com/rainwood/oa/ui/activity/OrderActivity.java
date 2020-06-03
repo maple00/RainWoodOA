@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Examination;
+import com.rainwood.oa.model.domain.TempData;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.ExaminationAdapter;
 import com.rainwood.oa.ui.adapter.FollowAdapter;
@@ -135,6 +136,18 @@ public final class OrderActivity extends BaseActivity implements OrderAttachAdap
     }
 
     @Override
+    protected void initData() {
+        TempData orderValues = (TempData) getIntent().getSerializableExtra("orderValues");
+        if (orderValues != null) {
+            // 创建订单数据
+            customName.setText(orderValues.getTempMap().get("customName"));
+            orderName.setText(orderValues.getTempMap().get("orderName"));
+            contractMoney.setText(orderValues.getTempMap().get("money"));
+            note.setText(orderValues.getTempMap().get("note"));
+        }
+    }
+
+    @Override
     protected void loadData() {
         // 请求数据
         mOrderEditPresenter.requestAllExaminationData();
@@ -147,14 +160,18 @@ public final class OrderActivity extends BaseActivity implements OrderAttachAdap
     }
 
     @SingleClick
-    @OnClick({R.id.tv_page_right_title, R.id.cet_note, R.id.iv_upload_attach, R.id.tv_upload_attach,
+    @OnClick({R.id.iv_page_back, R.id.tv_page_right_title, R.id.cet_note, R.id.iv_upload_attach, R.id.tv_upload_attach,
             R.id.iv_provision, R.id.tv_provision, R.id.iv_follow_record, R.id.tv_follow_record,
             R.id.tv_add_attach, R.id.iv_add_attach, R.id.iv_add_follow, R.id.iv_add_provision,
             R.id.iv_add_approver, R.id.tv_add_approver, R.id.tv_add_follow, R.id.tv_add_provision})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_page_back:
+                openActivity(OrderListActivity.class);
+                finish();
+                break;
             case R.id.tv_page_right_title:
-                // 保存
+                openActivity(OrderListActivity.class);
                 toast("保存了");
                 finish();
                 break;

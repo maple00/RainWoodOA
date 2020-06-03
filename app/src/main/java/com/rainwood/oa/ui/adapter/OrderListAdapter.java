@@ -34,25 +34,20 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
 
     public void setList(List<Order> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
-    public void setContext(Context context) {
-        mContext = context;
-    }
-
-    private int count = 0;
 
     @Override
     public int getItemViewType(int position) {
-        // TODO : 完美解决方式：采用多布局，让recyclerview上面的控件作为一个item加载进recyclerview上的第一个item，
-        //  下面的item放list数据，这样就解决了~
         return super.getItemViewType(position);
     }
 
+    private int count = 0;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LogUtils.d("sxs", "绘制------- " + ++count + "--- viewType: " + viewType);
+        mContext = parent.getContext();
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_order_view, parent, false);
         return new ViewHolder(view);
     }
@@ -60,14 +55,14 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.orderNo.setText("订单号：" + mList.get(position).getNo());
-        holder.status.setText(mList.get(position).getStatus());
-        holder.status.setTextColor("已完成".equals(mList.get(position).getStatus())
+        holder.orderNo.setText("订单号：" + mList.get(position).getId());
+        holder.status.setText(mList.get(position).getWorkFlow());
+        holder.status.setTextColor("已完成".equals(mList.get(position).getWorkFlow())
                 ? mContext.getColor(R.color.colorPrimary)
                 : mContext.getColor(R.color.tipsColor));
-        holder.orderName.setText(mList.get(position).getOrderName());
+        holder.orderName.setText(mList.get(position).getName());
         holder.money.setText("￥" + mList.get(position).getMoney());
-        holder.chargeMan.setText(mList.get(position).getChargeName());
+        holder.chargeMan.setText(mList.get(position).getStaffName());
         holder.limitDay.setText(mList.get(position).getTimeLimit() + "天");
         holder.limitDate.setText(mList.get(position).getStartTime() + "-"
                 + mList.get(position).getEndTime());

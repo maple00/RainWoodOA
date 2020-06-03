@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/iv_head_photo"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default_head" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        android:text="邵雪松"
+        android:textColor="@color/fontColor"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="3dp"
+        android:layout_toEndOf="@+id/tv_name"
+        android:text="Android开发工程师"
+        android:textColor="@color/labelColor"
+        android:textSize="14sp" />
+
+    <com.rainwood.oa.ui.widget.GroupIconText
+        android:id="@+id/git_tel_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_name"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        android:layout_toEndOf="@+id/iv_head_photo"
+        app:icon="@drawable/ic_staff_phone_num"
+        app:spacing="0"
+        app:text="15847251880" />
+
+    <com.rainwood.oa.ui.widget.GroupIconText
+        android:id="@+id/git_qq_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_name"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="13dp"
+        android:layout_toEndOf="@+id/git_tel_num"
+        app:icon="@drawable/ic_staff_qq"
+        app:spacing="0"
+        app:text="15847251880" />
+
+</RelativeLayout>

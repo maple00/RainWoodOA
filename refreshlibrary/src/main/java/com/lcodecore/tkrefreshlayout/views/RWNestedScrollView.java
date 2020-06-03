@@ -2,6 +2,7 @@ package com.lcodecore.tkrefreshlayout.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -21,11 +22,11 @@ public class RWNestedScrollView extends NestedScrollView {
     }
 
     public RWNestedScrollView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context,attrs);
+        super(context, attrs);
     }
 
     public RWNestedScrollView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context,attrs,defStyleAttr);
+        super(context, attrs, defStyleAttr);
     }
 
     public void setHeaderHeight(int headerHeight) {
@@ -33,25 +34,25 @@ public class RWNestedScrollView extends NestedScrollView {
     }
 
     @Override
-    public void onNestedPreScroll(@NonNull View target,int dx,int dy,@NonNull int[] consumed,
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed,
                                   @ViewCompat.NestedScrollType int type) {
         //        LogUtils.d(this,"dy === > " + dy);
-        if(target instanceof RecyclerView) {
+        if (target instanceof RecyclerView) {
             this.mRecyclerView = (RecyclerView) target;
         }
-        if(originScroll < mHeaderHeight) {
-            scrollBy(dx,dy);
+        if (originScroll < mHeaderHeight) {
+            scrollBy(dx, dy);
             consumed[0] = dx;
             consumed[1] = dy;
         }
-        super.onNestedPreScroll(target,dx,dy,consumed,type);
+        super.onNestedPreScroll(target, dx, dy, consumed, type);
     }
 
     @Override
-    protected void onScrollChanged(int l,int t,int oldl,int oldt) {
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         this.originScroll = t;
         //        LogUtils.d(this,"vertical -- > " + t);
-        super.onScrollChanged(l,t,oldl,oldt);
+        super.onScrollChanged(l, t, oldl, oldt);
     }
 
     /**
@@ -60,9 +61,9 @@ public class RWNestedScrollView extends NestedScrollView {
      * @return
      */
     public boolean isInBottom() {
-        if(mRecyclerView != null) {
+        if (mRecyclerView != null) {
             boolean isBottom = !mRecyclerView.canScrollVertically(1);
-           // Log.d(TAG,"isBottom == > " + isBottom);
+            Log.d(TAG, "isBottom == > " + isBottom);
             return isBottom;
         }
         return false;

@@ -210,6 +210,14 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 订单详情 OrderDetailActivity-->
+        <activity
+            android:name=".ui.activity.OrderDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 添加费用计提 AddProvisionActivity-->
         <activity
             android:name=".ui.activity.AddProvisionActivity"
@@ -297,6 +305,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 通讯录 AddressBookActivity-->
+        <activity
+            android:name=".ui.activity.AddressBookActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 员工 staffMainActivity-->
         <activity
             android:name=".ui.activity.StaffMainActivity"
@@ -363,6 +378,12 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 帮助中心 HelperActivity-->
+        <activity
+            android:name=".ui.activity.HelperActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
 
         <!--
         三方集成

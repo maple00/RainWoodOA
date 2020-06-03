@@ -44,8 +44,8 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
             managerMain.setTitle(data[i]);
             // 设置默认打开
             if (i == 0) {
-                managerMain.setHasSelected(true);
             }
+            managerMain.setHasSelected(true);
             switch (i) {
                 case 0:     // 行政人事
                     List<IconAndFont> moduleItemList = new ArrayList<>();

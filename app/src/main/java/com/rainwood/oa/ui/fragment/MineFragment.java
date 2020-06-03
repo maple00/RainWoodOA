@@ -29,7 +29,6 @@ import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.SmartUtil;
 

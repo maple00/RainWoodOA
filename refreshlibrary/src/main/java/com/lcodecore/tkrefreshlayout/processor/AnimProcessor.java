@@ -7,13 +7,13 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.view.animation.DecelerateInterpolator;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.lcodecore.tkrefreshlayout.utils.LogUtil;
 import com.lcodecore.tkrefreshlayout.utils.ScrollingUtil;
 
 import java.util.LinkedList;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

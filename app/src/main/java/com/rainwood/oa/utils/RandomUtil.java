@@ -10,6 +10,7 @@ import java.util.Random;
 public final class RandomUtil {
 
     /**
+     * 创建字母+数字的组合id
      * 生成随机数当作getItemID
      * n ： 需要的长度
      */
@@ -25,6 +26,18 @@ public final class RandomUtil {
             } else { // 产生数字
                 val.append(random.nextInt(10));
             }
+        }
+        return val.toString();
+    }
+
+    /**
+     * 创建纯数字的id
+     */
+    public static String getNumberId(int n) {
+        StringBuilder val = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < n; i++) {
+            val.append(random.nextInt(10));
         }
         return val.toString();
     }

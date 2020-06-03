@@ -57,8 +57,8 @@ public final class GroupIconText extends LinearLayout {
         if (color != 0) {
             values.setTextColor(color);
         }
-        int spacing = typedArray.getInteger(R.styleable.GroupIconText_spacing, 8);
-        if (spacing != 0){
+        int spacing = typedArray.getInteger(R.styleable.GroupIconText_spacing, 0);
+        if (spacing != 0) {
             values.setPadding(FontSwitchUtil.dip2px(context, spacing), 0, 0, 0);
         }
         // icon

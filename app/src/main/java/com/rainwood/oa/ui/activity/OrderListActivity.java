@@ -23,6 +23,7 @@ import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IOrderCallbacks;
@@ -52,10 +53,6 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     // content
     @ViewInject(R.id.cl_order_list_parent)
     private CoordinatorLayout orderListParent;
-    @ViewInject(R.id.iv_show_hide)
-    private ImageView showHideView;
-    @ViewInject(R.id.mlv_statics_order)
-    private MeasureListView staticsOrder;
     @ViewInject(R.id.gti_status)
     private GroupTextIcon orderStatus;
     @ViewInject(R.id.gti_staff)
@@ -105,9 +102,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         mStaticsAdapter = new OrderStaticsAdapter();
         mOrderListAdapter = new OrderListAdapter();
         // 设置适配器
-        staticsOrder.setAdapter(mStaticsAdapter);
         orderView.setAdapter(mOrderListAdapter);
-        mOrderListAdapter.setContext(this);
         // 设置刷新相关属性 -- 可加载不可刷新
         pagerRefresh.setEnableLoadmore(true);
         pagerRefresh.setEnableRefresh(false);
@@ -161,7 +156,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     protected void loadData() {
         // 请求数据
-        mOrderPresenter.requestOrderData();
+        mOrderPresenter.requestOrderList();
     }
 
     @Override
@@ -171,25 +166,21 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     }
 
     @SingleClick
-    @OnClick({R.id.iv_show_hide, R.id.iv_page_back})
+    @OnClick({R.id.iv_page_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-            case R.id.iv_show_hide:
+            /*case R.id.iv_show_hide:
                 isShowHide = !isShowHide;
                 showHideView.setImageResource(isShowHide ? R.drawable.ic_up_arrow : R.drawable.ic_down_arrow);
                 mStaticsAdapter.setList(isShowHide ? mOrderStatics : mOrderStatics.subList(0, 3));
-                break;
+                break;*/
         }
     }
 
-    /**
-     * 返回所有的统计信息
-     *
-     * @param orderListData 订单列表信息
-     */
+/*
     @SuppressWarnings("all")
     @Override
     public void getAllOrderPage(Map orderListData) {
@@ -203,6 +194,16 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         List<Order> orderList = (List<Order>) orderListData.get("order");
         mOrderListAdapter.setList(orderList);
         // mContentListAdapter.setList(orderList);
+    }*/
+
+    /**
+     * 总的订单列表
+     * @param orderList
+     */
+    @Override
+    public void getOrderList(List<Order> orderList) {
+        LogUtils.d("sxs", "共-- " + ListUtils.getSize(orderList) + "-- 条数据");
+        mOrderListAdapter.setList(orderList);
     }
 
     @Override

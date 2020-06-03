@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.OrderStatics;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -22,9 +23,9 @@ import java.util.List;
  */
 public final class OrderNatureAdapter extends BaseAdapter {
 
-    private List<OrderStatics> mList;
+    private List<FontAndFont> mList;
 
-    public void setList(List<OrderStatics> list) {
+    public void setList(List<FontAndFont> list) {
         mList = list;
     }
 
@@ -34,7 +35,7 @@ public final class OrderNatureAdapter extends BaseAdapter {
     }
 
     @Override
-    public OrderStatics getItem(int position) {
+    public FontAndFont getItem(int position) {
         return mList.get(position);
     }
 
@@ -55,7 +56,7 @@ public final class OrderNatureAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.title.setText(getItem(position).getTitle());
-        holder.value.setText(getItem(position).getValues());
+        holder.value.setText(getItem(position).getDesc());
         return convertView;
     }
 

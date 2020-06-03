@@ -2,10 +2,14 @@ package com.rainwood.oa.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.TempData;
+
+import java.util.Map;
 
 /**
  * @Author: a797s
@@ -61,6 +65,7 @@ public final class PageJumpUtil {
 
     /**
      * 回款记录列表跳转到汇款记录详情
+     *
      * @param context
      * @param clazz
      */
@@ -68,6 +73,20 @@ public final class PageJumpUtil {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "回款记录详情");
         sIntent.putExtra("receivableId", receivableId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 创建订单跳转到订单编辑页面
+     *
+     * @param context
+     * @param clazz
+     * @param tempData 页面跳转携带的数据
+     */
+    public static void OrderNew2OrderEditPage(Context context, Class<? extends BaseActivity> clazz, TempData tempData) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "编辑订单");
+        sIntent.putExtra("orderValues", tempData);
         context.startActivity(sIntent);
     }
 }

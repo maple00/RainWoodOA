@@ -7,8 +7,8 @@ import com.rainwood.oa.model.domain.CustomOrderValues;
 import com.rainwood.oa.model.domain.Examination;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.Order;
+import com.rainwood.oa.model.domain.OrderValues;
 import com.rainwood.oa.model.domain.PrimaryKey;
-import com.rainwood.oa.model.domain.OrderStatics;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -17,7 +17,9 @@ import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IOrderCallbacks;
+import com.rainwood.tools.toast.ToastUtils;
 
 import org.json.JSONException;
 
@@ -52,7 +54,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         mOrderEditCallbacks.getAllExaminationData(dataMap);
     }
 
-    @Override
+  /*  @Override
     public void requestOrderData() {
         Map<String, List> orderMap = new HashMap<>();
         // 模拟所有订单的统计信息
@@ -95,9 +97,11 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
 
         mOrderEditCallbacks.getAllOrderPage(orderMap);
     }
+*/
 
     /**
      * 请求客户下的订单列表
+     *
      * @param customId
      */
     @Override
@@ -111,12 +115,19 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
      * 创建订单
      */
     @Override
-    public void CreateNewOrder() {
-
+    public void CreateNewOrder(String customId, String orderNameStr, String moneyStr, String noteStr) {
+        RequestParams params = new RequestParams();
+        params.add("khid", customId);
+        params.add("id", RandomUtil.getNumberId(20));
+        params.add("name", orderNameStr);
+        params.add("money", moneyStr);
+        params.add("text", noteStr);
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=edit", params, this);
     }
 
     /**
      * 通过关键字查询客户名称
+     *
      * @param key
      */
     @Override
@@ -124,6 +135,15 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         RequestParams params = new RequestParams();
         params.add("key", key);
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=clientKey", params, this);
+    }
+
+    /**
+     * 请求订单列表
+     */
+    @Override
+    public void requestOrderList() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=home", params, this);
     }
 
     @Override
@@ -157,6 +177,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         try {
             String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
             if (!"success".equals(warn)) {
+                ToastUtils.show(warn);
                 mOrderEditCallbacks.onError(warn);
                 return;
             }
@@ -165,7 +186,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         }
 
         if (result.url().contains("cla=client&fun=orderLi")) {
-            // 订单列表
+            // 客户订单列表
             try {
                 List<CustomOrderValues> customOrderValuesList = JsonParser.parseJSONArray(CustomOrderValues.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("order"));
@@ -252,20 +273,106 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                     customOrder.setValueList(valuesList);
                     customOrderList.add(customOrder);
                 }
-
-
                 mOrderEditCallbacks.getCustomOrderList(customOrderList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         // 通过关键字查询客户名称
-        else if (result.url().contains("cla=order&fun=clientKey")){
+        else if (result.url().contains("cla=order&fun=clientKey")) {
             try {
                 List<PrimaryKey> orderCustomData = JsonParser.parseJSONArray(PrimaryKey.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("kehu"));
 
                 mOrderEditCallbacks.getCustomDataByKey(orderCustomData);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 创建订单
+        else if (result.url().contains("cla=order&fun=edit")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mOrderEditCallbacks.getCreateResult("success".equals(warn));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 总的订单列表
+        else if (result.url().contains("cla=order&fun=home")) {
+            try {
+                List<OrderValues> orderList = JsonParser.parseJSONArray(OrderValues.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("order"));
+                // 数据处理
+                List<Order> orderValuesList = new ArrayList<>();
+                for (OrderValues order : orderList) {
+                    Order values = new Order();
+                    values.setId(order.getId());
+                    values.setName(order.getName());
+                    values.setWorkFlow(order.getWorkFlow());
+                    values.setMoney(order.getMoney());
+                    values.setStaffName(order.getStaffName());
+
+                    List<FontAndFont> valuesList = new ArrayList<>();
+                    if (!TextUtils.isEmpty(order.getCost())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("费用计提");
+                        value.setDesc("￥" + order.getCost());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getNetWorthOrder())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("合同净值");
+                        value.setDesc("￥" + order.getNetWorthOrder());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getMoneyWait())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("合同应收");
+                        value.setDesc("￥" + order.getMoneyWait());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getNetWorthIn())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("净回款");
+                        value.setDesc("￥" + order.getNetWorthIn());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getNetWorthWait())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("剩余净值");
+                        value.setDesc("￥" + order.getNetWorthWait());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getRatio())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("拨付比例");
+                        value.setDesc("￥" + order.getRatio());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getBuyCarAllotMoney())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("预计奖金");
+                        value.setDesc("￥" + order.getBuyCarAllotMoney());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getBuyCarAllotPay())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("已拨付");
+                        value.setDesc("￥" + order.getBuyCarAllotPay());
+                        valuesList.add(value);
+                    }
+                    if (!TextUtils.isEmpty(order.getBuyCarAllotSurplus())) {
+                        FontAndFont value = new FontAndFont();
+                        value.setTitle("奖金余额");
+                        value.setDesc("￥" + order.getBuyCarAllotSurplus());
+                        valuesList.add(value);
+                    }
+                    values.setNatureList(valuesList);
+                    orderValuesList.add(values);
+                }
+
+                mOrderEditCallbacks.getOrderList(orderValuesList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

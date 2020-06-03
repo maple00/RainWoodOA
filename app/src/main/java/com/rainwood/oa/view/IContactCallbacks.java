@@ -17,5 +17,10 @@ public interface IContactCallbacks extends IBaseCallback {
     /**
      * 返回联系人
      */
-    void getAllContact(Map<String, List> contactData);
+    default void getAllContact(Map<String, List> contactData){}
+
+    /**
+     * 返回通讯录数据
+     */
+    default void getAddressBookData(Map addressBookData){}
 }
