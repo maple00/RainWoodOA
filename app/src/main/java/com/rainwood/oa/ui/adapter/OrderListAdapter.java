@@ -43,7 +43,6 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
         return super.getItemViewType(position);
     }
 
-    private int count = 0;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
