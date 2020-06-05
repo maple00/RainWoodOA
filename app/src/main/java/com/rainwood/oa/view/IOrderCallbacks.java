@@ -49,4 +49,9 @@ public interface IOrderCallbacks extends IBaseCallback {
      * 订单列表数据
      */
     default void getOrderList(List<Order> orderList){}
+
+    /**
+     * 订单详情数据
+     */
+    default void getOrderDetail(Map orderDetailMap){}
 }

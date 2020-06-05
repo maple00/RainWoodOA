@@ -59,7 +59,6 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
         RequestParams params = new RequestParams();
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=fileLi", params, this);
-
     }
 
     @Override

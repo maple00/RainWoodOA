@@ -76,7 +76,7 @@ public final class ManagerSystemActivity extends BaseActivity implements IManage
             @Override
             public void onClickItem(ManagerSystem item) {
                 // toast("查看详情");
-                startActivity(getNewIntent(ManagerSystemActivity.this, SystemDetailActivity.class, "管理制度"));
+                startActivity(getNewIntent(ManagerSystemActivity.this, ArticleDetailActivity.class, "管理制度"));
             }
         });
     }

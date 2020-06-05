@@ -25,6 +25,7 @@ import com.rainwood.oa.ui.activity.CustomNewActivity;
 import com.rainwood.oa.ui.activity.CustomOrderListActivity;
 import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
+import com.rainwood.oa.ui.activity.CustomFollowRecordActivity;
 import com.rainwood.oa.ui.activity.FollowRecordActivity;
 import com.rainwood.oa.ui.activity.HelperActivity;
 import com.rainwood.oa.ui.activity.InvoiceRecordActivity;
@@ -34,8 +35,10 @@ import com.rainwood.oa.ui.activity.OrderListActivity;
 import com.rainwood.oa.ui.activity.OrderNewActivity;
 import com.rainwood.oa.ui.activity.PostManagerActivity;
 import com.rainwood.oa.ui.activity.RecordManagerActivity;
+import com.rainwood.oa.ui.activity.ReimbursementActivity;
 import com.rainwood.oa.ui.activity.RoleManagerActivity;
 import com.rainwood.oa.ui.activity.StaffManagerActivity;
+import com.rainwood.oa.ui.activity.TeamFundsActivity;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -138,7 +141,11 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "跟进记录":
                     LogUtils.d("sxs", "customId----" + Constants.CUSTOM_ID);
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录"));
+                    if (Constants.CUSTOM_ID != null){
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomFollowRecordActivity.class, "跟进记录"));
+                    }else {
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录"));
+                    }
                     break;
                 case "开票信息":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), BillingDataActivity.class, "开票信息"));
@@ -151,7 +158,6 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderNewActivity.class, "新建订单"));
                     break;
                 case "订单列表":
-
                     if (Constants.CUSTOM_ID != null) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomOrderListActivity.class, "订单列表"));
                     } else {
@@ -203,6 +209,12 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "行政处罚":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AdminPunishActivity.class, "行政处罚"));
+                    break;
+                // 财务管理
+                case "费用报销":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), ReimbursementActivity.class, "费用报销"));
+                case "团队基金":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), TeamFundsActivity.class, "团队基金"));
                     break;
                 // 系统设置
                 case "系统日志":

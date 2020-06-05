@@ -13,8 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.FontSwitchUtil;
 
 /**
  * @Author: a797s
@@ -30,6 +32,7 @@ public final class GroupTextText extends LinearLayout {
     @ViewInject(R.id.v_placeholder)
     private View placeholder;
 
+    private String title;
     private String value;
 
     public GroupTextText(Context context) {
@@ -58,6 +61,11 @@ public final class GroupTextText extends LinearLayout {
             titleTV.setText(title);
         }
 
+        int titleSize = typedArray.getInteger(R.styleable.GroupTextText_title_size, 15);
+        if (titleSize != -1) {
+            titleTV.setTextSize(titleSize);
+        }
+
         int valueColor = typedArray.getColor(R.styleable.GroupTextText_value_color, context.getColor(R.color.fontColor));
         if (valueColor != -1) {
             values.setTextColor(valueColor);
@@ -66,6 +74,11 @@ public final class GroupTextText extends LinearLayout {
         String valueStr = typedArray.getString(R.styleable.GroupTextText_values);
         if (!TextUtils.isEmpty(valueStr)) {
             values.setText(valueStr);
+        }
+
+        int valuesSize = typedArray.getInteger(R.styleable.GroupTextText_title_size, 15);
+        if (valuesSize != -1) {
+            values.setTextSize(valuesSize);
         }
 
         boolean endParent = typedArray.getBoolean(R.styleable.GroupTextText_endParent, false);
@@ -82,7 +95,18 @@ public final class GroupTextText extends LinearLayout {
         }
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+        if (!TextUtils.isEmpty(title)) {
+            titleTV.setText(title);
+        }
+    }
+
     public String getValue() {
         return value;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

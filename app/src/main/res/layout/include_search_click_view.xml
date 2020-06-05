@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_search_click"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="?attr/actionBarSize"
     android:background="@color/white"
     android:gravity="center_vertical"
     android:paddingTop="10dp"
@@ -24,8 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="5dp"
-        android:padding="10dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/text_common_search"
         android:textColor="@color/fontColor"
         android:textSize="20sp" />
@@ -33,7 +32,7 @@
     <LinearLayout
         android:id="@+id/ll_search_view"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="?attr/actionBarSize"
         android:layout_centerVertical="true"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="7dp"
@@ -56,6 +55,8 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             android:hint="请输入搜索内容"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:textColor="@color/labelColor"
             android:textSize="16sp" />
     </LinearLayout>

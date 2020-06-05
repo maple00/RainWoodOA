@@ -3,6 +3,7 @@ package com.rainwood.oa.presenter.impl;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
+import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
@@ -153,14 +154,15 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     /**
      * 新建开票记录
-     * @param seller 销售方
-     * @param type 发票类型
-     * @param money 价税合计
-     * @param note 备注
+     *
+     * @param seller   销售方
+     * @param type     发票类型
+     * @param money    价税合计
+     * @param note     备注
      * @param customId 客户id
      */
     @Override
-    public void CreateInvoiceRecord(String seller, String type, String money,  String note, String customId) {
+    public void CreateInvoiceRecord(String seller, String type, String money, String note, String customId) {
         RequestParams params = new RequestParams();
         params.add("id", RandomUtil.getItemID(20));
         params.add("company", seller);
@@ -169,6 +171,29 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         params.add("text", note);
         params.add("clientId", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceAdd", params, this);
+    }
+
+    @Override
+    public void requestKnowledgeFollowRecords() {
+        // 模拟知识管理中的跟进记录
+        List<KnowledgeFollowRecord> recordList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            KnowledgeFollowRecord record = new KnowledgeFollowRecord();
+            record.setType((i % 2 == 0) ? " 客户" : "订单");
+            record.setName("重庆市永川区兴永建设发展有限公司项目管理");
+            record.setContent("在全球，随着Flutter被越来越多的知名公司应用在自己的商业APP中，" +
+                    "Flutter这门新技术也逐渐进入了移动开发者的视野，尤其是当Google在2018年IO大会上发布了第一个" +
+                    "Preview版本后，国内刮起来一股学习Flutter的热潮。\n\n为了更好的方便帮助中国开发者了解这门新技术" +
+                    "，我们，Flutter中文网，前后发起了Flutter翻译计划、Flutter开源计划，前者主要的任务是翻译" +
+                    "Flutter官方文档，后者则主要是开发一些常用的包来丰富Flutter生态，帮助开发者提高开发效率。而时" +
+                    "至今日，这两件事取得的效果还都不错！");
+            record.setStaffName("Android攻城狮");
+            record.setTime("  2020.04.10 13:37");
+            recordList.add(record);
+        }
+
+        mRecordCallbacks.getKnowledgeFollowRecords(recordList);
+
     }
 
     @Override
@@ -286,7 +311,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             }
         }
         // 新增开票记录
-        else if (result.url().contains("cla=client&fun=invoiceAdd")){
+        else if (result.url().contains("cla=client&fun=invoiceAdd")) {
             JSONObject jsonObject = JsonParser.parseJSONObjectString(result.body());
             try {
                 mRecordCallbacks.createInvoiceRecord(jsonObject.get("warn").equals("success"));

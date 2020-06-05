@@ -177,7 +177,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             });
         } else if (title.contains("回款")) {
             mReceivableRecordAdapter.setClickReceivable((record, position) ->
-                    PageJumpUtil.Receivable2Detail(RecordManagerActivity.this, ReceivableDetailActivity.class, record.getId()));
+                    PageJumpUtil.receivable2Detail(RecordManagerActivity.this, ReceivableDetailActivity.class, record.getId()));
         }
 
         //选择时间段

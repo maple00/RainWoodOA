@@ -41,7 +41,7 @@ public final class PageJumpUtil {
      * @param clazz    target clazz
      * @param customId 客户id
      */
-    public static void CustomDetail2ContactList(Context context, Class<? extends BaseActivity> clazz, String customId) {
+    public static void customDetail2ContactList(Context context, Class<? extends BaseActivity> clazz, String customId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "联系人");
         sIntent.putExtra("customId", customId);
@@ -69,7 +69,7 @@ public final class PageJumpUtil {
      * @param context
      * @param clazz
      */
-    public static void Receivable2Detail(Context context, Class<? extends BaseActivity> clazz, String receivableId) {
+    public static void receivable2Detail(Context context, Class<? extends BaseActivity> clazz, String receivableId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "回款记录详情");
         sIntent.putExtra("receivableId", receivableId);
@@ -83,10 +83,50 @@ public final class PageJumpUtil {
      * @param clazz
      * @param tempData 页面跳转携带的数据
      */
-    public static void OrderNew2OrderEditPage(Context context, Class<? extends BaseActivity> clazz, TempData tempData) {
+    public static void orderNew2OrderEditPage(Context context, Class<? extends BaseActivity> clazz, TempData tempData) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "编辑订单");
         sIntent.putExtra("orderValues", tempData);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 订单列表跳转到订单详情页面
+     * @param context
+     * @param clazz
+     * @param orderId
+     */
+    public static void orderList2Detail(Context context, Class<? extends BaseActivity> clazz, String orderId, String status){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "订单详情");
+        sIntent.putExtra("orderId", orderId);
+        sIntent.putExtra("status", status);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 费用报销列表页跳转到详情页面
+     * @param context
+     * @param clazz
+     * @param reimburseId
+     */
+    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz, String reimburseId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "费用详情");
+        sIntent.putExtra(reimburseId, reimburseId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 沟通技巧列表跳转到详情页
+     * @param context
+     * @param clazz
+     * @param skillId
+     */
+    public static void skillList2Detail(Context context, Class<? extends BaseActivity> clazz, String skillId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "沟通技巧");
+        sIntent.putExtra("articleId", skillId);
         context.startActivity(sIntent);
     }
 }

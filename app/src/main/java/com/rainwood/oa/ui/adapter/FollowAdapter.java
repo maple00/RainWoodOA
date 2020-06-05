@@ -49,7 +49,7 @@ public final class FollowAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_follow_record, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_custom_follow_record, parent, false);
             ViewBind.inject(holder, convertView);
             convertView.setTag(holder);
         } else {

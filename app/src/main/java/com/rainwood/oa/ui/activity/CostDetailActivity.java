@@ -9,13 +9,14 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 /**
  * @Author: a797s
- * @Date: 2020/5/25 19:24
- * @Desc:
+ * @Date: 2020/6/4 18:03
+ * @Desc: 费用详情activity
  */
-public final class SystemDetailActivity extends BaseActivity {
+public final class CostDetailActivity extends BaseActivity {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
@@ -23,18 +24,10 @@ public final class SystemDetailActivity extends BaseActivity {
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
-    @ViewInject(R.id.tv_title)
-    private TextView systemTitle;
-    @ViewInject(R.id.tv_screen)
-    private TextView screen;
-    @ViewInject(R.id.tv_content)
-    private TextView content;
-    @ViewInject(R.id.tv_time)
-    private TextView time;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_system_detail;
+        return R.layout.activity_cost_detail;
     }
 
     @Override
@@ -49,9 +42,10 @@ public final class SystemDetailActivity extends BaseActivity {
 
     }
 
+    @SingleClick
     @OnClick(R.id.iv_page_back)
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view){
+        switch (view.getId()){
             case R.id.iv_page_back:
                 finish();
                 break;

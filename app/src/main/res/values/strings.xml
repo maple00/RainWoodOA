@@ -129,5 +129,11 @@
     <string name="text_custom_order_divided">本订单分得</string>
     <string name="text_custom_copy_invoice">复制开票信息</string>
     <string name="text_custom_tax_name">纳税人识别号</string>
+    <string name="order_data">订单信息</string>
+    <string name="order_attachment">订单附件</string>
+    <string name="order_cost">费用计提</string>
+    <string name="text_task_allocation">任务分配</string>
+    <string name="text_receivable_record">回款记录</string>
+    <string name="text_prepaid">已付费用</string>
 
 </resources>

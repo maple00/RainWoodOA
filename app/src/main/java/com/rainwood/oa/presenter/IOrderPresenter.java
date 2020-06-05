@@ -39,5 +39,8 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
      */
     void requestOrderList();
 
-
+    /**
+     * 请求订单详情
+     */
+    void requestOrderDetailById(String orderId);
 }

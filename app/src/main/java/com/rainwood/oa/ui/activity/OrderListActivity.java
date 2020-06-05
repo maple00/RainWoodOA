@@ -2,8 +2,6 @@ package com.rainwood.oa.ui.activity;
 
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,10 +18,9 @@ import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.OrderListAdapter;
 import com.rainwood.oa.ui.adapter.OrderStaticsAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
-import com.rainwood.oa.ui.widget.MeasureListView;
-import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IOrderCallbacks;
@@ -34,7 +31,6 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: a797s
@@ -64,21 +60,12 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
 
-    // 收起或展开-- 默认收起
-    private boolean isShowHide = false;
-
     private IOrderPresenter mOrderPresenter;
-
-    private OrderStaticsAdapter mStaticsAdapter;
     private OrderListAdapter mOrderListAdapter;
-
-    private List<OrderStatics> mOrderStatics;
-
     // 选中标记
     private boolean selectedStatusFlag = false;
     private boolean selectedDepartFlag = false;
     private boolean selectedSortingFlag = false;
-
 
     @Override
     protected int getLayoutResId() {
@@ -99,7 +86,6 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         orderView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
                 FontSwitchUtil.dip2px(this, 10f)));
         // 创建适配器
-        mStaticsAdapter = new OrderStaticsAdapter();
         mOrderListAdapter = new OrderListAdapter();
         // 设置适配器
         orderView.setAdapter(mOrderListAdapter);
@@ -151,6 +137,11 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             }
         });
 
+        // 查看订单详情
+        mOrderListAdapter.setClickItemOrder((order, position) -> {
+            // 订单详情
+            PageJumpUtil.orderList2Detail(OrderListActivity.this, OrderDetailActivity.class, order.getId(), order.getWorkFlow());
+        });
     }
 
     @Override
@@ -198,6 +189,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
 
     /**
      * 总的订单列表
+     *
      * @param orderList
      */
     @Override

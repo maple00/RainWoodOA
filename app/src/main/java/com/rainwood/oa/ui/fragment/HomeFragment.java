@@ -23,7 +23,6 @@ import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +126,7 @@ public final class HomeFragment extends BaseFragment implements
 
     @Override
     public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
-      //  LogUtils.d("sxs", "model---> " + model + " -- position ---> " + position);
+        //  LogUtils.d("sxs", "model---> " + model + " -- position ---> " + position);
         Glide.with(itemView.getContext())
                 .load(model)
                 .apply(new RequestOptions().placeholder(R.drawable.ic_banner)

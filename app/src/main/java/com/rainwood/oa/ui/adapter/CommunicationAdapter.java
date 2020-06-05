@@ -1,16 +1,18 @@
 package com.rainwood.oa.ui.adapter;
 
 import android.annotation.SuppressLint;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.CommunicationSkills;
+import com.rainwood.oa.model.domain.Article;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -24,10 +26,11 @@ import java.util.List;
  */
 public final class CommunicationAdapter extends RecyclerView.Adapter<CommunicationAdapter.ViewHolder> {
 
-    List<CommunicationSkills> mList;
+    private List<Article> mList;
 
-    public void setList(List<CommunicationSkills> list) {
+    public void setList(List<Article> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,9 +44,12 @@ public final class CommunicationAdapter extends RecyclerView.Adapter<Communicati
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.title.setText(mList.get(position).getTitle());
-        holder.content.setText(mList.get(position).getContent());
-        holder.screen.setText(mList.get(position).getScreenNum() + "浏览 · NO." + mList.get(position).getSort());
-        holder.time.setText(mList.get(position).getTime());
+        holder.content.setText(Html.fromHtml(mList.get(position).getWord()));
+        holder.screen.setText(mList.get(position).getClickRate() + " 浏览");
+        holder.time.setText(mList.get(position).getUpdateTime());
+
+        // 点击事件
+        holder.item.setOnClickListener(v -> mItemCommunication.onClickItem(mList.get(position), position));
     }
 
     @Override
@@ -53,6 +59,8 @@ public final class CommunicationAdapter extends RecyclerView.Adapter<Communicati
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @ViewInject(R.id.ll_item_communication)
+        private LinearLayout item;
         @ViewInject(R.id.tv_title)
         private TextView title;
         @ViewInject(R.id.tv_content)
@@ -66,5 +74,21 @@ public final class CommunicationAdapter extends RecyclerView.Adapter<Communicati
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickItemCommunication {
+        /**
+         * 查看详情
+         *
+         * @param skills
+         * @param position
+         */
+        void onClickItem(Article skills, int position);
+    }
+
+    private OnClickItemCommunication mItemCommunication;
+
+    public void setItemCommunication(OnClickItemCommunication itemCommunication) {
+        mItemCommunication = itemCommunication;
     }
 }

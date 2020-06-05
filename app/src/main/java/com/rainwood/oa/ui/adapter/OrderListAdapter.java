@@ -16,7 +16,6 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Order;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -36,7 +35,6 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
         mList = list;
         notifyDataSetChanged();
     }
-
 
     @Override
     public int getItemViewType(int position) {
@@ -79,7 +77,9 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
             holder.limit.setVisibility(View.VISIBLE);
         }
         // 点击事件
-
+        holder.orderNature.setOnItemClickListener((parent, view, position1, id) ->
+                mClickItemOrder.onClickOrder(mList.get(position), position));
+        holder.itemOrder.setOnClickListener(v -> mClickItemOrder.onClickOrder(mList.get(position), position));
     }
 
     @Override
@@ -88,6 +88,8 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        @ViewInject(R.id.ll_item_order)
+        private LinearLayout itemOrder;
         @ViewInject(R.id.tv_order_no)
         private TextView orderNo;
         @ViewInject(R.id.tv_status)
@@ -111,5 +113,21 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickItemOrder {
+        /**
+         * 查看详情
+         *
+         * @param order
+         * @param position
+         */
+        void onClickOrder(Order order, int position);
+    }
+
+    private OnClickItemOrder mClickItemOrder;
+
+    public void setClickItemOrder(OnClickItemOrder clickItemOrder) {
+        mClickItemOrder = clickItemOrder;
     }
 }

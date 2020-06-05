@@ -22,9 +22,9 @@ import java.util.List;
 /**
  * @Author: a797s
  * @Date: 2020/5/29 13:26
- * @Desc: 跟进记录adapter
+ * @Desc: 客户跟进记录adapter
  */
-public final class FollowRecordAdapter extends RecyclerView.Adapter<FollowRecordAdapter.ViewHolder> {
+public final class CustomFollowRecordAdapter extends RecyclerView.Adapter<CustomFollowRecordAdapter.ViewHolder> {
 
     private List<CustomFollowRecord> mRecordList;
 

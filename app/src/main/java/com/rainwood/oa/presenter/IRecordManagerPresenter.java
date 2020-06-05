@@ -60,4 +60,9 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      */
     void CreateInvoiceRecord(String seller, String type, String money,  String note,
                              String customId);
+
+    /**
+     * 知识管理中的跟进记录
+     */
+    void requestKnowledgeFollowRecords();
 }

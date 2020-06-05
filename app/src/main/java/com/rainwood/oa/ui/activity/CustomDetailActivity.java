@@ -15,8 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.Associates;
-import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.CustomValues;
@@ -191,7 +189,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
             case R.id.tv_query_all_contact:
                 // 查看全部联系人
                 // startActivity(getNewIntent(this, CommonActivity.class, "联系人"));
-                PageJumpUtil.CustomDetail2ContactList(this, CommonActivity.class, mCustomId);
+                PageJumpUtil.customDetail2ContactList(this, CommonActivity.class, mCustomId);
                 break;
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑

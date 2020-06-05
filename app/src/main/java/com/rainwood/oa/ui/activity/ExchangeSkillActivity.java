@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.CommunicationSkills;
-import com.rainwood.oa.presenter.ICommunicationPresenter;
+import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.CommunicationAdapter;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.ICommunicationCallbacks;
+import com.rainwood.oa.view.IArticleCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -27,9 +28,9 @@ import java.util.List;
 /**
  * @Author: a797s
  * @Date: 2020/5/21 11:21
- * @Desc: 沟通技巧
+ * @Desc: 沟通技巧（业务技能）
  */
-public final class ExchangeSkillActivity extends BaseActivity implements ICommunicationCallbacks {
+public final class ExchangeSkillActivity extends BaseActivity implements IArticleCallbacks {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -46,7 +47,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements ICommun
 
     private CommunicationAdapter mCommunicationAdapter;
 
-    private ICommunicationPresenter mCommunicationPresenter;
+    private IArticlePresenter mArticlePresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -74,13 +75,21 @@ public final class ExchangeSkillActivity extends BaseActivity implements ICommun
     @Override
     protected void loadData() {
         // 请求数据
-        mCommunicationPresenter.getAllData();
+        mArticlePresenter.requestCommunicationData();
     }
 
     @Override
     protected void initPresenter() {
-        mCommunicationPresenter = PresenterManager.getOurInstance().getSkillPresenter();
-        mCommunicationPresenter.registerViewCallback(this);
+        mArticlePresenter = PresenterManager.getOurInstance().getArticlePresenter();
+        mArticlePresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void initEvent() {
+        mCommunicationAdapter.setItemCommunication((skills, position) -> {
+            // 跳转到详情页面
+            PageJumpUtil.skillList2Detail(ExchangeSkillActivity.this, ArticleDetailActivity.class, skills.getId());
+        });
     }
 
     @SingleClick
@@ -97,9 +106,8 @@ public final class ExchangeSkillActivity extends BaseActivity implements ICommun
     }
 
     @Override
-    public void getAllData(List<CommunicationSkills> dataList) {
-        // 得到返回数据
-        mCommunicationAdapter.setList(dataList);
+    public void getCommunicationData(List<Article> skillsList) {
+        mCommunicationAdapter.setList(skillsList);
     }
 
     @Override

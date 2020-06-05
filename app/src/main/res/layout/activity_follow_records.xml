@@ -1,94 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="DisableBaselineAlignment">
 
-    <include layout="@layout/include_title_bar" />
+    <include layout="@layout/include_search_click_view" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <com.rainwood.oa.ui.widget.GroupTextIcon
+                android:id="@+id/gti_depart_staff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:status_text="部门员工" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <com.rainwood.oa.ui.widget.GroupTextIcon
+                android:id="@+id/gti_record_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:status_text="记录类型" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <View style="@style/HorizontalLineStyle" />
 
-
-    <RelativeLayout
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_create_follow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="40dp"
-            android:background="@color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_plus_float"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:maxImageSize="53dp"
-            app:rippleColor="#e7d16b" />
-
-        <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
-            android:id="@+id/trl_pager_refresh"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_follow_records"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_follow_records"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="60dp" />
-
-            <LinearLayout
-                android:id="@+id/ll_follow_selected_all"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_below="@+id/trl_pager_refresh"
-                android:layout_alignParentBottom="true"
-                android:background="@color/white"
-                android:clickable="false"
-                android:focusable="false"
-                android:gravity="center_vertical"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:visibility="gone">
-
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/cb_checked"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:button="@drawable/selector_checkbox"
-                    android:gravity="start|top" />
-
-                <TextView
-                    android:id="@+id/tv_selected_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="11dp"
-                    android:text="全选(0)" />
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/btn_delete"
-                    style="@style/SecondaryButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/common_delete" />
-
-            </LinearLayout>
-        </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
-
-    </RelativeLayout>
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 
 </LinearLayout>

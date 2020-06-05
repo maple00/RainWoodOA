@@ -7,6 +7,13 @@ import com.rainwood.oa.model.domain.CustomOrderValues;
 import com.rainwood.oa.model.domain.Examination;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.Order;
+import com.rainwood.oa.model.domain.OrderCost;
+import com.rainwood.oa.model.domain.OrderDetailAttachment;
+import com.rainwood.oa.model.domain.OrderDetailBaseValues;
+import com.rainwood.oa.model.domain.OrderFollow;
+import com.rainwood.oa.model.domain.OrderPayed;
+import com.rainwood.oa.model.domain.OrderReceivable;
+import com.rainwood.oa.model.domain.OrderTask;
 import com.rainwood.oa.model.domain.OrderValues;
 import com.rainwood.oa.model.domain.PrimaryKey;
 import com.rainwood.oa.network.json.JsonParser;
@@ -54,51 +61,6 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         mOrderEditCallbacks.getAllExaminationData(dataMap);
     }
 
-  /*  @Override
-    public void requestOrderData() {
-        Map<String, List> orderMap = new HashMap<>();
-        // 模拟所有订单的统计信息
-        List<OrderStatics> staticsList = new ArrayList<>();
-        String[] staticsTitles = {"合同金额", "费用计提", "合同净值", "已回款", "已付费用", "净回款", "合同应收", "剩余净值"};
-        for (int i = 0; i < staticsTitles.length; i++) {
-            OrderStatics statics = new OrderStatics();
-            statics.setTitle(staticsTitles[i]);
-            statics.setValues("￥7669646.86" + i);
-            staticsList.add(statics);
-        }
-        // 模拟所有的订单
-        // 订单中所有为空得字段，都不会显示出来
-        List<Order> orderList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Order order = new Order();
-            order.setNo("6345001937");
-            order.setStatus("开发中");
-            order.setOrderName("正南齐北科技制造业ERP");
-            order.setMoney("7800.00");
-            order.setChargeName("圣枪游侠");
-            order.setTimeLimit("12");
-            order.setStartTime("2020.04.10");
-            order.setEndTime("2020.04.22");
-            List<OrderStatics> natureList = new ArrayList<>();
-            for (String staticsTitle : staticsTitles) {
-                OrderStatics statics = new OrderStatics();
-                statics.setTitle(staticsTitle);
-                statics.setValues("￥7669646.86");
-                if ("已回款".equals(staticsTitle)) {
-                    statics.setValues(null);
-                }
-                natureList.add(statics);
-            }
-            order.setNatureList(natureList);
-            orderList.add(order);
-        }
-        orderMap.put("orderStatics", staticsList);
-        orderMap.put("order", orderList);
-
-        mOrderEditCallbacks.getAllOrderPage(orderMap);
-    }
-*/
-
     /**
      * 请求客户下的订单列表
      *
@@ -144,6 +106,18 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     public void requestOrderList() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=home", params, this);
+    }
+
+    /**
+     * 请求订单详情
+     *
+     * @param orderId
+     */
+    @Override
+    public void requestOrderDetailById(String orderId) {
+        RequestParams params = new RequestParams();
+        params.add("id", orderId);
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=detail", params, this);
     }
 
     @Override
@@ -373,6 +347,108 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                 }
 
                 mOrderEditCallbacks.getOrderList(orderValuesList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 订单详情
+        else if (result.url().contains("cla=order&fun=detail")) {
+            // 订单基本信息、附件列表、费用计提、跟进记录、任务分配、回款记录、已付费用
+            try {
+                // 附件
+                List<OrderDetailAttachment> attachmentList = JsonParser.parseJSONArray(OrderDetailAttachment.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("file"));
+                // 费用计提
+                List<OrderCost> costList = JsonParser.parseJSONArray(OrderCost.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("cost"));
+                // 跟进记录
+                List<OrderFollow> followList = JsonParser.parseJSONArray(OrderFollow.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("follow"));
+                // 任务分配
+                List<OrderTask> taskList = JsonParser.parseJSONArray(OrderTask.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("allot"));
+                // 回款记录
+                List<OrderReceivable> receivableList = JsonParser.parseJSONArray(OrderReceivable.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("pay"));
+                //已付费用
+                List<OrderPayed> payedList = JsonParser.parseJSONArray(OrderPayed.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("out"));
+                Map<String, List> orderMap = new HashMap<String, List>();
+                orderMap.put("attachment", attachmentList);
+                orderMap.put("cost", costList);
+                orderMap.put("follow", followList);
+                orderMap.put("task", taskList);
+                orderMap.put("receivable", receivableList);
+                orderMap.put("payed", payedList);
+                // 处理基本数据
+                OrderDetailBaseValues orderBaseValues = JsonParser.parseJSONObject(OrderDetailBaseValues.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("order"));
+                // 显示数据
+                List<FontAndFont> showDataList = new ArrayList<>();
+                if (orderBaseValues.getId() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("订单号");
+                    font.setDesc(orderBaseValues.getId());
+                    showDataList.add(font);
+                }
+                if (orderBaseValues.getName() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("订单名称");
+                    font.setDesc(orderBaseValues.getName());
+                    showDataList.add(font);
+                }
+                if (orderBaseValues.getMoney() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("合同金额");
+                    font.setDesc("￥ " + orderBaseValues.getId());
+                    showDataList.add(font);
+                }
+                List<FontAndFont> hideDataList = new ArrayList<>();
+                if (orderBaseValues.getCost() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("费用计提");
+                    font.setDesc("￥ " + orderBaseValues.getCost());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getNetWorthOrder() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("合同净值");
+                    font.setDesc("￥ " + orderBaseValues.getNetWorthOrder());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getMoneyIn() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("已回款");
+                    font.setDesc("￥ " + orderBaseValues.getMoneyIn());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getMoneyOut() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("已付费用");
+                    font.setDesc("￥ " + orderBaseValues.getMoneyOut());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getNetWorthIn() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("净回款");
+                    font.setDesc("￥ " + orderBaseValues.getNetWorthIn());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getMoneyWait() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("合同应收");
+                    font.setDesc("￥ " + orderBaseValues.getMoneyWait());
+                    hideDataList.add(font);
+                }
+                if (orderBaseValues.getNetWorthWait() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("剩余净值");
+                    font.setDesc("￥ " + orderBaseValues.getNetWorthWait());
+                    hideDataList.add(font);
+                }
+                orderMap.put("showData", showDataList);
+                orderMap.put("hideData", hideDataList);
+                mOrderEditCallbacks.getOrderDetail(orderMap);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

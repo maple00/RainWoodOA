@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_item_communication"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -22,9 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
+        android:ellipsize="end"
         android:lineSpacingExtra="6dp"
         android:maxLines="3"
-        android:ellipsize="end"
         android:text="一、说话必须简明扼要。1、当我们和客户见面时，无论是自我介绍还是介绍产品，都要简明，最好在两句话内完成，语速一定要缓慢不拖沓，说话时一定要看着对方的眼睛面..."
         android:textColor="@color/colorMiddle"
         android:textSize="13sp" />

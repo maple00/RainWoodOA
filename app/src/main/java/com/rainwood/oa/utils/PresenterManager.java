@@ -1,11 +1,12 @@
 package com.rainwood.oa.utils;
 
+import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.presenter.ICommonPresenter;
-import com.rainwood.oa.presenter.ICommunicationPresenter;
 import com.rainwood.oa.presenter.IContactPresenter;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.presenter.IDepartPresenter;
+import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.presenter.IManagerPresenter;
@@ -17,12 +18,13 @@ import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.presenter.IRoleManagerPresenter;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.presenter.ISystemSettingPresenter;
+import com.rainwood.oa.presenter.impl.ArticleImpl;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
 import com.rainwood.oa.presenter.impl.CommonImpl;
-import com.rainwood.oa.presenter.impl.CommunicationImpl;
 import com.rainwood.oa.presenter.impl.ContactImpl;
 import com.rainwood.oa.presenter.impl.CustomImpl;
 import com.rainwood.oa.presenter.impl.DepartImpl;
+import com.rainwood.oa.presenter.impl.FinancialImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
 import com.rainwood.oa.presenter.impl.LoginAboutImpl;
 import com.rainwood.oa.presenter.impl.ManagerMainImpl;
@@ -51,7 +53,6 @@ public final class PresenterManager {
     private final ICustomPresenter mCustomPresenter;
     private final ILoginAboutPresenter mLoginAboutPresenter;
     private final IOrderPresenter mOrderPresenter;
-    private final ICommunicationPresenter mSkillPresenter;
     private final IRoleManagerPresenter mRoleManagerPresenter;
     private final IDepartPresenter mDepartPresenter;
     private final IPostPresenter mPostPresenter;
@@ -60,6 +61,8 @@ public final class PresenterManager {
     private final IRecordManagerPresenter mRecordManagerPresenter;
     private final ICommonPresenter mCommonPresenter;
     private final ISystemSettingPresenter mSystemSettingPresenter;
+    private final IFinancialPresenter mFinancialPresenter;
+    private final IArticlePresenter mArticlePresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -98,10 +101,6 @@ public final class PresenterManager {
         return mOrderPresenter;
     }
 
-    public ICommunicationPresenter getSkillPresenter() {
-        return mSkillPresenter;
-    }
-
     public IRoleManagerPresenter getRoleManagerPresenter() {
         return mRoleManagerPresenter;
     }
@@ -134,6 +133,14 @@ public final class PresenterManager {
         return mSystemSettingPresenter;
     }
 
+    public IFinancialPresenter getFinancialPresenter() {
+        return mFinancialPresenter;
+    }
+
+    public IArticlePresenter getArticlePresenter() {
+        return mArticlePresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
@@ -143,7 +150,6 @@ public final class PresenterManager {
         mCustomPresenter = new CustomImpl();
         mLoginAboutPresenter = new LoginAboutImpl();
         mOrderPresenter = new OrderImpl();
-        mSkillPresenter = new CommunicationImpl();
         mRoleManagerPresenter = new RoleManagerImpl();
         mDepartPresenter = new DepartImpl();
         mPostPresenter = new PostImpl();
@@ -152,5 +158,7 @@ public final class PresenterManager {
         mRecordManagerPresenter = new RecordManagerImpl();
         mCommonPresenter = new CommonImpl();
         mSystemSettingPresenter = new SystemSettingImpl();
+        mFinancialPresenter = new FinancialImpl();
+        mArticlePresenter = new ArticleImpl();
     }
 }

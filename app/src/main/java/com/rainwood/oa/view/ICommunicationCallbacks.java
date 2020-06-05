@@ -1,7 +1,7 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
-import com.rainwood.oa.model.domain.CommunicationSkills;
+import com.rainwood.oa.model.domain.Article;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface ICommunicationCallbacks extends IBaseCallback {
      * 获取沟通技巧所有得内容
      * @param dataList
      */
-    void getAllData(List<CommunicationSkills> dataList);
+    void getAllData(List<Article> dataList);
 }
