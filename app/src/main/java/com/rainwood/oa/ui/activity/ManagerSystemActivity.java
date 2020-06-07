@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.ManagerSystem;
-import com.rainwood.oa.presenter.IManagerSystemPresenter;
+import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.ManagerSystemAdapter;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IManagerSystemCallbacks;
+import com.rainwood.oa.view.IArticleCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -26,7 +27,7 @@ import java.util.List;
  * @Date: 2020/5/25 18:51
  * @Desc: 管理制度activity
  */
-public final class ManagerSystemActivity extends BaseActivity implements IManagerSystemCallbacks {
+public final class ManagerSystemActivity extends BaseActivity implements IArticleCallbacks {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -37,7 +38,7 @@ public final class ManagerSystemActivity extends BaseActivity implements IManage
 
     private ManagerSystemAdapter mSystemAdapter;
 
-    private IManagerSystemPresenter mSystemPresenter;
+    private IArticlePresenter mArticlePresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -61,23 +62,21 @@ public final class ManagerSystemActivity extends BaseActivity implements IManage
     @Override
     protected void loadData() {
         // 请求数据
-        mSystemPresenter.requestAllData();
+        mArticlePresenter.requestManagerSystemData();
     }
 
     @Override
     protected void initPresenter() {
-        mSystemPresenter = PresenterManager.getOurInstance().getSystemPresenter();
-        mSystemPresenter.registerViewCallback(this);
+        mArticlePresenter = PresenterManager.getOurInstance().getArticlePresenter();
+        mArticlePresenter.registerViewCallback(this);
     }
 
     @Override
     protected void initEvent() {
-        mSystemAdapter.setClickSystem(new ManagerSystemAdapter.OnClickSystem() {
-            @Override
-            public void onClickItem(ManagerSystem item) {
-                // toast("查看详情");
-                startActivity(getNewIntent(ManagerSystemActivity.this, ArticleDetailActivity.class, "管理制度"));
-            }
+        mSystemAdapter.setClickSystem(article -> {
+            // toast("查看详情");
+            // startActivity(getNewIntent(ManagerSystemActivity.this, ArticleDetailActivity.class, "管理制度"));
+            PageJumpUtil.skillList2Detail(ManagerSystemActivity.this, ArticleDetailActivity.class, article.getId(), "管理制度");
         });
     }
 
@@ -91,8 +90,8 @@ public final class ManagerSystemActivity extends BaseActivity implements IManage
     }
 
     @Override
-    public void getAllData(List<ManagerSystem> systemList) {
-        mSystemAdapter.setSystemList(systemList);
+    public void getManagerSystemData(List<Article> managerSysList) {
+        mSystemAdapter.setSystemList(managerSysList);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.Article;
 import com.rainwood.oa.model.domain.ManagerSystem;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -24,10 +26,11 @@ import java.util.List;
  */
 public final class ManagerSystemAdapter extends RecyclerView.Adapter<ManagerSystemAdapter.ViewHolder> {
 
-    private List<ManagerSystem> mSystemList;
+    private List<Article> mSystemList;
 
-    public void setSystemList(List<ManagerSystem> systemList) {
+    public void setSystemList(List<Article> systemList) {
         mSystemList = systemList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -40,7 +43,7 @@ public final class ManagerSystemAdapter extends RecyclerView.Adapter<ManagerSyst
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.title.setText(mSystemList.get(position).getTitle());
-        holder.content.setText(mSystemList.get(position).getContent());
+        holder.content.setText(Html.fromHtml(mSystemList.get(position).getWord()));
         // 点击事件
         holder.itemSystem.setOnClickListener(v -> mClickSystem.onClickItem(mSystemList.get(position)));
     }
@@ -68,9 +71,9 @@ public final class ManagerSystemAdapter extends RecyclerView.Adapter<ManagerSyst
     public interface OnClickSystem{
         /**
          * 查看详情
-         * @param item
+         * @param article
          */
-        void onClickItem(ManagerSystem item);
+        void onClickItem(Article article);
     }
 
     public OnClickSystem mClickSystem;

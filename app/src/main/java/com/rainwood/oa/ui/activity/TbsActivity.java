@@ -121,13 +121,13 @@ public final class TbsActivity extends BaseActivity implements TbsReaderView.Rea
         bundle.putString("filePath", filePath);
         bundle.putString("tempPath", tbsReaderTemp);
 
-        boolean result = mTbsReaderView.preOpen(getFileType(fileName), false);
+        boolean result = mTbsReaderView.preOpen(getFileType(fileName), true);
 
         LogUtils.d(TAG, "query the world : " + result);
         if (result) {
             mTbsReaderView.openFile(bundle);
         } else {
-
+            toast("暂不支持该格式预览");
         }
     }
 

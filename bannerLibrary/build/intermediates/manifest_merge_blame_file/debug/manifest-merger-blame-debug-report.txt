@@ -4,8 +4,8 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="23"
-6-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+6-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
 7        android:targetSdkVersion="29" />
-7-->D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+7-->D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
 8
 9</manifest>

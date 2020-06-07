@@ -38,7 +38,8 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
      */
     @Override
     public void requestManagerSystemData() {
-
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=article&fun=adSystem", params, this);
     }
 
     /**
@@ -54,7 +55,8 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
      */
     @Override
     public void requestHelperData() {
-
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=article&fun=adHelp", params, this);
     }
 
     /**
@@ -107,6 +109,26 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
                 List<Article> skillList = JsonParser.parseJSONArray(Article.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("article"));
                 mArticleCallbacks.getCommunicationData(skillList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 管理制度
+        else if (result.url().contains("cla=article&fun=adSystem")){
+            try {
+                List<Article> skillList = JsonParser.parseJSONArray(Article.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("article"));
+                mArticleCallbacks.getManagerSystemData(skillList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 帮助中心
+        else if (result.url().contains("cla=article&fun=adHelp")){
+            try {
+                List<Article> skillList = JsonParser.parseJSONArray(Article.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("article"));
+                mArticleCallbacks.getHelperData(skillList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

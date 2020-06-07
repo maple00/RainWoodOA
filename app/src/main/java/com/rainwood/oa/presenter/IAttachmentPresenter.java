@@ -20,4 +20,9 @@ public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallback
      * @param customId 客户id
      */
     void requestCustomAttachData(String customId);
+
+    /**
+     * 请求办公文件
+     */
+    void requestOfficeFileData();
 }

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingStart="15dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="15dp"
+    tools:ignore="ContentDescription">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="13dp"
+            android:layout_height="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_attachment_logo" />
+
+        <TextView
+            android:id="@+id/tv_file_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:singleLine="true"
+            android:text="开户许可证"
+            android:textColor="@color/fontColor"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_secret"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_secret" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_file_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="资质 · jpg"
+        android:textColor="@color/fontColor"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="23dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_file_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="2020.04.10 13:37"
+            android:textColor="@color/labelColor"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/iv_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_download" />
+
+        <TextView
+            android:id="@+id/tv_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/text_download"
+            android:textColor="@color/colorMiddle"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/iv_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_preview" />
+
+        <TextView
+            android:id="@+id/tv_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/text_preview"
+            android:textColor="@color/colorMiddle"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+
+</LinearLayout>

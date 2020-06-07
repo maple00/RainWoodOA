@@ -2,6 +2,7 @@ package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.OfficeFile;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -53,12 +54,25 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
         mAttachmentCallback.getAllAttachment(attachmentMap);
     }
 
+    /**
+     * 通过客户id查询建客户附件
+     * @param customId 客户id
+     */
     @Override
     public void requestCustomAttachData(String customId) {
         // 查询客户附件
         RequestParams params = new RequestParams();
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=fileLi", params, this);
+    }
+
+    /**
+     * 请求办公文件
+     */
+    @Override
+    public void requestOfficeFileData() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=home", params, this);
     }
 
     @Override
@@ -102,6 +116,16 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
                     return;
                 }
                 mAttachmentCallback.getCustomAttachments(attachList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 办公文件
+        else if (result.url().contains("cla=fileWork&fun=home")){
+            try {
+                List<OfficeFile> officeFileList = JsonParser.parseJSONArray(OfficeFile.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("file"));
+                mAttachmentCallback.getOfficeFileData(officeFileList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -14,23 +14,26 @@ import com.bumptech.glide.Glide;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
+import com.rainwood.oa.model.domain.OfficeFile;
 import com.rainwood.oa.ui.activity.AddressBookActivity;
 import com.rainwood.oa.ui.activity.AdminPunishActivity;
+import com.rainwood.oa.ui.activity.AttachManagerActivity;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
 import com.rainwood.oa.ui.activity.BillingDataActivity;
 import com.rainwood.oa.ui.activity.CommonActivity;
+import com.rainwood.oa.ui.activity.CustomFollowRecordActivity;
 import com.rainwood.oa.ui.activity.CustomIntroduceActivity;
 import com.rainwood.oa.ui.activity.CustomListActivity;
 import com.rainwood.oa.ui.activity.CustomNewActivity;
 import com.rainwood.oa.ui.activity.CustomOrderListActivity;
 import com.rainwood.oa.ui.activity.DepartManagerActivity;
 import com.rainwood.oa.ui.activity.ExchangeSkillActivity;
-import com.rainwood.oa.ui.activity.CustomFollowRecordActivity;
 import com.rainwood.oa.ui.activity.FollowRecordActivity;
 import com.rainwood.oa.ui.activity.HelperActivity;
 import com.rainwood.oa.ui.activity.InvoiceRecordActivity;
 import com.rainwood.oa.ui.activity.LogcatActivity;
 import com.rainwood.oa.ui.activity.ManagerSystemActivity;
+import com.rainwood.oa.ui.activity.OfficeFileActivity;
 import com.rainwood.oa.ui.activity.OrderListActivity;
 import com.rainwood.oa.ui.activity.OrderNewActivity;
 import com.rainwood.oa.ui.activity.PostManagerActivity;
@@ -141,9 +144,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     break;
                 case "跟进记录":
                     LogUtils.d("sxs", "customId----" + Constants.CUSTOM_ID);
-                    if (Constants.CUSTOM_ID != null){
+                    if (Constants.CUSTOM_ID != null) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomFollowRecordActivity.class, "跟进记录"));
-                    }else {
+                    } else {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录"));
                     }
                     break;
@@ -215,6 +218,13 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), ReimbursementActivity.class, "费用报销"));
                 case "团队基金":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), TeamFundsActivity.class, "团队基金"));
+                    break;
+                // 知识管理
+                case "办公文件":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), OfficeFileActivity.class, "办公文件"));
+                    break;
+                case "附件管理":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AttachManagerActivity.class, "附件管理"));
                     break;
                 // 系统设置
                 case "系统日志":

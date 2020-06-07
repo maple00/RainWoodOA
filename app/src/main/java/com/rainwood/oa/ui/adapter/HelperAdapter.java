@@ -1,15 +1,18 @@
 package com.rainwood.oa.ui.adapter;
 
 import android.annotation.SuppressLint;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.Article;
 import com.rainwood.oa.model.domain.Helper;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -24,10 +27,11 @@ import java.util.List;
  */
 public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.ViewHolder> {
 
-    private List<Helper> mHelperList;
+    private List<Article> mHelperList;
 
-    public void setHelperList(List<Helper> helperList) {
+    public void setHelperList(List<Article> helperList) {
         mHelperList = helperList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,9 +45,12 @@ public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.title.setText(mHelperList.get(position).getTitle());
-        holder.content.setText(mHelperList.get(position).getContent());
-        holder.screenSort.setText(mHelperList.get(position).getScreenNum() + " " + mHelperList.get(position).getSort());
-        holder.time.setText(mHelperList.get(position).getTime());
+        holder.content.setText(Html.fromHtml(mHelperList.get(position).getWord()));
+        holder.screenSort.setText(mHelperList.get(position).getClickRate() + " 浏览");
+        holder.time.setText(mHelperList.get(position).getUpdateTime());
+
+        // 点击事件
+        holder.itemHelper.setOnClickListener(v -> mClickItemHelper.onClickItem(mHelperList.get(position), position));
     }
 
     @Override
@@ -53,6 +60,8 @@ public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @ViewInject(R.id.ll_item_helper)
+        private LinearLayout itemHelper;
         @ViewInject(R.id.tv_title)
         private TextView title;
         @ViewInject(R.id.tv_content)
@@ -66,5 +75,20 @@ public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.View
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickItemHelper{
+        /**
+         * 查看详情
+         * @param article
+         * @param position
+         */
+        void onClickItem(Article article, int position);
+    }
+
+    private OnClickItemHelper mClickItemHelper;
+
+    public void setClickItemHelper(OnClickItemHelper clickItemHelper) {
+        mClickItemHelper = clickItemHelper;
     }
 }

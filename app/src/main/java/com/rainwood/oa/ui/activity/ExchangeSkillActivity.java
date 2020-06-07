@@ -88,7 +88,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     protected void initEvent() {
         mCommunicationAdapter.setItemCommunication((skills, position) -> {
             // 跳转到详情页面
-            PageJumpUtil.skillList2Detail(ExchangeSkillActivity.this, ArticleDetailActivity.class, skills.getId());
+            PageJumpUtil.skillList2Detail(ExchangeSkillActivity.this, ArticleDetailActivity.class, skills.getId(), "沟通技巧");
         });
     }
 

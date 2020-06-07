@@ -118,15 +118,15 @@ public final class PageJumpUtil {
     }
 
     /**
-     * 沟通技巧列表跳转到详情页
+     * 文章列表页面跳转到文章详情页面
      * @param context
      * @param clazz
-     * @param skillId
+     * @param articleId
      */
-    public static void skillList2Detail(Context context, Class<? extends BaseActivity> clazz, String skillId){
+    public static void skillList2Detail(Context context, Class<? extends BaseActivity> clazz, String articleId, String title){
         sIntent = new Intent(context, clazz);
-        sIntent.putExtra("title", "沟通技巧");
-        sIntent.putExtra("articleId", skillId);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("articleId", articleId);
         context.startActivity(sIntent);
     }
 }

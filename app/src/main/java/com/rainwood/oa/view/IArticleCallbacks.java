@@ -21,7 +21,7 @@ public interface IArticleCallbacks extends IBaseCallback {
     /**
      * 管理制度
      */
-    default void getManagerSystemData() {
+    default void getManagerSystemData(List<Article> managerSysList) {
     }
 
     /**
@@ -33,7 +33,7 @@ public interface IArticleCallbacks extends IBaseCallback {
     /**
      * 帮助中心
      */
-    default void getHelperData() {
+    default void getHelperData(List<Article> helperList) {
     }
 
     /**

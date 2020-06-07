@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Attachment;
+import com.rainwood.oa.model.domain.OfficeFile;
 
 import java.util.List;
 import java.util.Map;
@@ -23,4 +24,10 @@ public interface IAttachmentCallbacks extends IBaseCallback {
      * 客户下的附件
      */
     default void getCustomAttachments(List<Attachment> attachmentList){};
+
+    /**
+     * 办公文件
+     * @param fileList
+     */
+    default void getOfficeFileData(List<OfficeFile> fileList){}
 }

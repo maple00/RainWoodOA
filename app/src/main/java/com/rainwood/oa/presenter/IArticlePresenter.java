@@ -6,7 +6,7 @@ import com.rainwood.oa.view.IArticleCallbacks;
 /**
  * @Author: a797s
  * @Date: 2020/6/5 18:12
- * @Desc: 文章管理
+ * @Desc: 文章管理 ---沟通技巧、管理制度、开发文档、帮助中心
  */
 public interface IArticlePresenter extends IBasePresenter<IArticleCallbacks> {
 

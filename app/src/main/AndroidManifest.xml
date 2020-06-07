@@ -340,7 +340,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
-        <!-- 管理制度详情 SystemDetailActivity-->
+        <!-- 文章管理详情 ArticleDetailActivity-->
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -395,6 +395,19 @@
         <!--
         知识管理
         -->
+        <!-- 办公文件 OfficeFileActivity-->
+        <activity
+            android:name=".ui.activity.OfficeFileActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 附件管理 AttachManagerActivity-->
+        <activity
+            android:name=".ui.activity.AttachManagerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
 
         <!-- 跟进记录 FollowRecordActivity-->
         <activity
