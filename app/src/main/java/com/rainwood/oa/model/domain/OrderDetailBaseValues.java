@@ -20,6 +20,21 @@ public final class OrderDetailBaseValues implements Serializable {
     private String name;
 
     /**
+     * 订单状态
+     */
+    private String workFlow;
+
+    /**
+     * 立项日期
+     */
+    private String signDay;
+
+    /**
+     * 交付日期
+     */
+    private String endDay;
+
+    /**
      * 合同金额
      */
     private String money;
@@ -54,10 +69,23 @@ public final class OrderDetailBaseValues implements Serializable {
      */
     private String moneyWait;
 
-    /**d
+    /**
      * 剩余净值
      */
     private String netWorthWait;
+
+    /**
+     *工期
+     */
+    private String cycle;
+
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
+    }
 
     public String getId() {
         return id;
@@ -73,6 +101,30 @@ public final class OrderDetailBaseValues implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getWorkFlow() {
+        return workFlow;
+    }
+
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
+    }
+
+    public String getSignDay() {
+        return signDay;
+    }
+
+    public void setSignDay(String signDay) {
+        this.signDay = signDay;
+    }
+
+    public String getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(String endDay) {
+        this.endDay = endDay;
     }
 
     public String getMoney() {

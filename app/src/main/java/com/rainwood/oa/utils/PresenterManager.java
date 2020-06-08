@@ -1,39 +1,35 @@
 package com.rainwood.oa.utils;
 
+import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.presenter.ICommonPresenter;
 import com.rainwood.oa.presenter.IContactPresenter;
 import com.rainwood.oa.presenter.ICustomPresenter;
-import com.rainwood.oa.presenter.IDepartPresenter;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
+import com.rainwood.oa.presenter.ILogcatPresenter;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.presenter.IOrderPresenter;
-import com.rainwood.oa.presenter.IPostPresenter;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
-import com.rainwood.oa.presenter.IRoleManagerPresenter;
 import com.rainwood.oa.presenter.IStaffPresenter;
-import com.rainwood.oa.presenter.ISystemSettingPresenter;
+import com.rainwood.oa.presenter.impl.AdministrativeImpl;
 import com.rainwood.oa.presenter.impl.ArticleImpl;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
 import com.rainwood.oa.presenter.impl.CommonImpl;
 import com.rainwood.oa.presenter.impl.ContactImpl;
 import com.rainwood.oa.presenter.impl.CustomImpl;
-import com.rainwood.oa.presenter.impl.DepartImpl;
 import com.rainwood.oa.presenter.impl.FinancialImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
+import com.rainwood.oa.presenter.impl.LogcatImpl;
 import com.rainwood.oa.presenter.impl.LoginAboutImpl;
 import com.rainwood.oa.presenter.impl.ManagerMainImpl;
 import com.rainwood.oa.presenter.impl.MineImpl;
 import com.rainwood.oa.presenter.impl.OrderImpl;
-import com.rainwood.oa.presenter.impl.PostImpl;
 import com.rainwood.oa.presenter.impl.RecordManagerImpl;
-import com.rainwood.oa.presenter.impl.RoleManagerImpl;
 import com.rainwood.oa.presenter.impl.StaffImpl;
-import com.rainwood.oa.presenter.impl.SystemSettingImpl;
 
 /**
  * @Author: a797s
@@ -51,13 +47,11 @@ public final class PresenterManager {
     private final ICustomPresenter mCustomPresenter;
     private final ILoginAboutPresenter mLoginAboutPresenter;
     private final IOrderPresenter mOrderPresenter;
-    private final IRoleManagerPresenter mRoleManagerPresenter;
-    private final IDepartPresenter mDepartPresenter;
-    private final IPostPresenter mPostPresenter;
+    private final IAdministrativePresenter mAdministrativePresenter;
     private final IStaffPresenter mStaffPresenter;
     private final IRecordManagerPresenter mRecordManagerPresenter;
     private final ICommonPresenter mCommonPresenter;
-    private final ISystemSettingPresenter mSystemSettingPresenter;
+    private final ILogcatPresenter mLogcatPresenter;
     private final IFinancialPresenter mFinancialPresenter;
     private final IArticlePresenter mArticlePresenter;
 
@@ -98,22 +92,13 @@ public final class PresenterManager {
         return mOrderPresenter;
     }
 
-    public IRoleManagerPresenter getRoleManagerPresenter() {
-        return mRoleManagerPresenter;
-    }
-
-    public IDepartPresenter getDepartPresenter() {
-        return mDepartPresenter;
-    }
-
-    public IPostPresenter getPostPresenter() {
-        return mPostPresenter;
-    }
-
     public IStaffPresenter getStaffPresenter() {
         return mStaffPresenter;
     }
 
+    public IAdministrativePresenter getAdministrativePresenter() {
+        return mAdministrativePresenter;
+    }
 
     public IRecordManagerPresenter getRecordManagerPresenter() {
         return mRecordManagerPresenter;
@@ -123,8 +108,8 @@ public final class PresenterManager {
         return mCommonPresenter;
     }
 
-    public ISystemSettingPresenter getSystemSettingPresenter() {
-        return mSystemSettingPresenter;
+    public ILogcatPresenter getLogcatPresenter() {
+        return mLogcatPresenter;
     }
 
     public IFinancialPresenter getFinancialPresenter() {
@@ -144,13 +129,11 @@ public final class PresenterManager {
         mCustomPresenter = new CustomImpl();
         mLoginAboutPresenter = new LoginAboutImpl();
         mOrderPresenter = new OrderImpl();
-        mRoleManagerPresenter = new RoleManagerImpl();
-        mDepartPresenter = new DepartImpl();
-        mPostPresenter = new PostImpl();
+        mAdministrativePresenter = new AdministrativeImpl();
         mStaffPresenter = new StaffImpl();
         mRecordManagerPresenter = new RecordManagerImpl();
         mCommonPresenter = new CommonImpl();
-        mSystemSettingPresenter = new SystemSettingImpl();
+        mLogcatPresenter = new LogcatImpl();
         mFinancialPresenter = new FinancialImpl();
         mArticlePresenter = new ArticleImpl();
     }

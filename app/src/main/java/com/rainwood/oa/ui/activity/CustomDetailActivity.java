@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,6 +56,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
+    @ViewInject(R.id.ll_order_detail_parent)
+    private LinearLayout orderDetailParent;
     @ViewInject(R.id.iv_company_logo)
     private ImageView logoSrc;
     @ViewInject(R.id.tv_company_name)
@@ -107,8 +110,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     private ICustomPresenter mCustomPresenter;
 
     private ItemModuleAdapter mModuleAdapter;
-    private AssociatesAdapter mAssociatesAdapter;
     private ContactAdapter mContactAdapter;
+    private AssociatesAdapter mAssociatesAdapter;
 
     // customId
     private String mCustomId;
@@ -143,7 +146,6 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
         mCustomId = getIntent().getStringExtra("customId");
         Constants.CUSTOM_ID = mCustomId;
         LogUtils.d("sxs", "客户详情----> " + mCustomId + "");
-        // 客户详情页面如果要做局部刷新的话，则必须重新定义接口
     }
 
     @Override
@@ -160,13 +162,13 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
 
     @Override
     protected void loadData() {
-        // 从这里加载数据
+        // 加载数据
         mCustomPresenter.getDetailData();
         mCustomPresenter.requestCustomDetailById(mCustomId);
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.btn_transfer_custom, R.id.tv_add_associates,
+    @OnClick({R.id.iv_page_back, R.id.btn_transfer_custom, R.id.tv_add_associates, R.id.iv_menu,
             R.id.iv_add_associates, R.id.tv_query_all_contact, R.id.btn_copy_custom_id, R.id.tv_requested_edit})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -200,6 +202,10 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
                 // 复制客户id
                 ClipboardUtil.clipFormat2Board(this, "customId", mCustomId);
                 toast("已复制");
+                break;
+            case R.id.iv_menu:
+                //toast("menu");
+                showQuickFunction(this, orderDetailParent);
                 break;
         }
     }

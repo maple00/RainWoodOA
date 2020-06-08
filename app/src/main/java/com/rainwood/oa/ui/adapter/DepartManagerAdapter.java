@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Depart;
-import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -31,6 +30,7 @@ public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManag
 
     public void setDepartList(List<Depart> departList) {
         mDepartList = departList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -42,7 +42,7 @@ public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManag
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.depart.setText(mDepartList.get(position).getDepart());
+        holder.depart.setText(mDepartList.get(position).getName());
         holder.selectedImg.setImageResource(mDepartList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         // 设置隐藏
         holder.managerTop.setOnClickListener(v -> {
@@ -52,7 +52,7 @@ public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManag
         // 项目组
         ProjectGroupsAdapter groupsAdapter = new ProjectGroupsAdapter();
         holder.groups.setAdapter(groupsAdapter);
-        groupsAdapter.setGroupList(mDepartList.get(position).getGroups());
+        groupsAdapter.setGroupList(mDepartList.get(position).getArray());
         groupsAdapter.setClickGroup(position, mOnClickGroup);
         // 设置隐藏
         if (!mDepartList.get(position).isHasSelected()) {

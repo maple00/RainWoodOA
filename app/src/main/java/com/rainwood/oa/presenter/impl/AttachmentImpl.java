@@ -2,6 +2,7 @@ package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.OfficeFile;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -67,12 +68,21 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     }
 
     /**
-     * 请求办公文件
+     * 请求办公文件(知识管理)
      */
     @Override
     public void requestOfficeFileData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=home", params, this);
+    }
+
+    /**
+     * 请求知识管理中的附件列表
+     */
+    @Override
+    public void requestKnowledgeAttach() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=file&fun=home", params, this);
     }
 
     @Override
@@ -107,6 +117,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
             e.printStackTrace();
         }
 
+        // 客户附件管理
         if (result.url().contains("cla=client&fun=fileLi")){
             try {
                 List<Attachment> attachList = JsonParser.parseJSONArray(Attachment.class,
@@ -126,6 +137,16 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
                 List<OfficeFile> officeFileList = JsonParser.parseJSONArray(OfficeFile.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("file"));
                 mAttachmentCallback.getOfficeFileData(officeFileList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 知识管理---附件管理
+        else if (result.url().contains("cla=file&fun=home")){
+            try {
+                List<KnowledgeAttach> attachList = JsonParser.parseJSONArray(KnowledgeAttach.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("file"));
+                mAttachmentCallback.getKnowledgeAttach(attachList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -12,7 +12,7 @@ public final class Depart {
     /**
      * 部门名称
      */
-    private String depart;
+    private String name;
 
     /**
      * 是否被选中
@@ -22,14 +22,14 @@ public final class Depart {
     /**
      * 项目组
      */
-    private List<ProjectGroup> mGroups;
+    private List<ProjectGroup> array;
 
-    public String getDepart() {
-        return depart;
+    public String getName() {
+        return name;
     }
 
-    public void setDepart(String depart) {
-        this.depart = depart;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isHasSelected() {
@@ -40,11 +40,11 @@ public final class Depart {
         this.hasSelected = hasSelected;
     }
 
-    public List<ProjectGroup> getGroups() {
-        return mGroups;
+    public List<ProjectGroup> getArray() {
+        return array;
     }
 
-    public void setGroups(List<ProjectGroup> groups) {
-        mGroups = groups;
+    public void setArray(List<ProjectGroup> array) {
+        this.array = array;
     }
 }

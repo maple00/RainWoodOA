@@ -19,6 +19,7 @@ public final class SubRoleXModule implements Serializable {
      * 某个模块被选择
      */
     private boolean hasSelected;
+
     /**
      * 模块下的所有权限
      */

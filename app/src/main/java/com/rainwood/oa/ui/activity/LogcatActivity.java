@@ -7,16 +7,17 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.SystemLogcat;
-import com.rainwood.oa.presenter.ISystemSettingPresenter;
+import com.rainwood.oa.model.domain.Logcat;
+import com.rainwood.oa.presenter.ILogcatPresenter;
 import com.rainwood.oa.ui.adapter.LogcatAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.ISystemSettingCallbacks;
+import com.rainwood.oa.view.ILogcatCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -29,13 +30,13 @@ import java.util.List;
  * @Date: 2020/5/28 9:25
  * @Desc: 系统日志
  */
-public final class LogcatActivity extends BaseActivity implements ISystemSettingCallbacks {
+public final class LogcatActivity extends BaseActivity implements ILogcatCallbacks {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_search_tips)
-    private TextView searchContent;
+    private TextView searchTips;
     // content
     @ViewInject(R.id.gti_logcat_type)
     private GroupTextIcon logcatType;
@@ -48,7 +49,7 @@ public final class LogcatActivity extends BaseActivity implements ISystemSetting
     @ViewInject(R.id.rv_logcat_content)
     private RecyclerView logcatContent;
 
-    private ISystemSettingPresenter mSettingPresenter;
+    private ILogcatPresenter mLogcatPresenter;
     private LogcatAdapter mLogcatAdapter;
 
     @Override
@@ -60,6 +61,7 @@ public final class LogcatActivity extends BaseActivity implements ISystemSetting
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
+        searchTips.setText("输入详细说明");
         // 设置布局管理器
         logcatContent.setLayoutManager(new GridLayoutManager(this, 1));
         logcatContent.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
@@ -74,13 +76,38 @@ public final class LogcatActivity extends BaseActivity implements ISystemSetting
 
     @Override
     protected void loadData() {
-        mSettingPresenter.requestLogcatData();
+        mLogcatPresenter.requestLogcatData();
     }
 
     @Override
     protected void initPresenter() {
-        mSettingPresenter = PresenterManager.getOurInstance().getSystemSettingPresenter();
-        mSettingPresenter.registerViewCallback(this);
+        mLogcatPresenter = PresenterManager.getOurInstance().getLogcatPresenter();
+        mLogcatPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void initEvent() {
+        logcatType.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("日志类型");
+            }
+        });
+        departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("部门员工");
+            }
+        });
+        time.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("时间段");
+            }
+        });
+        // 查看详情
+        mLogcatAdapter.setClickLogcat((logcat, position) ->
+                PageJumpUtil.logcatList2Detail(LogcatActivity.this, LogcatDetailActivity.class, "日志详情", logcat));
     }
 
     @SingleClick
@@ -95,7 +122,7 @@ public final class LogcatActivity extends BaseActivity implements ISystemSetting
     }
 
     @Override
-    public void getSystemLogcat(List<SystemLogcat> logcatList) {
+    public void getSystemLogcat(List<Logcat> logcatList) {
         mLogcatAdapter.setLogcatList(logcatList);
     }
 

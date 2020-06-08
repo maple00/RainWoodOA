@@ -373,7 +373,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                 //已付费用
                 List<OrderPayed> payedList = JsonParser.parseJSONArray(OrderPayed.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("out"));
-                Map<String, List> orderMap = new HashMap<String, List>();
+                Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("attachment", attachmentList);
                 orderMap.put("cost", costList);
                 orderMap.put("follow", followList);
@@ -397,12 +397,32 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                     font.setDesc(orderBaseValues.getName());
                     showDataList.add(font);
                 }
+                if (orderBaseValues.getName() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("立项日期");
+                    font.setDesc(orderBaseValues.getSignDay());
+                    showDataList.add(font);
+                }
+                if (orderBaseValues.getName() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("交付日期");
+                    font.setDesc(orderBaseValues.getEndDay());
+                    showDataList.add(font);
+                }
                 if (orderBaseValues.getMoney() != null) {
                     FontAndFont font = new FontAndFont();
                     font.setTitle("合同金额");
                     font.setDesc("￥ " + orderBaseValues.getId());
                     showDataList.add(font);
                 }
+                if (orderBaseValues.getMoney() != null) {
+                    FontAndFont font = new FontAndFont();
+                    font.setTitle("工期");
+                    font.setDesc(orderBaseValues.getCycle() + "天");
+                    showDataList.add(font);
+                }
+
+                // 点击隐藏/显示内容
                 List<FontAndFont> hideDataList = new ArrayList<>();
                 if (orderBaseValues.getCost() != null) {
                     FontAndFont font = new FontAndFont();
@@ -448,6 +468,9 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                 }
                 orderMap.put("showData", showDataList);
                 orderMap.put("hideData", hideDataList);
+                if (!TextUtils.isEmpty(orderBaseValues.getWorkFlow())){
+                    orderMap.put("orderStatus", orderBaseValues.getWorkFlow());
+                }
                 mOrderEditCallbacks.getOrderDetail(orderMap);
             } catch (JSONException e) {
                 e.printStackTrace();

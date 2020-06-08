@@ -11,9 +11,15 @@ import com.rainwood.oa.view.IRecordCallbacks;
 public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks> {
 
     /**
-     * 请求加班记录
+     * 客户下的加班记录
+     * @param customId
      */
     void requestOvertimeRecord(String customId);
+
+    /**
+     * 行政人事--加班记录
+     */
+    void requestOvertimeRecord();
 
     /**
      * 请求请假记录

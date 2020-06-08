@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Custom;
@@ -270,7 +270,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
     @Override
     public void onItemClick(Custom custom) {
-        PageJumpUtil.listJump2CustomDetail(this, CustomDetailActivity.class, custom);
+        PageJumpUtil.listJump2CustomDetail(this, CustomDetailActivity.class, custom.getKhid());
     }
 
 }

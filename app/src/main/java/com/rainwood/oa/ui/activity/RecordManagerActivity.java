@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CardRecord;
@@ -132,7 +132,11 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     protected void loadData() {
         // 从这里request data
         if (title.contains("加班")) {
-            mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
+            if (Constants.CUSTOM_ID != null){
+                mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
+            }else {
+                mRecordManagerPresenter.requestOvertimeRecord();
+            }
         } else if (title.contains("请假")) {
             mRecordManagerPresenter.requestLeaveRecord();
         } else if (title.contains("外出")) {

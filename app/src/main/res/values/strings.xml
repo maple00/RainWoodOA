@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RainWoodOA</string>
+    <string name="app_name">雨木科技</string>
 
     <string name="frame_name" translatable="true">AndroidOHP</string>
     <string name="navigation_home">首页</string>
@@ -135,5 +135,6 @@
     <string name="text_task_allocation">任务分配</string>
     <string name="text_receivable_record">回款记录</string>
     <string name="text_prepaid">已付费用</string>
+    <string name="text_quick_function">快捷功能</string>
 
 </resources>

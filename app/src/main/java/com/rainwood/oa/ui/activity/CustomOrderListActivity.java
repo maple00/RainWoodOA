@@ -1,25 +1,21 @@
 package com.rainwood.oa.ui.activity;
 
-import android.graphics.Rect;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CustomOrder;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.CustomOrderAdapter;
-import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;

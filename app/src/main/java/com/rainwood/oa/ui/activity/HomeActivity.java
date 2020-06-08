@@ -11,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.base.BaseFragment;
+import com.rainwood.oa.model.domain.MessageEvent;
 import com.rainwood.oa.network.app.App;
 import com.rainwood.oa.ui.fragment.BlockLogFragment;
 import com.rainwood.oa.ui.fragment.HomeFragment;
@@ -21,6 +22,10 @@ import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED;
 
@@ -37,6 +42,7 @@ public final class HomeActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
+        EventBus.getDefault().register(this);
         return R.layout.activity_main;
     }
 
@@ -64,19 +70,15 @@ public final class HomeActivity extends BaseActivity {
     private void initListener() {
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
-                // StatusBarUtil.setStatusBarDarkTheme(this, false);
                 StatusBarUtils.darkMode(this, false);
                 switchFragment(mHomeFragment);
             } else if (item.getItemId() == R.id.navigation_manager) {
-                // StatusBarUtil.setStatusBarDarkTheme(this, true);
                 StatusBarUtils.darkMode(this, true);
                 switchFragment(mManagerFragment);
             } else if (item.getItemId() == R.id.navigation_backlog) {
-                // StatusBarUtil.setStatusBarDarkTheme(this, true);
                 StatusBarUtils.darkMode(this, true);
                 switchFragment(mBlockLogFragment);
             } else if (item.getItemId() == R.id.navigation_mine) {
-                // StatusBarUtil.setStatusBarDarkTheme(this, true);
                 StatusBarUtils.darkMode(this, true);
                 switchFragment(mMineFragment);
             }
@@ -110,7 +112,7 @@ public final class HomeActivity extends BaseActivity {
             fragmentTransaction.hide(lastOneFragment);
         }
         lastOneFragment = targetFragment;
-        // fragmentTransaction.replace(R.id.fl_main_container, targetFragment);
+        // transaction 提交
         fragmentTransaction.commit();
     }
 
@@ -134,6 +136,37 @@ public final class HomeActivity extends BaseActivity {
         }
     }
 
+    //接收消息
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(MessageEvent messageEvent) {
+        toast(messageEvent.getMessage());
+        LogUtils.d("sxs", "messageEvent.getType()--- " + messageEvent.getType());
+        switch (messageEvent.getType()) {
+            case Constants.HOME_FRAGMENT_RESULT_SIZE:
+                switchFragment(mHomeFragment);
+                break;
+            case Constants.MANAGER_FRAGMENT_RESULT_SIZE:
+                switchFragment(mManagerFragment);
+                break;
+            case Constants.BLOCK_FRAGMENT_RESULT_SIZE:
+                switchFragment(mBlockLogFragment);
+                break;
+            case Constants.MINE_FRAGMENT_RESULT_SIZE:
+                switchFragment(mMineFragment);
+                break;
+        }
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //解除注册
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
 
     @Override
     protected void setStatusBar() {

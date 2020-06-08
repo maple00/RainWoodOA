@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.lcodecore.tkrefreshlayout.header.bezierlayout.WaveView
+    <com.rainwood.tkrefreshlayout.header.bezierlayout.WaveView
         android:id="@+id/draweeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
 
-        <com.lcodecore.tkrefreshlayout.header.bezierlayout.RoundDotView
+        <com.rainwood.tkrefreshlayout.header.bezierlayout.RoundDotView
             android:id="@+id/round1"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -18,14 +18,14 @@
             android:layout_gravity="center" />
 
 
-    <com.lcodecore.tkrefreshlayout.header.bezierlayout.RoundProgressView
+    <com.rainwood.tkrefreshlayout.header.bezierlayout.RoundProgressView
         android:id="@+id/round2"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-    <com.lcodecore.tkrefreshlayout.header.bezierlayout.RippleView
+    <com.rainwood.tkrefreshlayout.header.bezierlayout.RippleView
         android:id="@+id/ripple"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

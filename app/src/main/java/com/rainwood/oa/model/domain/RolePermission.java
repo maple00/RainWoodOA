@@ -1,5 +1,7 @@
 package com.rainwood.oa.model.domain;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public final class RolePermission implements Serializable {
     /**
      * 角色权限描述
      */
-    private String desc;
+    private String text;
 
     /**
      * 角色拥有的模块权限
@@ -46,12 +48,12 @@ public final class RolePermission implements Serializable {
         this.name = name;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getText() {
+        return text;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public List<SubRoleXModule> getRoleXModules() {

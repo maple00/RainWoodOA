@@ -39,13 +39,22 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     private IRecordCallbacks mRecordCallbacks;
 
     /**
-     * 加班记录
+     * 客户-加班记录
      */
     @Override
     public void requestOvertimeRecord(String customId) {
         RequestParams params = new RequestParams();
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=workAdd", params, this);
+    }
+
+    /**
+     * 行政人事--- 加班记录
+     */
+    @Override
+    public void requestOvertimeRecord() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home", params, this);
     }
 
     @Override
@@ -318,6 +327,10 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        // 行政人事--- 加班记录
+        else if (result.url().contains("cla=workAdd&fun=home")){
+
         }
     }
 }

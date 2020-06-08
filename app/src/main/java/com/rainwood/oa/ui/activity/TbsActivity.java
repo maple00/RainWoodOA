@@ -5,15 +5,19 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.aop.SingleClick;
 import com.tencent.smtt.sdk.TbsReaderView;
 
 import java.io.File;
@@ -35,19 +39,32 @@ public final class TbsActivity extends BaseActivity implements TbsReaderView.Rea
 
     @ViewInject(R.id.tbs_view)
     private RelativeLayout mRelativeLayout;
+    @ViewInject(R.id.cl_tbs)
+    private RelativeLayout pageTop;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
 
     private TbsReaderView mTbsReaderView;
     private String docUrl;
     private String download = Environment.getExternalStorageDirectory() + "/download/rainwood/document/";
+    private String tbsReaderTemp = Environment.getExternalStorageDirectory() + "/TbsReaderTemp";
 
     @Override
     protected void initView() {
         StatusBarUtils.immersive(this);
-        StatusBarUtils.setMargin(this, mRelativeLayout);
+        StatusBarUtils.setPaddingSmart(this, pageTop);
+
         mTbsReaderView = new TbsReaderView(this, this);
         mRelativeLayout.addView(mTbsReaderView, new RelativeLayout.LayoutParams(-1, -1));
         docUrl = getIntent().getStringExtra("path");
         initDoc();
+    }
+
+    @Override
+    protected void initData() {
+        // title
+        String fileName = getIntent().getStringExtra("fileName");
+        pageTitle.setText(fileName);
     }
 
     private void initDoc() {
@@ -82,12 +99,21 @@ public final class TbsActivity extends BaseActivity implements TbsReaderView.Rea
         }
     }
 
+
     @Override
     protected void initPresenter() {
 
     }
 
-    private String tbsReaderTemp = Environment.getExternalStorageDirectory() + "/TbsReaderTemp";
+    @SingleClick
+    @OnClick(R.id.iv_page_back)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_page_back:
+                finish();
+                break;
+        }
+    }
 
     private void displayFile(String filePath, String fileName) {
 

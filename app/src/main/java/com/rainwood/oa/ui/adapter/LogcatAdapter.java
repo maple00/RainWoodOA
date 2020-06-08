@@ -3,13 +3,14 @@ package com.rainwood.oa.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.SystemLogcat;
+import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -23,10 +24,11 @@ import java.util.List;
  */
 public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
-    private List<SystemLogcat> mLogcatList;
+    private List<Logcat> mLogcatList;
 
-    public void setLogcatList(List<SystemLogcat> logcatList) {
+    public void setLogcatList(List<Logcat> logcatList) {
         mLogcatList = logcatList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,10 +40,12 @@ public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.name.setText(mLogcatList.get(position).getName());
-        holder.logcat.setText(mLogcatList.get(position).getLogcat());
-        holder.origin.setText(mLogcatList.get(position).getOrigin());
+        holder.name.setText(mLogcatList.get(position).getStaffName());
+        holder.logcat.setText(mLogcatList.get(position).getText());
+        holder.origin.setText(mLogcatList.get(position).getType());
         holder.time.setText(mLogcatList.get(position).getTime());
+        // 点击事件
+        holder.itemLogcat.setOnClickListener(v -> mClickLogcat.onClickLogcat(mLogcatList.get(position), position));
     }
 
     @Override
@@ -51,6 +55,8 @@ public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @ViewInject(R.id.ll_item_logcat)
+        private LinearLayout itemLogcat;
         @ViewInject(R.id.tv_name)
         private TextView name;
         @ViewInject(R.id.tv_logcat)
@@ -64,5 +70,21 @@ public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.View
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickLogcat {
+        /**
+         * 查看详情
+         *
+         * @param logcat
+         * @param position
+         */
+        void onClickLogcat(Logcat logcat, int position);
+    }
+
+    private OnClickLogcat mClickLogcat;
+
+    public void setClickLogcat(OnClickLogcat clickLogcat) {
+        mClickLogcat = clickLogcat;
     }
 }

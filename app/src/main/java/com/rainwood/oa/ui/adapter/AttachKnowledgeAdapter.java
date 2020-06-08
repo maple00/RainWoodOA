@@ -1,5 +1,9 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,21 +29,53 @@ import java.util.List;
 public final class AttachKnowledgeAdapter extends RecyclerView.Adapter<AttachKnowledgeAdapter.ViewHolder> {
 
     private List<KnowledgeAttach> mAttachList;
+    private Context mContext;
 
     public void setAttachList(List<KnowledgeAttach> attachList) {
         mAttachList = attachList;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_knowledge_attach, parent, false);
+        mContext = parent.getContext();
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_knowledge_attach, parent, false);
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // TODO: 文件item
+
+        final String secretSrc = "<img src=\"" + R.drawable.ic_secret + "\"/>";
+        String secret = mAttachList.get(position).getSecret();
+        // 获取图片资源
+        final Html.ImageGetter imageGetter = new Html.ImageGetter() {
+            public Drawable getDrawable(String source) {
+                Drawable drawable = null;
+                int rId = Integer.parseInt(source);
+                drawable = mContext.getResources().getDrawable(rId);
+                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                return drawable;
+            }
+        };
+        holder.attachName.setText(Html.fromHtml(mAttachList.get(position).getName()
+                + " " + (secret.equals("是") ? secretSrc : ""), imageGetter, null));
+
+        holder.size.setText(mAttachList.get(position).getSize());
+        holder.attachTargetName.setText(Html.fromHtml("<font color=\"" + mContext.getColor(R.color.fontColor)
+                + "\">" + mAttachList.get(position).getTarget() + "·" + "</font>"
+                + "<font color=\"" + mContext.getColor(R.color.blue05) + "\">" + mAttachList.get(position).getTargetName() + "</font>"));
+        holder.nameTime.setText(mAttachList.get(position).getStaffName() + " " + mAttachList.get(position).getTime());
+        // 点击事件
+        holder.attachTargetName.setOnClickListener(v -> mClickAttach.onClickTarget(mAttachList.get(position), position));
+
+        holder.downloadIV.setOnClickListener(v -> mClickAttach.onClickDownload(mAttachList.get(position), position));
+        holder.downloadTV.setOnClickListener(v -> mClickAttach.onClickDownload(mAttachList.get(position), position));
+
+        holder.previewIV.setOnClickListener(v -> mClickAttach.onClickPreview(mAttachList.get(position), position));
+        holder.previewTV.setOnClickListener(v -> mClickAttach.onClickPreview(mAttachList.get(position), position));
     }
 
     @Override
@@ -70,5 +106,37 @@ public final class AttachKnowledgeAdapter extends RecyclerView.Adapter<AttachKno
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickKnowledgeAttach {
+        /**
+         * 点击页面跳转
+         *
+         * @param attach
+         * @param position
+         */
+        void onClickTarget(KnowledgeAttach attach, int position);
+
+        /**
+         * 下载
+         *
+         * @param attach
+         * @param position
+         */
+        void onClickDownload(KnowledgeAttach attach, int position);
+
+        /**
+         * 预览
+         *
+         * @param attach
+         * @param position
+         */
+        void onClickPreview(KnowledgeAttach attach, int position);
+    }
+
+    private OnClickKnowledgeAttach mClickAttach;
+
+    public void setClickAttach(OnClickKnowledgeAttach clickAttach) {
+        mClickAttach = clickAttach;
     }
 }

@@ -68,7 +68,7 @@ public final class CustomIntroduceActivity extends BaseActivity {
 
     @OnClick({R.id.iv_warn_prompt, R.id.tv_warm_prompt, R.id.cet_demand_desc, R.id.iv_page_back,
             R.id.cet_follow_status, R.id.cet_custom_origin_note, R.id.cet_introduce_to, R.id.btn_confirm})
-    private void onClick(View view) {
+    public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();

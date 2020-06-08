@@ -25,4 +25,9 @@ public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallback
      * 请求办公文件
      */
     void requestOfficeFileData();
+
+    /**
+     * 请求知识管理中的附件
+     */
+    void requestKnowledgeAttach();
 }

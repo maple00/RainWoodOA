@@ -328,7 +328,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      */
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        LogUtils.d("sxs", "result ---- " + result.body());
+       // LogUtils.d("sxs", "result ---- " + result.body());
         if (!(result.code() == 200)) {
             mCustomCallback.onError();
             return;

@@ -305,6 +305,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 工作日 WorkDayActivity-->
+        <activity
+            android:name=".ui.activity.WorkDayActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!-- 通讯录 AddressBookActivity-->
         <activity
             android:name=".ui.activity.AddressBookActivity"
@@ -422,6 +429,13 @@
         <!-- 系统日志 LogcatActivity-->
         <activity
             android:name=".ui.activity.LogcatActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 日志详情 LogcatDetailActivity-->
+        <activity
+            android:name=".ui.activity.LogcatDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />

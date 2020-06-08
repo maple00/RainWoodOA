@@ -165,7 +165,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
             android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -189,7 +189,7 @@
                 android:textSize="12sp"
                 android:visibility="invisible" />
 
-        </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 
     </LinearLayout>
 

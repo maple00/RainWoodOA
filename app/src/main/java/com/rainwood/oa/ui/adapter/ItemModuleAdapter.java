@@ -42,6 +42,7 @@ import com.rainwood.oa.ui.activity.ReimbursementActivity;
 import com.rainwood.oa.ui.activity.RoleManagerActivity;
 import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.oa.ui.activity.TeamFundsActivity;
+import com.rainwood.oa.ui.activity.WorkDayActivity;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -184,7 +185,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), StaffManagerActivity.class, "员工管理"));
                     break;
                 case "工作日":
-                    ToastUtils.show("工作日");
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), WorkDayActivity.class, "工作日"));
                     break;
                 case "通讯录":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AddressBookActivity.class, "通讯录"));

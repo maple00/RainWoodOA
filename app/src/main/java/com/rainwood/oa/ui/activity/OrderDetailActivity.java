@@ -204,7 +204,9 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
         List<OrderPayed> payedList = (List<OrderPayed>) orderDetailMap.get("payed");
         List<FontAndFont> shoDataList = (List<FontAndFont>) orderDetailMap.get("showData");
         List<FontAndFont> hideDataList = (List<FontAndFont>) orderDetailMap.get("hideData");
-
+        // 订单状态
+        String orderStatus = (String) orderDetailMap.get("orderStatus");
+        statusTV.setText(orderStatus);
         mDataAdapter.setList(shoDataList);
         mDataCostAdapter.setList(hideDataList);
         mAttachAdapter.setAttachmentList(attachmentList);

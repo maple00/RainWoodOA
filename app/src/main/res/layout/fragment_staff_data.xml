@@ -10,7 +10,7 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <androidx.core.widget.NestedScrollView
+    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -286,6 +286,6 @@
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
 
 </LinearLayout>

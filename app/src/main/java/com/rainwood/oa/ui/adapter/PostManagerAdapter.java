@@ -34,6 +34,7 @@ public final class PostManagerAdapter extends RecyclerView.Adapter<PostManagerAd
 
     public void setPostList(List<Post> postList) {
         mPostList = postList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -47,16 +48,16 @@ public final class PostManagerAdapter extends RecyclerView.Adapter<PostManagerAd
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.post.setText(mPostList.get(position).getPost());
-        holder.salary.setText(Html.fromHtml("<font color=" + mContext.getColor(R.color.fontColor) + " size= "
-                + FontSwitchUtil.dip2px(mContext, 12f) + ">基</font>"
-                + "<font color=" + mContext.getColor(R.color.fontColor) + " size= "
-                + FontSwitchUtil.dip2px(mContext, 15f) + ">" + mPostList.get(position).getBaseSalary() + "+</font>"
-                + "<font color=" + mContext.getColor(R.color.colorPrimary) + " size= "
-                + FontSwitchUtil.dip2px(mContext, 15f) + ">津" + mPostList.get(position).getPostAllowance() + "</font>"));
-        holder.depart.setValue(mPostList.get(position).getDepart());
-        holder.role.setValue(mPostList.get(position).getRole());
-        holder.desc.setText(mPostList.get(position).getPostDesc());
+        holder.post.setText(mPostList.get(position).getName());
+        holder.salary.setText(Html.fromHtml("<font color=" + mContext.getColor(R.color.fontColor) + " size= \""
+                + FontSwitchUtil.dip2px(mContext, 12f) + "\">基</font>"
+                + "<font color=" + mContext.getColor(R.color.fontColor) + " size= \""
+                + FontSwitchUtil.dip2px(mContext, 15f) + "\">" + mPostList.get(position).getBasePay() + "+</font>"
+                + "<font color=\"" + mContext.getColor(R.color.colorPrimary) + "\" size= \""
+                + FontSwitchUtil.dip2px(mContext, 15f) + "\">津" + mPostList.get(position).getSubsidy() + "</font>"));
+        holder.depart.setValue(mPostList.get(position).getDepartmentName());
+        holder.role.setValue(mPostList.get(position).getRoleName());
+        holder.desc.setText(mPostList.get(position).getText());
         // 点击事件
         holder.itemPost.setOnClickListener(v -> mClickPostItem.onClickPost(mPostList.get(position)));
     }

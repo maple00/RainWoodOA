@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_item_logcat"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -23,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ellipsize="end"
+        android:lineSpacingExtra="10dp"
         android:maxLines="4"
         android:text="王海新增了一笔订单：客户名称：重庆正南齐北科技有限公司；订单名称：制造业ERP"
         android:textColor="@color/colorMiddle"

@@ -29,6 +29,7 @@ public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAd
 
     public void setPermissionList(List<RolePermission> permissionList) {
         mPermissionList = permissionList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,14 +42,15 @@ public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.roleName.setText(mPermissionList.get(position).getName());
-        holder.roleDesc.setText(mPermissionList.get(position).getDesc());
+        holder.roleDesc.setText(mPermissionList.get(position).getText());
         // 角色下的模块
-        RoleModuleAdapter moduleAdapter = new RoleModuleAdapter();
+        RoleDescAdapter moduleAdapter = new RoleDescAdapter();
         holder.roleModule.setNumColumns(5);
         holder.roleModule.setAdapter(moduleAdapter);
-        moduleAdapter.setModuleList(mPermissionList.get(position).getRoleXModules());
+       // moduleAdapter.setList(mPermissionList.get(position).getPower());
         // 点击事件
         holder.roleItem.setOnClickListener(v -> mClickRoleItem.onClick(mPermissionList.get(position)));
+        holder.roleModule.setOnItemClickListener((parent, view, position1, id) -> mClickRoleItem.onClick(mPermissionList.get(position)));
     }
 
     @Override

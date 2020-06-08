@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.lcodecore.tkrefreshlayout.views.RWNestedScrollView
+        <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
             android:id="@+id/rns_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -183,7 +183,7 @@
                     android:textColor="@color/colorMiddle" />
 
             </LinearLayout>
-        </com.lcodecore.tkrefreshlayout.views.RWNestedScrollView>
+        </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tb_mine_bar"

@@ -1,99 +1,115 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/22 9:25
  * @Desc: 职位
  */
-public final class Post {
+public final class Post implements Serializable {
+
+    /**
+     * 职位id
+     */
+
+    private String id;
     /**
      * 职位名称
      */
-    private String post;
+    private String name;
 
     /**
-     * 所属部门
+     * 部门名称
      */
-    private String depart;
+    private String departmentName;
+
+    /**
+     * 部门分类
+     */
+    private String departmentType;
 
     /**
      * 所属角色
      */
-    private String role;
+    private String roleName;
 
     /**
      * 基本工资
      */
-    private String baseSalary;
+    private String basePay;
 
     /**
      * 岗位津贴
      */
-    private String postAllowance;
+    private String subsidy;
 
     /**
      * 津贴说明
      */
-    private String allowanceDesc;
+    private String text;
 
-    /**
-     * 职位描述
-     */
-    private String postDesc;
-
-    public String getPost() {
-        return post;
+    public String getId() {
+        return id;
     }
 
-    public void setPost(String post) {
-        this.post = post;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getDepart() {
-        return depart;
+    public String getName() {
+        return name;
     }
 
-    public void setDepart(String depart) {
-        this.depart = depart;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
-    public String getBaseSalary() {
-        return baseSalary;
+    public String getDepartmentType() {
+        return departmentType;
     }
 
-    public void setBaseSalary(String baseSalary) {
-        this.baseSalary = baseSalary;
+    public void setDepartmentType(String departmentType) {
+        this.departmentType = departmentType;
     }
 
-    public String getPostAllowance() {
-        return postAllowance;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setPostAllowance(String postAllowance) {
-        this.postAllowance = postAllowance;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
-    public String getAllowanceDesc() {
-        return allowanceDesc;
+    public String getBasePay() {
+        return basePay;
     }
 
-    public void setAllowanceDesc(String allowanceDesc) {
-        this.allowanceDesc = allowanceDesc;
+    public void setBasePay(String basePay) {
+        this.basePay = basePay;
     }
 
-    public String getPostDesc() {
-        return postDesc;
+    public String getSubsidy() {
+        return subsidy;
     }
 
-    public void setPostDesc(String postDesc) {
-        this.postDesc = postDesc;
+    public void setSubsidy(String subsidy) {
+        this.subsidy = subsidy;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

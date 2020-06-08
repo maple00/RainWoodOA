@@ -35,7 +35,7 @@ import java.util.Map;
 public final class AttendanceActivity extends BaseActivity {
 
     // page
-    @ViewInject(R.id.rl_page_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView mPageTitle;
@@ -96,10 +96,9 @@ public final class AttendanceActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     @Override
     protected void initView() {
-        super.initView();
         StatusBarUtils.immersive(this);
-        StatusBarUtils.setPaddingSmart(this, pageTop);
-        StatusBarUtil.setStatusBarColor(this, this.getColor(R.color.assistColor15));
+        StatusBarUtils.setMargin(this, pageTop);
+        //StatusBarUtil.setStatusBarColor(this, this.getColor(R.color.assistColor15));
         // 设置日历选中当前日期
         mMiui9Calendar.setCheckMode(CheckModel.SINGLE_DEFAULT_CHECKED);  // 设置当前选中
         //只在selectedMode==SINGLE_SELECTED有效

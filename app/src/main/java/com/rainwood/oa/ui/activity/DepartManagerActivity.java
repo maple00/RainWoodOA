@@ -7,18 +7,20 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.presenter.IAdministrativePresenter;
+import com.rainwood.oa.utils.PageJumpUtil;
+import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.ProjectGroup;
-import com.rainwood.oa.presenter.IDepartPresenter;
 import com.rainwood.oa.ui.adapter.DepartManagerAdapter;
 import com.rainwood.oa.ui.adapter.ProjectGroupsAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IDepartCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -32,7 +34,7 @@ import java.util.List;
  * @Date: 2020/5/21 16:59
  * @Desc: 部门管理
  */
-public final class DepartManagerActivity extends BaseActivity implements IDepartCallbacks, ProjectGroupsAdapter.OnClickGroup {
+public final class DepartManagerActivity extends BaseActivity implements IAdministrativeCallbacks, ProjectGroupsAdapter.OnClickGroup {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -49,10 +51,10 @@ public final class DepartManagerActivity extends BaseActivity implements IDepart
 
     private DepartManagerAdapter mDepartManagerAdapter;
 
-    private IDepartPresenter mDepartPresenter;
+    private IAdministrativePresenter mAdministrativePresenter;
+
     // 筛选
     private boolean selectedStatusFlag = false;
-    private List<Depart> mDepartList;
 
     @Override
     protected int getLayoutResId() {
@@ -97,26 +99,34 @@ public final class DepartManagerActivity extends BaseActivity implements IDepart
     @Override
     protected void loadData() {
         // 请求数据
-        mDepartPresenter.getAllDepartData();
+        mAdministrativePresenter.requestAllDepartData();
     }
 
     @Override
     protected void initPresenter() {
-        mDepartPresenter = PresenterManager.getOurInstance().getDepartPresenter();
-        mDepartPresenter.registerViewCallback(this);
-    }
-
-    @Override
-    public void getAllDepartData(List<Depart> departList) {
-        mDepartList = departList;
-        mDepartManagerAdapter.setDepartList(mDepartList);
+        mAdministrativePresenter = PresenterManager.getOurInstance().getAdministrativePresenter();
+        mAdministrativePresenter.registerViewCallback(this);
     }
 
     @Override
     public void onClickItem(int parentPos, ProjectGroup group) {
         // 查看详情
-        toast("部门：" + mDepartList.get(parentPos).getDepart() + " ---- 项目组：" + group.getGroup());
-        startActivity(getNewIntent(this, DepartDetailActivity.class, "部门详情"));
+        PageJumpUtil.departList2Detail(this, DepartDetailActivity.class, group.getId());
+    }
+
+    @SingleClick
+    @OnClick(R.id.iv_page_back)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_page_back:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void getDepartListData(List<Depart> departList) {
+        mDepartManagerAdapter.setDepartList(departList);
     }
 
     @Override
@@ -134,14 +144,4 @@ public final class DepartManagerActivity extends BaseActivity implements IDepart
 
     }
 
-
-    @SingleClick
-    @OnClick(R.id.iv_page_back)
-    private void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_page_back:
-                finish();
-                break;
-        }
-    }
 }

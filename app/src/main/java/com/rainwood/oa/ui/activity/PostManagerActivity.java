@@ -7,16 +7,17 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Post;
-import com.rainwood.oa.presenter.IPostPresenter;
+import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.PostManagerAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IPostCallbacks;
+import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -28,9 +29,9 @@ import java.util.List;
 /**
  * @Author: a797s
  * @Date: 2020/5/22 9:04
- * @Desc: 职位管理
+ * @Desc: 职位管理activity
  */
-public final class PostManagerActivity extends BaseActivity implements IPostCallbacks, PostManagerAdapter.OnClickPostItem {
+public final class PostManagerActivity extends BaseActivity implements IAdministrativeCallbacks, PostManagerAdapter.OnClickPostItem {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -54,7 +55,7 @@ public final class PostManagerActivity extends BaseActivity implements IPostCall
     private boolean selectedRoleFlag = false;
 
     private PostManagerAdapter mPostManagerAdapter;
-    private IPostPresenter mPostPresenter;
+    private IAdministrativePresenter mAdministrativePresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -91,19 +92,24 @@ public final class PostManagerActivity extends BaseActivity implements IPostCall
             roleGTI.setRightIcon(selectedRoleFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedRoleFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
         });
+        //
+    }
+
+    @Override
+    protected void initPresenter() {
+        mAdministrativePresenter = PresenterManager.getOurInstance().getAdministrativePresenter();
+        mAdministrativePresenter.registerViewCallback(this);
     }
 
     @Override
     protected void loadData() {
         // 加载数据
-        mPostPresenter.getAllPost();
-
+        mAdministrativePresenter.requestPostListData();
     }
 
     @Override
-    protected void initPresenter() {
-        mPostPresenter = PresenterManager.getOurInstance().getPostPresenter();
-        mPostPresenter.registerViewCallback(this);
+    public void onClickPost(Post post) {
+        PageJumpUtil.postList2Detail(this, PostDetailActivity.class, post.getId());
     }
 
     @SingleClick
@@ -117,7 +123,7 @@ public final class PostManagerActivity extends BaseActivity implements IPostCall
     }
 
     @Override
-    public void getALlPostData(List<Post> postList) {
+    public void getPostListData(List<Post> postList) {
         mPostManagerAdapter.setPostList(postList);
     }
 
@@ -136,11 +142,4 @@ public final class PostManagerActivity extends BaseActivity implements IPostCall
 
     }
 
-    @Override
-    public void onClickPost(Post post) {
-        // item点击事件
-        toast("查看详情");
-        //startActivity(PostDetailActivity.class);
-        startActivity(getNewIntent(this, PostDetailActivity.class, "职位详情"));
-    }
 }

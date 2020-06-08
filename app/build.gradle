@@ -93,4 +93,6 @@ dependencies {
         exclude module: "okhttp"
     })
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    // EventBus
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }

@@ -67,7 +67,7 @@
         style="@style/HorizontalLineStyle" />
 
     <!-- 客户列表-->
-    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -78,6 +78,6 @@
             android:layout_height="match_parent"
             android:background="@color/assistColor10" />
 
-    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 
 </LinearLayout>

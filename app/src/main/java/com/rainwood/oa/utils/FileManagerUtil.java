@@ -95,6 +95,7 @@ public final class FileManagerUtil {
             Intent intent = new Intent(context, clazz);
             Bundle bundle = new Bundle();
             bundle.putString("path", filePath);
+            bundle.putString("fileName", fileName);
             intent.putExtras(bundle);
             context.startActivity(intent);
         }

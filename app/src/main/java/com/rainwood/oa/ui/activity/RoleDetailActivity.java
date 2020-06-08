@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RolePermission;
@@ -28,9 +27,9 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 public final class RoleDetailActivity extends BaseActivity {
 
     // actionBar
-    @ViewInject(R.id.rl_action_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.iv_return)
+    @ViewInject(R.id.iv_page_back)
     private ImageView pageReturn;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -54,6 +53,7 @@ public final class RoleDetailActivity extends BaseActivity {
     @Override
     protected void initView() {
         StatusBarUtils.immersive(this);
+        StatusBarUtils.darkMode(this, false);
         StatusBarUtils.setMargin(this, pageTop);
         // 设置管理布局
         permissionsView.setLayoutManager(new GridLayoutManager(this, 1));
@@ -71,13 +71,13 @@ public final class RoleDetailActivity extends BaseActivity {
         rolePermissionABL.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
-                if (state == State.EXPANDED){
+                if (state == State.EXPANDED) {
                     LogUtils.d("sxs", "展开状态");
                     pageTitle.setText("");
-                }else if (state == State.COLLAPSED){
+                } else if (state == State.COLLAPSED) {
                     LogUtils.d("sxs", "折叠状态");
                     pageTitle.setText("超级管理员");
-                }else {
+                } else {
                     LogUtils.d("sxs", "中间状态");
                     pageTitle.setText("超级管理员");
                 }

@@ -68,10 +68,10 @@ public final class Constants {
     /**
      * activity、fragment 之间相互跳转请求码
      */
-    public static final int HOME_FRAGMENT_RESULT_SIZE = 0x101;
-    public static final int MANAGER_FRAGMENT_RESULT_SIZE = 0x102;
-    public static final int BLOCK_FRAGMENT_RESULT_SIZE = 0x103;
-    public static final int MINE_FRAGMENT_RESULT_SIZE = 0x104;
+    public static final int HOME_FRAGMENT_RESULT_SIZE = 101;
+    public static final int MANAGER_FRAGMENT_RESULT_SIZE = 102;
+    public static final int BLOCK_FRAGMENT_RESULT_SIZE = 103;
+    public static final int MINE_FRAGMENT_RESULT_SIZE = 104;
 
     /**
      * 需求填写请求码

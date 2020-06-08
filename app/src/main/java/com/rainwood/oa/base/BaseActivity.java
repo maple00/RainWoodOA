@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,10 +13,15 @@ import android.os.SystemClock;
 import android.service.autofill.OnClickAction;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -23,11 +29,18 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.MessageEvent;
+import com.rainwood.oa.ui.activity.HomeActivity;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -40,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
     protected String title;
+    private CommonPopupWindow mCommonPopupWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -251,6 +265,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
 
     /**
      * 判断手机是否有底部虚拟键位
+     *
      * @param context
      * @return
      */
@@ -277,6 +292,98 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         } catch (Exception e) {
         }
         return hasNavigationBar;
+    }
+
+    /**
+     * 快捷方式
+     *
+     * @param parentView 根布局
+     */
+    public void showQuickFunction(Context context, ViewGroup parentView) {
+        mCommonPopupWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.ScaleAnimStyle)
+                .setView(R.layout.pop_quick_function)
+                .setBackGroundLevel(0.7f)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    LinearLayout pageParent = view.findViewById(R.id.ll_page_parent);
+                    StatusBarUtils.setPaddingSmart(context, pageParent);
+
+                    ImageView close = view.findViewById(R.id.iv_dialog_close);
+                    close.setOnClickListener(v -> mCommonPopupWindow.dismiss());
+                    // 点击事件
+                    LinearLayout backHome = view.findViewById(R.id.ll_home);
+                    LinearLayout backManager = view.findViewById(R.id.ll_manager);
+                    LinearLayout backLog = view.findViewById(R.id.ll_backlog);
+                    LinearLayout backMine = view.findViewById(R.id.ll_mine);
+                    MessageEvent event = new MessageEvent("来，给你发一个消息");
+                    // 返回首页
+                    backHome.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            event.setType(Constants.HOME_FRAGMENT_RESULT_SIZE);
+                            EventBus.getDefault().post(event);
+                            openActivity(HomeActivity.class);
+                            finish();
+                            mCommonPopupWindow.dismiss();
+                        }
+                    });
+                    // 返回我的管理
+                    backManager.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            event.setType(Constants.MANAGER_FRAGMENT_RESULT_SIZE);
+                            EventBus.getDefault().post(event);
+                            openActivity(HomeActivity.class);
+                            finish();
+                            mCommonPopupWindow.dismiss();
+                        }
+                    });
+                    // 返回代办事项
+                    backLog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            event.setType(Constants.BLOCK_FRAGMENT_RESULT_SIZE);
+                            EventBus.getDefault().post(event);
+                            openActivity(HomeActivity.class);
+                            finish();
+                            mCommonPopupWindow.dismiss();
+                        }
+                    });
+                    // 返回个人中心
+                    backMine.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            event.setType(Constants.MINE_FRAGMENT_RESULT_SIZE);
+                            EventBus.getDefault().post(event);
+                            openActivity(HomeActivity.class);
+                            setResult(Constants.MINE_FRAGMENT_RESULT_SIZE);
+                            finish();
+                            mCommonPopupWindow.dismiss();
+                        }
+                    });
+                })
+                .create();
+        fitPopupWindowOverStatusBar(mCommonPopupWindow);
+        mCommonPopupWindow.showAtLocation(parentView, Gravity.TOP, 0, 0);
+        mCommonPopupWindow.setOnDismissListener(() -> mCommonPopupWindow.dismiss());
+    }
+
+    /**
+     * popWindow 沉浸
+     *  @param mPopupWindow
+     *
+     */
+    private void fitPopupWindowOverStatusBar(PopupWindow mPopupWindow) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                Field mLayoutInScreen = PopupWindow.class.getDeclaredField("mLayoutInScreen");
+                mLayoutInScreen.setAccessible(true);
+                mLayoutInScreen.set(mPopupWindow, true);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@mipmap/ic_bottom_selected_temp"
+        android:icon="@drawable/ic_home"
         android:title="@string/navigation_home" />
 
     <item
         android:id="@+id/navigation_manager"
-        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:icon="@drawable/ic_manager"
         android:title="@string/navigation_manager" />
 
     <item
         android:id="@+id/navigation_backlog"
-        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:icon="@drawable/ic_backlog"
         android:title="@string/navigation_backlog" />
 
     <item
         android:id="@+id/navigation_mine"
-        android:icon="@mipmap/ic_bottom_normal_temp"
+        android:icon="@drawable/ic_mine"
         android:title="@string/navigation_mine" />
 
 </menu>

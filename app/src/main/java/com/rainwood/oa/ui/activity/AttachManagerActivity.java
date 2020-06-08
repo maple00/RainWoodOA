@@ -4,24 +4,35 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.ui.adapter.AttachKnowledgeAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.FileManagerUtil;
+import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IAttachmentCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.tools.wheel.view.RegexEditText;
+
+import java.util.List;
 
 /**
  * @Author: sxs
  * @Time: 2020/6/7 16:10
- * @Desc: 知识管理--    附件管理
+ * @Desc: 知识管理-- 附件管理
  */
 public final class AttachManagerActivity extends BaseActivity implements IAttachmentCallbacks {
 
@@ -45,6 +56,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private RecyclerView attachView;
 
     private IAttachmentPresenter mAttachmentPresenter;
+    private AttachKnowledgeAdapter mAttachKnowledgeAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -56,12 +68,84 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
         searchTips.setHint("输入文件名称");
+        // 设置布局管理器
+        attachView.setLayoutManager(new GridLayoutManager(this, 1));
+        attachView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
+        // 创建适配器
+        mAttachKnowledgeAdapter = new AttachKnowledgeAdapter();
+        // 设置适配器
+        attachView.setAdapter(mAttachKnowledgeAdapter);
+        // 设置刷新属性
+        pageRefresh.setEnableLoadmore(true);
+        pageRefresh.setEnableRefresh(false);
     }
 
     @Override
     protected void initPresenter() {
         mAttachmentPresenter = PresenterManager.getOurInstance().getAttachmentPresenter();
         mAttachmentPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        mAttachmentPresenter.requestKnowledgeAttach();
+    }
+
+    @Override
+    protected void initEvent() {
+        departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("部门员工");
+            }
+        });
+        attachSecret.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("保密状态");
+            }
+        });
+        objType.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("对象类型");
+            }
+        });
+        attachSorting.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("默认排序");
+            }
+        });
+        // itemClickListener
+        mAttachKnowledgeAdapter.setClickAttach(new AttachKnowledgeAdapter.OnClickKnowledgeAttach() {
+            @Override
+            public void onClickTarget(KnowledgeAttach attach, int position) {
+                if (attach.getTargetId().startsWith(RegexEditText.REGEX_CHINESE)
+                        && attach.getTargetId().endsWith(RegexEditText.REGEX_CHINESE)) {
+                    toast("数据异常");
+                    LogUtils.d("sxs", "传入的id有问题");
+                    return;
+                }
+                //toast("页面跳转");
+                if ("客户".equals(attach.getTarget())) {
+                    PageJumpUtil.listJump2CustomDetail(AttachManagerActivity.this, CustomDetailActivity.class, attach.getTargetId());
+                } else {
+                    PageJumpUtil.orderList2Detail(AttachManagerActivity.this, OrderDetailActivity.class, attach.getTargetId(), "");
+                }
+            }
+
+            @Override
+            public void onClickDownload(KnowledgeAttach attach, int position) {
+                FileManagerUtil.fileDownload(AttachManagerActivity.this, TbsActivity.class, attach.getSrc(), attach.getName(), attach.getFormat());
+            }
+
+            @Override
+            public void onClickPreview(KnowledgeAttach attach, int position) {
+                FileManagerUtil.filePreview(AttachManagerActivity.this, TbsActivity.class, attach.getSrc(), attach.getName(), attach.getFormat());
+            }
+        });
     }
 
     @SingleClick
@@ -72,6 +156,11 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void getKnowledgeAttach(List<KnowledgeAttach> attachList) {
+        mAttachKnowledgeAdapter.setAttachList(attachList);
     }
 
     @Override

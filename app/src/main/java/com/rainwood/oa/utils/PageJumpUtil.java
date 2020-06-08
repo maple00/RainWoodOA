@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.TempData;
 
 import java.util.Map;
@@ -21,16 +22,42 @@ public final class PageJumpUtil {
     private static Intent sIntent;
 
     /**
-     * 跳转到客户详情页面
+     * 部门列表跳转到部门详情页面
+     * @param context
+     * @param clazz
+     * @param departId
+     */
+    public static void departList2Detail(Context context, Class<? extends BaseActivity> clazz, String departId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "部门详情");
+        sIntent.putExtra("departId", departId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 职位列表跳转到详情页面
+     * @param context
+     * @param clazz
+     * @param postId
+     */
+    public static void postList2Detail(Context context, Class<? extends BaseActivity> clazz, String postId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "职位详情");
+        sIntent.putExtra("postId", postId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 客户列表跳转到客户详情页面
      *
      * @param context con
      * @param clazz   跳转目的地
-     * @param custom  data
+     * @param customId  客户id
      */
-    public static void listJump2CustomDetail(Context context, Class<? extends BaseActivity> clazz, Custom custom) {
+    public static void listJump2CustomDetail(Context context, Class<? extends BaseActivity> clazz, String customId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "客户详情");
-        sIntent.putExtra("customId", custom.getKhid());
+        sIntent.putExtra("customId", customId);
         context.startActivity(sIntent);
     }
 
@@ -127,6 +154,19 @@ public final class PageJumpUtil {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("articleId", articleId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 日志列表跳转到日志详情
+     * @param context
+     * @param clazz
+     * @param logcat
+     */
+    public static void logcatList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, Logcat logcat){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("logcat", logcat);
         context.startActivity(sIntent);
     }
 }

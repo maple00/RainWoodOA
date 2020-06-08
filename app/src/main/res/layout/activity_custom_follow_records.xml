@@ -33,7 +33,7 @@
             app:maxImageSize="53dp"
             app:rippleColor="#e7d16b" />
 
-        <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
             android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -87,7 +87,7 @@
                     android:text="@string/common_delete" />
 
             </LinearLayout>
-        </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 
     </RelativeLayout>
 

@@ -55,8 +55,8 @@ public final class ProjectGroupsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.group.setText(getItem(position).getGroup());
-        holder.duty.setText(getItem(position).getDuty());
+        holder.group.setText(getItem(position).getName());
+        holder.duty.setText(getItem(position).getText());
         // 点击事件--点击组查看详情
         holder.itemGroup.setOnClickListener(new View.OnClickListener() {
             @Override

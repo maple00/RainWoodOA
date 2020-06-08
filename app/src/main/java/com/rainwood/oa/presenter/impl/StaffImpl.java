@@ -8,10 +8,17 @@ import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.model.domain.StaffPhoto;
 import com.rainwood.oa.model.domain.StaffPost;
 import com.rainwood.oa.model.domain.StaffSettlement;
+import com.rainwood.oa.network.json.JsonParser;
+import com.rainwood.oa.network.okhttp.HttpResponse;
+import com.rainwood.oa.network.okhttp.OkHttp;
+import com.rainwood.oa.network.okhttp.OnHttpListener;
+import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IStaffPresenter;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IStaffCallbacks;
 
-import org.w3c.dom.ls.LSInput;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +28,19 @@ import java.util.List;
  * @Date: 2020/5/22 11:35
  * @Desc:
  */
-public final class StaffImpl implements IStaffPresenter {
+public final class StaffImpl implements IStaffPresenter, OnHttpListener {
 
     private IStaffCallbacks mStaffCallbacks;
 
+    /**
+     * 请求部门职位列表
+     */
     @Override
     public void requestAllDepartData() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=department", params, this);
+
+
         // 模拟员工部门
         List<StaffDepart> staffDepartList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -139,7 +153,7 @@ public final class StaffImpl implements IStaffPresenter {
             staffSettlement.setEvent("2019-05社保扣款");
             staffSettlement.setMoney("-389.72");
             staffSettlement.setVoucher("有凭证");
-            if (i %6 == 0){
+            if (i % 6 == 0) {
                 staffSettlement.setVoucher("");
                 staffSettlement.setMoney("+389.72");
             }
@@ -158,5 +172,33 @@ public final class StaffImpl implements IStaffPresenter {
     @Override
     public void unregisterViewCallback(IStaffCallbacks callback) {
         mStaffCallbacks = null;
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        LogUtils.d("sxs", "result ---- " + result.body());
+        if (!(result.code() == 200)) {
+            mStaffCallbacks.onError();
+            return;
+        }
+        try {
+            String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+            if (!"success".equals(warn)) {
+                mStaffCallbacks.onError(warn);
+                return;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // 部门职位列表
+        if (result.url().contains("cla=staff&fun=department")){
+
+        }
     }
 }

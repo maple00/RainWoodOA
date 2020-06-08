@@ -2,23 +2,22 @@ package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RolePermission;
-import com.rainwood.oa.presenter.IRoleManagerPresenter;
+import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.RoleManagerAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IRoleManagerCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -32,7 +31,7 @@ import java.util.List;
  * @Date: 2020/5/21 13:12
  * @Desc: 角色管理pager
  */
-public final class RoleManagerActivity extends BaseActivity implements IRoleManagerCallbacks, RoleManagerAdapter.OnClickRoleItem {
+public final class RoleManagerActivity extends BaseActivity implements IAdministrativeCallbacks, RoleManagerAdapter.OnClickRoleItem {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -48,7 +47,7 @@ public final class RoleManagerActivity extends BaseActivity implements IRoleMana
     private TwinklingRefreshLayout pagerRefresh;
 
     private RoleManagerAdapter mRoleManagerAdapter;
-    private IRoleManagerPresenter mRoleManagerPresenter;
+    private IAdministrativePresenter mRoleManagerPresenter;
     // 筛选
     private boolean selectedStatusFlag = false;
 
@@ -85,13 +84,13 @@ public final class RoleManagerActivity extends BaseActivity implements IRoleMana
             selectedStatusFlag = !selectedStatusFlag;
             screenTitle.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
-
         });
+
     }
 
     @Override
     protected void initPresenter() {
-        mRoleManagerPresenter = PresenterManager.getOurInstance().getRoleManagerPresenter();
+        mRoleManagerPresenter = PresenterManager.getOurInstance().getAdministrativePresenter();
         mRoleManagerPresenter.registerViewCallback(this);
     }
 
@@ -108,7 +107,6 @@ public final class RoleManagerActivity extends BaseActivity implements IRoleMana
             case R.id.iv_page_back:
                 finish();
                 break;
-
         }
     }
 

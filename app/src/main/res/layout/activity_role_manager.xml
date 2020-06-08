@@ -9,7 +9,7 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,5 +18,5 @@
             android:id="@+id/rv_role_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>
