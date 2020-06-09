@@ -18,7 +18,7 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     /**
      * 请求所有的员工
      */
-    void requestAllStaff();
+    void requestAllStaff(String postId);
 
     /**
      * 请求员工的所有照片

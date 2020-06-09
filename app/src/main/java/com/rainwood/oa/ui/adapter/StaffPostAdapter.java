@@ -54,7 +54,7 @@ public final class StaffPostAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.post.setText(getItem(position).getPost());
+        holder.post.setText(getItem(position).getName());
         holder.post.setTextColor(getItem(position).isSelected() ? parent.getContext().getColor(R.color.colorPrimary)
                 : parent.getContext().getColor(R.color.fontColor));
         // 点击事件

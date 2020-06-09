@@ -179,6 +179,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), DepartManagerActivity.class, "部门管理"));
                     break;
                 case "职位管理":
+                    // TODO: 职位管理
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), PostManagerActivity.class, "职位管理"));
                     break;
                 case "员工管理":

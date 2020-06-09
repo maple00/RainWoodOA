@@ -34,6 +34,7 @@ public final class StaffLeftAdapter extends RecyclerView.Adapter<StaffLeftAdapte
 
     public void setDepartList(List<StaffDepart> departList) {
         mDepartList = departList;
+        notifyDataSetChanged();
     }
 
     public void setTempSelected(boolean tempSelected) {
@@ -50,7 +51,7 @@ public final class StaffLeftAdapter extends RecyclerView.Adapter<StaffLeftAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.depart.setText(mDepartList.get(position).getDepart());
+        holder.depart.setText(mDepartList.get(position).getName());
         // 如果被选中-- 临时变量记录
         if (mDepartList.get(position).isSelected()) {
             holder.selectedFlag.setVisibility(View.VISIBLE);
@@ -74,7 +75,7 @@ public final class StaffLeftAdapter extends RecyclerView.Adapter<StaffLeftAdapte
         StaffPostAdapter postAdapter = new StaffPostAdapter();
         holder.postListView.setAdapter(postAdapter);
         postAdapter.setClickPost(position, mPostClick);
-        postAdapter.setPostList(mDepartList.get(position).getPostList());
+        postAdapter.setPostList(mDepartList.get(position).getArray());
         // 折叠、展开
         holder.postListView.setVisibility((mDepartList.get(position).isSelected() && !tempSelected)
                 ? View.VISIBLE : View.GONE);

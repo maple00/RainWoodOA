@@ -20,6 +20,7 @@ import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.oa.model.domain.IconAndFont;
+import com.rainwood.oa.model.domain.MessageEvent;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AssociatesAdapter;
 import com.rainwood.oa.ui.adapter.ContactAdapter;
@@ -39,6 +40,8 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +60,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     private TextView pageTitle;
     // content
     @ViewInject(R.id.ll_order_detail_parent)
-    private LinearLayout orderDetailParent;
+    public LinearLayout orderDetailParent;
     @ViewInject(R.id.iv_company_logo)
     private ImageView logoSrc;
     @ViewInject(R.id.tv_company_name)

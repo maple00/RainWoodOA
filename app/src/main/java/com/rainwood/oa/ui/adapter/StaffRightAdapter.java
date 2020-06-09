@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Staff;
@@ -37,6 +38,7 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
 
     public void setStaffList(List<Staff> staffList) {
         mStaffList = staffList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -50,27 +52,29 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Glide.with(mContext)
-                .load(mStaffList.get(position).getHeadPhoto())
-                .apply(new RequestOptions().placeholder(R.drawable.ic_default_head)
-                        .error(R.drawable.ic_default_head)
-                        .dontAnimate().centerCrop())
+        Glide.with(mContext).load(mStaffList.get(position).getIco())
+                .placeholder(mContext.getDrawable(R.drawable.ic_default_head))
+                .error(mContext.getDrawable(R.drawable.ic_default_head))
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
         holder.staff.setText(mStaffList.get(position).getName());
+
         holder.salary.setText(Html.fromHtml("<font color=\"" + mContext.getColor(R.color.fontColor)
                 + "\" size=\"" + FontSwitchUtil.dip2px(mContext, 10f) + "\">基</font>"
                 + "<font color=\"" + mContext.getColor(R.color.fontColor)
                 + "\" size=\"" + FontSwitchUtil.dip2px(mContext, 13f) + "\">"
-                + mStaffList.get(position).getBaseSalary() + "+</font>"
+                + mStaffList.get(position).getBasePay() + "+</font>"
                 + "<font color=\"" + mContext.getColor(R.color.colorPrimary)
                 + "\" size=\"" + FontSwitchUtil.dip2px(mContext, 10f) + "\">津</font>"
                 + "<font color=\"" + mContext.getColor(R.color.colorPrimary)
                 + "\" size=\"" + FontSwitchUtil.dip2px(mContext, 13f) + "\">"
-                + mStaffList.get(position).getAllowance() + "</font>"));
-        holder.departPost.setText(mStaffList.get(position).getDepart() + "-" + mStaffList.get(position).getPost());
-        holder.telNum.setValue(mStaffList.get(position).getTelNum());
+                + mStaffList.get(position).getSubsidy() + "</font>"));
+
+        //holder.departPost.setText(mStaffList.get(position).getDepart() + "-" + mStaffList.get(position).getPost());
+        holder.departPost.setText(mStaffList.get(position).getDepartment());
+        holder.telNum.setValue(mStaffList.get(position).getTel());
         // 点击事件
-        holder.itemStaff.setOnClickListener(v -> mClickStaffRight.onClickStaff(position));
+        holder.itemStaff.setOnClickListener(v -> mClickStaffRight.onClickStaff(mStaffList.get(position), position));
     }
 
     @Override
@@ -104,7 +108,7 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
          * 查看员工详情
          * @param position
          */
-        void onClickStaff(int position);
+        void onClickStaff(Staff staff, int position);
     }
 
     private OnClickStaffRight mClickStaffRight;

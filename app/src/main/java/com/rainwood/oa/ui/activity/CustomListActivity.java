@@ -77,6 +77,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private CustomListAdapter mCustomAdapter;
 
     private ICustomPresenter mCustomListPresenter;
+    private View mMaskLayer;
 
     @Override
     protected int getLayoutResId() {
@@ -147,7 +148,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
         // 查看详情
         mCustomAdapter.setItemClickListener(this);
-
         // 去加载更多的内容
         pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -176,7 +176,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @Override
     public void getAllCustomList(List customList) {
         // 拿到客户列表
-        // 设置数据
         if (pageCount != 0) {
             if (pagerRefresh != null) {
                 pagerRefresh.finishLoadmore();
@@ -187,8 +186,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             mCustomAdapter.setList(customList);
         }
     }
-
-    private View mMaskLayer;
 
     @SuppressWarnings("all")
     @Override

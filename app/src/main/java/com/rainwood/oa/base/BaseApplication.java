@@ -109,9 +109,14 @@ public final class BaseApplication extends Application {
     }
 
     private void initActivity() {
-        ActivityStackManagerUtil.getInstance().register(this);
+        ActivityStackManagerUtil.getInstance().register(app);
     }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        ActivityStackManagerUtil.getInstance().unRegister(app);
+    }
 
     public boolean isDetermineNetwork() {
         return true;

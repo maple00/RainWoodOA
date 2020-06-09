@@ -6,7 +6,6 @@ import com.rainwood.oa.model.domain.StaffAccountType;
 import com.rainwood.oa.model.domain.StaffDepart;
 import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.model.domain.StaffPhoto;
-import com.rainwood.oa.model.domain.StaffPost;
 import com.rainwood.oa.model.domain.StaffSettlement;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -15,6 +14,7 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IStaffCallbacks;
 
@@ -39,48 +39,17 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=department", params, this);
-
-
-        // 模拟员工部门
-        List<StaffDepart> staffDepartList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            StaffDepart staffDepart = new StaffDepart();
-            staffDepart.setDepart("全部乘员哈");
-            if (i == 0) {
-                staffDepart.setSelected(true);
-            }
-            List<StaffPost> postList = new ArrayList<>();
-            for (int j = 0; j < 5; j++) {
-                StaffPost staffPost = new StaffPost();
-                staffPost.setPost("PHP研发工程师");
-                if (j == 0) {
-                    staffPost.setSelected(true);
-                }
-                postList.add(staffPost);
-            }
-            staffDepart.setPostList(postList);
-            staffDepartList.add(staffDepart);
-        }
-
-        mStaffCallbacks.getAllDepart(staffDepartList);
     }
 
+    /**
+     * 通过职位id查询该职位下的员工
+     * @param postId
+     */
     @Override
-    public void requestAllStaff() {
-        // 模拟所有的员工
-        List<Staff> staffList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Staff staff = new Staff();
-            staff.setName("邵雪松");
-            staff.setTelNum("15847251880");
-            staff.setAllowance("1500");
-            staff.setBaseSalary("2000");
-            staff.setDepart("研发部");
-            staff.setPost("Android工程师");
-            staffList.add(staff);
-        }
-
-        mStaffCallbacks.getAllStaff(staffList);
+    public void requestAllStaff(String postId) {
+        RequestParams params = new RequestParams();
+        params.add("id", postId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home", params, this);
     }
 
     @Override
@@ -118,9 +87,9 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     public void requestAccountType() {
         // 模拟员工类型
         List<StaffAccountType> typeList = new ArrayList<>();
-        for (int i = 0; i < accountTypes.length; i++) {
+        for (String accountType : accountTypes) {
             StaffAccountType type = new StaffAccountType();
-            type.setTitle(accountTypes[i]);
+            type.setTitle(accountType);
             typeList.add(type);
         }
         mStaffCallbacks.getAccountTypes(typeList);
@@ -197,8 +166,35 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         }
 
         // 部门职位列表
-        if (result.url().contains("cla=staff&fun=department")){
-
+        if (result.url().contains("cla=staff&fun=department")) {
+            try {
+                List<StaffDepart> departmentList = JsonParser.parseJSONArray(StaffDepart.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("department"));
+                if (ListUtils.getSize(departmentList) != 0) {
+                    // 设置默认选中的值--目前是只有通过
+                    for (int i = 0; i < departmentList.size(); ) {
+                        departmentList.get(i).setSelected(true);
+                        for (int j = 0; j < departmentList.get(i).getArray().size();) {
+                            departmentList.get(i).getArray().get(j).setSelected(true);
+                            break;
+                        }
+                        break;
+                    }
+                }
+                mStaffCallbacks.getAllDepart(departmentList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 职位下的员工
+        else if (result.url().contains("cla=staff&fun=home")){
+            try {
+                List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                mStaffCallbacks.getAllStaff(staffList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

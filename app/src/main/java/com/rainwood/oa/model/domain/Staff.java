@@ -8,6 +8,11 @@ package com.rainwood.oa.model.domain;
 public final class Staff {
 
     /**
+     * 员工id
+     */
+    private String id;
+
+    /**
      * 员工姓名
      */
     private String name;
@@ -15,17 +20,17 @@ public final class Staff {
     /**
      * 员工头像
      */
-    private String headPhoto;
+    private String ico;
 
     /**
      * 基本工资
      */
-    private String baseSalary;
+    private String basePay;
 
     /**
      * 岗位津贴
      */
-    private String allowance;
+    private String subsidy;
 
     /**
      * 员工所属部门
@@ -38,9 +43,30 @@ public final class Staff {
     private String post;
 
     /**
+     * 部门职位
+     */
+    private String department;
+
+    /**
      * 员工手机号
      */
-    private String telNum;
+    private String tel;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     public String getName() {
         return name;
@@ -50,28 +76,28 @@ public final class Staff {
         this.name = name;
     }
 
-    public String getHeadPhoto() {
-        return headPhoto;
+    public String getIco() {
+        return ico;
     }
 
-    public void setHeadPhoto(String headPhoto) {
-        this.headPhoto = headPhoto;
+    public void setIco(String ico) {
+        this.ico = ico;
     }
 
-    public String getBaseSalary() {
-        return baseSalary;
+    public String getBasePay() {
+        return basePay;
     }
 
-    public void setBaseSalary(String baseSalary) {
-        this.baseSalary = baseSalary;
+    public void setBasePay(String basePay) {
+        this.basePay = basePay;
     }
 
-    public String getAllowance() {
-        return allowance;
+    public String getSubsidy() {
+        return subsidy;
     }
 
-    public void setAllowance(String allowance) {
-        this.allowance = allowance;
+    public void setSubsidy(String subsidy) {
+        this.subsidy = subsidy;
     }
 
     public String getDepart() {
@@ -90,11 +116,11 @@ public final class Staff {
         this.post = post;
     }
 
-    public String getTelNum() {
-        return telNum;
+    public String getTel() {
+        return tel;
     }
 
-    public void setTelNum(String telNum) {
-        this.telNum = telNum;
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 }

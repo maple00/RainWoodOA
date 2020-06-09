@@ -61,12 +61,31 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
-        <!-- App首页 singleTask， 其余singleTop -->
+        <!--
+        四种启动模式的区别和常用场景：
+        1、singleTask模式运用场景
+            最常见的应用场景保持应用开启之后只有一个activity实例。最典型的就是应用中的Home页。
+            假设用户在主页跳转到其他页面，运行多次操作后想返回到主页，假设不使用SingleTask模式，在点击返回的过程中会多次看到主页，这明显就是设计不合理了。
+             如果在栈中已经有该Activity的实例，就重用该实例(会调用实例的onNewIntent())。重用时，会让该实例回到栈顶，因此在它上面的实例将会被移除栈。
+             如果栈中不存在该实例，将会创建新的实例放入栈中（此时不会调用onNewIntent()）。
+        2、SingleTop模式运用场景
+            假设你在当前的Activity中又要启动同类型的Activity，此时建议将此类型Activity的启动模式指定为SingleTop，能够降低Activity的创建，节省内存！
+             如果在任务的栈顶正好存在该Activity的实例， 就重用该实例，并调用其onNewIntent()，否者就会创建新的实例并放入栈顶(即使栈中已经存在该Activity实例，
+             只要不在栈顶，都会创建实例，而不会调用onNewIntent()，此时就跟standard模式一样)。
+        3、standard
+            默认启动模式，每次激活Activity时都会创建Activity，并放入任务栈中，永远不会调用onNewIntent()。
+        4、singleInstance  
+            在一个新栈中创建该Activity实例，并让多个应用共享改栈中的该Activity实例。一旦改模式的Activity的实例存在于某个栈中，
+            任何应用再激活改Activity时都会重用该栈中的实例，其效果相当于多个应用程序共享一个应用，不管谁激活该Activity都会进入同一个应用中。
+        -->
+        <!--
+        screenOrientation：设置屏幕的显示方向 https://blog.csdn.net/m940034240/article/details/76619130
+        -->
         <!-- 启动页面-->
         <activity
             android:name=".ui.activity.LoginActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,7 +108,7 @@
             android:name=".ui.activity.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="fullSensor" />
 
         <!-- 考勤模块 AttendanceActivity-->

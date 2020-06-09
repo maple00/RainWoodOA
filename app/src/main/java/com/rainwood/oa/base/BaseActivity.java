@@ -53,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
     protected String title;
-    private CommonPopupWindow mCommonPopupWindow;
+    public CommonPopupWindow mCommonPopupWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -316,52 +316,15 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
                     LinearLayout backManager = view.findViewById(R.id.ll_manager);
                     LinearLayout backLog = view.findViewById(R.id.ll_backlog);
                     LinearLayout backMine = view.findViewById(R.id.ll_mine);
-                    MessageEvent event = new MessageEvent("来，给你发一个消息");
+                    MessageEvent event = new MessageEvent("逻辑页面跳转");
                     // 返回首页
-                    backHome.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            event.setType(Constants.HOME_FRAGMENT_RESULT_SIZE);
-                            EventBus.getDefault().post(event);
-                            openActivity(HomeActivity.class);
-                            finish();
-                            mCommonPopupWindow.dismiss();
-                        }
-                    });
+                    backHome.setOnClickListener(v -> onBackHomePager(event, Constants.HOME_FRAGMENT_RESULT_SIZE));
                     // 返回我的管理
-                    backManager.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            event.setType(Constants.MANAGER_FRAGMENT_RESULT_SIZE);
-                            EventBus.getDefault().post(event);
-                            openActivity(HomeActivity.class);
-                            finish();
-                            mCommonPopupWindow.dismiss();
-                        }
-                    });
+                    backManager.setOnClickListener(v -> onBackHomePager(event, Constants.MANAGER_FRAGMENT_RESULT_SIZE));
                     // 返回代办事项
-                    backLog.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            event.setType(Constants.BLOCK_FRAGMENT_RESULT_SIZE);
-                            EventBus.getDefault().post(event);
-                            openActivity(HomeActivity.class);
-                            finish();
-                            mCommonPopupWindow.dismiss();
-                        }
-                    });
+                    backLog.setOnClickListener(v -> onBackHomePager(event, Constants.BLOCK_FRAGMENT_RESULT_SIZE));
                     // 返回个人中心
-                    backMine.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            event.setType(Constants.MINE_FRAGMENT_RESULT_SIZE);
-                            EventBus.getDefault().post(event);
-                            openActivity(HomeActivity.class);
-                            setResult(Constants.MINE_FRAGMENT_RESULT_SIZE);
-                            finish();
-                            mCommonPopupWindow.dismiss();
-                        }
-                    });
+                    backMine.setOnClickListener(v -> onBackHomePager(event, Constants.MINE_FRAGMENT_RESULT_SIZE));
                 })
                 .create();
         fitPopupWindowOverStatusBar(mCommonPopupWindow);
@@ -370,9 +333,23 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     }
 
     /**
-     * popWindow 沉浸
-     *  @param mPopupWindow
+     * 跳转回HomeAty
      *
+     * @param event
+     * @param mineFragmentResultSize
+     */
+    private void onBackHomePager(MessageEvent event, int mineFragmentResultSize) {
+        openActivity(HomeActivity.class);
+        event.setType(mineFragmentResultSize);
+        EventBus.getDefault().post(event);
+        finish();
+        mCommonPopupWindow.dismiss();
+    }
+
+    /**
+     * popWindow 沉浸
+     *
+     * @param mPopupWindow
      */
     private void fitPopupWindowOverStatusBar(PopupWindow mPopupWindow) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

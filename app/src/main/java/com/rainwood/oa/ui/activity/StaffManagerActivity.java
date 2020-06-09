@@ -7,7 +7,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Staff;
@@ -21,6 +20,7 @@ import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -49,9 +49,9 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @ViewInject(R.id.gti_default_sort)
     private GroupTextIcon defaultSort;
     @ViewInject(R.id.gti_sex)
-    private GroupTextIcon sex;
+    private GroupTextIcon sexScreen;
     @ViewInject(R.id.gti_screen)
-    private GroupTextIcon screen;
+    private GroupTextIcon screenAll;
     @ViewInject(R.id.rv_depart_post_list)
     private RecyclerView departPostView;
     @ViewInject(R.id.rv_staff_list)
@@ -96,21 +96,28 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     }
 
     @Override
-    protected void loadData() {
-        /*
-        请求数据
-         */
-        // 请求所有的部门数据
-        mStaffPresenter.requestAllDepartData();
-        // 根据职位/部门id查询该所属员工
-        mStaffPresenter.requestAllStaff();
-    }
-
-    @Override
     protected void initEvent() {
         mLeftAdapter.setstaffDepart(this);
         mLeftAdapter.setPostClick(this);
         mRightAdapter.setClickStaffRight(this);
+        defaultSort.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("默认排序");
+            }
+        });
+        sexScreen.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("性别筛选");
+            }
+        });
+        screenAll.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("全部筛选");
+            }
+        });
     }
 
     @Override
@@ -118,6 +125,55 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mStaffPresenter = PresenterManager.getOurInstance().getStaffPresenter();
         mStaffPresenter.registerViewCallback(this);
     }
+
+    @Override
+    protected void loadData() {
+        // 请求所有的部门数据
+        mStaffPresenter.requestAllDepartData();
+    }
+
+    @Override
+    public void onClickDepart(int position) {
+        // 选择部门 -- 如果已经是被选中状态，则折叠，反之展开
+        if (!mDepartList.get(position).isSelected()) {
+            for (StaffDepart depart : mDepartList) {
+                depart.setSelected(false);
+            }
+            mLeftAdapter.setTempSelected(true);
+            mDepartList.get(position).setSelected(!mDepartList.get(position).isSelected());
+        }
+    }
+
+    /**
+     * 查询职位下的员工
+     *
+     * @param parentPos
+     * @param position
+     */
+    @Override
+    public void onClickPost(int parentPos, int position) {
+        // 选择职位
+        for (StaffPost staffPost : mDepartList.get(parentPos).getArray()) {
+            staffPost.setSelected(false);
+        }
+        mDepartList.get(parentPos).getArray().get(position).setSelected(true);
+        //
+        toast(mDepartList.get(parentPos).getArray().get(position).getName());
+        // 根据职位/部门id查询该所属员工
+        mStaffPresenter.requestAllStaff(mDepartList.get(parentPos).getArray().get(position).getId());
+    }
+
+    /**
+     * 查看员工详情
+     *
+     * @param position
+     */
+    @Override
+    public void onClickStaff(Staff staff, int position) {
+        // toast("查看员工详情---" + mStaffList.get(position).getName());
+        startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
+    }
+
 
     @SingleClick
     @OnClick(R.id.iv_page_back)
@@ -133,6 +189,15 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     public void getAllDepart(List<StaffDepart> departList) {
         mDepartList = departList;
         mLeftAdapter.setDepartList(mDepartList);
+        // 查询部门下的员工-- 查询选中的职位员工
+        for (StaffDepart depart : departList) {
+            for (int i = 0; i < depart.getArray().size(); i++) {
+                if (depart.getArray().get(i).isSelected()){
+                    mStaffPresenter.requestAllStaff(depart.getArray().get(i).getId());
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -154,38 +219,5 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @Override
     public void onEmpty() {
 
-    }
-
-    @Override
-    public void onClickDepart(int position) {
-        // 选择部门 -- 如果已经是被选中状态，则折叠，反之展开
-        if (!mDepartList.get(position).isSelected()) {
-            for (StaffDepart depart : mDepartList) {
-                depart.setSelected(false);
-            }
-            mLeftAdapter.setTempSelected(true);
-            mDepartList.get(position).setSelected(!mDepartList.get(position).isSelected());
-        }
-    }
-
-    @Override
-    public void onClickPost(int parentPos, int position) {
-        // 选择职位
-        toast(mDepartList.get(parentPos).getPostList().get(position).getPost());
-        for (StaffPost staffPost : mDepartList.get(parentPos).getPostList()) {
-            staffPost.setSelected(false);
-        }
-        mDepartList.get(parentPos).getPostList().get(position).setSelected(true);
-    }
-
-    /**
-     * 查看员工详情
-     *
-     * @param position
-     */
-    @Override
-    public void onClickStaff(int position) {
-        // toast("查看员工详情---" + mStaffList.get(position).getName());
-        startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
     }
 }

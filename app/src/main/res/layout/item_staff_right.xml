@@ -46,6 +46,8 @@
         android:layout_below="@+id/tv_staff"
         android:layout_marginStart="14dp"
         android:layout_marginTop="12dp"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp"
         android:layout_toEndOf="@+id/iv_head_photo"
         android:text="研发部-Android研发工程师" />
 

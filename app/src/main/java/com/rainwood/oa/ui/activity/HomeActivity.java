@@ -42,7 +42,10 @@ public final class HomeActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
-        EventBus.getDefault().register(this);
+        // 注册
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         return R.layout.activity_main;
     }
 
@@ -64,6 +67,7 @@ public final class HomeActivity extends BaseActivity {
         mBlockLogFragment = new BlockLogFragment();
         mMineFragment = new MineFragment();
         mFragmentManager = getSupportFragmentManager();
+        // 选择默认
         switchFragment(mHomeFragment);
     }
 
@@ -103,6 +107,7 @@ public final class HomeActivity extends BaseActivity {
         }
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        // 隐藏上一个fragment
         if (!targetFragment.isAdded()) {
             fragmentTransaction.add(R.id.fl_main_container, targetFragment);
         } else {
@@ -113,7 +118,7 @@ public final class HomeActivity extends BaseActivity {
         }
         lastOneFragment = targetFragment;
         // transaction 提交
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
 
@@ -122,7 +127,7 @@ public final class HomeActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //
         LogUtils.d("sxs", "结果码：" + resultCode);
-        if (requestCode == Constants.HOME_FRAGMENT_RESULT_SIZE && resultCode == Constants.HOME_FRAGMENT_RESULT_SIZE) {
+       /* if (requestCode == Constants.HOME_FRAGMENT_RESULT_SIZE && resultCode == Constants.HOME_FRAGMENT_RESULT_SIZE) {
             switchFragment(mHomeFragment);
         }
         if (requestCode == Constants.MANAGER_FRAGMENT_RESULT_SIZE && resultCode == Constants.MANAGER_FRAGMENT_RESULT_SIZE) {
@@ -133,39 +138,44 @@ public final class HomeActivity extends BaseActivity {
         }
         if (requestCode == Constants.MINE_FRAGMENT_RESULT_SIZE && resultCode == Constants.MINE_FRAGMENT_RESULT_SIZE) {
             switchFragment(mMineFragment);
-        }
+        }*/
     }
 
     //接收消息
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void Event(MessageEvent messageEvent) {
-        toast(messageEvent.getMessage());
+        //toast(messageEvent.getMessage());
         LogUtils.d("sxs", "messageEvent.getType()--- " + messageEvent.getType());
         switch (messageEvent.getType()) {
             case Constants.HOME_FRAGMENT_RESULT_SIZE:
-                switchFragment(mHomeFragment);
+                mBottomNavigationView.setSelectedItemId(R.id.navigation_home);
                 break;
             case Constants.MANAGER_FRAGMENT_RESULT_SIZE:
-                switchFragment(mManagerFragment);
+                mBottomNavigationView.setSelectedItemId(R.id.navigation_manager);
                 break;
             case Constants.BLOCK_FRAGMENT_RESULT_SIZE:
-                switchFragment(mBlockLogFragment);
+                mBottomNavigationView.setSelectedItemId(R.id.navigation_backlog);
                 break;
             case Constants.MINE_FRAGMENT_RESULT_SIZE:
-                switchFragment(mMineFragment);
+                mBottomNavigationView.setSelectedItemId(R.id.navigation_mine);
                 break;
         }
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         //解除注册
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+        super.onDestroy();
     }
 
     @Override
