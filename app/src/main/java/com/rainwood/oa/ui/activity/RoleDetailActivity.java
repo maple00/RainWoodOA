@@ -88,7 +88,7 @@ public final class RoleDetailActivity extends BaseActivity {
     @Override
     protected void loadData() {
         RolePermission rolePermission = (RolePermission) getIntent().getSerializableExtra("permissions");
-        mDetailModuleAdapter.setPermissionList(rolePermission.getRoleXModules());
+        mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
     }
 
     @Override

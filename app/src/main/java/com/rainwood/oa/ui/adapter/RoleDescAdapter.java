@@ -7,13 +7,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.SubRoleXModule;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,26 +22,21 @@ import java.util.Objects;
  */
 public final class RoleDescAdapter extends BaseAdapter {
 
-    private JSONArray mList;
+    private List<SubRoleXModule> mList;
 
-    public void setList(JSONArray list) {
+    public void setList(List<SubRoleXModule> list) {
         mList = list;
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mList.length();
+        return ListUtils.getSize(mList);
     }
 
     @Override
-    public JSONObject getItem(int position) {
-        try {
-            return mList.getJSONObject(position);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public SubRoleXModule getItem(int position) {
+        return mList.get(position);
     }
 
     @Override
@@ -63,7 +55,7 @@ public final class RoleDescAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.permission.setText(Objects.requireNonNull(getItem(position)).toString());
+        holder.permission.setText(mList.get(position).getName());
         return convertView;
     }
 

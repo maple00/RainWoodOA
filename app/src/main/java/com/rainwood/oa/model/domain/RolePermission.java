@@ -1,8 +1,5 @@
 package com.rainwood.oa.model.domain;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,26 +23,12 @@ public final class RolePermission implements Serializable {
     /**
      * 角色拥有的模块权限
      */
-    private List<SubRoleXModule> roleXModules;
-
-    /**
-     * 权限数组
-     */
-
-    private JSONArray power;
+    private List<SubRoleXModule> power;
 
     /**
      * 是否被选择
      */
     private boolean hasSelected;
-
-    public JSONArray getPower() {
-        return power;
-    }
-
-    public void setPower(JSONArray power) {
-        this.power = power;
-    }
 
     public boolean isHasSelected() {
         return hasSelected;
@@ -71,12 +54,12 @@ public final class RolePermission implements Serializable {
         this.text = text;
     }
 
-    public List<SubRoleXModule> getRoleXModules() {
-        return roleXModules;
+    public List<SubRoleXModule> getPower() {
+        return power;
     }
 
-    public void setRoleXModules(List<SubRoleXModule> roleXModules) {
-        this.roleXModules = roleXModules;
+    public void setPower(List<SubRoleXModule> power) {
+        this.power = power;
     }
 }
 

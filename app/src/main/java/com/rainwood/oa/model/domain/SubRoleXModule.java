@@ -13,7 +13,7 @@ public final class SubRoleXModule implements Serializable {
     /**
      * 某个模块
      */
-    private String moduleX;
+    private String name;
 
     /**
      * 某个模块被选择
@@ -33,12 +33,12 @@ public final class SubRoleXModule implements Serializable {
         this.hasSelected = hasSelected;
     }
 
-    public String getModuleX() {
-        return moduleX;
+    public String getName() {
+        return name;
     }
 
-    public void setModuleX(String moduleX) {
-        this.moduleX = moduleX;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<SubRoleXPermission> getPermissions() {

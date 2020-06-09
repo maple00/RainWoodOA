@@ -41,7 +41,7 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.moduleName.setText(mPermissionList.get(position).getModuleX());
+        holder.moduleName.setText(mPermissionList.get(position).getName());
         holder.selected.setImageResource(mPermissionList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         // 选模块 -- 点击折叠
         holder.selectedModule.setOnClickListener(v -> {
