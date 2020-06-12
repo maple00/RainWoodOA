@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_search_click_view" />
+
+    <LinearLayout
+        android:id="@+id/ll_type_invoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="16dp">
+
+        <com.rainwood.oa.ui.widget.GroupTextIcon
+            android:id="@+id/gti_seller"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:status_text="销售方" />
+
+        <com.rainwood.oa.ui.widget.GroupTextIcon
+            android:id="@+id/gti_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:status_text="发票类型" />
+
+        <com.rainwood.oa.ui.widget.GroupTextIcon
+            android:id="@+id/gti_period_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:status_text="时间段" />
+
+    </LinearLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_invoice_records"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/assistColor10" />
+
+    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+
+</LinearLayout>

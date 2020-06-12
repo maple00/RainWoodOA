@@ -136,5 +136,8 @@
     <string name="text_receivable_record">回款记录</string>
     <string name="text_prepaid">已付费用</string>
     <string name="text_quick_function">快捷功能</string>
+    <string name="text_complete">全部</string>
+    <string name="text_income">收入</string>
+    <string name="text_speeding">支出</string>
 
 </resources>

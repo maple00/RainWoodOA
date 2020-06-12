@@ -1,10 +1,15 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.AdminLeaveOut;
+import com.rainwood.oa.model.domain.AdminOverTime;
+import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
+import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
 
@@ -26,7 +31,7 @@ public interface IRecordCallbacks extends IBaseCallback {
     /**
      * 获取所有的请假记录
      */
-    default void getLeaveRecords(Map recordMap){}
+    default void getLeaveRecords(List<LeaveRecord> leaveRecordList){}
 
     /**
      * 获取所有的外出记录
@@ -34,9 +39,15 @@ public interface IRecordCallbacks extends IBaseCallback {
     default void getGoOutRecords(List<LeaveOutRecord> leaveOutList){}
 
     /**
+     * 行政人事--外出记录
+     * @param adminLeaveOutList
+     */
+    default void getAdminLeaveOutRecords(List<AdminLeaveOut> adminLeaveOutList){}
+
+    /**
      * 获取所有的补卡记录
      */
-    default void getReissueRecords(Map reissueMap){}
+    default void getReissueRecords(List<CardRecord> cardRecordList){}
 
     /**
      * 获取客户的跟进记录
@@ -59,6 +70,12 @@ public interface IRecordCallbacks extends IBaseCallback {
     default void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList){};
 
     /**
+     * 财务管理下开票记录
+     * @param financialInvoiceRecords
+     */
+    default void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords){}
+
+    /**
      * 客户新建开票记录的页面数据
      */
     default void getCustomNewInvoiceRecordsPageParams(Map pageMap){}
@@ -73,4 +90,10 @@ public interface IRecordCallbacks extends IBaseCallback {
      * 获取知识管理中的跟进记录
      */
     default void getKnowledgeFollowRecords(List<KnowledgeFollowRecord> recordList){}
+
+    /**
+     * 行政人事--- 加班记录
+     * @param adminOverTimeList
+     */
+    default void getAdminOverTimeRecords(List<AdminOverTime> adminOverTimeList){}
 }

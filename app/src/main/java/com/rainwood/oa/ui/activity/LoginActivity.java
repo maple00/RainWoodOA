@@ -147,7 +147,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                 break;
             case R.id.tv_forget_password:
                 //toast("忘记密码");
-                startActivity(getNewIntent(this, ForgetPasswordActivity.class, "忘记密码"));
+                startActivity(getNewIntent(this, ForgetPasswordActivity.class, "忘记密码", "忘记密码"));
                 break;
         }
     }

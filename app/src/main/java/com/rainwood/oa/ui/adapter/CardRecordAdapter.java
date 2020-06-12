@@ -29,6 +29,7 @@ public final class CardRecordAdapter extends RecyclerView.Adapter<CardRecordAdap
 
     public void setLeaveOutRecordList(List<CardRecord> cardRecordList) {
         mCardRecordList = cardRecordList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,10 +42,10 @@ public final class CardRecordAdapter extends RecyclerView.Adapter<CardRecordAdap
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.name.setText(mCardRecordList.get(position).getName());
-        holder.status.setText(mCardRecordList.get(position).getStatus());
-        holder.preTime.setText(mCardRecordList.get(position).getTime());
-        holder.content.setText(mCardRecordList.get(position).getContent());
+        holder.name.setText(mCardRecordList.get(position).getStaffName());
+        holder.status.setText(mCardRecordList.get(position).getWorkFlow());
+        holder.preTime.setText(mCardRecordList.get(position).getSignTime());
+        holder.content.setText(mCardRecordList.get(position).getText());
         // 点击事件
         holder.itemCardRecord.setOnClickListener(v -> mCardRecordListener.onClickGoOut(mCardRecordList.get(position)));
     }

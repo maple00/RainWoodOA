@@ -89,7 +89,7 @@ public final class ForgetPasswordActivity extends BaseActivity {
                 break;
             case R.id.tv_login_account:
                 // toast("账号密码登录");
-                startActivity(getNewIntent(this, LoginActivity.class, "账号密码登录"));
+                startActivity(getNewIntent(this, LoginActivity.class, "账号密码登录","账号密码登录"));
                 break;
         }
     }

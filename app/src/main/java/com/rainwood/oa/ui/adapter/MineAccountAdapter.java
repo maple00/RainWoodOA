@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.TempMineAccount;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -20,10 +22,11 @@ import java.util.List;
  */
 public final class MineAccountAdapter extends BaseAdapter {
 
-    private List<TempMineAccount> mList;
+    private List<FontAndFont> mList;
 
-    public void setList(List<TempMineAccount> list) {
+    public void setList(List<FontAndFont> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -32,7 +35,7 @@ public final class MineAccountAdapter extends BaseAdapter {
     }
 
     @Override
-    public TempMineAccount getItem(int position) {
+    public FontAndFont getItem(int position) {
         return mList.get(position);
     }
 
@@ -54,17 +57,37 @@ public final class MineAccountAdapter extends BaseAdapter {
         }
         holder.verticalLine.setVisibility(position % 2 == 0 ? View.VISIBLE : View.GONE);
         holder.title.setText(getItem(position).getTitle());
-        holder.content.setText(getItem(position).getLabel());
+        holder.content.setText(getItem(position).getDesc());
+        // 点击事件
+        holder.itemPersonalAccount.setOnClickListener(v -> mPersonalAccount.onClickItem(getItem(position), position));
         return convertView;
     }
 
 
-    private class ViewHolder {
+    private static class ViewHolder {
+        @ViewInject(R.id.rl_item_personal_account)
+        private RelativeLayout itemPersonalAccount;
         @ViewInject(R.id.tv_title)
         private TextView title;
         @ViewInject(R.id.tv_content)
         private TextView content;
         @ViewInject(R.id.v_vertical_line)
         private View verticalLine;
+    }
+
+    public interface OnClickPersonalAccount{
+
+        /**
+         * 查看详情
+         * @param item
+         * @param position
+         */
+        void  onClickItem(FontAndFont item, int position);
+    }
+
+    private OnClickPersonalAccount mPersonalAccount;
+
+    public void setPersonalAccount(OnClickPersonalAccount personalAccount) {
+        mPersonalAccount = personalAccount;
     }
 }

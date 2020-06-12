@@ -11,7 +11,6 @@ import com.rainwood.tkrefreshlayout.utils.ScrollingUtil;
 /**
  * Created by lcodecore on 2017/3/1.
  */
-//TODO FullOverScrollDecorator、VerticalDecorator
 public class OverScrollDecorator extends Decorator {
 
     //主要为了监测Fling的动作,实现越界回弹

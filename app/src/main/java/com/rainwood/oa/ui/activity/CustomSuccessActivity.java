@@ -60,7 +60,7 @@ public final class CustomSuccessActivity extends BaseActivity {
                 break;
             case R.id.btn_return:
                 //setResult(Constants.MANAGER_FRAGMENT_RESULT_SIZE);
-                startActivityForResult(getNewIntent(this, HomeActivity.class, "管理"), Constants.MANAGER_FRAGMENT_RESULT_SIZE);
+                startActivityForResult(getNewIntent(this, HomeActivity.class, "管理", "管理"), Constants.MANAGER_FRAGMENT_RESULT_SIZE);
                 finish();
                 break;
         }

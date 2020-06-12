@@ -161,7 +161,7 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
                 switch (title) {
                     case "联系人":
                         // 添加联系人
-                        startActivity(getNewIntent(this, AddContactActivity.class, "添加联系人"));
+                        startActivity(getNewIntent(this, AddContactActivity.class, "添加联系人", "添加联系人"));
                         break;
                     case "客户附件":
                         toast("添加客户附件");

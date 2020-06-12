@@ -14,8 +14,6 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.utils.LogUtils;
-import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -41,8 +39,10 @@ public abstract class BaseFragment extends Fragment {
 
     private FrameLayout mBaseContainer;
 
+   /* @SingleClick
     @OnClick(R.id.ll_network_error_tips)
     public void onClick(View view) {
+        LogUtils.d("sxs", "------ " + view.getId());
         switch (view.getId()) {
             case R.id.ll_network_error_tips:
                 //点击了重新加载内容
@@ -50,19 +50,12 @@ public abstract class BaseFragment extends Fragment {
                 onRetryClick();
                 break;
         }
-    }
+    }*/
 
     /**
      * 如果子fragment需要知道网络错误以后的点击，那覆盖些方法即可
      */
     protected void onRetryClick() {
-
-    }
-
-    /**
-     * 点击事件管理
-     */
-    protected void onClickManager() {
 
     }
 
@@ -194,9 +187,10 @@ public abstract class BaseFragment extends Fragment {
     /**
      * startActivity 优化
      */
-    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title) {
+    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title, String menu) {
         Intent intent = new Intent(context, clazz);
         intent.putExtra("title", title);
+        intent.putExtra("menu", menu);
         return intent;
     }
 

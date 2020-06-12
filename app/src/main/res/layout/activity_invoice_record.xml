@@ -135,22 +135,30 @@
 
     </LinearLayout>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/assistColor10">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_invoice_records"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/assistColor10" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_invoice_records"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 
         <LinearLayout
             android:id="@+id/ll_apply_invoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/btn_apply_open"
@@ -164,5 +172,4 @@
                 android:text="开票申请" />
         </LinearLayout>
     </RelativeLayout>
-
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,26 +26,29 @@ import java.util.List;
 public final class LeaveAdapter extends RecyclerView.Adapter<LeaveAdapter.ViewHolder> {
 
     private List<LeaveRecord> mLeaveList;
+    private Context mContext;
 
     public void setLeaveList(List<LeaveRecord> leaveList) {
         mLeaveList = leaveList;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_leave_record, parent, false);
+        mContext = parent.getContext();
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_leave_record, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.name.setText(mLeaveList.get(position).getName());
-        holder.content.setText(mLeaveList.get(position).getContent());
+        holder.name.setText(mLeaveList.get(position).getStaffName());
+        holder.content.setText(mLeaveList.get(position).getText());
         holder.time.setText(mLeaveList.get(position).getTime());
-        holder.status.setText(mLeaveList.get(position).getStatus());
-        // color
-
+        holder.status.setText(mLeaveList.get(position).getWorkFlow());
+        holder.status.setTextColor("已通过".equals(mLeaveList.get(position).getWorkFlow())
+                ? mContext.getColor(R.color.colorPrimary) : mContext.getColor(R.color.tipsColor));
         // 点击事件
         holder.itemLeave.setOnClickListener(v -> mClickItemLeave.onClickLeave(mLeaveList.get(position)));
     }
@@ -72,13 +76,16 @@ public final class LeaveAdapter extends RecyclerView.Adapter<LeaveAdapter.ViewHo
             ViewBind.inject(this, itemView);
         }
     }
-    public interface OnClickItemLeave{
+
+    public interface OnClickItemLeave {
         /**
          * 查看详情
+         *
          * @param leaveRecord
          */
         void onClickLeave(LeaveRecord leaveRecord);
     }
+
     private OnClickItemLeave mClickItemLeave;
 
     public void setClickItemLeave(OnClickItemLeave clickItemLeave) {

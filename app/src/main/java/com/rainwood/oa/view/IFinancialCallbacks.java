@@ -21,5 +21,5 @@ public interface IFinancialCallbacks extends IBaseCallback {
     /**
      * 获取团队基金数据
      */
-    default void getTeamFundsData(List<TeamFunds> fundsList){}
+    default void getTeamFundsData(List<TeamFunds> fundsList, String money){}
 }

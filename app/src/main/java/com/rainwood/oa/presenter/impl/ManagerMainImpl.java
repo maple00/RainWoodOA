@@ -51,7 +51,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     List<IconAndFont> moduleItemList = new ArrayList<>();
                     for (String personal : personals) {
                         IconAndFont andFont = new IconAndFont();
-                        andFont.setDesc(personal);
+                        andFont.setName(personal);
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         moduleItemList.add(andFont);
                     }
@@ -61,7 +61,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     List<IconAndFont> financialList = new ArrayList<>();
                     for (String financial : financialManager) {
                         IconAndFont andFont = new IconAndFont();
-                        andFont.setDesc(financial);
+                        andFont.setName(financial);
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         financialList.add(andFont);
                     }
@@ -71,7 +71,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     List<IconAndFont> customList = new ArrayList<>();
                     for (String custom : customManager) {
                         IconAndFont andFont = new IconAndFont();
-                        andFont.setDesc(custom);
+                        andFont.setName(custom);
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         customList.add(andFont);
                     }
@@ -81,7 +81,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     List<IconAndFont> knowledgeList = new ArrayList<>();
                     for (String knowledge : knowledgeManager) {
                         IconAndFont andFont = new IconAndFont();
-                        andFont.setDesc(knowledge);
+                        andFont.setName(knowledge);
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         knowledgeList.add(andFont);
                     }
@@ -91,7 +91,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                     List<IconAndFont> systemList = new ArrayList<>();
                     for (String system : systemSetting) {
                         IconAndFont andFont = new IconAndFont();
-                        andFont.setDesc(system);
+                        andFont.setName(system);
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         systemList.add(andFont);
                     }

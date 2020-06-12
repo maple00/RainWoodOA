@@ -80,7 +80,7 @@ public final class CustomIntroduceActivity extends BaseActivity {
                 break;
             case R.id.cet_demand_desc:
                 // 填写需求详情
-                startActivity(getNewIntent(this, DemandWriteActivity.class, "需求详情"));
+                startActivity(getNewIntent(this, DemandWriteActivity.class, "需求详情","需求详情"));
                 break;
             case R.id.cet_follow_status:
                 toast("跟进状态");
@@ -104,7 +104,7 @@ public final class CustomIntroduceActivity extends BaseActivity {
                             public void onCompleted(BaseDialog dialog, String password) {
                                 dialog.dismiss();
                                 // toast(password);
-                                startActivityForResult(getNewIntent(CustomIntroduceActivity.this, CustomSuccessActivity.class, "提示"),
+                                startActivityForResult(getNewIntent(CustomIntroduceActivity.this, CustomSuccessActivity.class, "提示", "提示"),
                                         Constants.MANAGER_FRAGMENT_RESULT_SIZE);
                             }
 

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="20dp"
+                app:title="姓名" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_post"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="职位" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_super_manager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="直属上级" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="当前状态" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_entry_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="入职时间" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_staff_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="ID" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_tel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="手机号" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_qq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="QQ号" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_graduation_school"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="毕业院校" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_major"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="所学专业" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_graduation_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="毕业时间" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_bank_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="银行名称" />
+
+            <com.rainwood.oa.ui.widget.GroupTextText
+                android:id="@+id/gtt_bank_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:title="银行卡号" />
+
+        </LinearLayout>
+
+    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+
+</LinearLayout>

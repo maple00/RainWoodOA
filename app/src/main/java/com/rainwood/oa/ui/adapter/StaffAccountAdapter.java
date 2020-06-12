@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
 
     public void setAccountList(List<StaffAccount> accountList) {
         mAccountList = accountList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -43,12 +45,16 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.event.setText(TextUtils.isEmpty(mAccountList.get(position).getTitle()) ? "" : mAccountList.get(position).getTitle());
+        holder.event.setText(TextUtils.isEmpty(mAccountList.get(position).getText()) ? "" : mAccountList.get(position).getText());
         holder.time.setText(mAccountList.get(position).getTime());
-        holder.money.setText(mAccountList.get(position).getMoney());
-        holder.money.setTextColor(mAccountList.get(position).getMoney().startsWith("+")
+        holder.money.setText("收入".equals(mAccountList.get(position).getDirection())
+                ? "+" + mAccountList.get(position).getMoney()
+                : "-" + mAccountList.get(position).getMoney());
+        holder.money.setTextColor("收入".equals(mAccountList.get(position).getDirection())
                 ? mContext.getColor(R.color.colorPrimary)
                 : mContext.getColor(R.color.fontColor));
+        // TODO: 文字+图片---图片紧跟文字之后
+        holder.voucher.setVisibility(TextUtils.isEmpty(mAccountList.get(position).getIco()) ? View.GONE : View.VISIBLE);
         // 点击事件
         holder.itemAccount.setOnClickListener(v -> mItemAccount.onClickAccount(mAccountList.get(position)));
     }
@@ -64,6 +70,8 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         private RelativeLayout itemAccount;
         @ViewInject(R.id.tv_money)
         private TextView money;
+        @ViewInject(R.id.iv_voucher)
+        private ImageView voucher;
         @ViewInject(R.id.tv_event)
         private TextView event;
         @ViewInject(R.id.tv_time)
@@ -75,9 +83,10 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         }
     }
 
-    public interface OnClickItemAccount{
+    public interface OnClickItemAccount {
         /**
          * 查看详情
+         *
          * @param account
          */
         void onClickAccount(StaffAccount account);

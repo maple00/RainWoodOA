@@ -199,7 +199,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑
                 //toast("编辑客户需求");
-                startActivity(getNewIntent(this, CustomNewActivity.class, "新建客户"));
+                startActivity(getNewIntent(this, CustomNewActivity.class, "新建客户", "新建客户"));
                 break;
             case R.id.btn_copy_custom_id:
                 // 复制客户id

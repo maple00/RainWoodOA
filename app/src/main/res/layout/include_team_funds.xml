@@ -33,7 +33,6 @@
                     android:id="@+id/tv_account_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3841.2"
                     android:textColor="@color/white"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -43,7 +42,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="13dp"
-                    android:text="账户余额(元)"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
@@ -141,8 +139,8 @@
 
             <ImageView
                 android:id="@+id/iv_screen_time"
-                android:layout_width="13dp"
-                android:layout_height="14dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_screen_time" />
 

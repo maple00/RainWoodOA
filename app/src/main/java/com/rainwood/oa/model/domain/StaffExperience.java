@@ -8,14 +8,19 @@ package com.rainwood.oa.model.domain;
 public final class StaffExperience {
 
     /**
+     * 工作经历id
+     */
+    private String id;
+
+    /**
      * 公司
      */
-    private String company;
+    private String companyName;
 
     /**
      * 职位
      */
-    private String post;
+    private String position;
 
     /**
      * 入职时间
@@ -28,29 +33,50 @@ public final class StaffExperience {
     private String departureTime;
 
     /**
+     * 入职离职时间
+     */
+    private String dayStart;
+
+    /**
      * 职责
      */
-    private String responsibility;
+    private String content;
 
     /**
      * 离职原因
      */
-    private String reason;
+    private String cause;
 
-    public String getCompany() {
-        return company;
+    public String getId() {
+        return id;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getPost() {
-        return post;
+    public String getDayStart() {
+        return dayStart;
     }
 
-    public void setPost(String post) {
-        this.post = post;
+    public void setDayStart(String dayStart) {
+        this.dayStart = dayStart;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public String getEntryTime() {
@@ -69,19 +95,19 @@ public final class StaffExperience {
         this.departureTime = departureTime;
     }
 
-    public String getResponsibility() {
-        return responsibility;
+    public String getContent() {
+        return content;
     }
 
-    public void setResponsibility(String responsibility) {
-        this.responsibility = responsibility;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getReason() {
-        return reason;
+    public String getCause() {
+        return cause;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void setCause(String cause) {
+        this.cause = cause;
     }
 }

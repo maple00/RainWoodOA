@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.adapter;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.StaffPhoto;
@@ -36,6 +36,7 @@ public final class StaffPhotoAdapter extends BaseAdapter {
         for (StaffPhoto photo : mList) {
             photoLit.add(photo.getOrigin());
         }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -67,7 +68,7 @@ public final class StaffPhotoAdapter extends BaseAdapter {
         Glide.with(convertView).load(getItem(position).getOrigin())
                 .error(R.drawable.bg_monkey_king)
                 .placeholder(R.drawable.bg_monkey_king)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(8)))
                 .into(holder.photo);
         // 查看大图
         holder.photo.setOnClickListener(v ->

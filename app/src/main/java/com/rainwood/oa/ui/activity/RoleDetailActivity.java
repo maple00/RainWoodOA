@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -11,26 +12,29 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.RoleDetailModuleAdapter;
 import com.rainwood.oa.utils.AppBarStateChangeListener;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
+import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 /**
  * @Author: a797s
  * @Date: 2020/5/21 14:36
  * @Desc: 角色详情
  */
-public final class RoleDetailActivity extends BaseActivity {
+public final class RoleDetailActivity extends BaseActivity implements IAdministrativeCallbacks {
 
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.iv_page_back)
-    private ImageView pageReturn;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
@@ -44,6 +48,8 @@ public final class RoleDetailActivity extends BaseActivity {
     private RecyclerView permissionsView;
 
     private RoleDetailModuleAdapter mDetailModuleAdapter;
+
+    private IAdministrativePresenter mAdministrativePresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -86,15 +92,42 @@ public final class RoleDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void loadData() {
-        RolePermission rolePermission = (RolePermission) getIntent().getSerializableExtra("permissions");
-        mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
+    protected void initPresenter() {
+        mAdministrativePresenter = PresenterManager.getOurInstance().getAdministrativePresenter();
+        mAdministrativePresenter.registerViewCallback(this);
     }
 
     @Override
-    protected void initPresenter() {
+    protected void loadData() {
+        String roleId = getIntent().getStringExtra("roleId");
+        if (roleId != null){
+            mAdministrativePresenter.requestRoleDetailById(roleId);
+        }
+        //mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
+    }
+
+    @SingleClick
+    @OnClick({R.id.iv_page_back})
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.iv_page_back:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onError() {
 
     }
 
+    @Override
+    public void onLoading() {
 
+    }
+
+    @Override
+    public void onEmpty() {
+
+    }
 }

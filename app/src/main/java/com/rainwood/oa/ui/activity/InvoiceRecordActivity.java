@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.activity;
 
-import android.annotation.TargetApi;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -12,15 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
+import com.rainwood.oa.ui.adapter.FinancialInvoiceRecordAdapter;
 import com.rainwood.oa.ui.adapter.InvoiceRecordAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -44,7 +45,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private TextView pageTitle;
     // content
     @ViewInject(R.id.rv_invoice_records)
-    private RecyclerView invoiceRecords;
+    private RecyclerView invoiceRecordView;
     // @ViewInject(R.id.nsv_invoice_record)
     // private NestedScrollView invoiceRecordNest;
     @ViewInject(R.id.ll_status_invoice)
@@ -69,9 +70,12 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private LinearLayout applyInvoice;
     @ViewInject(R.id.btn_apply_open)
     private Button applyOpen;
+    @ViewInject(R.id.trl_pager_refresh)
+    private TwinklingRefreshLayout pageRefresh;
 
-    private InvoiceRecordAdapter mInvoiceRecordAdapter;
     private IRecordManagerPresenter mRecordManagerPresenter;
+    private InvoiceRecordAdapter mInvoiceRecordAdapter;
+    private FinancialInvoiceRecordAdapter mFinancialInvoiceRecordAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -80,8 +84,11 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
 
     @Override
     protected void initView() {
-        LogUtils.d("sxs", "customId------ " + Constants.CUSTOM_ID);
         StatusBarUtils.immersive(this);
+        pageTitle.setText(title);
+        // 设置布局管理器
+        invoiceRecordView.setLayoutManager(new GridLayoutManager(this, 1));
+        invoiceRecordView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         if (Constants.CUSTOM_ID == null) {
             pageTop.setVisibility(View.GONE);
             pageTopSearch.setVisibility(View.VISIBLE);
@@ -89,28 +96,48 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             applyInvoice.setVisibility(View.GONE);
             invoiceStatus.setVisibility(View.VISIBLE);
             invoiceType.setVisibility(View.VISIBLE);
+            // 适配器
+            mFinancialInvoiceRecordAdapter = new FinancialInvoiceRecordAdapter();
+            invoiceRecordView.setAdapter(mFinancialInvoiceRecordAdapter);
         } else {
             pageTop.setVisibility(View.VISIBLE);
             pageTopSearch.setVisibility(View.GONE);
             StatusBarUtils.setPaddingSmart(this, pageTop);
             invoiceStatus.setVisibility(View.GONE);
             invoiceType.setVisibility(View.GONE);
+            applyInvoice.setVisibility(View.VISIBLE);
+            // 适配器
+            mInvoiceRecordAdapter = new InvoiceRecordAdapter();
+            invoiceRecordView.setAdapter(mInvoiceRecordAdapter);
         }
-        pageTitle.setText(title);
-        // TODO：在滑动的位置设置状态和下拉选择框
-        // 设置布局管理器
-        invoiceRecords.setLayoutManager(new GridLayoutManager(this, 1));
-        invoiceRecords.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
-        // 创建适配器
-        mInvoiceRecordAdapter = new InvoiceRecordAdapter();
-        // 设置适配器
-        invoiceRecords.setAdapter(mInvoiceRecordAdapter);
+        // 设置刷新属性
+        pageRefresh.setEnableLoadmore(true);
+        pageRefresh.setEnableRefresh(false);
+    }
+
+    @Override
+    protected void initPresenter() {
+        mRecordManagerPresenter = PresenterManager.getOurInstance().getRecordManagerPresenter();
+        mRecordManagerPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        // 加载数据
+        if (Constants.CUSTOM_ID != null) {
+            // 从客户详情中点击
+            mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID);
+        } else {
+            mRecordManagerPresenter.requestInvoiceRecords("");
+        }
     }
 
     @Override
     protected void initEvent() {
-        int measuredHeight = applyOpen.getMinHeight();
-        invoiceRecords.setPadding(0, 0, 0, measuredHeight + 70);
+        if (Constants.CUSTOM_ID != null) {
+            int measuredHeight = applyOpen.getMinHeight();
+            pageRefresh.setPadding(0, 0, 0, measuredHeight + 70);
+        }
 
         departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
             @Override
@@ -139,23 +166,9 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
 
     }
 
-    @Override
-    protected void initPresenter() {
-        mRecordManagerPresenter = PresenterManager.getOurInstance().getRecordManagerPresenter();
-        mRecordManagerPresenter.registerViewCallback(this);
-    }
-
-    @Override
-    protected void loadData() {
-        // 加载数据
-        if (Constants.CUSTOM_ID != null) {
-            // 从客户详情中点击
-            mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID);
-        }
-    }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open,R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated})
+    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
@@ -166,19 +179,28 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 break;
             case R.id.btn_apply_open:
                 //toast("申请开通");
-                startActivity(getNewIntent(this, InvoiceApplyActivity.class, "开票记录"));
+                startActivity(getNewIntent(this, InvoiceApplyActivity.class, "开票记录", "开票记录"));
                 break;
             case R.id.tv_query_all:
-                toast("全部");
+                //toast("全部");
                 setStatusLine(true, false, false);
+                if (Constants.CUSTOM_ID == null) {
+                    mRecordManagerPresenter.requestInvoiceRecords("");
+                }
                 break;
             case R.id.tv_allocated:
-                toast("已拨付");
+                //toast("已拨付");
                 setStatusLine(false, true, false);
+                if (Constants.CUSTOM_ID == null) {
+                    mRecordManagerPresenter.requestInvoiceRecords("是");
+                }
                 break;
             case R.id.tv_un_allocated:
-                toast("未拨付");
+                //toast("未拨付");
                 setStatusLine(false, false, true);
+                if (Constants.CUSTOM_ID == null) {
+                    mRecordManagerPresenter.requestInvoiceRecords("否");
+                }
                 break;
         }
     }
@@ -186,8 +208,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     /**
      * 设置状态下划线
      *
-     * @param selectedAll 全部
-     * @param selectedAllocated 已拨付
+     * @param selectedAll         全部
+     * @param selectedAllocated   已拨付
      * @param selectedUnAllocated 未拨付
      */
     private void setStatusLine(boolean selectedAll, boolean selectedAllocated, boolean selectedUnAllocated) {
@@ -198,6 +220,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
 
     /**
      * 获取客户开票记录
+     *
      * @param invoiceRecordList
      */
     @Override
@@ -205,6 +228,15 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         mInvoiceRecordAdapter.setRecordList(invoiceRecordList);
     }
 
+    /**
+     * 财务管理下的开票记录
+     *
+     * @param financialInvoiceRecords
+     */
+    @Override
+    public void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords) {
+        mFinancialInvoiceRecordAdapter.setRecordList(financialInvoiceRecords);
+    }
 
     @Override
     public void onError() {

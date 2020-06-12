@@ -21,14 +21,14 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     void requestAllStaff(String postId);
 
     /**
-     * 请求员工的所有照片
+     * 请求员工资料data
      */
-    void requestStaffPhoto();
+    void requestStaffData(String staffId);
 
     /**
      * 请求员工的所有的工作经历
      */
-    void requestExperience();
+    void requestExperienceById(String experienceId);
 
     /**
      * 请求员工账户类型
@@ -38,10 +38,15 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     /**
      * 获取员工的所有的会计账户
      */
-    void requestAllAccountData();
+    void requestAllAccountData(String type);
 
     /**
      * 获取员工的所有的计算账户的信息
      */
-    void requestAllSettlementData();
+    void requestAllSettlementData(String type);
+
+    /**
+     * 获取员工账户的详情
+     */
+    void requestStaffAccountDetailById(String accountId);
 }

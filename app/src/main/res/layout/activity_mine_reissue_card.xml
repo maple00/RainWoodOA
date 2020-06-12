@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="DisableBaselineAlignment">
+
+    <include layout="@layout/include_title_bar_screen_time" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_query_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="全部"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/line_all"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:background="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_through"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="已通过"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/line_through"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:background="@color/colorPrimary"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_audit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="待审核"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/line_audit"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:background="@color/colorPrimary"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_draft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="草稿"
+                android:textColor="@color/fontColor"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/line_draft"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:background="@color/colorPrimary"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/trl_pager_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_reissue_records"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+
+</LinearLayout>

@@ -1,54 +1,81 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/27 9:06
  * @Desc: 请假记录
  */
-public final class LeaveRecord {
+public final class LeaveRecord implements Serializable {
+
+    /**
+     * 记录id
+     */
+    private String id;
 
     /**
      * 申请人
      */
-    private String name;
+    private String staffName;
 
     /**
      * 状态
      */
-    private String status;
+    private String workFlow;
 
+    /**
+     * 请假类型
+     */
+    private String type;
     /**
      * 请假内容
      */
-    private String content;
+    private String text;
 
     /**
      * 请假时间
      */
     private String time;
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
-    public String getContent() {
-        return content;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getTime() {

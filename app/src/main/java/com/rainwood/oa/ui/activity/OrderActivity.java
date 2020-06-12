@@ -176,7 +176,7 @@ public final class OrderActivity extends BaseActivity implements OrderAttachAdap
                 finish();
                 break;
             case R.id.cet_note:
-                startActivity(getNewIntent(this, DemandWriteActivity.class, "备注信息"));
+                startActivity(getNewIntent(this, DemandWriteActivity.class, "备注信息", "备注信息"));
                 break;
             case R.id.iv_upload_attach:
             case R.id.tv_upload_attach:
@@ -190,14 +190,14 @@ public final class OrderActivity extends BaseActivity implements OrderAttachAdap
             case R.id.iv_provision:
             case R.id.tv_provision:
                 // 添加费用计提
-                startActivity(getNewIntent(this, AddProvisionActivity.class, "添加费用计提"));
+                startActivity(getNewIntent(this, AddProvisionActivity.class, "添加费用计提", "添加费用计提"));
                 break;
             case R.id.iv_follow_record:
             case R.id.tv_follow_record:
             case R.id.iv_add_follow:
             case R.id.tv_add_follow:
                 // 新增跟进
-                startActivity(getNewIntent(this, AddFollowRecordActivity.class, "新增跟进记录"));
+                startActivity(getNewIntent(this, AddFollowRecordActivity.class, "新增跟进记录", "新增跟进记录"));
                 break;
             case R.id.iv_add_approver:
             case R.id.tv_add_approver:

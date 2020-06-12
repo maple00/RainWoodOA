@@ -11,7 +11,62 @@ import com.rainwood.oa.view.IMineCallbacks;
 public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
 
     /**
-     * 我的界面数据
+     * 请求个人中心数据
      */
     void getMineData();
+
+    /**
+     * 请求我的个人资料数据
+     */
+    void requestMineInfo();
+
+    /**
+     * 请求我的会计账户
+     */
+    void requestAccountingAccount(String type);
+
+    /**
+     * 请求我的结算账户
+     */
+    void requestSettlementAccount(String  type);
+
+    /**
+     * 请求我的补卡记录
+     */
+    void requestMineReissueCards(String state);
+
+    /**
+     * 我的补卡记录申请
+     */
+    void requestMineReissueApply();
+
+    /**
+     * 请求审核记录列表
+     */
+    void requestAuditRecords(String recordId);
+
+    /**
+     * 请求我的请假列表
+     */
+    void requestAskLeaveRecords();
+
+    /**
+     * 请求我的加班列表
+     */
+    void requestMineOverTimeRecords();
+
+    /**
+     * 请求我的外出记录列表
+     */
+    void requestMineLeaveOutRecords();
+
+    /**
+     * 请求我的费用报销
+     */
+    void requestMineReimburseData();
+
+    /**
+     * 请求我的开票记录
+     */
+    void requestMineInvoiceRecords();
 }

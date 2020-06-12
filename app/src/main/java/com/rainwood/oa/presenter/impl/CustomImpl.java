@@ -179,7 +179,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         List<IconAndFont> moduleItemList = new ArrayList<>();
         for (int i = 0; i < customModules.length; i++) {
             IconAndFont moduleCustom = new IconAndFont();
-            moduleCustom.setDesc(customModules[i]);
+            moduleCustom.setName(customModules[i]);
             moduleCustom.setLocalMipmap(customDetailModuleIcons[i]);
             moduleItemList.add(moduleCustom);
         }

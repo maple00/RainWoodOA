@@ -32,6 +32,11 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     void requestGoOutRecord(String customId);
 
     /**
+     * 行政人事--外出记录
+     */
+    void requestGoOutRecord();
+
+    /**
      * 请求补卡记录
      */
     void requestReissueRecord();
@@ -55,6 +60,11 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      * 请求客户下的开票记录
      */
     void requestCustomInvoiceRecords(String customId);
+
+    /**
+     * 请求开票记录（财务管理）
+     */
+    void requestInvoiceRecords(String type);
 
     /**
      * 请求客户下的开票记录中的开票参数

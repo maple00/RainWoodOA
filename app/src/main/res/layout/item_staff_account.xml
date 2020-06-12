@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_item_account"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -24,9 +25,19 @@
         android:layout_toStartOf="@+id/tv_money"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="奖金拨付，订单【秦工设备秦工设备...奖金拨付，订单【秦工设备秦工设备..."
+        android:text="奖金拨付，订单【秦工设备秦工设备奖金拨付，订单【秦工设备秦工设备..."
         android:textColor="@color/fontColor"
         android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/iv_voucher"
+        android:layout_width="12dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/tv_event"
+        android:src="@drawable/ic_voucher"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_time"

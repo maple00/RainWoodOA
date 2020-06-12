@@ -10,6 +10,10 @@ import java.io.Serializable;
 public final class Reimbursement implements Serializable {
 
     /**
+     * id
+     */
+    private String id;
+    /**
      * 费用类型
      */
     private String type;
@@ -22,27 +26,27 @@ public final class Reimbursement implements Serializable {
     /**
      * 是否有报销凭证
      */
-    private boolean voucher;
+    private boolean ico;
 
     /**
      * 报销人
      */
-    private String name;
+    private String staffName;
 
     /**
      * 报销事由
      */
-    private String content;
+    private String text;
 
     /**
      * 是否已拨付
      */
-    private String allocated;
+    private String pay;
 
     /**
      * 拨付时间
      */
-    private String time;
+    private String payDate;
 
     public String getType() {
         return type;
@@ -60,44 +64,44 @@ public final class Reimbursement implements Serializable {
         this.money = money;
     }
 
-    public boolean isVoucher() {
-        return voucher;
+    public boolean isIco() {
+        return ico;
     }
 
-    public void setVoucher(boolean voucher) {
-        this.voucher = voucher;
+    public void setIco(boolean ico) {
+        this.ico = ico;
     }
 
-    public String getName() {
-        return name;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
-    public String getContent() {
-        return content;
+    public String getText() {
+        return text;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getAllocated() {
-        return allocated;
+    public String getPay() {
+        return pay;
     }
 
-    public void setAllocated(String allocated) {
-        this.allocated = allocated;
+    public void setPay(String pay) {
+        this.pay = pay;
     }
 
-    public String getTime() {
-        return time;
+    public String getPayDate() {
+        return payDate;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setPayDate(String payDate) {
+        this.payDate = payDate;
     }
 }
 

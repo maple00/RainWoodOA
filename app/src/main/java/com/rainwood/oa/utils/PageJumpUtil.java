@@ -2,15 +2,12 @@ package com.rainwood.oa.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
-import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.Logcat;
+import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.TempData;
-
-import java.util.Map;
 
 /**
  * @Author: a797s
@@ -23,11 +20,12 @@ public final class PageJumpUtil {
 
     /**
      * 部门列表跳转到部门详情页面
+     *
      * @param context
      * @param clazz
      * @param departId
      */
-    public static void departList2Detail(Context context, Class<? extends BaseActivity> clazz, String departId){
+    public static void departList2Detail(Context context, Class<? extends BaseActivity> clazz, String departId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "部门详情");
         sIntent.putExtra("departId", departId);
@@ -36,11 +34,12 @@ public final class PageJumpUtil {
 
     /**
      * 职位列表跳转到详情页面
+     *
      * @param context
      * @param clazz
      * @param postId
      */
-    public static void postList2Detail(Context context, Class<? extends BaseActivity> clazz, String postId){
+    public static void postList2Detail(Context context, Class<? extends BaseActivity> clazz, String postId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "职位详情");
         sIntent.putExtra("postId", postId);
@@ -48,11 +47,53 @@ public final class PageJumpUtil {
     }
 
     /**
+     * 员工管理列表中的员工跳转到员工详情
+     *
+     * @param context
+     * @param clazz
+     * @param staffId
+     */
+    public static void staffList2Detail(Context context, Class<? extends BaseActivity> clazz, String staffId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "员工详情");
+        sIntent.putExtra("staffId", staffId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 员工工作经历列表跳转到工作经历详情
+     *
+     * @param context
+     * @param clazz
+     * @param experienceId
+     */
+    public static void staffJobExperience2Detail(Context context, Class<? extends BaseActivity> clazz, String experienceId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "工作经历");
+        sIntent.putExtra("experienceId", experienceId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 员工账户跳转到详情页
+     *
+     * @param context
+     * @param clazz
+     * @param accountId
+     */
+    public static void staffAccount2Detail(Context context, Class<? extends BaseActivity> clazz, String accountId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", "收支详情");
+        sIntent.putExtra("accountId", accountId);
+        context.startActivity(sIntent);
+    }
+
+    /**
      * 客户列表跳转到客户详情页面
      *
-     * @param context con
-     * @param clazz   跳转目的地
-     * @param customId  客户id
+     * @param context  con
+     * @param clazz    跳转目的地
+     * @param customId 客户id
      */
     public static void listJump2CustomDetail(Context context, Class<? extends BaseActivity> clazz, String customId) {
         sIntent = new Intent(context, clazz);
@@ -119,11 +160,12 @@ public final class PageJumpUtil {
 
     /**
      * 订单列表跳转到订单详情页面
+     *
      * @param context
      * @param clazz
      * @param orderId
      */
-    public static void orderList2Detail(Context context, Class<? extends BaseActivity> clazz, String orderId, String status){
+    public static void orderList2Detail(Context context, Class<? extends BaseActivity> clazz, String orderId, String status) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "订单详情");
         sIntent.putExtra("orderId", orderId);
@@ -133,11 +175,12 @@ public final class PageJumpUtil {
 
     /**
      * 费用报销列表页跳转到详情页面
+     *
      * @param context
      * @param clazz
      * @param reimburseId
      */
-    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz, String reimburseId){
+    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz, String reimburseId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "费用详情");
         sIntent.putExtra(reimburseId, reimburseId);
@@ -146,11 +189,12 @@ public final class PageJumpUtil {
 
     /**
      * 文章列表页面跳转到文章详情页面
+     *
      * @param context
      * @param clazz
      * @param articleId
      */
-    public static void skillList2Detail(Context context, Class<? extends BaseActivity> clazz, String articleId, String title){
+    public static void skillList2Detail(Context context, Class<? extends BaseActivity> clazz, String articleId, String title) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("articleId", articleId);
@@ -159,14 +203,45 @@ public final class PageJumpUtil {
 
     /**
      * 日志列表跳转到日志详情
+     *
      * @param context
      * @param clazz
      * @param logcat
      */
-    public static void logcatList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, Logcat logcat){
+    public static void logcatList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, Logcat logcat) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("logcat", logcat);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 我的补卡记录列表跳转到补卡申请
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param reissue
+     */
+    public static void mineReissueList2Apply(Context context, Class<? extends BaseActivity> clazz, String title, MineRecords reissue) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("reissue", reissue);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 补卡申请页面跳转到补卡审核记录页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void reissueApply2AuditList(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
         context.startActivity(sIntent);
     }
 }

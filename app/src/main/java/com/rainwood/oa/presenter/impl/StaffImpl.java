@@ -1,9 +1,12 @@
 package com.rainwood.oa.presenter.impl;
 
+import android.text.TextUtils;
+
 import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
 import com.rainwood.oa.model.domain.StaffDepart;
+import com.rainwood.oa.model.domain.StaffDetail;
 import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.model.domain.StaffPhoto;
 import com.rainwood.oa.model.domain.StaffSettlement;
@@ -43,6 +46,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
 
     /**
      * 通过职位id查询该职位下的员工
+     *
      * @param postId
      */
     @Override
@@ -52,32 +56,32 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home", params, this);
     }
 
+    /**
+     * 员工详情数据
+     *
+     * @param staffId
+     */
     @Override
-    public void requestStaffPhoto() {
-        // 模拟员工详情中的照片
-        List<StaffPhoto> photoList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            StaffPhoto photo = new StaffPhoto();
-            photoList.add(photo);
-        }
-        mStaffCallbacks.getStaffPhoto(photoList);
+    public void requestStaffData(String staffId) {
+        RequestParams params = new RequestParams();
+        params.add("id", staffId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=detail", params, this);
     }
 
     @Override
-    public void requestExperience() {
+    public void requestExperienceById(String experienceId) {
         // 模拟工作经历
         List<StaffExperience> experienceList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             StaffExperience experience = new StaffExperience();
-            experience.setCompany("重庆雨木科技有限公司");
-            experience.setPost("Android研发工程师");
+            experience.setCompanyName("重庆雨木科技有限公司");
+            experience.setPosition("Android研发工程师");
             experience.setEntryTime("2020.05.25");
             experience.setDepartureTime("2020.06.25");
-            experience.setResponsibility("负责公司移动客户端UI界面设计，为公司新产品与新功能提供创意及设计方案，参与设计讨论，和开发团队共同创建用户界面，跟踪设计效果，提出设计优化方案...");
-            experience.setReason("公司离家太远，无法照顾家庭");
+            experience.setContent("负责公司移动客户端UI界面设计，为公司新产品与新功能提供创意及设计方案，参与设计讨论，和开发团队共同创建用户界面，跟踪设计效果，提出设计优化方案...");
+            experience.setCause("公司离家太远，无法照顾家庭");
             experienceList.add(experience);
         }
-
         mStaffCallbacks.getStaffExperience(experienceList);
     }
 
@@ -95,42 +99,38 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         mStaffCallbacks.getAccountTypes(typeList);
     }
 
+    /**
+     * 员工会计账户
+     *
+     * @param type
+     */
     @Override
-    public void requestAllAccountData() {
-        // 模拟会计账户的content
-        List<StaffAccount> accountList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            StaffAccount account = new StaffAccount();
-            account.setTitle("行政处罚---" + i);
-            account.setMoney("-520.00");
-            if (i % 3 == 0) {
-                account.setMoney("+1520.00");
-            }
-            account.setTime("2020.03.17 15:56");
-            accountList.add(account);
-        }
-        mStaffCallbacks.getAccountData(accountList);
-
+    public void requestAllAccountData(String type) {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
     }
 
+    /**
+     * 员工结算账户
+     *
+     * @param type
+     */
     @Override
-    public void requestAllSettlementData() {
-        // 模拟所有的结算账户信息
-        List<StaffSettlement> staffSettlementList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            StaffSettlement staffSettlement = new StaffSettlement();
-            staffSettlement.setEvent("2019-05社保扣款");
-            staffSettlement.setMoney("-389.72");
-            staffSettlement.setVoucher("有凭证");
-            if (i % 6 == 0) {
-                staffSettlement.setVoucher("");
-                staffSettlement.setMoney("+389.72");
-            }
-            staffSettlement.setTime("2020.03.17 15:56");
-            staffSettlementList.add(staffSettlement);
-        }
+    public void requestAllSettlementData(String type) {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
+    }
 
-        mStaffCallbacks.getSettlementData(staffSettlementList);
+    /**
+     * 员工账户详情
+     *
+     * @param accountId
+     */
+    @Override
+    public void requestStaffAccountDetailById(String accountId) {
+        RequestParams params = new RequestParams();
+        params.add("id", accountId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=accountDetail", params, this);
     }
 
     @Override
@@ -174,7 +174,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                     // 设置默认选中的值--目前是只有通过
                     for (int i = 0; i < departmentList.size(); ) {
                         departmentList.get(i).setSelected(true);
-                        for (int j = 0; j < departmentList.get(i).getArray().size();) {
+                        for (int j = 0; j < departmentList.get(i).getArray().size(); ) {
                             departmentList.get(i).getArray().get(j).setSelected(true);
                             break;
                         }
@@ -187,11 +187,87 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
             }
         }
         // 职位下的员工
-        else if (result.url().contains("cla=staff&fun=home")){
+        else if (result.url().contains("cla=staff&fun=home")) {
             try {
                 List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("staff"));
                 mStaffCallbacks.getAllStaff(staffList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 员工资料详情
+        else if (result.url().contains("cla=staff&fun=detail")) {
+            try {
+                StaffDetail staffDetail = JsonParser.parseJSONObject(StaffDetail.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                // 数据处理
+                List<StaffPhoto> staffPhotoList = new ArrayList<>();
+                StaffPhoto photo;
+                if (!TextUtils.isEmpty(staffDetail.getIco())) {
+                    photo = new StaffPhoto();
+                    photo.setOrigin(staffDetail.getIco());
+                    photo.setDesc("头像");
+                    staffPhotoList.add(photo);
+                }
+                if (!TextUtils.isEmpty(staffDetail.getIDCardFront())) {
+                    photo = new StaffPhoto();
+                    photo.setOrigin(staffDetail.getIDCardFront());
+                    photo.setDesc("身份证正面");
+                    staffPhotoList.add(photo);
+                }
+                if (!TextUtils.isEmpty(staffDetail.getIDCardBack())) {
+                    photo = new StaffPhoto();
+                    photo.setOrigin(staffDetail.getIDCardBack());
+                    photo.setDesc("身份证背面");
+                    staffPhotoList.add(photo);
+                }
+                if (!TextUtils.isEmpty(staffDetail.getDiploma())) {
+                    photo = new StaffPhoto();
+                    photo.setOrigin(staffDetail.getDiploma());
+                    photo.setDesc("毕业证扫描件");
+                    staffPhotoList.add(photo);
+                }
+                if (!TextUtils.isEmpty(staffDetail.getBankIco())) {
+                    photo = new StaffPhoto();
+                    photo.setOrigin(staffDetail.getBankIco());
+                    photo.setDesc("银行卡扫描件");
+                    staffPhotoList.add(photo);
+                }
+                mStaffCallbacks.getStaffPhoto(staffPhotoList);
+                mStaffCallbacks.getStaffDetailData(staffDetail);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 员工会计账户--全部、收入、支出
+        else if (result.url().contains("cla=staff&fun=accountAll") || result.url().contains("cla=staff&fun=accountIn")
+                || result.url().contains("cla=staff&fun=accountOut")) {
+            try {
+                List<StaffAccount> accountList = JsonParser.parseJSONArray(StaffAccount.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("account"));
+                mStaffCallbacks.getAccountData(accountList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 员工结算账户-- 全部、收入、支出
+        else if (result.url().contains("cla=staff&fun=settleAccountAll") || result.url().contains("cla=staff&fun=settleAccountIn")
+                || result.url().contains("cla=staff&fun=settleAccountOut")) {
+            try {
+                List<StaffSettlement> accountList = JsonParser.parseJSONArray(StaffSettlement.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("account"));
+                mStaffCallbacks.getSettlementData(accountList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 员工账户详情
+        else if (result.url().contains("cla=staff&fun=accountDetail")) {
+            try {
+                StaffAccount accountDetail = JsonParser.parseJSONObject(StaffAccount.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("detail"));
+                mStaffCallbacks.getStaffAccountDetail(accountDetail);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

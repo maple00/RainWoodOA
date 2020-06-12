@@ -17,6 +17,7 @@ import com.rainwood.oa.ui.adapter.StaffLeftAdapter;
 import com.rainwood.oa.ui.adapter.StaffPostAdapter;
 import com.rainwood.oa.ui.adapter.StaffRightAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
@@ -64,8 +65,6 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private StaffLeftAdapter mLeftAdapter;
     private List<StaffDepart> mDepartList;
     private StaffRightAdapter mRightAdapter;
-
-    private List<Staff> mStaffList;
 
     @Override
     protected int getLayoutResId() {
@@ -170,8 +169,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void onClickStaff(Staff staff, int position) {
-        // toast("查看员工详情---" + mStaffList.get(position).getName());
-        startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
+        PageJumpUtil.staffList2Detail(this, StaffMainActivity.class, staff.getId());
+        //startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
     }
 
 
@@ -202,8 +201,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
     @Override
     public void getAllStaff(List<Staff> staffList) {
-        mStaffList = staffList;
-        mRightAdapter.setStaffList(mStaffList);
+        mRightAdapter.setStaffList(staffList);
     }
 
     @Override

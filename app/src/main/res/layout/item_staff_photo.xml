@@ -4,8 +4,8 @@
     android:id="@+id/iv_photo"
     android:layout_width="110dp"
     android:layout_height="110dp"
-    android:scaleType="centerCrop"
-    android:src="@drawable/bg_monkey_king"
+    android:scaleType="fitXY"
+    android:src="@mipmap/ic_logo_mdpi"
     tools:ignore="ContentDescription">
 
 </ImageView>

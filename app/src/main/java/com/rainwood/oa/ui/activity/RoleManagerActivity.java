@@ -111,10 +111,10 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
     }
 
     @Override
-    public void onClick(RolePermission rolePermission) {
+    public void onClick(RolePermission role) {
         // 查看详情
         Intent intent = new Intent(this, RoleDetailActivity.class);
-        intent.putExtra("permissions", rolePermission);
+        intent.putExtra("roleId", role.getId());
         startActivity(intent);
     }
 

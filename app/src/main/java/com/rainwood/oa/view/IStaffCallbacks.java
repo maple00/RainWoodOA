@@ -5,6 +5,7 @@ import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
 import com.rainwood.oa.model.domain.StaffDepart;
+import com.rainwood.oa.model.domain.StaffDetail;
 import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.model.domain.StaffPhoto;
 import com.rainwood.oa.model.domain.StaffSettlement;
@@ -31,6 +32,10 @@ public interface IStaffCallbacks extends IBaseCallback {
     default void getAllStaff(List<Staff> staffList){};
 
     /**
+     * 员工详情
+     */
+    default void getStaffDetailData(StaffDetail staffDetail){};
+    /**
      * 获取员工详情的所有的照片
      */
     default void getStaffPhoto(List<StaffPhoto> photoList){};
@@ -53,6 +58,15 @@ public interface IStaffCallbacks extends IBaseCallback {
      */
     default void getAccountData(List<StaffAccount> accountList){};
 
-
+    /**
+     * 员工结算账户
+     * @param settlementList
+     */
     default void getSettlementData(List<StaffSettlement> settlementList){};
+
+    /**
+     * 员工账户详情
+     * @param account
+     */
+    default void getStaffAccountDetail(StaffAccount account){}
 }

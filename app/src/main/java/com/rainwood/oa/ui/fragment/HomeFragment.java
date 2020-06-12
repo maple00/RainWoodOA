@@ -92,7 +92,6 @@ public final class HomeFragment extends BaseFragment implements
         Message msg = new Message();
         msg.what = INITIAL_LINE_SALARY_SIZE;
         mHandler.sendMessage(msg);
-        // TODO: 自定义线性表的属性(线条，颜色，间距等)
 
         // 模拟加载返回的图片
         mStackBanner.setTransitionEffect(TransitionEffect.Default);

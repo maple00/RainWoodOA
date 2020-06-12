@@ -1,7 +1,10 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.oa.model.domain.AdminLeaveOut;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
@@ -57,22 +60,13 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home", params, this);
     }
 
+    /**
+     * 请假记录
+     */
     @Override
     public void requestLeaveRecord() {
-        // 模拟请假记录
-        List<LeaveRecord> leaveRecordList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            LeaveRecord leaveRecord = new LeaveRecord();
-            leaveRecord.setName("无双剑姬");
-            leaveRecord.setContent("动作太慢了");
-            leaveRecord.setStatus("审核中");
-            leaveRecord.setTime("请假时间：2020.03.20 09:00 - 2020.03.20 18:00");
-            leaveRecordList.add(leaveRecord);
-        }
-
-        Map<String, List<LeaveRecord>> leaveMap = new HashMap<>();
-        leaveMap.put("leave", leaveRecordList);
-        mRecordCallbacks.getLeaveRecords(leaveMap);
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=work&fun=home", params, this);
     }
 
     /**
@@ -87,21 +81,22 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=out", params, this);
     }
 
+    /**
+     * 行政人事--外出记录
+     */
+    @Override
+    public void requestGoOutRecord() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=home", params, this);
+    }
+
+    /**
+     * 行政人事---补卡记录
+     */
     @Override
     public void requestReissueRecord() {
-        // 模拟补卡记录
-        List<CardRecord> cardRecordList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            CardRecord cardRecord = new CardRecord();
-            cardRecord.setName("暗影猎手-VN");
-            cardRecord.setStatus("离线");
-            cardRecord.setTime("2020.03.25 18:00");
-            cardRecord.setContent("下午4点出发到大足鑫发集团沟通详细的需求，所以未打下卡下午4点出发到大足鑫发集团，所以未打下班卡。");
-            cardRecordList.add(cardRecord);
-        }
-        Map<String, List<CardRecord>> cardMap = new HashMap<>();
-        cardMap.put("cardRecord", cardRecordList);
-        mRecordCallbacks.getReissueRecords(cardMap);
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=home", params, this);
     }
 
     /**
@@ -150,6 +145,17 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         RequestParams params = new RequestParams();
         params.add("id ", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi", params, this);
+    }
+
+    /**
+     * 财务管理---开票记录
+     * @param type 为空queryAll， 已拨付：是，未拨付：否
+     */
+    @Override
+    public void requestInvoiceRecords(String type) {
+        RequestParams params = new RequestParams();
+        params.add("open", type);
+        OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=home", params, this);
     }
 
     /**
@@ -238,7 +244,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             e.printStackTrace();
         }
 
-        // 跟进记录
+        // 客户管理-----跟进记录
         if (result.url().contains("cla=client&fun=follow")) {
             try {
                 List<CustomFollowRecord> customFollowRecordList = JsonParser.parseJSONArray(CustomFollowRecord.class,
@@ -248,7 +254,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 e.printStackTrace();
             }
         }
-        // 外出记录
+        // 客户管理----外出记录
         else if (result.url().contains("cla=client&fun=out")) {
             try {
                 List<LeaveOutRecord> customFollowRecordList = JsonParser.parseJSONArray(LeaveOutRecord.class,
@@ -259,7 +265,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             }
 
         }
-        // 加班记录
+        // 客户管理---加班记录
         else if (result.url().contains("cla=client&fun=workAdd")) {
             try {
                 List<OvertimeRecord> overtimeRecordList = JsonParser.parseJSONArray(OvertimeRecord.class,
@@ -269,7 +275,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 e.printStackTrace();
             }
         }
-        // 回款记录
+        // 客户管理----回款记录
         else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=collection")) {
             try {
                 List<ReceivableRecord> receivableList = JsonParser.parseJSONArray(ReceivableRecord.class,
@@ -279,7 +285,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 e.printStackTrace();
             }
         }
-        // 回款记录详情
+        //客户管理---- 回款记录详情
         else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=collectionDetail")) {
             try {
                 ReceivableRecord receivableRecord = JsonParser.parseJSONObject(ReceivableRecord.class,
@@ -288,7 +294,9 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=invoiceLi")) {
+        }
+        // 客户管理--开票记录
+        else if (result.url().contains("cla=client&fun=invoiceLi")) {
             try {
                 List<InvoiceRecord> invoiceList = JsonParser.parseJSONArray(InvoiceRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
@@ -319,7 +327,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 e.printStackTrace();
             }
         }
-        // 新增开票记录
+        // 客户管理---新增开票记录
         else if (result.url().contains("cla=client&fun=invoiceAdd")) {
             JSONObject jsonObject = JsonParser.parseJSONObjectString(result.body());
             try {
@@ -329,8 +337,54 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             }
         }
         // 行政人事--- 加班记录
-        else if (result.url().contains("cla=workAdd&fun=home")){
-
+        else if (result.url().contains("cla=workAdd&fun=home")) {
+            try {
+                List<AdminOverTime> adminOvertimeRecordList = JsonParser.parseJSONArray(AdminOverTime.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("add"));
+                mRecordCallbacks.getAdminOverTimeRecords(adminOvertimeRecordList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 请假记录
+        else if (result.url().contains("cla=work&fun=home")){
+            try {
+                List<LeaveRecord> leaveRecordList = JsonParser.parseJSONArray(LeaveRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("work"));
+                mRecordCallbacks.getLeaveRecords(leaveRecordList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政人事--外出记录
+        else if (result.url().contains("cla=workOut&fun=home")){
+            try {
+                List<AdminLeaveOut> adminLeaveOutList = JsonParser.parseJSONArray(AdminLeaveOut.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("out"));
+                mRecordCallbacks.getAdminLeaveOutRecords(adminLeaveOutList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政人事--- 补卡记录
+        else if (result.url().contains("cla=workSignAdd&fun=home")){
+            try {
+                List<CardRecord> cardRecords = JsonParser.parseJSONArray(CardRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("add"));
+                mRecordCallbacks.getReissueRecords(cardRecords);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 财务管理--开票记录
+        else if (result.url().contains("cla=kehuInvoice&fun=home")){
+            try {
+                List<FinancialInvoiceRecord> financialInvoiceRecordList = JsonParser.parseJSONArray(FinancialInvoiceRecord.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
+                mRecordCallbacks.getFinancialInvoiceRecords(financialInvoiceRecordList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

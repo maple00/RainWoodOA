@@ -12,11 +12,24 @@ public final class StaffPhoto {
      */
     private String origin;
 
+    /**
+     * 照片描述
+     */
+    private String desc;
+
     public String getOrigin() {
         return origin;
     }
 
     public void setOrigin(String origin) {
         this.origin = origin;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

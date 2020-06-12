@@ -11,6 +11,11 @@ import java.util.List;
 public final class RolePermission implements Serializable {
 
     /**
+     * 角色id
+     */
+    private String id;
+
+    /**
      * 角色名字
      */
      private String name;
@@ -29,6 +34,14 @@ public final class RolePermission implements Serializable {
      * 是否被选择
      */
     private boolean hasSelected;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public boolean isHasSelected() {
         return hasSelected;

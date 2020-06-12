@@ -6,6 +6,9 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.presenter.IStaffPresenter;
+import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.view.IStaffCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -15,13 +18,26 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
  * @Date: 2020/5/25 13:14
  * @Desc: 工作经历详情
  */
-public final class ExperienceDetailActivity extends BaseActivity {
+public final class ExperienceDetailActivity extends BaseActivity implements IStaffCallbacks {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    // content
+    @ViewInject(R.id.tv_company)
+    private TextView companyName;
+    @ViewInject(R.id.tv_post)
+    private TextView post;
+    @ViewInject(R.id.tv_entry_out_time)
+    private TextView entryOutTime;
+    @ViewInject(R.id.tv_duty)
+    private TextView duty;
+    @ViewInject(R.id.tv_reason)
+    private TextView reason;
+
+    private IStaffPresenter mStaffPresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -37,7 +53,17 @@ public final class ExperienceDetailActivity extends BaseActivity {
 
     @Override
     protected void initPresenter() {
+        mStaffPresenter = PresenterManager.getOurInstance().getStaffPresenter();
+        mStaffPresenter.registerViewCallback(this);
+    }
 
+    @Override
+    protected void loadData() {
+        String experienceId = getIntent().getStringExtra("experienceId");
+        if (experienceId != null){
+            mStaffPresenter.requestExperienceById(experienceId);
+        }
+        // TODO：无员工经历详情接口
     }
 
     @OnClick(R.id.iv_page_back)
@@ -47,5 +73,20 @@ public final class ExperienceDetailActivity extends BaseActivity {
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onLoading() {
+
+    }
+
+    @Override
+    public void onEmpty() {
+
     }
 }

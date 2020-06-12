@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/assistColor15"
@@ -13,61 +14,97 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/assistColor15"
+        android:orientation="horizontal"
         android:paddingTop="25dp"
         android:paddingBottom="25dp">
 
+        <TextView
+            android:id="@+id/tv_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:text="2020年"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <View
+            style="@style/VerticalLineStyle"
+            android:background="@color/labelColor" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_work_month"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="8dp"
+            tools:itemCount="6" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/assistColor15"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
         <!-- 周视图-->
         <com.necer.view.WeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white" />
+            android:background="@drawable/shape_white_top_8dp"
+            android:paddingTop="20dp" />
 
         <!-- 日历表-->
-        <com.necer.calendar.Miui9Calendar
-            android:id="@+id/mc_calendar_9"
+        <com.necer.calendar.Miui10Calendar
+            android:id="@+id/mc10_calendar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/shape_white_bottom_8dp"
             app:showNumberBackground="false"
             app:solarTextBold="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="22dp">
+                android:background="@color/assistColor15"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2020年3月，共21个工作日"
-                    android:textColor="@color/fontColor"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="清明节休3天"
-                    android:textColor="@color/labelColor"
-                    android:textSize="12sp" />
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="22dp">
 
+                    <TextView
+                        android:id="@+id/tv_calendar_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2020年3月，共21个工作日"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_calendar_note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="清明节休3天"
+                        android:textColor="@color/labelColor"
+                        android:textSize="12sp" />
+                </LinearLayout>
             </LinearLayout>
 
-        </com.necer.calendar.Miui9Calendar>
+        </com.necer.calendar.Miui10Calendar>
     </LinearLayout>
 
 </LinearLayout>

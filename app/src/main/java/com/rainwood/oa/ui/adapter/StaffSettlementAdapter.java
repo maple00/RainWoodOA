@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffSettlement;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -31,6 +33,7 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
 
     public void setSettlementList(List<StaffSettlement> settlementList) {
         mSettlementList = settlementList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -43,15 +46,17 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.event.setText(TextUtils.isEmpty(mSettlementList.get(position).getEvent())
-                ? "" : mSettlementList.get(position).getEvent());
-        holder.voucher.setVisibility(TextUtils.isEmpty(mSettlementList.get(position).getVoucher())
-                ? View.GONE : View.VISIBLE);
+        holder.event.setText(TextUtils.isEmpty(mSettlementList.get(position).getText()) ? "" : mSettlementList.get(position).getText());
         holder.time.setText(mSettlementList.get(position).getTime());
-        holder.money.setText(mSettlementList.get(position).getMoney());
-        holder.money.setTextColor(mSettlementList.get(position).getMoney().startsWith("+")
+        holder.money.setText("收入".equals(mSettlementList.get(position).getDirection())
+                ? "+" + mSettlementList.get(position).getMoney()
+                : "-" + mSettlementList.get(position).getMoney());
+        holder.money.setTextColor("收入".equals(mSettlementList.get(position).getDirection())
                 ? mContext.getColor(R.color.colorPrimary)
                 : mContext.getColor(R.color.fontColor));
+        holder.voucher.setVisibility(TextUtils.isEmpty(mSettlementList.get(position).getIco()) ? View.GONE : View.VISIBLE);
+        // 点击事件
+        holder.itemSettlement.setOnClickListener(v -> mItemAccount.onClickAccount(mSettlementList.get(position)));
     }
 
     @Override
@@ -61,6 +66,8 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @ViewInject(R.id.ll_item_settlement)
+        private LinearLayout itemSettlement;
         @ViewInject(R.id.tv_event)
         private TextView event;
         @ViewInject(R.id.iv_voucher)
@@ -74,5 +81,20 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickItemAccount {
+        /**
+         * 查看详情
+         *
+         * @param account
+         */
+        void onClickAccount(StaffSettlement account);
+    }
+
+    private OnClickItemAccount mItemAccount;
+
+    public void setItemAccount(OnClickItemAccount itemAccount) {
+        mItemAccount = itemAccount;
     }
 }

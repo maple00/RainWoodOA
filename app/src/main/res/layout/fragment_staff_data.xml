@@ -109,7 +109,7 @@
                 app:title="用户名"
                 app:values="yangjia" />
 
-            <com.rainwood.oa.ui.widget.GroupTextText
+           <!-- <com.rainwood.oa.ui.widget.GroupTextText
                 android:id="@+id/gtt_staff_pwd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                 android:paddingTop="13dp"
                 android:paddingBottom="13dp"
                 app:title="登录密码"
-                app:values="123456" />
+                app:values="123456" />-->
 
             <com.rainwood.oa.ui.widget.GroupTextText
                 android:id="@+id/gtt_direct_supervisor"
@@ -258,7 +258,6 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="25dp"
                 android:numColumns="3"
-                android:horizontalSpacing="7dp"
                 android:verticalSpacing="7dp" />
 
             <View
@@ -283,6 +282,16 @@
                 android:layout_height="wrap_content"
                 android:divider="@color/transparent"
                 android:dividerHeight="20dp" />
+
+            <TextView
+                android:id="@+id/tv_none_job_experience"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="暂无工作经历"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/colorMiddle"
+                android:textSize="16sp"/>
 
         </LinearLayout>
 

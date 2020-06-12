@@ -43,12 +43,21 @@ public final class StaffMainActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        mStaffDataFragment = new StaffDataFragment();
-        mStaffAccountFragment = new StaffAccountFragment();
-        mStaffSettleFragment = new StaffSettleFragment();
-        mFragmentManager = getSupportFragmentManager();
-        // 切换fragment
-        switchFragment(mStaffDataFragment);
+        String staffId = getIntent().getStringExtra("staffId");
+        if (staffId != null) {
+            // 员工资料
+            mStaffDataFragment = new StaffDataFragment(staffId);
+            // 员工会计账户
+            mStaffAccountFragment = new StaffAccountFragment(staffId);
+            // 员工结算账户
+            mStaffSettleFragment = new StaffSettleFragment(staffId);
+            mFragmentManager = getSupportFragmentManager();
+            // 切换fragment
+            switchFragment(mStaffDataFragment);
+        } else {
+            toast("数据异常");
+            finish();
+        }
     }
 
     @Override

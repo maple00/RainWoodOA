@@ -43,10 +43,12 @@ public final class TeamFundsAdapter extends RecyclerView.Adapter<TeamFundsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.content.setText(mList.get(position).getContent());
+        holder.content.setText(mList.get(position).getText());
         holder.time.setText(mList.get(position).getTime());
-        holder.money.setText(mList.get(position).getMoney());
-        holder.money.setTextColor(mList.get(position).getMoney().startsWith("+")
+        holder.money.setText("收入".equals(mList.get(position).getDirection())
+                ? "+" + mList.get(position).getMoney()
+                : "-" + mList.get(position).getMoney());
+        holder.money.setTextColor("收入".equals(mList.get(position).getDirection())
                 ? mContext.getColor(R.color.colorPrimary) : mContext.getColor(R.color.fontColor));
         // 点击事件
     }

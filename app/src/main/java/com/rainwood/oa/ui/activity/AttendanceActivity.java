@@ -188,9 +188,6 @@ public final class AttendanceActivity extends BaseActivity {
         mMonthSalaryAdapter.setList(mMonthSalaryList);
 
         /*
-         * TODO: 从这里进行数据请求
-         */
-        /*
         模拟日历信息
          */
         InnerPainter innerPainter = (InnerPainter) mMiui9Calendar.getCalendarPainter();

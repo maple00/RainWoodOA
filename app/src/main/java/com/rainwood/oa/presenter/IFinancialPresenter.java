@@ -18,5 +18,5 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
     /**
      * 请求团队基金数据
      */
-    void requestTeamFundsData();
+    void requestTeamFundsData(String direction);
 }

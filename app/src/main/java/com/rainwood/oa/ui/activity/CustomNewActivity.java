@@ -216,7 +216,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
                 break;
             case R.id.tv_demand_detail_content:
                 // 填写需求详情
-                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情"),
+                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情","需求详情"),
                         CUSTOM_DEMAND_WRITE_SIZE);
                 break;
             case R.id.btn_confirm:
@@ -297,7 +297,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
     @Override
     public void createCustomData(boolean isSuccess, String warn) {
         if (isSuccess){
-            startActivity(getNewIntent(this, CustomDetailActivity.class, "客户详情"));
+            startActivity(getNewIntent(this, CustomDetailActivity.class, "客户详情", "客户详情"));
         }else {
            toast(warn);
         }

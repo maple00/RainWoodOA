@@ -1,61 +1,67 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/27 9:06
  * @Desc: 补卡记录
  */
-public final class CardRecord {
+public final class CardRecord implements Serializable {
 
+    /**
+     * id
+     */
+    private String id;
     /**
      * 申请人
      */
-    private String name;
+    private String staffName;
 
     /**
      * 状态
      */
-    private String status;
+    private String workFlow;
 
     /**
      * 补卡时间
      */
-    private String time;
+    private String signTime;
 
     /**
      * 补卡内容
      */
-    private String content;
+    private String text;
 
-    public String getName() {
-        return name;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
-    public String getStatus() {
-        return status;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
     }
 
-    public String getContent() {
-        return content;
+    public String getText() {
+        return text;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getTime() {
-        return time;
+    public String getSignTime() {
+        return signTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setSignTime(String signTime) {
+        this.signTime = signTime;
     }
 }

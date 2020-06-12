@@ -9,15 +9,18 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.AdminLeaveOut;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
+import com.rainwood.oa.ui.adapter.AdminLeaveOutAdapter;
+import com.rainwood.oa.ui.adapter.AdminOvertimeAdapter;
 import com.rainwood.oa.ui.adapter.CardRecordAdapter;
 import com.rainwood.oa.ui.adapter.LeaveAdapter;
 import com.rainwood.oa.ui.adapter.LeaveOutAdapter;
@@ -30,6 +33,7 @@ import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -37,7 +41,6 @@ import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: a797s
@@ -68,7 +71,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
     @ViewInject(R.id.rv_record_list)
-    private RecyclerView recordList;
+    private RecyclerView recordListView;
 
     private IRecordManagerPresenter mRecordManagerPresenter;
 
@@ -77,6 +80,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
      */
     // 加班记录
     private OvertimeAdapter mOvertimeAdapter;
+    private AdminOvertimeAdapter mAdminOvertimeAdapter;
     // 请假记录
     private LeaveAdapter mLeaveAdapter;
     // 外出记录
@@ -88,7 +92,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     // 选择flag
     private boolean selectedTimeFlag = false;
-
+    private AdminLeaveOutAdapter mAdminLeaveOutAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -104,24 +108,28 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         topStatusLL.setVisibility(Constants.CUSTOM_ID == null ? View.VISIBLE : View.GONE);
         topRightMenu.setVisibility(Constants.CUSTOM_ID == null ? View.GONE : View.VISIBLE);
         // 设置布局管理器
-        recordList.setLayoutManager(new GridLayoutManager(this, 1));
-        recordList.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
+        recordListView.setLayoutManager(new GridLayoutManager(this, 1));
+        recordListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         // 设置适配器属性
         if (title.equals("加班记录")) {
             mOvertimeAdapter = new OvertimeAdapter();
-            recordList.setAdapter(mOvertimeAdapter);
+            mAdminOvertimeAdapter = new AdminOvertimeAdapter();
+            recordListView.setAdapter(mOvertimeAdapter);
+            recordListView.setAdapter(mAdminOvertimeAdapter);
         } else if ("请假记录".equals(title)) {
             mLeaveAdapter = new LeaveAdapter();
-            recordList.setAdapter(mLeaveAdapter);
+            recordListView.setAdapter(mLeaveAdapter);
         } else if (title.contains("外出")) {
             mOutAdapter = new LeaveOutAdapter();
-            recordList.setAdapter(mOutAdapter);
+            mAdminLeaveOutAdapter = new AdminLeaveOutAdapter();
+            recordListView.setAdapter(mOutAdapter);
+            recordListView.setAdapter(mAdminLeaveOutAdapter);
         } else if (title.contains("补卡")) {
             mCardRecordAdapter = new CardRecordAdapter();
-            recordList.setAdapter(mCardRecordAdapter);
+            recordListView.setAdapter(mCardRecordAdapter);
         } else if (title.contains("回款")) {
             mReceivableRecordAdapter = new ReceivableRecordAdapter();
-            recordList.setAdapter(mReceivableRecordAdapter);
+            recordListView.setAdapter(mReceivableRecordAdapter);
         }
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
@@ -132,15 +140,19 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     protected void loadData() {
         // 从这里request data
         if (title.contains("加班")) {
-            if (Constants.CUSTOM_ID != null){
+            if (Constants.CUSTOM_ID != null) {
                 mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
-            }else {
+            } else {
                 mRecordManagerPresenter.requestOvertimeRecord();
             }
         } else if (title.contains("请假")) {
             mRecordManagerPresenter.requestLeaveRecord();
         } else if (title.contains("外出")) {
-            mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
+            if (Constants.CUSTOM_ID != null) {
+                mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
+            } else {
+                mRecordManagerPresenter.requestGoOutRecord();
+            }
         } else if (title.contains("补卡")) {
             mRecordManagerPresenter.requestReissueRecord();
         } else if (title.contains("回款")) {
@@ -158,26 +170,33 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     protected void initEvent() {
         if (title.contains("加班")) {
             mOvertimeAdapter.setItemOvertime(overtimeRecord -> {
-                // 加班详情
+                // 客户管理--加班详情
                 toast("点击了---" + overtimeRecord.getStaffName());
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情"));
+                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
+            });
+            // 行政人事
+            mAdminOvertimeAdapter.setItemOvertime(new AdminOvertimeAdapter.OnClickItemOvertimeListener() {
+                @Override
+                public void onClickOvertime(AdminOverTime overtimeRecord) {
+                    toast("加班详情");
+                }
             });
         } else if (title.contains("请假")) {
             mLeaveAdapter.setClickItemLeave(leaveRecord -> {
                 // 请假详情
-                toast("点击了-----" + leaveRecord.getName());
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "请假详情"));
+                toast("点击了-----" + leaveRecord.getStaffName());
+                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "请假详情", "请假详情"));
             });
         } else if (title.contains("外出")) {
             mOutAdapter.setItemGoOut(leaveOutRecord -> {
                 // 外出详情
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情"));
+                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情", "外出详情"));
             });
         } else if (title.contains("补卡")) {
             mCardRecordAdapter.setItemGoOut(cardRecord -> {
                 // 补卡详情
-                toast("查看详情---" + cardRecord.getName());
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "补卡详情"));
+                toast("查看详情---" + cardRecord.getStaffName());
+                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "补卡详情", "补卡详情"));
             });
         } else if (title.contains("回款")) {
             mReceivableRecordAdapter.setClickReceivable((record, position) ->
@@ -233,37 +252,46 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     @SuppressWarnings("all")
     @Override
     public void getOvertimeRecords(List<OvertimeRecord> overtimeRecords) {
-        // 加班记录
+        // 客户管理---加班记录
         mOvertimeAdapter.setOvertimeRecordList(overtimeRecords);
     }
 
     @SuppressWarnings("all")
     @Override
-    public void getLeaveRecords(Map recordMap) {
-        // 请假记录
-        List<LeaveRecord> leaveRecordList = (List<LeaveRecord>) recordMap.get("leave");
-        mLeaveAdapter.setLeaveList(leaveRecordList);
-    }
-
-    @SuppressWarnings("all")
-    @Override
     public void getGoOutRecords(List<LeaveOutRecord> leaveOutList) {
-        // 外出记录
+        // 客户管理--- 外出记录
         mOutAdapter.setLeaveOutRecordList(leaveOutList);
     }
 
     @SuppressWarnings("all")
     @Override
-    public void getReissueRecords(Map reissueMap) {
-        // 补卡记录
-        List<CardRecord> cardList = (List<CardRecord>) reissueMap.get("cardRecord");
-        mCardRecordAdapter.setLeaveOutRecordList(cardList);
+    public void getReissueRecords(List<CardRecord> cardRecordList) {
+        //  行政人事---补卡记录
+        mCardRecordAdapter.setLeaveOutRecordList(cardRecordList);
     }
 
     @Override
     public void getCustomReceivableRecords(List<ReceivableRecord> receivableRecordList) {
-        // 回款记录
+        //  客户管理---回款记录
         mReceivableRecordAdapter.setRecordList(receivableRecordList);
+    }
+
+    @Override
+    public void getAdminOverTimeRecords(List<AdminOverTime> adminOverTimeList) {
+        // 行政人事-- 加班记录
+        mAdminOvertimeAdapter.setOvertimeRecordList(adminOverTimeList);
+    }
+
+    @Override
+    public void getLeaveRecords(List<LeaveRecord> leaveRecordList) {
+        //  行政人事---请假记录
+        mLeaveAdapter.setLeaveList(leaveRecordList);
+    }
+
+    @Override
+    public void getAdminLeaveOutRecords(List<AdminLeaveOut> adminLeaveOutList) {
+        // 行政人事---外出记录
+        mAdminLeaveOutAdapter.setLeaveOutRecordList(adminLeaveOutList);
     }
 
     @Override

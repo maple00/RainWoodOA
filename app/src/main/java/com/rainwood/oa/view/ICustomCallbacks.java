@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @Author: a797s
  * @Date: 2020/5/18 14:45
- * @Desc:
+ * @Desc: 客户callbacks
  */
 public interface ICustomCallbacks extends IBaseCallback {
 

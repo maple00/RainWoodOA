@@ -16,17 +16,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="42dp"
-        android:text="奖金拨付"
         android:textColor="@color/fontColor"
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/tv_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:gravity="bottom"
-        android:text="+300.00"
         android:textColor="@color/fontColor"
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -38,21 +37,23 @@
         android:layout_marginEnd="15dp" />
 
     <com.rainwood.oa.ui.widget.GroupTextText
+        android:id="@+id/gtt_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="27dp"
         android:layout_marginEnd="30dp"
         app:title="简要说明"
-        app:values="订单【秦工设备20191217001】任务测试任务】" />
+        app:values=" " />
 
     <com.rainwood.oa.ui.widget.GroupTextText
+        android:id="@+id/gtt_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="30dp"
         app:title="时间"
-        app:values="2020.04.08 13:50" />
+        app:values=" " />
 
 </LinearLayout>

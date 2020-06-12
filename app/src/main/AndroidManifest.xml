@@ -411,9 +411,9 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
-        <!-- 团队基金 TeamFundsActivity-->
+        <!-- 账户金额 AccountFundsActivity-->
         <activity
-            android:name=".ui.activity.TeamFundsActivity"
+            android:name=".ui.activity.AccountFundsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
@@ -462,6 +462,49 @@
         <!-- 帮助中心 HelperActivity-->
         <activity
             android:name=".ui.activity.HelperActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 个人中心-->
+        <!-- 个人资料 MineInfoActivity-->
+        <activity
+            android:name=".ui.activity.MineInfoActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 我的补卡记录 MineReissueCardActivity-->
+        <activity
+            android:name=".ui.activity.MineReissueCardActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 补卡申请 ReissueApplyActivity-->
+        <activity
+            android:name=".ui.activity.ReissueApplyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 我的公共页面 MineCommonActivity-->
+        <activity
+            android:name=".ui.activity.MineCommonActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 我的请假记录 MineRecordsActivity-->
+        <activity
+            android:name=".ui.activity.MineRecordsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!-- 我的开票记录 MineInvoiceRecordActivity-->
+        <activity
+            android:name=".ui.activity.MineInvoiceRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />

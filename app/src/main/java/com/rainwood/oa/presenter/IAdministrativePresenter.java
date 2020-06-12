@@ -16,6 +16,11 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
     void requestAllRole();
 
     /**
+     * 请求角色详情
+     */
+    void requestRoleDetailById(String roleId);
+
+    /**
      * 部门管理列表
      */
     void requestAllDepartData();

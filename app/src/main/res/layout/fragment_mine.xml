@@ -26,6 +26,7 @@
                 android:paddingBottom="25dp">
 
                 <RelativeLayout
+                    android:id="@+id/rl_mine_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
@@ -71,6 +72,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rl_account_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"

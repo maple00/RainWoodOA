@@ -1,38 +1,63 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/25 18:19
  * @Desc: 员工结算账户
  */
-public final class StaffSettlement {
+public final class StaffSettlement implements Serializable {
 
     /**
-     * 结算事件
+     * id
      */
-    private String event;
+    private String id;
 
     /**
-     * 结算金额
+     * 方式
+     */
+    private String direction;
+
+    /**
+     * 金额
      */
     private String money;
 
     /**
-     * 结算时间
+     * 余额
+     */
+    private String balance;
+
+    /**
+     * 备注
+     */
+    private String text;
+
+    /**
+     * 发生时间
      */
     private String time;
 
     /**
-     * 支付凭证【图片】
+     * 凭证
      */
-    private String voucher;
+    private String ico;
 
-    public String getEvent() {
-        return event;
+    public String getId() {
+        return id;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public String getMoney() {
@@ -43,6 +68,22 @@ public final class StaffSettlement {
         this.money = money;
     }
 
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public String getTime() {
         return time;
     }
@@ -51,12 +92,12 @@ public final class StaffSettlement {
         this.time = time;
     }
 
-    public String getVoucher() {
-        return voucher;
+    public String getIco() {
+        return ico;
     }
 
-    public void setVoucher(String voucher) {
-        this.voucher = voucher;
+    public void setIco(String ico) {
+        this.ico = ico;
     }
 }
 

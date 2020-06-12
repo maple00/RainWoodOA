@@ -53,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
     protected String title;
+    protected String moduleMenu;
     public CommonPopupWindow mCommonPopupWindow;
 
     @Override
@@ -61,6 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         setContentView(getLayoutResId());
         ViewBind.inject(this);
         title = getIntent().getStringExtra("title") == null ? "" : getIntent().getStringExtra("title");
+        moduleMenu = getIntent().getStringExtra("menu") == null ? "" : getIntent().getStringExtra("menu");
         setStatusBar();
         initView();
         initEvent();
@@ -137,9 +139,10 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     /**
      * startActivity 优化
      */
-    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title) {
+    protected Intent getNewIntent(Context context, Class<? extends BaseActivity> clazz, String title, String menu) {
         Intent intent = new Intent(context, clazz);
         intent.putExtra("title", title);
+        intent.putExtra("menu", menu);
         return intent;
     }
 

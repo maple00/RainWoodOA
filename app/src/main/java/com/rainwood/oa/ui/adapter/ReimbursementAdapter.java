@@ -47,15 +47,15 @@ public final class ReimbursementAdapter extends RecyclerView.Adapter<Reimburseme
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.type.setText(mList.get(position).getType());
         holder.money.setText(mList.get(position).getMoney());
-        holder.voucher.setVisibility(mList.get(position).isVoucher() ? View.VISIBLE : View.GONE);
+        holder.voucher.setVisibility(mList.get(position).isIco() ? View.VISIBLE : View.GONE);
         holder.nameContent.setText(Html.fromHtml("<font color='" + mContext.getColor(R.color.fontColor) + "'> "
-                + mList.get(position).getName() + "</font>" +
-                "<font color='" + mContext.getColor(R.color.labelColor) + "'> | " + mList.get(position).getContent() + "</font>"));
-        holder.allocatedChecked.setImageDrawable("已拨付".equals(mList.get(position).getAllocated())
+                + mList.get(position).getStaffName() + "</font>" +
+                "<font color='" + mContext.getColor(R.color.labelColor) + "'> | " + mList.get(position).getText() + "</font>"));
+        holder.allocatedChecked.setImageDrawable("是".equals(mList.get(position).getPay())
                 ? mContext.getDrawable(R.drawable.ic_reimburse_checked)
                 : mContext.getDrawable(R.drawable.ic_reimburse_unchecked));
-        holder.reimburse.setText(mList.get(position).getAllocated());
-        holder.time.setText(mList.get(position).getTime());
+        holder.reimburse.setText("是".equals(mList.get(position).getPay()) ? "已拨付" : "未拨付");
+        holder.time.setText(mList.get(position).getPayDate());
         // 点击事件
         holder.itemReimburse.setOnClickListener(v -> {
             // 查看详情

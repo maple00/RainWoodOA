@@ -28,6 +28,7 @@ public final class StaffExperienceAdapter extends BaseAdapter {
 
     public void setList(List<StaffExperience> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -57,13 +58,14 @@ public final class StaffExperienceAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.company.setText(TextUtils.isEmpty(getItem(position).getCompany()) ? "" : getItem(position).getCompany());
-        holder.post.setText(TextUtils.isEmpty(getItem(position).getPost()) ? "" : getItem(position).getPost());
-        holder.entryOutTime.setText((TextUtils.isEmpty(getItem(position).getEntryTime()) ? "" : getItem(position).getCompany())
-                + "-"
-                + (TextUtils.isEmpty(getItem(position).getDepartureTime()) ? "" : getItem(position).getDepartureTime()));
-        holder.duty.setText(TextUtils.isEmpty(getItem(position).getResponsibility()) ? "" : getItem(position).getResponsibility());
-        holder.leavingReason.setText(TextUtils.isEmpty(getItem(position).getReason()) ? "" : getItem(position).getReason());
+        holder.company.setText(TextUtils.isEmpty(getItem(position).getCompanyName()) ? "" : getItem(position).getCompanyName());
+        holder.post.setText(TextUtils.isEmpty(getItem(position).getPosition()) ? "" : getItem(position).getPosition());
+        //holder.entryOutTime.setText((TextUtils.isEmpty(getItem(position).getEntryTime()) ? "" : getItem(position).getCompanyName())
+        //        + "-"
+        //        + (TextUtils.isEmpty(getItem(position).getDepartureTime()) ? "" : getItem(position).getDepartureTime()));
+        holder.entryOutTime.setText(getItem(position).getDayStart());
+        holder.duty.setText(TextUtils.isEmpty(getItem(position).getContent()) ? "" : getItem(position).getContent());
+        holder.leavingReason.setText(TextUtils.isEmpty(getItem(position).getCause()) ? "" : getItem(position).getCause());
         // 点击事件--查看详情
         holder.itemExperience.setOnClickListener(v -> mClickExperience.onClickExperience(getItem(position)));
         return convertView;

@@ -37,6 +37,17 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
     }
 
     /**
+     * 角色详情
+     * @param roleId
+     */
+    @Override
+    public void requestRoleDetailById(String roleId) {
+        RequestParams params = new RequestParams();
+        params.add("id", roleId);
+        OkHttp.post(Constants.BASE_URL + "cla=role&fun=detail", params, this);
+    }
+
+    /**
      * 部门管理列表
      */
     @Override
@@ -117,6 +128,10 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        // 角色权限详情
+        else if (result.url().contains("cla=role&fun=detail")){
+
         }
         // 部门列表
         else if (result.url().contains("cla=department&fun=home")){
