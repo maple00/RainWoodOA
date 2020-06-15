@@ -13,7 +13,12 @@ public final class SubRoleXPermission implements Serializable {
     /**
      * 某个权限
      */
-    private String XPermission;
+    private String menuTwo;
+
+    /**
+     * 关键词
+     */
+    private String key;
 
     /**
      * 是否拥有某个权限
@@ -23,7 +28,23 @@ public final class SubRoleXPermission implements Serializable {
     /**
      * 某个权限下的具体权限
      */
-    private List<RoleDetailXPermission> detailXPermissions;
+    private List<RoleDetailXPermission> array;
+
+    public String getMenuTwo() {
+        return menuTwo;
+    }
+
+    public void setMenuTwo(String menuTwo) {
+        this.menuTwo = menuTwo;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public boolean isChecked() {
         return checked;
@@ -33,19 +54,11 @@ public final class SubRoleXPermission implements Serializable {
         this.checked = checked;
     }
 
-    public String getXPermission() {
-        return XPermission;
+    public List<RoleDetailXPermission> getArray() {
+        return array;
     }
 
-    public void setXPermission(String XPermission) {
-        this.XPermission = XPermission;
-    }
-
-    public List<RoleDetailXPermission> getDetailXPermissions() {
-        return detailXPermissions;
-    }
-
-    public void setDetailXPermissions(List<RoleDetailXPermission> detailXPermissions) {
-        this.detailXPermissions = detailXPermissions;
+    public void setArray(List<RoleDetailXPermission> array) {
+        this.array = array;
     }
 }

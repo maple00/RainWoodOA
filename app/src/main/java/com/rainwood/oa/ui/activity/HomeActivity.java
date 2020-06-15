@@ -43,7 +43,7 @@ public final class HomeActivity extends BaseActivity {
     @Override
     protected int getLayoutResId() {
         // 注册
-        if (!EventBus.getDefault().isRegistered(this)){
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
         return R.layout.activity_main;
@@ -192,7 +192,7 @@ public final class HomeActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
             if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                toast("再按一次退出到桌面");
+                toast(R.string.home_exit_hint);
                 mExitTime = System.currentTimeMillis();
                 return false;
             } else {
@@ -200,6 +200,18 @@ public final class HomeActivity extends BaseActivity {
                 return true;
             }
         }
+       /* if (DoubleClickHelper.isOnDoubleClick()) {
+            // 移动到上一个任务栈，避免侧滑引起的不良反应
+            moveTaskToBack(false);
+            postDelayed(() -> {
+                // 进行内存优化，销毁掉所有的界面
+                ActivityStackManager.getInstance().finishAllActivities();
+                // 销毁进程（注意：调用此 API 可能导致当前 Activity onDestroy 方法无法正常回调）
+                // System.exit(0);
+            }, 300);
+        } else {
+            toast(R.string.home_exit_hint);
+        }*/
         return super.onKeyDown(keyCode, event);
     }
 }

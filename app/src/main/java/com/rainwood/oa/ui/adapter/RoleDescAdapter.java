@@ -13,7 +13,6 @@ import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Author: a797s

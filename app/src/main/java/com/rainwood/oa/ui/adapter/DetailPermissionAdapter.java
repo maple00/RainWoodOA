@@ -26,6 +26,7 @@ public final class DetailPermissionAdapter extends BaseAdapter {
 
     public void setXPermissionList(List<RoleDetailXPermission> XPermissionList) {
         mXPermissionList = XPermissionList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -55,8 +56,8 @@ public final class DetailPermissionAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.permission.setChecked(getItem(position).isChecked());
-        holder.permissionName.setText(getItem(position).getDetailX());
+        holder.permission.setChecked("yes".equals(getItem(position).getHook()));
+        holder.permissionName.setText(getItem(position).getName());
         return convertView;
     }
 

@@ -81,4 +81,19 @@ public interface IMineCallbacks extends IBaseCallback {
      * 我的-- 开记录
      */
     default void getMineInvoiceRecords(List<MineInvoice> invoiceList){}
+
+    /**
+     * 获取短信验证码
+     */
+    default void getSmsVerifyCode(String smsId){}
+
+    /***
+     * 校验验证码
+     */
+    default void getVerifySuccess(boolean success){}
+
+    /**
+     * 退出登录
+     */
+    default void getLogout(boolean success){}
 }

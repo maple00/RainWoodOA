@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="旧密码"
+                    android:textColor="@color/colorMiddle" />
+
+                <com.rainwood.tools.wheel.view.PasswordEditText
+                    android:id="@+id/pet_current_pwd"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入当前密码"
+                    app:regexType="nonnull" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="新密码"
+                    android:textColor="@color/colorMiddle" />
+
+                <com.rainwood.tools.wheel.view.PasswordEditText
+                    android:id="@+id/pet_new_pwd"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入新密码"
+                    app:regexType="nonnull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="确认密码"
+                    android:textColor="@color/colorMiddle" />
+
+                <com.rainwood.tools.wheel.view.PasswordEditText
+                    android:id="@+id/pet_confirm_pwd"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请再次输入新密码"
+                    app:regexType="nonnull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="手机号"
+                    android:textColor="@color/colorMiddle" />
+                <!-- 此手机号为当前账号绑定手机号，此处不可修改-->
+                <com.rainwood.tools.wheel.view.ClearEditText
+                    android:id="@+id/cet_tel"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="请输入当前手机号"
+                    android:inputType="phone"
+                    app:regexType="mobile" />
+
+                <com.rainwood.tools.wheel.view.CountdownView
+                    android:id="@+id/cv_verify_code"
+                    style="@style/CountdownViewStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="验证码"
+                    android:textColor="@color/colorMiddle" />
+
+                <com.rainwood.tools.wheel.view.RegexEditText
+                    android:id="@+id/ret_sms_code"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入短信验证码"
+                    android:inputType="number"
+                    app:regexType="count" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_confirm_changed"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:text="确认修改" />
+
+        </LinearLayout>
+
+    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+
+
+</LinearLayout>

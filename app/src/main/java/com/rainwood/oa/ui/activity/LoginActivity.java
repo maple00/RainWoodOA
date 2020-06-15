@@ -102,7 +102,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
             case R.id.btn_login:
                 // 登录
                 account.setText("邵雪松");
-                password.setText("ds1124+0929");
+                password.setText("123456");
                /* if (TextUtils.isEmpty(account.getText())) {
                     toast("请输入用户名");
                     return;
@@ -129,7 +129,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                                 if (isAll) {
                                     startActivity(HomeActivity.class);
                                     // mLoginAboutPresenter.Login(account.getText().toString().trim(),
-                                    // password.getText().toString().trim());
+                                    //         password.getText().toString().trim());
                                 }
                             }
 

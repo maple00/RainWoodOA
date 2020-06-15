@@ -12,12 +12,22 @@ public final class RoleDetailXPermission implements Serializable {
     /**
      * 具体权限
      */
-    private String detailX;
+    private String name;
 
     /**
      * 是否拥有这个权限
      */
     private boolean checked;
+
+    /**
+     * 关键词
+     */
+    private String key;
+
+    /**
+     * 是否拥有这个权限
+     */
+    private String hook;
 
     public boolean isChecked() {
         return checked;
@@ -27,11 +37,27 @@ public final class RoleDetailXPermission implements Serializable {
         this.checked = checked;
     }
 
-    public String getDetailX() {
-        return detailX;
+    public String getName() {
+        return name;
     }
 
-    public void setDetailX(String detailX) {
-        this.detailX = detailX;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getHook() {
+        return hook;
+    }
+
+    public void setHook(String hook) {
+        this.hook = hook;
     }
 }

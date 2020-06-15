@@ -21,6 +21,10 @@ public interface IAdministrativeCallbacks extends IBaseCallback {
     default void getAllData2List(List<RolePermission> rolePermissions) {
     }
 
+    /**
+     * 角色详情
+     */
+    default void getRoleXPermissionDetail(RolePermission rolePermission){}
 
     /**
      * 部门管理列表data

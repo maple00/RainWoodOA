@@ -12,7 +12,6 @@
     <string name="text_mine_manager">我的管理</string>
     <string name="text_home_salary_line_curve">工资曲线</string>
     <string name="text_query_all">查看全部</string>
-
     <!-- 日期组合控件-->
     <string name="common_year">年</string>
     <string name="common_month">月</string>
@@ -38,6 +37,8 @@
     <string name="update_no">下次再说</string>
     <string name="update_yes">立即更新</string>
     <string name="update_background">后台更新</string>
+    <string name="common_permission_hint">请先授予权限</string>
+    <string name="common_permission_fail">授权失败，请手动授予权限</string>
     <string name="text_common_search">搜索</string>
     <string name="text_mine_logout">退出登录</string>
 
@@ -47,7 +48,7 @@
     <string name="common_delete">删除</string>
     <string name="common_code_send">发送验证码</string>
     <string name="common_code_send_hint">验证码已发送，请注意查收</string>
-
+    <string name="home_exit_hint">再按一次退出</string>
     <!-- 考勤-->
     <string name="attendance_title">我的考勤</string>
     <string name="attendance_current_day">当日考勤</string>

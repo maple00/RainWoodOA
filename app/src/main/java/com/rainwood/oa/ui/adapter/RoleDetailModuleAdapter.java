@@ -30,6 +30,7 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
 
     public void setPermissionList(List<SubRoleXModule> permissionList) {
         mPermissionList = permissionList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,7 +42,7 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.moduleName.setText(mPermissionList.get(position).getName());
+        holder.moduleName.setText(mPermissionList.get(position).getMenuOne());
         holder.selected.setImageResource(mPermissionList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         // 选模块 -- 点击折叠
         holder.selectedModule.setOnClickListener(v -> {
@@ -51,7 +52,7 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
         // 子项-- 所有权限列表
         RolePermissionAdapter permissionAdapter = new RolePermissionAdapter();
         holder.permissionList.setAdapter(permissionAdapter);
-        permissionAdapter.setPermissionList(mPermissionList.get(position).getPermissions());
+        permissionAdapter.setPermissionList(mPermissionList.get(position).getArray());
         // 子项隐藏
         if (!mPermissionList.get(position).isHasSelected()){   // 子项的隐藏显示
             holder.permissionList.setVisibility(View.GONE);

@@ -16,13 +16,14 @@ import androidx.fragment.app.Fragment;
 import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.wheel.action.HandlerAction;
 
 /**
  * @Author: a797s
  * @Date: 2020/4/27 16:15
  * @Desc: fragment基类
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements HandlerAction {
 
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
@@ -192,6 +193,11 @@ public abstract class BaseFragment extends Fragment {
         intent.putExtra("title", title);
         intent.putExtra("menu", menu);
         return intent;
+    }
+
+    protected void openActivity(Class clazz) {
+        Intent intent = new Intent(getContext(), clazz);
+        startActivity(intent);
     }
 
 }

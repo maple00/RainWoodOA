@@ -175,6 +175,38 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=kehuInvoice", params, this);
     }
 
+    /**
+     * 请求短信验证码
+     */
+    @Override
+    public void requestSmsVerifyCode() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=sms", params, this);
+    }
+
+    /**
+     * 验证短信验证码
+     */
+    @Override
+    public void requestCheckedSms(String currentPwd, String newPwd, String confirmPwd, String verifyCode, String smsSecret) {
+        RequestParams params = new RequestParams();
+        params.add("oldPas", currentPwd);
+        params.add("newPas", newPwd);
+        params.add("surePas", confirmPwd);
+        params.add("prove", verifyCode);
+        params.add("smsid", smsSecret);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=pas", params, this);
+    }
+
+    /**
+     * 退出登录
+     */
+    @Override
+    public void requestLogout() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=loginOut", params, this);
+    }
+
     @Override
     public void registerViewCallback(IMineCallbacks callback) {
         this.mMineCallbacks = callback;
@@ -317,7 +349,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             }
         }
         // 费用报销
-        else if (result.url().contains("cla=my&fun=cost")){
+        else if (result.url().contains("cla=my&fun=cost")) {
             try {
                 List<MineReimbursement> reimbursementList = JsonParser.parseJSONArray(MineReimbursement.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
@@ -327,11 +359,38 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             }
         }
         // 开票记录
-        else if (result.url().contains("cla=my&fun=kehuInvoice")){
+        else if (result.url().contains("cla=my&fun=kehuInvoice")) {
             try {
                 List<MineInvoice> reimbursementList = JsonParser.parseJSONArray(MineInvoice.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
                 mMineCallbacks.getMineInvoiceRecords(reimbursementList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 获取短信验证码
+        else if (result.url().contains("cla=my&fun=sms")) {
+            try {
+                String smsId = JsonParser.parseJSONObjectString(result.body()).getString("smsid");
+                mMineCallbacks.getSmsVerifyCode(smsId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 验证短信验证码
+        else if (result.url().contains("cla=my&fun=pas")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mMineCallbacks.getVerifySuccess("success".equals(warn));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 退出登录
+        else if (result.url().contains("cla=my&fun=loginOut")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mMineCallbacks.getLogout("success".equals(warn));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -47,16 +47,16 @@ public final class MessageDialog {
             return this;
         }
 
-        /*
-        设置是显示弹窗还是弹窗关闭按钮
+        /**
+         * 设置是显示弹窗还是弹窗关闭按钮
          */
-        public Builder setShowConfirm(boolean dismiss){
+        public Builder setShowConfirm(boolean dismiss) {
             LinearLayout confirm = findViewById(R.id.ll_confirm);
             ImageView dialogClose = findViewById(R.id.iv_dialog_close);
-            if (dismiss){
+            if (dismiss) {
                 confirm.setVisibility(View.GONE);
                 dialogClose.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 confirm.setVisibility(View.VISIBLE);
                 dialogClose.setVisibility(View.GONE);
             }

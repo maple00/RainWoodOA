@@ -53,7 +53,7 @@ public final class RoleModuleAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.roleModule.setText(getItem(position).getName());
+        holder.roleModule.setText(getItem(position).getMenuOne());
         return convertView;
     }
 

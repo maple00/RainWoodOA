@@ -1,7 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -82,10 +81,10 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
                     pageTitle.setText("");
                 } else if (state == State.COLLAPSED) {
                     LogUtils.d("sxs", "折叠状态");
-                    pageTitle.setText("超级管理员");
+                    pageTitle.setText("角色权限详情");
                 } else {
                     LogUtils.d("sxs", "中间状态");
-                    pageTitle.setText("超级管理员");
+                    pageTitle.setText("角色权限详情");
                 }
             }
         });
@@ -100,7 +99,7 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
     @Override
     protected void loadData() {
         String roleId = getIntent().getStringExtra("roleId");
-        if (roleId != null){
+        if (roleId != null) {
             mAdministrativePresenter.requestRoleDetailById(roleId);
         }
         //mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
@@ -108,12 +107,19 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
 
     @SingleClick
     @OnClick({R.id.iv_page_back})
-    public void onClick(View view){
-        switch (view.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void getRoleXPermissionDetail(RolePermission rolePermission) {
+        roleName.setText(rolePermission.getName());
+        roleDesc.setText(rolePermission.getText());
+        mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
     }
 
     @Override

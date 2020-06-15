@@ -27,12 +27,13 @@ public final class CountdownView extends AppCompatTextView implements Runnable {
     /**
      * 秒数单位文本提示
      */
-    private static final String TIME_DESC = "后重新发送";
+    private static final String TIME_DESC = "后可重发";
 
     /**
      * 当前秒数
      */
     private int mCurrentSecond;
+
     /**
      * 记录原有的文本
      */
@@ -48,6 +49,14 @@ public final class CountdownView extends AppCompatTextView implements Runnable {
 
     public CountdownView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public int getCurrentSecond() {
+        return mCurrentSecond;
+    }
+
+    public void setCurrentSecond(int currentSecond) {
+        mCurrentSecond = currentSecond;
     }
 
     /**
@@ -96,7 +105,7 @@ public final class CountdownView extends AppCompatTextView implements Runnable {
             stop();
         } else {
             mCurrentSecond--;
-            setText(mCurrentSecond + " " + TIME_UNIT + TIME_DESC);
+            setText(mCurrentSecond + "" + TIME_UNIT + TIME_DESC);
             postDelayed(this, 1000);
         }
     }

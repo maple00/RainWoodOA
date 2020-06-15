@@ -2,9 +2,9 @@ package com.rainwood.oa.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,14 +21,19 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
-import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.MineData;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.activity.AccountFundsActivity;
+import com.rainwood.oa.ui.activity.ChangePwdActivity;
+import com.rainwood.oa.ui.activity.LoginActivity;
 import com.rainwood.oa.ui.activity.MineInfoActivity;
 import com.rainwood.oa.ui.adapter.ItemModuleAdapter;
 import com.rainwood.oa.ui.adapter.MineAccountAdapter;
+import com.rainwood.oa.ui.dialog.MessageDialog;
+import com.rainwood.oa.ui.dialog.UpdateDialog;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.ActivityStackManager;
+import com.rainwood.oa.utils.AppCacheDataManager;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tkrefreshlayout.views.RWNestedScrollView;
@@ -36,9 +41,12 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.SmartUtil;
+import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.SettingBar;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: a797s
@@ -58,17 +66,13 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     private ImageView headPhoto;
     @ViewInject(R.id.tv_balance)
     private TextView accountBalance;
+    @ViewInject(R.id.sb_clear_cache)
+    private SettingBar clearCacheView;
     // 账户
     @ViewInject(R.id.mgv_account)
     private MeasureGridView accountGv;
     @ViewInject(R.id.mgv_mine_manager)
     private MeasureGridView mineManager;
-    // app应用信息
-    //@ViewInject(R.id.mlv_app)
-    // private MeasureListView appData;
-    @ViewInject(R.id.btn_logout)
-    private Button logout;
-
     @ViewInject(R.id.ll_mine_parent)
     private LinearLayout mineParent;
     @ViewInject(R.id.rns_scroll)
@@ -85,6 +89,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     private ItemModuleAdapter mModuleAdapter;
 
     private int mScrollY = 0;
+    private String telNumber;
 
     @Override
     protected int getRootViewResId() {
@@ -108,7 +113,9 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         // 设置适配器
         accountGv.setAdapter(mMineAccountAdapter);
         mineManager.setAdapter(mModuleAdapter);
-        //
+
+        // 设置缓存
+        clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(Objects.requireNonNull(getContext())));
     }
 
     @Override
@@ -171,6 +178,80 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         });
     }
 
+    @SingleClick
+    @OnClick({R.id.ll_network_error_tips, R.id.btn_logout, R.id.rl_mine_data, R.id.rl_account_account,
+            R.id.sb_mine_changed_pwd, R.id.sb_clear_cache, R.id.sb_update_version})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                onRetryClick();
+                break;
+            case R.id.rl_mine_data:
+                //toast("我的个人信息");
+                startActivity(getNewIntent(getContext(), MineInfoActivity.class, "个人资料", " 个人资料"));
+                break;
+            case R.id.rl_account_account:
+                startActivity(getNewIntent(getContext(), AccountFundsActivity.class, "会计账户", "accountAccount"));
+                break;
+            case R.id.sb_mine_changed_pwd:
+                // toast("修改密码");
+                startActivity(getNewIntent(getContext(), ChangePwdActivity.class, "修改密码",
+                        TextUtils.isEmpty(telNumber) ? "" : telNumber));
+                break;
+            case R.id.sb_clear_cache:
+                //toast("清除缓存");
+                AppCacheDataManager.clearAllCache(getContext());
+                postDelayed(() -> {
+                    // 重新获取应用缓存大小
+                    clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(getContext()));
+                }, 500);
+                break;
+            case R.id.sb_update_version:
+                // toast("版本更新");
+                new UpdateDialog.Builder(getContext())
+                        // 版本名
+                        .setVersionName("2.0")
+                        // 是否强制更新
+                        .setForceUpdate(false)
+                        // 更新日志
+                        .setUpdateLog("到底更新了啥\n到底更新了啥\n到底更新了啥\n到底更新了啥\n到底更新了啥")
+                        // 下载 URL
+                        .setDownloadUrl("")
+                        // 文件 MD5
+                        .setFileMD5("56A5A5712D1856BDBD4C2AECA9B1FFE7")
+                        .show();
+                break;
+            case R.id.btn_logout:
+                //toast("退出登录");
+                new MessageDialog.Builder(getContext())
+                        .setTitle(null)
+                        .setMessage("确定要退出登录吗？")
+                        .setConfirm(getString(R.string.common_confirm))
+                        .setCancel(getString(R.string.common_cancel))
+                        .setShowConfirm(false)
+                        .setAutoDismiss(true)
+                        .setListener(new MessageDialog.OnListener() {
+
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+                                // 返回到登录页面
+                                if (true) {
+                                    return;
+                                }
+                                mMinePresenter.requestLogout();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+        }
+    }
+
+    @SingleClick
     @SuppressLint("SetTextI18n")
     @Override
     public void getMenuData(MineData mineData, List<FontAndFont> accountList) {
@@ -181,6 +262,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                 .placeholder(R.mipmap.ic_logo_mdpi)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);
+        telNumber = mineData.getTel();
         accountBalance.setText(mineData.getMoney());
         name.setText(mineData.getStaffName());
         department.setText(mineData.getJob());
@@ -189,28 +271,11 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     }
 
     @Override
-    public void getMineModule(List<IconAndFont> iconAndFonts) {
-        //TODO: 修改密码
-    }
-
-    @SingleClick
-    @OnClick({R.id.ll_network_error_tips, R.id.btn_logout, R.id.rl_mine_data, R.id.rl_account_account})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ll_network_error_tips:
-                onRetryClick();
-                break;
-            case R.id.btn_logout:
-                toast("退出登录");
-                break;
-            case R.id.rl_mine_data:
-                //toast("我的个人信息");
-                startActivity(getNewIntent(getContext(), MineInfoActivity.class, "个人资料", " 个人资料"));
-                break;
-            case R.id.rl_account_account:
-                startActivity(getNewIntent(getContext(), AccountFundsActivity.class, "会计账户", "accountAccount"));
-                break;
-        }
+    public void getLogout(boolean success) {
+        toast(success ? "登出成功" : "登出失败");
+        // 销毁所有的栈--返回到登录页面
+        ActivityStackManager.getInstance().finishAllActivities();
+        openActivity(LoginActivity.class);
     }
 
     @Override
@@ -221,8 +286,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     }
 
     @Override
-    public void onError() {
-        //网络错误
+    public void onError(String tips) {
+        //错误状态
         setUpState(State.ERROR);
     }
 

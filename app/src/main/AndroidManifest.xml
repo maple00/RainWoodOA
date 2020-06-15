@@ -509,6 +509,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor" />
 
+        <!-- 修改密码 ChangePwdActivity-->
+        <activity
+            android:name=".ui.activity.ChangePwdActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
         <!--
         三方集成
         -->

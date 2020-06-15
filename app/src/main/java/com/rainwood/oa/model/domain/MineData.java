@@ -21,6 +21,11 @@ public final class MineData implements Serializable {
     private String job;
 
     /**
+     * 手机号
+     */
+    private String tel;
+
+    /**
      * 入职时间
      */
     private String entryTime;
@@ -84,6 +89,14 @@ public final class MineData implements Serializable {
 
     public void setJob(String job) {
         this.job = job;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     public String getEntryTime() {

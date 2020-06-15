@@ -148,26 +148,33 @@
                     android:background="@color/assistColor10" />
 
                 <com.rainwood.tools.wheel.widget.SettingBar
+                    android:id="@+id/sb_mine_changed_pwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="10dp"
+                    app:bar_leftIcon="@drawable/ic_change_pwd"
                     app:bar_leftText="修改密码"
                     app:bar_lineVisible="false"
                     app:bar_rightIcon="@drawable/ico_go_black" />
 
                 <com.rainwood.tools.wheel.widget.SettingBar
+                    android:id="@+id/sb_clear_cache"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    app:bar_leftIcon="@drawable/ic_clear_cache"
                     app:bar_leftText="清除缓存"
                     app:bar_lineVisible="false"
                     app:bar_rightHint="60.5M"
                     app:bar_rightIcon="@drawable/ico_go_black" />
 
                 <com.rainwood.tools.wheel.widget.SettingBar
+                    android:id="@+id/sb_update_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    app:bar_leftIcon="@drawable/ic_update_version"
                     app:bar_leftText="版本更新"
                     app:bar_lineVisible="false"
                     app:bar_rightHint="已是最新版本"

@@ -6,7 +6,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rainwood.oa.utils.ActivityStackManagerUtil;
+import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.DeviceIdUtil;
 import com.rainwood.oa.utils.LogUtils;
@@ -109,13 +109,12 @@ public final class BaseApplication extends Application {
     }
 
     private void initActivity() {
-        ActivityStackManagerUtil.getInstance().register(app);
+        ActivityStackManager.getInstance().init(app);
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-        ActivityStackManagerUtil.getInstance().unRegister(app);
     }
 
     public boolean isDetermineNetwork() {

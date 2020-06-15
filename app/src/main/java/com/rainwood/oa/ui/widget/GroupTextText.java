@@ -13,10 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.utils.FontSwitchUtil;
 
 /**
  * @Author: a797s

@@ -27,6 +27,7 @@ public final class RolePermissionAdapter extends BaseAdapter {
 
     public void setPermissionList(List<SubRoleXPermission> permissionList) {
         mPermissionList = permissionList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -56,12 +57,12 @@ public final class RolePermissionAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.permissionChecked.setChecked(mPermissionList.get(position).isChecked());
-        holder.permissionName.setText(mPermissionList.get(position).getXPermission());
+        holder.permissionName.setText(mPermissionList.get(position).getMenuTwo());
         // 具体的权限
         DetailPermissionAdapter permissionAdapter = new DetailPermissionAdapter();
         holder.detailPermission.setAdapter(permissionAdapter);
         holder.detailPermission.setNumColumns(2);
-        permissionAdapter.setXPermissionList(getItem(position).getDetailXPermissions());
+        permissionAdapter.setXPermissionList(getItem(position).getArray());
         return convertView;
     }
 

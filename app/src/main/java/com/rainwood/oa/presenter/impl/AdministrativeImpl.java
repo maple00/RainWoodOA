@@ -38,6 +38,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
 
     /**
      * 角色详情
+     *
      * @param roleId
      */
     @Override
@@ -58,6 +59,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
 
     /**
      * 查询部门详情
+     *
      * @param departId
      */
     @Override
@@ -78,6 +80,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
 
     /**
      * 通过id查询职位详情
+     *
      * @param postId
      */
     @Override
@@ -124,17 +127,23 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
             try {
                 List<RolePermission> rolePermissionList = JsonParser.parseJSONArray(RolePermission.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("role"));
-                 mAdministrativeCallbacks.getAllData2List(rolePermissionList);
+                mAdministrativeCallbacks.getAllData2List(rolePermissionList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         // 角色权限详情
-        else if (result.url().contains("cla=role&fun=detail")){
-
+        else if (result.url().contains("cla=role&fun=detail")) {
+            try {
+                RolePermission roleXPermission = JsonParser.parseJSONObject(RolePermission.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("role"));
+                mAdministrativeCallbacks.getRoleXPermissionDetail(roleXPermission);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // 部门列表
-        else if (result.url().contains("cla=department&fun=home")){
+        else if (result.url().contains("cla=department&fun=home")) {
             try {
                 List<Depart> departList = JsonParser.parseJSONArray(Depart.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("department"));
@@ -144,7 +153,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
             }
         }
         // 部门详情
-        else if (result.url().contains("cla=department&fun=detail")){
+        else if (result.url().contains("cla=department&fun=detail")) {
             try {
                 ProjectGroup depart = JsonParser.parseJSONObject(ProjectGroup.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("department"));
@@ -154,7 +163,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
             }
         }
         // 职位列表
-        else if (result.url().contains("cla=job&fun=home")){
+        else if (result.url().contains("cla=job&fun=home")) {
             try {
                 List<Post> postList = JsonParser.parseJSONArray(Post.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("job"));
@@ -164,7 +173,7 @@ public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListe
             }
         }
         // 职位详情
-        else if (result.url().contains("cla=job&fun=detail")){
+        else if (result.url().contains("cla=job&fun=detail")) {
             try {
                 Post post = JsonParser.parseJSONObject(Post.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("job"));

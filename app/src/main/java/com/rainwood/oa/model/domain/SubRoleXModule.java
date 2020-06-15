@@ -13,6 +13,8 @@ public final class SubRoleXModule implements Serializable {
     /**
      * 某个模块
      */
+    private String menuOne;
+
     private String name;
 
     /**
@@ -23,15 +25,7 @@ public final class SubRoleXModule implements Serializable {
     /**
      * 模块下的所有权限
      */
-    private List<SubRoleXPermission> permissions;
-
-    public boolean isHasSelected() {
-        return hasSelected;
-    }
-
-    public void setHasSelected(boolean hasSelected) {
-        this.hasSelected = hasSelected;
-    }
+    private List<SubRoleXPermission> array;
 
     public String getName() {
         return name;
@@ -41,11 +35,27 @@ public final class SubRoleXModule implements Serializable {
         this.name = name;
     }
 
-    public List<SubRoleXPermission> getPermissions() {
-        return permissions;
+    public boolean isHasSelected() {
+        return hasSelected;
     }
 
-    public void setPermissions(List<SubRoleXPermission> permissions) {
-        this.permissions = permissions;
+    public void setHasSelected(boolean hasSelected) {
+        this.hasSelected = hasSelected;
+    }
+
+    public String getMenuOne() {
+        return menuOne;
+    }
+
+    public void setMenuOne(String menuOne) {
+        this.menuOne = menuOne;
+    }
+
+    public List<SubRoleXPermission> getArray() {
+        return array;
+    }
+
+    public void setArray(List<SubRoleXPermission> array) {
+        this.array = array;
     }
 }

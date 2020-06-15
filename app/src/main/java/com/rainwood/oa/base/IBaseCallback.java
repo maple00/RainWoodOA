@@ -10,12 +10,14 @@ public interface IBaseCallback {
     /**
      * 数据错误
      */
-    void onError();
+    default void onError() {
+    }
 
     /**
      * 数据错误提示
      */
-    default void onError(String tips){}
+    default void onError(String tips) {
+    }
 
     /**
      * 加载中

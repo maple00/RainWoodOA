@@ -69,4 +69,19 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
      * 请求我的开票记录
      */
     void requestMineInvoiceRecords();
+
+    /**
+     * 发送验证码
+     */
+    void requestSmsVerifyCode();
+
+    /**
+     * 验证短信验证码
+     */
+    void requestCheckedSms(String currentPwd, String newPwd, String confirmPwd, String verifyCode, String smsSecret);
+
+    /**
+     * 退出登录
+     */
+    void requestLogout();
 }

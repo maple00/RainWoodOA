@@ -37,6 +37,7 @@ import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.action.HandlerAction;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -48,7 +49,7 @@ import java.lang.reflect.Method;
  * @Date: 2020/4/27 16:16
  * @Desc: activity基类
  */
-public abstract class BaseActivity extends AppCompatActivity implements OnClickAction {
+public abstract class BaseActivity extends AppCompatActivity implements OnClickAction, HandlerAction {
 
     // public String TAG = this.getClass().getSimpleName();
     public final String TAG = "sxs";
