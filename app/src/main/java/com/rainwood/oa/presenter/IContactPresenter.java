@@ -12,11 +12,6 @@ import com.rainwood.oa.view.IContactCallbacks;
 public interface IContactPresenter extends IBasePresenter<IContactCallbacks> {
 
     /**
-     * 获取所有的联系人
-     */
-    void getAllContact();
-
-    /**
      * 请求通讯录数据
      */
     void requestAddressBookData();

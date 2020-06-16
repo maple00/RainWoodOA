@@ -11,7 +11,10 @@ import com.rainwood.oa.view.IHomeCallbacks;
 public interface IHomePresenter extends IBasePresenter<IHomeCallbacks> {
 
     /**
-     * 获取工资曲线内容
+     * 请求工资数据
+     *
+     * @param startMonth 开始月份
+     * @param endMonth   结束月份
      */
-    void getHomeSalaryData();
+    void requestSalaryData(String startMonth, String endMonth);
 }

@@ -1,5 +1,6 @@
 package com.rainwood.oa.view;
 
+import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.AuditRecord;
 import com.rainwood.oa.model.domain.FontAndFont;
@@ -11,7 +12,6 @@ import com.rainwood.oa.model.domain.MineRecordTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.TeamFunds;
-import com.rainwood.oa.utils.ListUtils;
 
 import java.util.List;
 
@@ -28,7 +28,6 @@ public interface IMineCallbacks extends IBaseCallback {
     default void getMenuData(MineData mineData, List<FontAndFont> accountList) {
     }
 
-    ;
 
     /**
      * 个人中心-- 我的模块
@@ -40,6 +39,12 @@ public interface IMineCallbacks extends IBaseCallback {
      * 我的--个人资料
      */
     default void getMineInfo(MineInfo mineInfo) {
+    }
+
+    /**
+     * 我的---通讯录
+     */
+    default void getMineAddressBookData(List<ContactsBean> contactsList) {
     }
 
     /**
@@ -75,25 +80,30 @@ public interface IMineCallbacks extends IBaseCallback {
     /**
      * 我的--费用报销
      */
-    default void getMineReimbursementRecords(List<MineReimbursement> reimbursementList){}
+    default void getMineReimbursementRecords(List<MineReimbursement> reimbursementList) {
+    }
 
     /**
      * 我的-- 开记录
      */
-    default void getMineInvoiceRecords(List<MineInvoice> invoiceList){}
+    default void getMineInvoiceRecords(List<MineInvoice> invoiceList) {
+    }
 
     /**
      * 获取短信验证码
      */
-    default void getSmsVerifyCode(String smsId){}
+    default void getSmsVerifyCode(String smsId) {
+    }
 
     /***
      * 校验验证码
      */
-    default void getVerifySuccess(boolean success){}
+    default void getVerifySuccess(boolean success) {
+    }
 
     /**
      * 退出登录
      */
-    default void getLogout(boolean success){}
+    default void getLogout(boolean success) {
+    }
 }

@@ -21,6 +21,11 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     void requestMineInfo();
 
     /**
+     * 请求通讯录数据
+     */
+    void requestAddressBookData();
+
+    /**
      * 请求我的会计账户
      */
     void requestAccountingAccount(String type);
@@ -84,4 +89,5 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
      * 退出登录
      */
     void requestLogout();
+
 }

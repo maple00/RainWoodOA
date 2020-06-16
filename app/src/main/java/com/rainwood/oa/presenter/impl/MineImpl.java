@@ -2,6 +2,7 @@ package com.rainwood.oa.presenter.impl;
 
 import android.text.TextUtils;
 
+import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.AuditRecord;
 import com.rainwood.oa.model.domain.FontAndFont;
@@ -61,8 +62,6 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             iconAndFont.setLocalMipmap(R.drawable.bg_monkey_king);
             fontList.add(iconAndFont);
         }
-        // 我的模块
-        // mMineCallbacks.getMineModule(fontList);
     }
 
     /**
@@ -72,6 +71,15 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     public void requestMineInfo() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=archive", params, this);
+    }
+
+    /**
+     * 申请通讯录数据
+     */
+    @Override
+    public void requestAddressBookData() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=contacts", params, this);
     }
 
     /**
@@ -391,6 +399,16 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             try {
                 String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
                 mMineCallbacks.getLogout("success".equals(warn));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 通讯录
+        else if (result.url().contains("cla=my&fun=contacts")) {
+            try {
+                List<ContactsBean> contactsList = JsonParser.parseJSONArray(ContactsBean.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                mMineCallbacks.getMineAddressBookData(contactsList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

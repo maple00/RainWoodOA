@@ -7,8 +7,6 @@
             <solid android:color="@color/white" />
             <!-- 圆角 -->
             <corners android:radius="@dimen/shape_radius_size" />
-
-            <!--<size android:height="@dimen/N_calendarHeight"/>-->
         </shape>
     </item>
 

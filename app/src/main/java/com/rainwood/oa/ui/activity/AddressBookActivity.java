@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,27 +15,26 @@ import com.rainwood.contactslibrary.decoration.DividerItemDecoration;
 import com.rainwood.contactslibrary.decoration.TitleItemDecoration;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.DepartStructure;
-import com.rainwood.oa.presenter.IContactPresenter;
+import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.DepartStructureAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IContactCallbacks;
+import com.rainwood.oa.view.IMineCallbacks;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/6/3 15:41
  * @Desc: 通讯录
  */
-public final class AddressBookActivity extends BaseActivity implements IContactCallbacks {
+public final class AddressBookActivity extends BaseActivity implements IMineCallbacks {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -64,7 +64,7 @@ public final class AddressBookActivity extends BaseActivity implements IContactC
     // 组织结构
     private DepartStructureAdapter mStructureAdapter;
 
-    private IContactPresenter mContactPresenter;
+    private IMinePresenter mMinePresenter;
 
     @Override
     protected int getLayoutResId() {
@@ -91,8 +91,6 @@ public final class AddressBookActivity extends BaseActivity implements IContactC
         // 设置适配器
         contactView.setAdapter(mContactAdapter);
         StructureView.setAdapter(mStructureAdapter);
-        // 设置数据
-        mContactAdapter.setDatas(mDatas);
         //使用indexBar
         indexBar.setmPressedShowTextView(sideBarHint)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
@@ -107,30 +105,51 @@ public final class AddressBookActivity extends BaseActivity implements IContactC
      * @return
      */
     private void initDatas(String[] data) {
-        mDatas = new ArrayList<>();
+      /*  mDatas = new ArrayList<>();
         for (int i = 0; i < data.length; i++) {
             ContactsBean contactsBean = new ContactsBean();
             contactsBean.setContact(data[i]);//设置城市名称
             mDatas.add(contactsBean);
-        }
+        }*/
     }
 
     @Override
     protected void initPresenter() {
-        mContactPresenter = PresenterManager.getOurInstance().getIContactPresenter();
-        mContactPresenter.registerViewCallback(this);
+        mMinePresenter = PresenterManager.getOurInstance().getIMinePresenter();
+        mMinePresenter.registerViewCallback(this);
     }
 
     @Override
     protected void loadData() {
-        mContactPresenter.requestAddressBookData();
+        // 请求通讯录数据
+        mMinePresenter.requestAddressBookData();
     }
 
-    @SuppressWarnings("all")
     @Override
-    public void getAddressBookData(Map addressBookData) {
-        List<DepartStructure> structureList = (List<DepartStructure>) addressBookData.get("structure");
-        mStructureAdapter.setStructureList(structureList);
+    protected void initEvent() {
+        pageRight.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("部门职位");
+            }
+        });
+    }
+
+    @SingleClick
+    @OnClick({R.id.iv_page_back})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_page_back:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void getMineAddressBookData(List<ContactsBean> contactsList) {
+        // TODO: 对接通讯录
+
+        mContactAdapter.setDatas(contactsList);
     }
 
     @Override

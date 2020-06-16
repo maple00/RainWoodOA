@@ -24,6 +24,7 @@ public final class HomeSalaryAdapter extends BaseAdapter {
 
     public void setList(List<FontAndFont> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override

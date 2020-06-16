@@ -6,8 +6,11 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -18,7 +21,7 @@ import com.rainwood.tools.wheel.BaseDialog;
  * @Time: 2020/5/17 13:13
  * @Desc: 介绍客户
  */
-public final class CustomIntroduceActivity extends BaseActivity {
+public final class CustomIntroduceActivity extends BaseActivity implements ICustomCallbacks {
 
     // top action bar
     @ViewInject(R.id.rl_page_top)
@@ -41,6 +44,8 @@ public final class CustomIntroduceActivity extends BaseActivity {
     @ViewInject(R.id.tv_introduce_to)
     private TextView introduceToTV;
 
+    private ICustomPresenter mCustomPresenter;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_introduce_custom;
@@ -58,12 +63,12 @@ public final class CustomIntroduceActivity extends BaseActivity {
         setRequiredValue(followStatusTV, "跟进状态");
         setRequiredValue(customOriginTV, "客户来源");
         setRequiredValue(introduceToTV, "介绍给");
-
     }
 
     @Override
     protected void initPresenter() {
-
+        mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
+        mCustomPresenter.registerViewCallback(this);
     }
 
     @OnClick({R.id.iv_warn_prompt, R.id.tv_warm_prompt, R.id.cet_demand_desc, R.id.iv_page_back,
@@ -116,5 +121,15 @@ public final class CustomIntroduceActivity extends BaseActivity {
                         .show();
                 break;
         }
+    }
+
+    @Override
+    public void onLoading() {
+
+    }
+
+    @Override
+    public void onEmpty() {
+
     }
 }

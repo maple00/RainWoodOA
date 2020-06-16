@@ -367,4 +367,30 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         }
     }
 
+    /**
+     * 返回指定的fragment
+     *
+     * @param navigationBar
+     */
+    public void backHome(String navigationBar) {
+        MessageEvent event = new MessageEvent("逻辑页面跳转");
+        switch (navigationBar) {
+            case "home":
+                // 返回首页
+                onBackHomePager(event, Constants.HOME_FRAGMENT_RESULT_SIZE);
+                break;
+            case "manager":
+                // 返回我的管理
+                onBackHomePager(event, Constants.MANAGER_FRAGMENT_RESULT_SIZE);
+                break;
+            case "blockLog":
+                // 返回待办事项
+                onBackHomePager(event, Constants.BLOCK_FRAGMENT_RESULT_SIZE);
+                break;
+            case "mine":
+                // 返回我的个人中心
+                onBackHomePager(event, Constants.MINE_FRAGMENT_RESULT_SIZE);
+                break;
+        }
+    }
 }

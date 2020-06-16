@@ -23,4 +23,5 @@ public interface IContactCallbacks extends IBaseCallback {
      * 返回通讯录数据
      */
     default void getAddressBookData(Map addressBookData){}
+
 }

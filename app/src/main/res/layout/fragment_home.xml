@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/assistColor15"
     tools:context=".ui.fragment.HomeFragment"
-    tools:ignore="HardcodedText">
+    tools:ignore="HardcodedText,RelativeOverlap">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,22 +41,25 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_query_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:text="@string/text_query_all"
                 android:textColor="@color/colorMiddle"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ll_query_salary_all"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="10dp"
+            android:orientation="vertical"
             android:background="@drawable/shape_white_8dp">
 
             <com.rainwood.oa.ui.widget.MeasureGridView
@@ -67,14 +70,13 @@
                 android:gravity="center"
                 android:numColumns="4" />
 
-            <com.rainwood.oa.ui.widget.LineChartView
-                android:id="@+id/lcv_salary"
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lc_salary_chart"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_below="@+id/mgv_home_salary"
-                android:layout_marginTop="30dp" />
+                android:layout_height="180dp"
+                android:layout_marginTop="20dp" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,15 +1,13 @@
-package com.rainwood.contactslibrary;
-
-import com.rainwood.contactslibrary.IndexBar.bean.BaseIndexPinyinBean;
+package com.rainwood.oa.model.domain;
 
 import java.io.Serializable;
 
 /**
- * Created by zhangxutong .
- * Date: 16/08/28
+ * @Author: a797s
+ * @Date: 2020/6/16 17:36
+ * @Desc: 通讯录员工
  */
-
-public class ContactsBean extends BaseIndexPinyinBean implements Serializable {
+public final class AddressBookData implements Serializable {
 
     /**
      * 名字
@@ -35,9 +33,6 @@ public class ContactsBean extends BaseIndexPinyinBean implements Serializable {
      * 头像
      */
     private String ico;
-
-    public ContactsBean() {
-    }
 
     public String getName() {
         return name;
@@ -77,14 +72,5 @@ public class ContactsBean extends BaseIndexPinyinBean implements Serializable {
 
     public void setIco(String ico) {
         this.ico = ico;
-    }
-
-    /**
-     * 拼音化
-     * @return
-     */
-    @Override
-    public String getTarget() {
-        return name;
     }
 }
