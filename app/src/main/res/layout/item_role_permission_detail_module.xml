@@ -37,8 +37,8 @@
     </RelativeLayout>
 
     <!-- 权限列表-->
-    <com.rainwood.oa.ui.widget.MeasureListView
-        android:id="@+id/mlv_permission_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_permission_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

@@ -79,6 +79,13 @@ public final class Constants {
     public static final int CUSTOM_DEMAND_WRITE_SIZE = 0x1001;
 
     /**
+     * 选择员工
+     */
+    public static final int CHOOSE_STAFF_REQUEST_SIZE = 0x1002;
+
+    public static final String KEY_BLOCK_PAGER_State = "0x1003";
+
+    /**
      * IMEI
      */
     public static String IMEI = "";

@@ -18,6 +18,8 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.DepartStructureAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.ClipboardUtil;
+import com.rainwood.oa.utils.PhoneCallUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IMineCallbacks;
@@ -56,8 +58,6 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
     private TextView sideBarHint;
 
     private LinearLayoutManager mManager;
-    private TitleItemDecoration mDecoration;
-    private List<ContactsBean> mDatas;
 
     // 联系人
     private ContactAdapter mContactAdapter;
@@ -77,40 +77,16 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
         StatusBarUtils.setMargin(this, pageTop);
         pageRight.setText("部门职位");
         searchTips.setText("输入关键词");
-        // 设置布局管理器
-        contactView.setLayoutManager(mManager = new LinearLayoutManager(this));
-        // 设置数据
-        initDatas(getResources().getStringArray(R.array.provinces));
-        contactView.addItemDecoration(mDecoration = new TitleItemDecoration(this, mDatas));
-        contactView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        // 设置部门布局管理器
         StructureView.setLayoutManager(new GridLayoutManager(this, 1));
-        StructureView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, FontSwitchUtil.dip2px(this, 30f)));
+        StructureView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 30f)));
         // 创建适配器
         mStructureAdapter = new DepartStructureAdapter();
         mContactAdapter = new ContactAdapter();
         // 设置适配器
         contactView.setAdapter(mContactAdapter);
         StructureView.setAdapter(mStructureAdapter);
-        //使用indexBar
-        indexBar.setmPressedShowTextView(sideBarHint)//设置HintTextView
-                .setNeedRealIndex(true)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
-                .setmSourceDatas(mDatas);//设置数据源
-    }
-
-    /**
-     * 组织数据源
-     *
-     * @param data
-     * @return
-     */
-    private void initDatas(String[] data) {
-      /*  mDatas = new ArrayList<>();
-        for (int i = 0; i < data.length; i++) {
-            ContactsBean contactsBean = new ContactsBean();
-            contactsBean.setContact(data[i]);//设置城市名称
-            mDatas.add(contactsBean);
-        }*/
     }
 
     @Override
@@ -133,6 +109,25 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
                 toast("部门职位");
             }
         });
+        // 选中员工
+        mContactAdapter.setContactListener(new ContactAdapter.OnClickContactListener() {
+            @Override
+            public void onClickItem(ContactsBean contact, int position) {
+                toast("选中员工：" + contact.getName());
+            }
+
+            @Override
+            public void onClickTel(ContactsBean contact, int position) {
+                //toast("拨打" + contact.getName() + "的电话---- " + contact.getTel());
+                PhoneCallUtil.callPhoneDump(getActivity(), contact.getTel());
+            }
+
+            @Override
+            public void onClickQq(ContactsBean contact, int position) {
+                ClipboardUtil.clipFormat2Board(getActivity(), contact.getName() + "qq", contact.getQq());
+                toast("已复制" + contact.getName() + "的QQ：" + contact.getQq());
+            }
+        });
     }
 
     @SingleClick
@@ -147,8 +142,18 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
 
     @Override
     public void getMineAddressBookData(List<ContactsBean> contactsList) {
-        // TODO: 对接通讯录
-
+        /*
+        员工列表
+         */
+        // 设置员工布局管理器
+        contactView.setLayoutManager(mManager = new LinearLayoutManager(this));
+        contactView.addItemDecoration(new TitleItemDecoration(this, contactsList));
+        contactView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        //使用indexBar
+        indexBar.setmPressedShowTextView(sideBarHint)//设置HintTextView
+                .setNeedRealIndex(false)//设置需要真实的索引
+                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
+                .setmSourceDatas(contactsList);//设置数据源
         mContactAdapter.setDatas(contactsList);
     }
 

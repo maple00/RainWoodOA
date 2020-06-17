@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +9,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.SubRoleXModule;
-import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -27,6 +29,7 @@ import java.util.List;
 public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDetailModuleAdapter.ViewHolder> {
 
     private List<SubRoleXModule> mPermissionList;
+    private Context mContext;
 
     public void setPermissionList(List<SubRoleXModule> permissionList) {
         mPermissionList = permissionList;
@@ -36,7 +39,8 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_role_permission_detail_module, parent, false);
+        mContext = parent.getContext();
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_role_permission_detail_module, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,13 +54,15 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
             notifyItemChanged(position);
         });
         // 子项-- 所有权限列表
+        holder.permissionList.setLayoutManager(new GridLayoutManager(mContext, 1));
+        holder.permissionList.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         RolePermissionAdapter permissionAdapter = new RolePermissionAdapter();
         holder.permissionList.setAdapter(permissionAdapter);
         permissionAdapter.setPermissionList(mPermissionList.get(position).getArray());
         // 子项隐藏
-        if (!mPermissionList.get(position).isHasSelected()){   // 子项的隐藏显示
+        if (!mPermissionList.get(position).isHasSelected()) {   // 子项的隐藏显示
             holder.permissionList.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.permissionList.setVisibility(View.VISIBLE);
         }
     }
@@ -74,8 +80,8 @@ public final class RoleDetailModuleAdapter extends RecyclerView.Adapter<RoleDeta
         private TextView moduleName;
         @ViewInject(R.id.iv_selected)
         private ImageView selected;
-        @ViewInject(R.id.mlv_permission_list)
-        private MeasureListView permissionList;
+        @ViewInject(R.id.rv_permission_list)
+        private RecyclerView permissionList;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -156,8 +156,6 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
             staffPost.setSelected(false);
         }
         mDepartList.get(parentPos).getArray().get(position).setSelected(true);
-        //
-        toast(mDepartList.get(parentPos).getArray().get(position).getName());
         // 根据职位/部门id查询该所属员工
         mStaffPresenter.requestAllStaff(mDepartList.get(parentPos).getArray().get(position).getId());
     }
@@ -170,9 +168,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @Override
     public void onClickStaff(Staff staff, int position) {
         PageJumpUtil.staffList2Detail(this, StaffMainActivity.class, staff.getId());
-        //startActivity(getNewIntent(this, StaffMainActivity.class, "员工详情"));
     }
-
 
     @SingleClick
     @OnClick(R.id.iv_page_back)

@@ -1,4 +1,4 @@
 include ':app', ':tools', 'refreshlibrary','bannerLibrary','calendarview'
 rootProject.name='RainWoodOA'
 include ':verification'
-include ':contactslibrary','MPChartLib'
+include ':contactslibrary','MPChartLib','gluetablayout'

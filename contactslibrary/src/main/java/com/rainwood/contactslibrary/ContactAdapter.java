@@ -1,6 +1,6 @@
 package com.rainwood.contactslibrary;
 
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -20,13 +24,16 @@ import java.util.List;
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
     private List<ContactsBean> mDatas;
+    private Context mContext;
 
     public void setDatas(List<ContactsBean> datas) {
         mDatas = datas;
+        notifyDataSetChanged();
     }
 
     @Override
     public ContactAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        mContext = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_city, parent, false);
         return new ViewHolder(view);
     }
@@ -34,11 +41,31 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ContactAdapter.ViewHolder holder, final int position) {
         final ContactsBean contactsBean = mDatas.get(position);
-        holder.tvCity.setText(contactsBean.getName());
+        holder.staffName.setText(contactsBean.getName());
+        holder.position.setText(contactsBean.getJob());
+        holder.telTv.setText(contactsBean.getTel());
+        holder.qqTv.setText(contactsBean.getQq());
+        Glide.with(mContext).load(contactsBean.getIco())
+                .placeholder(mContext.getDrawable(R.drawable.ic_default_head))
+                .error(mContext.getDrawable(R.drawable.ic_default_head))
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(holder.headPhoto);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("sxs-- ContactAdapter---", "pos:" + position);
+                mContactListener.onClickItem(contactsBean, position);
+            }
+        });
+        holder.telLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContactListener.onClickTel(contactsBean, position);
+            }
+        });
+        holder.qqLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContactListener.onClickQq(contactsBean, position);
             }
         });
     }
@@ -64,5 +91,37 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             telLL = itemView.findViewById(R.id.ll_tel);
             qqLL = itemView.findViewById(R.id.ll_qq);
         }
+    }
+
+    public interface OnClickContactListener {
+        /**
+         * 查看详情
+         *
+         * @param contact
+         * @param position
+         */
+        void onClickItem(ContactsBean contact, int position);
+
+        /**
+         * 拨打电话
+         *
+         * @param contact
+         * @param position
+         */
+        void onClickTel(ContactsBean contact, int position);
+
+        /**
+         * 复制QQ号
+         *
+         * @param contact
+         * @param position
+         */
+        void onClickQq(ContactsBean contact, int position);
+    }
+
+    private OnClickContactListener mContactListener;
+
+    public void setContactListener(OnClickContactListener contactListener) {
+        mContactListener = contactListener;
     }
 }

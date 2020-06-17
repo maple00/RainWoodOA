@@ -20,7 +20,7 @@
         android:id="@+id/iv_icon"
         android:layout_width="18dp"
         android:layout_height="15dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="1dp"
         android:src="@drawable/ic_triangle_down" />
 
 </LinearLayout>

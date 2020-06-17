@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:ignore="Autofill,TextFields">
 
-    <include layout="@layout/include_title_bar" />
+    <include layout="@layout/include_title_bar_none_menu" />
 
     <View style="@style/HorizontalLineStyle" />
 

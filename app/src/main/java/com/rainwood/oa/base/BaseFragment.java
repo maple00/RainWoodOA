@@ -40,19 +40,6 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
 
     private FrameLayout mBaseContainer;
 
-   /* @SingleClick
-    @OnClick(R.id.ll_network_error_tips)
-    public void onClick(View view) {
-        LogUtils.d("sxs", "------ " + view.getId());
-        switch (view.getId()) {
-            case R.id.ll_network_error_tips:
-                //点击了重新加载内容
-                LogUtils.d("sxs", "on retry...");
-                onRetryClick();
-                break;
-        }
-    }*/
-
     /**
      * 如果子fragment需要知道网络错误以后的点击，那覆盖些方法即可
      */

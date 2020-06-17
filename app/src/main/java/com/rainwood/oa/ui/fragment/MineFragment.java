@@ -22,6 +22,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.MineData;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.activity.AccountFundsActivity;
 import com.rainwood.oa.ui.activity.ChangePwdActivity;
@@ -126,6 +127,10 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @Override
     protected void loadData() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            onError(getString(R.string.text_network_state));
+            return;
+        }
         // 从这里请求数据
         mMinePresenter.getMineData();
     }
@@ -280,6 +285,10 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @Override
     protected void onRetryClick() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            onError(getString(R.string.text_network_state));
+            return;
+        }
         if (mMinePresenter != null) {
             mMinePresenter.getMineData();
         }
@@ -287,6 +296,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @Override
     public void onError(String tips) {
+        toast(tips);
         //错误状态
         setUpState(State.ERROR);
     }

@@ -3,9 +3,9 @@ package com.rainwood.oa.utils;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.presenter.ICommonPresenter;
-import com.rainwood.oa.presenter.IContactPresenter;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IHomePresenter;
@@ -19,9 +19,9 @@ import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.presenter.impl.AdministrativeImpl;
 import com.rainwood.oa.presenter.impl.ArticleImpl;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
+import com.rainwood.oa.presenter.impl.BlockLogImpl;
 import com.rainwood.oa.presenter.impl.CalendarImpl;
 import com.rainwood.oa.presenter.impl.CommonImpl;
-import com.rainwood.oa.presenter.impl.ContactImpl;
 import com.rainwood.oa.presenter.impl.CustomImpl;
 import com.rainwood.oa.presenter.impl.FinancialImpl;
 import com.rainwood.oa.presenter.impl.HomeMainImpl;
@@ -44,7 +44,6 @@ public final class PresenterManager {
     private final IManagerPresenter mIManagerPresenter;
     private final IMinePresenter mIMinePresenter;
     private final IHomePresenter mIHomePresenter;
-    private final IContactPresenter mIContactPresenter;
     private final IAttachmentPresenter mAttachmentPresenter;
     private final ICustomPresenter mCustomPresenter;
     private final ILoginAboutPresenter mLoginAboutPresenter;
@@ -57,6 +56,7 @@ public final class PresenterManager {
     private final IFinancialPresenter mFinancialPresenter;
     private final IArticlePresenter mArticlePresenter;
     private final ICalendarPresenter mCalendarPresenter;
+    private final IBlockLogPresenter mBlockLogPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -72,11 +72,6 @@ public final class PresenterManager {
 
     public IHomePresenter getIHomePresenter() {
         return mIHomePresenter;
-    }
-
-
-    public IContactPresenter getIContactPresenter() {
-        return mIContactPresenter;
     }
 
     public IAttachmentPresenter getAttachmentPresenter() {
@@ -127,11 +122,14 @@ public final class PresenterManager {
         return mCalendarPresenter;
     }
 
+    public IBlockLogPresenter getBlockLogPresenter() {
+        return mBlockLogPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
         mIHomePresenter = new HomeMainImpl();
-        mIContactPresenter = new ContactImpl();
         mAttachmentPresenter = new AttachmentImpl();
         mCustomPresenter = new CustomImpl();
         mLoginAboutPresenter = new LoginAboutImpl();
@@ -144,5 +142,6 @@ public final class PresenterManager {
         mFinancialPresenter = new FinancialImpl();
         mArticlePresenter = new ArticleImpl();
         mCalendarPresenter = new CalendarImpl();
+        mBlockLogPresenter = new BlockLogImpl();
     }
 }

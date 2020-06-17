@@ -77,13 +77,10 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
                 if (state == State.EXPANDED) {
-                    LogUtils.d("sxs", "展开状态");
                     pageTitle.setText("");
                 } else if (state == State.COLLAPSED) {
-                    LogUtils.d("sxs", "折叠状态");
                     pageTitle.setText("角色权限详情");
                 } else {
-                    LogUtils.d("sxs", "中间状态");
                     pageTitle.setText("角色权限详情");
                 }
             }
@@ -102,7 +99,6 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
         if (roleId != null) {
             mAdministrativePresenter.requestRoleDetailById(roleId);
         }
-        //mDetailModuleAdapter.setPermissionList(rolePermission.getPower());
     }
 
     @SingleClick

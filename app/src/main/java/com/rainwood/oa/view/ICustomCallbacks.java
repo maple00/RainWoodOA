@@ -33,6 +33,11 @@ public interface ICustomCallbacks extends IBaseCallback {
     default void createCustomData(boolean isSuccess, String warn){ }
 
     /**
+     * 获取温馨提示
+     */
+    default void getWarnPrompt(String warnPrompt){}
+
+    /**
      * 获取客户列表
      *
      * @param customList

@@ -34,7 +34,7 @@ import java.util.List;
  */
 
 public class IndexBar extends View {
-    private static final String TAG = "zxt/IndexBar";
+    private static final String TAG = "rw/IndexBar";
     public static String[] INDEX_STRING = {"A", "B", "C", "D", "E", "F", "G", "H", "I",
             "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
             "W", "X", "Y", "Z", "#"};//#在最后面（默认的数据源）

@@ -21,6 +21,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
@@ -30,6 +31,7 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.ArrayList;
@@ -78,18 +80,42 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
 
     @Override
     protected void loadData() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            StatusBarUtils.darkMode(getActivity(), true);
+            onError(getString(R.string.text_network_state));
+            return;
+        } else {
+            StatusBarUtils.darkMode(getActivity(), false);
+        }
         // 加载数据
         mHomePresenter.requestSalaryData("2020-01", "2020-05");
     }
 
     @SingleClick
-    @OnClick({R.id.tv_query_all, R.id.ll_query_salary_all})
+    @OnClick({R.id.tv_query_all, R.id.ll_query_salary_all, R.id.ll_network_error_tips})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                onRetryClick();
+                break;
             case R.id.tv_query_all:
             case R.id.ll_query_salary_all:
                 toast("查看全部");
                 break;
+        }
+    }
+
+    @Override
+    protected void onRetryClick() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            StatusBarUtils.darkMode(getActivity(), true);
+            onError(getString(R.string.text_network_state));
+            return;
+        } else {
+            StatusBarUtils.darkMode(getActivity(), false);
+        }
+        if (mHomePresenter != null) {
+            mHomePresenter.requestSalaryData("2020-01", "2020-05");
         }
     }
 
@@ -279,19 +305,26 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
+        //错误状态
+        setUpState(State.ERROR);
     }
 
     @Override
     public void onLoading() {
-
+        setUpState(State.LOADING);
     }
 
     @Override
     public void onEmpty() {
-
+        setUpState(State.EMPTY);
     }
 
-
+    @Override
+    protected void release() {
+        if (mHomePresenter != null) {
+            mHomePresenter.unregisterViewCallback(this);
+        }
+    }
 }

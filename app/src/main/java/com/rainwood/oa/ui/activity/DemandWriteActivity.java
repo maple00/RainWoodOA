@@ -23,7 +23,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 public final class DemandWriteActivity extends BaseActivity {
 
     // page
-    @ViewInject(R.id.rl_pager_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -44,7 +44,7 @@ public final class DemandWriteActivity extends BaseActivity {
         StatusBarUtils.setPaddingSmart(this, pageTop);
         pageTitle.setText(title);
         pageRightTitle.setText("保存");
-
+        // 软键盘回调
         showSoftInputFromWindow(demandContent);
     }
 
@@ -53,6 +53,10 @@ public final class DemandWriteActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void initData() {
+        demandContent.setText(moduleMenu);
+    }
 
     @OnClick({R.id.iv_page_back, R.id.tv_page_right_title})
     public void onClick(View view) {
@@ -61,7 +65,7 @@ public final class DemandWriteActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_page_right_title:
-                if (TextUtils.isEmpty(demandContent.getText())){
+                if (TextUtils.isEmpty(demandContent.getText())) {
                     toast("请填写需求");
                     return;
                 }

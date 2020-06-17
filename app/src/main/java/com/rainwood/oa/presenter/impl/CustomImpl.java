@@ -112,6 +112,40 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     }
 
     /**
+     * 温馨提示
+     */
+    @Override
+    public void requestWarmPrompt() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=shareWarn", params, this);
+    }
+
+    /**
+     * 创建新建客户
+     *
+     * @param companyName  公司名称
+     * @param contact      联系人
+     * @param tel          联系电话
+     * @param demand       需求描述
+     * @param origin       客户来源
+     * @param followState  跟进状态
+     * @param introduceObj 被介绍对象
+     */
+    @Override
+    public void createIntroduceCustom(String companyName, String contact, String tel, String demand,
+                                      String origin, String followState, String introduceObj) {
+        RequestParams params = new RequestParams();
+        params.add("companyName", companyName);
+        params.add("contactName", contact);
+        params.add("contactTel", tel);
+        params.add("text", demand);
+        params.add("workFlow", followState);
+        params.add("source", origin);
+        params.add("staffId", introduceObj);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=share", params, this);
+    }
+
+    /**
      * 请求客户列表
      *
      * @param pageCount 分页页码
@@ -296,6 +330,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
 
     /**
      * 查询客户下的开票信息
+     *
      * @param customId
      */
     @Override
@@ -328,7 +363,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      */
     @Override
     public void onHttpSucceed(HttpResponse result) {
-       // LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.body());
         if (!(result.code() == 200)) {
             mCustomCallback.onError();
             return;
@@ -379,8 +414,22 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=home&page")) {
-            // 客户列表
+        }
+        // 温馨提示
+        else if (result.url().contains("cla=client&fun=shareWarn")) {
+            try {
+                String warnPrompt = JsonParser.parseJSONObjectString(result.body()).getString("share");
+                mCustomCallback.getWarnPrompt(warnPrompt);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 新建介绍客户
+        else if (result.url().contains("cla=client&fun=share")){
+
+        }
+        // 客户列表
+        else if (result.url().contains("cla=client&fun=home&page")) {
             try {
                 List<Custom> customList = JsonParser.parseJSONArray(Custom.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("kehu"));
@@ -432,7 +481,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
 
         } else if (result.url().contains("cla=client&fun=move")) {
             // 客户转让
-        }else if (result.url().contains("cla=client&fun=invoice")){
+        } else if (result.url().contains("cla=client&fun=invoice")) {
             // 开票信息获取
             try {
                 CustomInvoice customInvoice = JsonParser.parseJSONObject(CustomInvoice.class,

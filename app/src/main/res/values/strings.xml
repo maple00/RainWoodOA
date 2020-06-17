@@ -12,6 +12,8 @@
     <string name="text_mine_manager">我的管理</string>
     <string name="text_home_salary_line_curve">工资曲线</string>
     <string name="text_query_all">查看全部</string>
+
+    <string name="text_network_state">请确认网络良好</string>
     <!-- 日期组合控件-->
     <string name="common_year">年</string>
     <string name="common_month">月</string>

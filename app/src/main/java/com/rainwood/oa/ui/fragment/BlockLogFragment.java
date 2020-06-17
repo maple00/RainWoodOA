@@ -1,29 +1,63 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.GradientDrawable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.viewpager.widget.ViewPager;
+
+import com.negier.gluetablayout.GlueTabLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
-import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.presenter.IBlockLogPresenter;
+import com.rainwood.oa.ui.adapter.BlockPagerAdapter;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.dialog.TimerDialog;
+import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.view.IBlockLogCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
+import java.util.List;
+
+import static com.rainwood.tools.utils.SmartUtil.dp2px;
+
 /**
  * @Author: a797s
  * @Date: 2020/4/27 17:45
  * @Desc: 待办事项fragment
  */
-public final class BlockLogFragment extends BaseFragment {
+public final class BlockLogFragment extends BaseFragment implements IBlockLogCallbacks {
 
-    @ViewInject(R.id.rl_item_search)
+    @ViewInject(R.id.rl_search_click)
     private RelativeLayout searchView;
+    @ViewInject(R.id.iv_page_back)
+    private ImageView pageBack;
+    // content
+    @ViewInject(R.id.tl_state)
+    private GlueTabLayout stateLayout;
+    @ViewInject(R.id.vp_block_log)
+    private ViewPager blockLogPager;
+    @ViewInject(R.id.gti_default_sort)
+    private GroupTextIcon defaultSortView;
+    @ViewInject(R.id.gti_depart_staff)
+    private GroupTextIcon departStaffView;
+    @ViewInject(R.id.gti_type)
+    private GroupTextIcon typeView;
+    @ViewInject(R.id.gti_period_time)
+    private GroupTextIcon periodTimeView;
+
+    private IBlockLogPresenter mBlockLogPresenter;
+    private BlockPagerAdapter mBlockPagerAdapter;
+
 
     @Override
     protected int getRootViewResId() {
@@ -32,10 +66,73 @@ public final class BlockLogFragment extends BaseFragment {
 
     @Override
     protected void initView(View rootView) {
-        setUpState(State.SUCCESS);
         super.initView(rootView);
-        StatusBarUtils.immersive(this.getActivity());
-        StatusBarUtils.setPaddingSmart(this.getContext(), searchView);
+        StatusBarUtils.immersive(getActivity());
+        StatusBarUtils.setMargin(getContext(), searchView);
+        pageBack.setVisibility(View.GONE);
+        // 创建适配器
+        mBlockPagerAdapter = new BlockPagerAdapter(getChildFragmentManager());
+        // 设置适配器
+        blockLogPager.setAdapter(mBlockPagerAdapter);
+        // 设置TabLayout属性
+        stateLayout.setTabMode(GlueTabLayout.GRAVITY_CENTER);
+        // 设置指示器下划线高度和颜色
+        stateLayout.setSelectedTabIndicatorHeight(dp2px(3));
+        stateLayout.setSelectedTabIndicatorColor(getContext().getColor(R.color.colorPrimary));
+        //GlueTabLayout 设置下划线指示器圆角
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setCornerRadius(dp2px(2));
+        stateLayout.setSelectedTabIndicator(gradientDrawable);
+        //GlueTabLayout 设置点击动画为水波纹扩散效果
+        stateLayout.setUnboundedRipple(false);
+        //GlueTabLayout 设置下划线指示器的宽度为原来的一半
+        stateLayout.setTabIndicatorWidth(0.3f);
+        // 设置点击时的背景
+        stateLayout.setTabRippleColor(ColorStateList.valueOf(getContext().getColor(R.color.transparent)));
+        // 设置字体颜色字体
+        stateLayout.setTabTextColors(getContext().getColor(R.color.colorMiddle), getContext().getColor(R.color.fontColor));
+        // 给ViewPager设置适配器
+        stateLayout.setupWithViewPager(blockLogPager);
+    }
+
+    @Override
+    protected void initPresenter() {
+        mBlockLogPresenter = PresenterManager.getOurInstance().getBlockLogPresenter();
+        mBlockLogPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        // 请求TabLayout状态
+        mBlockLogPresenter.requestStateData();
+    }
+
+    @Override
+    protected void initListener() {
+        defaultSortView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("默认排序");
+            }
+        });
+        departStaffView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("部门员工");
+            }
+        });
+        typeView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("类型");
+            }
+        });
+        periodTimeView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("时间段");
+            }
+        });
     }
 
     @SingleClick
@@ -111,5 +208,30 @@ public final class BlockLogFragment extends BaseFragment {
                         .show();
                 break;
         }
+    }
+
+
+    @Override
+    public void getBlockState(List<String> stateList) {
+        setUpState(State.SUCCESS);
+        mBlockPagerAdapter.setTitleList(stateList);
+        // 获取默认状态的数据
+        mBlockLogPresenter.requestBlockData(stateList.get(0));
+    }
+
+    @Override
+    public void onError(String tips) {
+        toast(tips);
+        setUpState(State.ERROR);
+    }
+
+    @Override
+    public void onLoading() {
+        setUpState(State.LOADING);
+    }
+
+    @Override
+    public void onEmpty() {
+        setUpState(State.EMPTY);
     }
 }

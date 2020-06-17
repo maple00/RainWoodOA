@@ -29,6 +29,17 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
                           String invoiceAddress, String landLine, String bankName, String bankNo);
 
     /**
+     * 请求介绍客户中的温馨提示
+     */
+    void requestWarmPrompt();
+
+    /**
+     * 新增介绍客户
+     */
+    void createIntroduceCustom(String companyName, String contact, String tel, String demand, String origin,
+                               String followState, String introduceObj);
+
+    /**
      * 请求客户列表
      */
     void getALlCustomData(int page);
@@ -88,4 +99,5 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      * 获取客户下的开票信息
      */
     void requestCustomInvoice(String customId);
+
 }

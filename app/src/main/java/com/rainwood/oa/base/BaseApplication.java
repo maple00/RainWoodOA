@@ -1,18 +1,24 @@
 package com.rainwood.oa.base;
 
 import android.app.Application;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.DeviceIdUtil;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
 import com.tencent.smtt.sdk.QbSdk;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
@@ -21,7 +27,7 @@ import com.tencent.smtt.sdk.QbSdk;
  */
 public final class BaseApplication extends Application {
 
-
+    private static final String TAG = "sxs";
     /**
      * 是否调试
      */
@@ -39,6 +45,8 @@ public final class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // 程序创建的时候执行
+        LogUtils.d(TAG, "onCreate");
         // android 7.0系统解决拍照的问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -52,6 +60,8 @@ public final class BaseApplication extends Application {
         initSDK();
         // 初始化工具类
         initUtil();
+        // 初始化数据库
+        initDB();
     }
 
     private void initSDK() {
@@ -71,9 +81,6 @@ public final class BaseApplication extends Application {
         // 吐司工具类
         ToastUtils.init(this);
 
-        /*
-         TBS 文件预览
-         */
         //初始化X5内核
         QbSdk.PreInitCallback callback = new QbSdk.PreInitCallback() {
             @Override
@@ -97,7 +104,6 @@ public final class BaseApplication extends Application {
         // 允许使用流量下载
         QbSdk.setDownloadWithoutWifi(true);
         QbSdk.initX5Environment(this.getApplicationContext(), callback);
-
     }
 
     /**
@@ -108,13 +114,24 @@ public final class BaseApplication extends Application {
         Constants.IMEI = DeviceIdUtil.getDeviceId(this);
     }
 
-    private void initActivity() {
-        ActivityStackManager.getInstance().init(app);
+    /**
+     * 创建数据表
+     */
+    private void initDB() {
+        // 提示
+        SQLiteHelper.with(this).createTable("rainWoodTips", new String[]{"module", "desc", "state"});
+        String selectSql = "SELECT module, desc,state FROM rainWoodTips";
+        List<Map<String, String>> list = SQLiteHelper.with(this).query(selectSql);
+        // 插入数据
+        if (ListUtils.getSize(list) == 0) {
+            String sql = "INSERT INTO rainWoodTips (module, desc, state)" +
+                    "VALUES('customIntroduce', '温馨提示：是否是第一次加载', 'notLoaded')";
+            SQLiteHelper.with(this).insert(sql);
+        }
     }
 
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
+    private void initActivity() {
+        ActivityStackManager.getInstance().init(app);
     }
 
     public boolean isDetermineNetwork() {
@@ -158,4 +175,31 @@ public final class BaseApplication extends Application {
         return isShow;
     }
 
+    @Override
+    public void onTerminate() {
+        // 程序终止的时候执行
+        LogUtils.d(TAG, "onTerminate");
+        super.onTerminate();
+    }
+
+    @Override
+    public void onLowMemory() {
+        // 低内存的时候执行
+        LogUtils.d(TAG, "onLowMemory");
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        // 程序在内存清理的时候执行（回收内存）
+        // HOME键退出应用程序、长按MENU键，打开Recent TASK都会执行
+        LogUtils.d(TAG, "onTrimMemory");
+        super.onTrimMemory(level);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        LogUtils.d(TAG, "onConfigurationChanged");
+        super.onConfigurationChanged(newConfig);
+    }
 }
