@@ -9,6 +9,8 @@ import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.TempData;
 
+import java.util.Map;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/18 18:21
@@ -242,6 +244,23 @@ public final class PageJumpUtil {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到成功页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param data
+     */
+    public static void jump2SuccessPage(Context context, Class<? extends BaseActivity> clazz, String title, Map<String, String> data) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("introduce", data.get("introduce"));
+        sIntent.putExtra("introduced", data.get("introduced"));
+        sIntent.putExtra("customName", data.get("customName"));
         context.startActivity(sIntent);
     }
 }

@@ -15,10 +15,16 @@ public interface IBlockLogCallbacks extends IBaseCallback {
     /**
      * 获取状态
      */
-    default void getBlockState(List<String> stateList){}
+    default void getBlockState(List<String> stateList) {
+    }
+
+    default String getState() {
+        return "";
+    }
 
     /**
      * 获取状态内容
      */
-    default void getBlockContent(List<BlockLog> blockLogList){}
+    default void getBlockContent(List<BlockLog> blockLogList) {
+    }
 }

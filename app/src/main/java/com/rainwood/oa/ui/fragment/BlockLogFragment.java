@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 
 import androidx.viewpager.widget.ViewPager;
 
-import com.negier.gluetablayout.GlueTabLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
@@ -16,6 +15,7 @@ import com.rainwood.oa.ui.adapter.BlockPagerAdapter;
 import com.rainwood.oa.ui.dialog.PayPasswordDialog;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.dialog.TimerDialog;
+import com.rainwood.oa.ui.widget.GlueTabLayout;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
@@ -58,7 +58,6 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     private IBlockLogPresenter mBlockLogPresenter;
     private BlockPagerAdapter mBlockPagerAdapter;
 
-
     @Override
     protected int getRootViewResId() {
         return R.layout.fragment_blocklog;
@@ -74,6 +73,7 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         mBlockPagerAdapter = new BlockPagerAdapter(getChildFragmentManager());
         // 设置适配器
         blockLogPager.setAdapter(mBlockPagerAdapter);
+        blockLogPager.setOffscreenPageLimit(2);
         // 设置TabLayout属性
         stateLayout.setTabMode(GlueTabLayout.GRAVITY_CENTER);
         // 设置指示器下划线高度和颜色
@@ -210,13 +210,12 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         }
     }
 
-
     @Override
     public void getBlockState(List<String> stateList) {
         setUpState(State.SUCCESS);
-        mBlockPagerAdapter.setTitleList(stateList);
-        // 获取默认状态的数据
-        mBlockLogPresenter.requestBlockData(stateList.get(0));
+        if (mBlockPagerAdapter != null) {
+            mBlockPagerAdapter.setTitleList(stateList);
+        }
     }
 
     @Override
@@ -233,5 +232,12 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     @Override
     public void onEmpty() {
         setUpState(State.EMPTY);
+    }
+
+    @Override
+    protected void release() {
+        if (mBlockLogPresenter != null){
+            mBlockLogPresenter.unregisterViewCallback(this);
+        }
     }
 }

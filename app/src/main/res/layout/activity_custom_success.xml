@@ -54,7 +54,6 @@
             android:id="@+id/tv_introduce_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="韩梅梅"
             android:textColor="@color/fontColor"
             android:textSize="14sp" />
 
@@ -78,7 +77,6 @@
             android:id="@+id/tv_introduced_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开心果"
             android:textColor="@color/fontColor"
             android:textSize="14sp" />
 
@@ -102,7 +100,6 @@
             android:id="@+id/tv_custom_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="重庆正南齐北科技正南齐北科技"
             android:textColor="@color/fontColor"
             android:textSize="14sp" />
 

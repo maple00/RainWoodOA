@@ -121,7 +121,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     }
 
     /**
-     * 创建新建客户
+     * 创建介绍客户
      *
      * @param companyName  公司名称
      * @param contact      联系人
@@ -425,7 +425,22 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             }
         }
         // 新建介绍客户
-        else if (result.url().contains("cla=client&fun=share")){
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=share")){
+            try {
+                // 介绍人
+                String introduce = JsonParser.parseJSONObjectString(result.body()).getString("share");
+                // 被介绍人
+                String introduced = JsonParser.parseJSONObjectString(result.body()).getString("staffName");
+                // 客户名称
+                String customName = JsonParser.parseJSONObjectString(result.body()).getString("companyName");
+                Map<String, String> map = new HashMap<>();
+                map.put("introduce", introduce);
+                map.put("introduced", introduced);
+                map.put("customName", customName);
+                mCustomCallback.getIntroduceCreateData(map);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }
         // 客户列表

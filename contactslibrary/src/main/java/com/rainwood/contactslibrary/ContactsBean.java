@@ -12,6 +12,11 @@ import java.io.Serializable;
 public class ContactsBean extends BaseIndexPinyinBean implements Serializable {
 
     /**
+     * 员工id
+     */
+    private String stid;
+
+    /**
      * 名字
      */
     private String name;
@@ -37,6 +42,14 @@ public class ContactsBean extends BaseIndexPinyinBean implements Serializable {
     private String ico;
 
     public ContactsBean() {
+    }
+
+    public String getStid() {
+        return stid;
+    }
+
+    public void setStid(String stid) {
+        this.stid = stid;
     }
 
     public String getName() {

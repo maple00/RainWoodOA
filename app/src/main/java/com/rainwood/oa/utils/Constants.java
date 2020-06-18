@@ -84,7 +84,7 @@ public final class Constants {
     public static final int CHOOSE_STAFF_REQUEST_SIZE = 0x1002;
 
     public static final String KEY_BLOCK_PAGER_State = "0x1003";
-
+    public static final String POSITION_BLOCK_PAGER_State = "0x1004";
     /**
      * IMEI
      */

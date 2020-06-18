@@ -82,6 +82,7 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
         mContactsAdapter.setContactListener((contact, position) -> {
             Intent intent = new Intent();
             intent.putExtra("staff", contact.getName());
+            intent.putExtra("staffId", contact.getStid());
             setResult(Constants.CHOOSE_STAFF_REQUEST_SIZE, intent);
             finish();
         });

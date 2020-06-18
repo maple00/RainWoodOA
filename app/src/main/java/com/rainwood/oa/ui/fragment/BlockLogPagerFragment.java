@@ -12,7 +12,6 @@ import com.rainwood.oa.model.domain.BlockLog;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.ui.adapter.BlockLogPagerAdapter;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IBlockLogCallbacks;
@@ -20,6 +19,8 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.ViewInject;
 
 import java.util.List;
+
+import static com.rainwood.oa.utils.Constants.POSITION_BLOCK_PAGER_State;
 
 /**
  * @Author: a797s
@@ -30,11 +31,13 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
 
     private IBlockLogPresenter mBlockLogPresenter;
     private BlockLogPagerAdapter mBlockLogPagerAdapter;
+    private String mTitleState;
 
-    public static BlockLogPagerFragment getInstance(String title) {
+    public static BlockLogPagerFragment getInstance(String title, int position) {
         BlockLogPagerFragment blockLogPagerFragment = new BlockLogPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.KEY_BLOCK_PAGER_State, title);
+        bundle.putInt(POSITION_BLOCK_PAGER_State, position);
         blockLogPagerFragment.setArguments(bundle);
         return blockLogPagerFragment;
     }
@@ -73,10 +76,18 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
     @Override
     protected void loadData() {
         Bundle bundle = getArguments();
-        String title = bundle.getString(Constants.KEY_BLOCK_PAGER_State);
-        if (mBlockLogPresenter != null) {
-            mBlockLogPresenter.requestBlockData(title);
+        if (bundle != null) {
+            mTitleState = bundle.getString(Constants.KEY_BLOCK_PAGER_State);
+            int defaultPos = bundle.getInt(POSITION_BLOCK_PAGER_State);
+            if (mBlockLogPresenter != null && defaultPos != -1) {
+                mBlockLogPresenter.requestBlockData(mTitleState);
+            }
         }
+    }
+
+    @Override
+    public String getState() {
+        return mTitleState;
     }
 
     @Override
@@ -84,13 +95,14 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
         mBlockLogPagerAdapter.setBlockListener(new BlockLogPagerAdapter.OnClickItemBlockListener() {
             @Override
             public void onClickItem(BlockLog blockLog, int position) {
-                toast("选中了--- " + blockLog.getContent() + "---- position---" + position);
+                toast("选中了--- " + blockLog.getId() + "---- position---" + position);
             }
         });
     }
 
     @Override
     public void getBlockContent(List<BlockLog> blockLogList) {
+        setUpState(State.SUCCESS);
         mBlockLogPagerAdapter.setBlockLogList(blockLogList);
     }
 
@@ -108,5 +120,12 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
     @Override
     public void onEmpty() {
         setUpState(State.EMPTY);
+    }
+
+    @Override
+    protected void release() {
+        if (mBlockLogPresenter != null) {
+            mBlockLogPresenter.unregisterViewCallback(this);
+        }
     }
 }

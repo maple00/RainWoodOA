@@ -35,7 +35,6 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
         // 12月份
         for (int i = 0; i < 12; i++) {
             Month month = new Month();
-            //month.setMonth(i + 1 == currentMonth ? "本" : String.valueOf(i + 1));
             month.setMonth(String.valueOf(i + 1));
             months.add(month);
         }
@@ -94,7 +93,7 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
                 // json数据处理
                 List<String> dayList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    dayList.add("2020-06-" + (Integer.parseInt(jsonArray.getString(i)) < 10
+                    dayList.add((Integer.parseInt(jsonArray.getString(i)) < 10
                             ? "0" + jsonArray.getString(i)
                             : jsonArray.getString(i)));
                 }

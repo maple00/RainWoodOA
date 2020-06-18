@@ -38,6 +38,11 @@ public interface ICustomCallbacks extends IBaseCallback {
     default void getWarnPrompt(String warnPrompt){}
 
     /**
+     * 新建介绍客户
+     */
+    default void getIntroduceCreateData(Map<String, String > createMap){}
+
+    /**
      * 获取客户列表
      *
      * @param customList

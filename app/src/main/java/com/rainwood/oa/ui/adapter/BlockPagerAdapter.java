@@ -1,5 +1,7 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,7 +22,7 @@ import java.util.List;
  */
 public final class BlockPagerAdapter extends FragmentPagerAdapter {
 
-    private List<String> titleList = new ArrayList<>();
+    private List<String> titleList;
 
     public void setTitleList(List<String> titleList) {
         this.titleList = titleList;
@@ -34,8 +36,7 @@ public final class BlockPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        LogUtils.d("sxs", "getItem ---- > " + position);
-        BlockLogPagerFragment pagerFragment = BlockLogPagerFragment.getInstance(titleList.get(position));
+        BlockLogPagerFragment pagerFragment = BlockLogPagerFragment.getInstance(titleList.get(position), position);
         return pagerFragment;
     }
 
@@ -49,4 +50,6 @@ public final class BlockPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return ListUtils.getSize(titleList);
     }
+
+
 }

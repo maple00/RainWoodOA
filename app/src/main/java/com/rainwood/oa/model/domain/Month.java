@@ -12,11 +12,24 @@ public final class Month {
      */
     private String month;
 
+    /**
+     * 设置选中
+     */
+    private boolean selected;
+
     public String getMonth() {
         return month;
     }
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

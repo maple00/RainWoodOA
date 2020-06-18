@@ -72,7 +72,7 @@ dependencies {
     implementation project(path: ':verification')
     implementation project(path: ':contactslibrary')
     implementation project(path: ':MPChartLib')
-    implementation project(path: ':gluetablayout')
+    implementation project(path: ':normalCalendarLibrary')
     // glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'

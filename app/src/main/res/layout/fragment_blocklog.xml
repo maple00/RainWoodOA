@@ -9,7 +9,6 @@
 
     <include layout="@layout/include_search_click_view" />
 
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_dialog_pay"
         style="@style/ButtonStyle"
@@ -40,7 +39,7 @@
             android:text="日期控件" />
     </LinearLayout>
 
-    <com.negier.gluetablayout.GlueTabLayout
+    <com.rainwood.oa.ui.widget.GlueTabLayout
         android:id="@+id/tl_state"
         android:layout_width="match_parent"
         android:layout_height="40dp" />
@@ -85,6 +84,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_block_log"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:overScrollMode="never" />
 
 </LinearLayout>
