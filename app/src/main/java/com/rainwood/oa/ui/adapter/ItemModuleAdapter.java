@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.PictureDrawable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
@@ -94,11 +97,20 @@ public final class ItemModuleAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).as(PictureDrawable.class)
-                .listener(new SvgSoftwareLayerSetter())
-                .load(getItem(position).getIco())
-                .error(R.mipmap.ic_logo)
-                .placeholder(R.mipmap.ic_logo).into(holder.moduleImg);
+        if (TextUtils.isEmpty(getItem(position).getIco())) {
+            Glide.with(convertView).load(mList.get(position).getLocalMipmap())
+                    .placeholder(R.mipmap.ic_logo)
+                    .error(R.mipmap.ic_logo)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(holder.moduleImg);
+        } else {
+            Glide.with(convertView).as(PictureDrawable.class)
+                    .listener(new SvgSoftwareLayerSetter())
+                    .load(getItem(position).getIco())
+                    .error(R.mipmap.ic_logo)
+                    .placeholder(R.mipmap.ic_logo).
+                    into(holder.moduleImg);
+        }
         holder.moduleName.setText(getItem(position).getName());
         // 点击事件
         onItemClickValues(position, holder, convertView, parent);
@@ -145,7 +157,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     if (Constants.CUSTOM_ID != null) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), CustomFollowRecordActivity.class, "跟进记录", "客户跟进记录"));
                     } else {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录", "管理跟进记录"));
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), FollowRecordActivity.class, "跟进记录", "知识管理跟进记录"));
                     }
                     break;
                 case "开票信息":

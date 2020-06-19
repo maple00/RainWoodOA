@@ -23,7 +23,7 @@ import java.util.List;
  * @Date: 2020/5/21 14:10
  * @Desc: 行政事务逻辑类----角色管理、部门管理、职位管理、工作日、通讯录
  */
-public class AdministrativeImpl implements IAdministrativePresenter, OnHttpListener {
+public final class AdministrativeImpl implements IAdministrativePresenter, OnHttpListener {
 
     private IAdministrativeCallbacks mAdministrativeCallbacks;
 

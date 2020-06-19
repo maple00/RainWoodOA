@@ -1,6 +1,7 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.RecordsDetail;
 
 import java.util.Map;
 
@@ -15,4 +16,9 @@ public interface ICommonCallbacks extends IBaseCallback {
      * 审核记录
      */
     void getAuditRecords(Map recordsMap);
+
+    /**
+     * 加班详情
+     */
+    default void getOverTimeDetail(RecordsDetail recordsDetail){}
 }

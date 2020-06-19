@@ -2,17 +2,22 @@ package com.rainwood.oa.ui.activity;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.AuditRecords;
+import com.rainwood.oa.model.domain.RecordsDetail;
 import com.rainwood.oa.presenter.ICommonPresenter;
 import com.rainwood.oa.ui.adapter.AuditRecordAdapter;
+import com.rainwood.oa.ui.adapter.RecordsResultsAdapter;
 import com.rainwood.oa.ui.dialog.BottomRejectDialog;
+import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.ui.widget.MeasureListView;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICommonCallbacks;
 import com.rainwood.tools.annotation.OnClick;
@@ -21,7 +26,6 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.aop.SingleClick;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,20 +42,28 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
     private TextView pageTitle;
 
     // 共有的
-    @ViewInject(R.id.tv_apply_name)
+    @ViewInject(R.id.git_state)
+    private GroupIconText mGroupState;
+    @ViewInject(R.id.tv_apply_name) //--申请人
     private TextView applyName;
-    @ViewInject(R.id.tv_reason)
+    @ViewInject(R.id.tv_reason)     // -- 事由
     private TextView reason;
+    @ViewInject(R.id.btn_through)
+    private Button btnThrough;
+    @ViewInject(R.id.ll_record_result)
+    private LinearLayout recordResultLl;
     // content
     // 加班记录
     @ViewInject(R.id.ll_include_overtime)
     private LinearLayout includeOvertime;
     @ViewInject(R.id.mlv_audit_records)
     private MeasureListView auditRecords;
-    @ViewInject(R.id.tv_overtime_task)
-    private TextView overtimeTask;
+    @ViewInject(R.id.tv_overtime_obj)
+    private TextView overtimeObj;
     @ViewInject(R.id.tv_pre_time)
     private TextView preTime;
+    @ViewInject(R.id.tv_actual_time)
+    private TextView actualTime;
     // 请假记录
     @ViewInject(R.id.ll_include_leave)
     private LinearLayout includeLeave;
@@ -73,10 +85,16 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
     private LinearLayout includeCard;
     @ViewInject(R.id.tv_reissue_time)
     private TextView reissueTime;
+    // 成果列表
+    @ViewInject(R.id.tv_record_title)
+    private TextView resultRecord;
+    @ViewInject(R.id.mlv_record_result)
+    private MeasureListView resultRecordListView;
 
     private ICommonPresenter mCommonPresenter;
     // 审核记录
     private AuditRecordAdapter mAuditRecordAdapter;
+    private RecordsResultsAdapter mResultsAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -100,25 +118,58 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
             includeOvertime.setVisibility(View.GONE);
             includeOut.setVisibility(View.GONE);
             includeCard.setVisibility(View.GONE);
-        }else if (title.contains("外出")){
+        } else if (title.contains("外出")) {
             includeOut.setVisibility(View.VISIBLE);
             includeLeave.setVisibility(View.GONE);
             includeOvertime.setVisibility(View.GONE);
             includeCard.setVisibility(View.GONE);
-        }else if (title.contains("补卡")){
+        } else if (title.contains("补卡")) {
             includeOut.setVisibility(View.GONE);
             includeLeave.setVisibility(View.GONE);
             includeOvertime.setVisibility(View.GONE);
             includeCard.setVisibility(View.VISIBLE);
         }
+        // 审核记录列表
         mAuditRecordAdapter = new AuditRecordAdapter();
         auditRecords.setAdapter(mAuditRecordAdapter);
+        // 成果记录列表
+        mResultsAdapter = new RecordsResultsAdapter();
+        resultRecordListView.setAdapter(mResultsAdapter);
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     @Override
     protected void initPresenter() {
         mCommonPresenter = PresenterManager.getOurInstance().getCommonPresenter();
         mCommonPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        String recordId = getIntent().getStringExtra("recordId");
+        // 请求数据
+        if (title.contains("加班")) {
+            if (moduleMenu.equals(Constants.PERSONAL_OVER_TIME_DETAIL_MENU)) {
+                // 行政人事--加班详情
+                mCommonPresenter.requestOverTimeRecordsById(recordId);
+            } else {
+                mCommonPresenter.AuditRecords();
+            }
+        } else if (title.contains("请假")) {
+            if (moduleMenu.equals(Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU)) {
+                // 行政人事 --- 请假详情
+                // TODO：记录页面打通
+            }
+            mCommonPresenter.AuditRecords();
+        } else if (title.contains("外出")) {
+            mCommonPresenter.AuditRecords();
+        } else if (title.contains("补卡")) {
+            mCommonPresenter.AuditRecords();
+        }
     }
 
     @SingleClick
@@ -155,26 +206,33 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
         }
     }
 
-    @Override
-    protected void loadData() {
-        // 请求数据
-        if (title.contains("加班")) {
-            mCommonPresenter.AuditRecords();
-        } else if (title.contains("请假")) {
-            mCommonPresenter.AuditRecords();
-        }else if (title.contains("外出")){
-            mCommonPresenter.AuditRecords();
-        }else if (title.contains("补卡")){
-            mCommonPresenter.AuditRecords();
-        }
-    }
-
     @SuppressWarnings("all")
     @Override
     public void getAuditRecords(Map recordsMap) {
-        // 得到数据
-        List<AuditRecords> recordsList = (List<AuditRecords>) recordsMap.get("overtime");
-        mAuditRecordAdapter.setAuditRecordsList(recordsList);
+        // 模拟得到数据
+
+    }
+
+    /**
+     * 加班详情
+     *
+     * @param recordsDetail
+     */
+    @Override
+    public void getOverTimeDetail(RecordsDetail recordsDetail) {
+        applyName.setText(recordsDetail.getStaffName());
+        preTime.setText(recordsDetail.getExpectTime());
+        actualTime.setText(recordsDetail.getTime());
+        mGroupState.setValue(recordsDetail.getWorkFlow());
+        mGroupState.setIcon(recordsDetail.getWorkFlow().contains("已")
+                ? R.drawable.ic_status_finished : R.drawable.ic_status_wait_in);
+        mAuditRecordAdapter.setAuditRecordsList(recordsDetail.getAuditingFollow());
+        // 审核成果，待审核
+        btnThrough.setVisibility(recordsDetail.getWorkFlow().contains("审核") ? View.VISIBLE : View.GONE);
+        // 成果
+        recordResultLl.setVisibility(ListUtils.getSize(recordsDetail.getWorkAddFruit()) == 0 ? View.GONE : View.VISIBLE);
+        resultRecord.setText("加班成果");
+        mResultsAdapter.setResultsList(recordsDetail.getWorkAddFruit());
     }
 
     @Override

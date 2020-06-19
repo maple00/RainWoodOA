@@ -18,21 +18,21 @@ public final class DepartStructure implements Serializable {
     /**
      * 部门总人数
      */
-    private String departNum;
+    private String num;
 
     /**
      * 被选中
      */
     private boolean selected;
 
-    private List<StaffStructure> staffList;
+    private List<StaffStructure> array;
 
-    public List<StaffStructure> getStaffList() {
-        return staffList;
+    public List<StaffStructure> getArray() {
+        return array;
     }
 
-    public void setStaffList(List<StaffStructure> staffList) {
-        this.staffList = staffList;
+    public void setArray(List<StaffStructure> array) {
+        this.array = array;
     }
 
     public String getName() {
@@ -43,12 +43,12 @@ public final class DepartStructure implements Serializable {
         this.name = name;
     }
 
-    public String getDepartNum() {
-        return departNum;
+    public String getNum() {
+        return num;
     }
 
-    public void setDepartNum(String departNum) {
-        this.departNum = departNum;
+    public void setNum(String num) {
+        this.num = num;
     }
 
     public boolean isSelected() {

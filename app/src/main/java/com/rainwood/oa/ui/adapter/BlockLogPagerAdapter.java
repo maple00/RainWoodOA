@@ -48,7 +48,14 @@ public final class BlockLogPagerAdapter extends RecyclerView.Adapter<BlockLogPag
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.content.setText(mBlockLogList.get(position).getText());
-        holder.time.setText(mBlockLogList.get(position).getTime() + "  状态--" + mBlockLogList.get(position).getWorkFlow());
+        holder.time.setText(mBlockLogList.get(position).getTime());
+        if ("已完成".equals(mBlockLogList.get(position).getWorkFlow())) {
+            holder.content.setTextColor(mContext.getColor(R.color.labelColor));
+            holder.time.setTextColor(mContext.getColor(R.color.labelColor));
+        } else {
+            holder.content.setTextColor(mContext.getColor(R.color.fontColor));
+            holder.time.setTextColor(mContext.getColor(R.color.fontColor));
+        }
         // 点击事件
         holder.itemBlock.setOnClickListener(v -> mBlockListener.onClickItem(mBlockLogList.get(position), position));
     }

@@ -74,7 +74,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     private RecyclerView recordListView;
 
     private IRecordManagerPresenter mRecordManagerPresenter;
-
     /*
     record适配器
      */
@@ -174,18 +173,17 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 toast("点击了---" + overtimeRecord.getStaffName());
                 startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
             });
-            // 行政人事
-            mAdminOvertimeAdapter.setItemOvertime(new AdminOvertimeAdapter.OnClickItemOvertimeListener() {
-                @Override
-                public void onClickOvertime(AdminOverTime overtimeRecord) {
-                    toast("加班详情");
-                }
+            // 行政人事 -- 加班详情
+            mAdminOvertimeAdapter.setItemOvertime(overtimeRecord -> {
+                //startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
+                PageJumpUtil.overTimeList2Detail(RecordManagerActivity.this,
+                        RecordDetailActivity.class, "加班详情", overtimeRecord.getId());
             });
         } else if (title.contains("请假")) {
             mLeaveAdapter.setClickItemLeave(leaveRecord -> {
                 // 请假详情
-                toast("点击了-----" + leaveRecord.getStaffName());
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "请假详情", "请假详情"));
+                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class,
+                        "请假详情", Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU));
             });
         } else if (title.contains("外出")) {
             mOutAdapter.setItemGoOut(leaveOutRecord -> {

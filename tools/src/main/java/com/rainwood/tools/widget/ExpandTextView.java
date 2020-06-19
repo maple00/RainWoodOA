@@ -159,8 +159,10 @@ public class ExpandTextView extends AppCompatTextView {
                 }
                 //计算收起的文本高度
                 int lineCount = tempLayout.getLineCount();
-                mCLoseHeight = (tempLayout.getHeight() / lineCount * (lineCount + 2)) + getPaddingTop() + getPaddingBottom();
-                Log.d("sxs", "收起的高度----- " + mCLoseHeight);
+                Log.d("sxs", "---临时行数--- " + lineCount);
+                Log.d("sxs", "---临时高度--- " + tempLayout.getHeight());
+                mCLoseHeight = (tempLayout.getHeight() / lineCount * (lineCount + 1))
+                        + getPaddingTop() + getPaddingBottom();
                 mCloseSpannableStr.append(ELLIPSIS_STRING);
                 if (mOpenSuffixSpan != null) {
                     mCloseSpannableStr.append(mOpenSuffixSpan);
@@ -174,6 +176,7 @@ public class ExpandTextView extends AppCompatTextView {
             super.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("sxs", "点击了--------------------------------");
 //                    switchOpenClose();
 //                    if (mOnClickListener != null) {
 //                        mOnClickListener.onClick(v);
@@ -226,8 +229,7 @@ public class ExpandTextView extends AppCompatTextView {
             Layout layout = createStaticLayout(mOpenSpannableStr);
             int lineCount = layout.getLineCount();
             Log.d("sxs", "行数--- " + lineCount);
-            mOpenHeight = (layout.getHeight() / lineCount * (lineCount + 2)) + getPaddingTop() + getPaddingBottom();
-            Log.d("sxs", "展开的高度----- " + mOpenHeight);
+            mOpenHeight = (layout.getHeight() / lineCount * (lineCount + mMaxLines)) + getPaddingTop() + getPaddingBottom();
             executeOpenAnim();
         } else {
             ExpandTextView.super.setMaxLines(Integer.MAX_VALUE);
@@ -265,7 +267,6 @@ public class ExpandTextView extends AppCompatTextView {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     ExpandTextView.super.setMaxLines(Integer.MAX_VALUE);
-                    Log.d("sxs", "mOpenSpannableStr --- " + mOpenSpannableStr);
                     setText(mOpenSpannableStr);
                 }
 

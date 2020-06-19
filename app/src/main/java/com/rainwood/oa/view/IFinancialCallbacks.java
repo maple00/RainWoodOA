@@ -22,4 +22,9 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * 获取团队基金数据
      */
     default void getTeamFundsData(List<TeamFunds> fundsList, String money){}
+
+    /**
+     * 行政处罚结果
+     */
+    default void getPunishResult(boolean success){}
 }

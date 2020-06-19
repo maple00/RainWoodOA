@@ -4,8 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical"
-    android:visibility="gone">
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:text="@string/record_actual_time"
+        android:textColor="@color/labelColor"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_actual_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:text="韩梅梅"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +54,7 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_overtime_task"
+        android:id="@+id/tv_overtime_obj"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

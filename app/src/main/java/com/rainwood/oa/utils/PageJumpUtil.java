@@ -263,4 +263,33 @@ public final class PageJumpUtil {
         sIntent.putExtra("customName", data.get("customName"));
         context.startActivity(sIntent);
     }
+
+    /**
+     * 已完成的待办事项列表跳转到详情页
+     * @param context
+     * @param clazz
+     * @param title
+     * @param blockId
+     */
+    public static void finishedBlock2Detail(Context context, Class<? extends BaseActivity> clazz, String title,String blockId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("blockId", blockId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---加班列表跳转到详情页面
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title,String recordId){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_OVER_TIME_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
 }

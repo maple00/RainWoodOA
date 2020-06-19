@@ -3,6 +3,7 @@ package com.rainwood.oa.utils;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.presenter.IBlockLogPagerPresenter;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.presenter.ICommonPresenter;
@@ -20,6 +21,7 @@ import com.rainwood.oa.presenter.impl.AdministrativeImpl;
 import com.rainwood.oa.presenter.impl.ArticleImpl;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
 import com.rainwood.oa.presenter.impl.BlockLogImpl;
+import com.rainwood.oa.presenter.impl.BlockLogPagerImpl;
 import com.rainwood.oa.presenter.impl.CalendarImpl;
 import com.rainwood.oa.presenter.impl.CommonImpl;
 import com.rainwood.oa.presenter.impl.CustomImpl;
@@ -57,6 +59,7 @@ public final class PresenterManager {
     private final IArticlePresenter mArticlePresenter;
     private final ICalendarPresenter mCalendarPresenter;
     private final IBlockLogPresenter mBlockLogPresenter;
+    private final IBlockLogPagerPresenter mBlockLogPagerPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -126,6 +129,10 @@ public final class PresenterManager {
         return mBlockLogPresenter;
     }
 
+    public IBlockLogPagerPresenter getBlockLogPagerPresenter() {
+        return mBlockLogPagerPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
@@ -143,5 +150,6 @@ public final class PresenterManager {
         mArticlePresenter = new ArticleImpl();
         mCalendarPresenter = new CalendarImpl();
         mBlockLogPresenter = new BlockLogImpl();
+        mBlockLogPagerPresenter = new BlockLogPagerImpl();
     }
 }

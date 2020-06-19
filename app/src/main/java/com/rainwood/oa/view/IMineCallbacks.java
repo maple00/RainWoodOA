@@ -3,6 +3,7 @@ package com.rainwood.oa.view;
 import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.AuditRecord;
+import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.MineData;
@@ -42,10 +43,16 @@ public interface IMineCallbacks extends IBaseCallback {
     }
 
     /**
-     * 我的---通讯录
+     * 我的---通讯录--- 员工列表
      */
     default void getMineAddressBookData(List<ContactsBean> contactsList) {
     }
+    /**
+     * 我的---通讯录--- 部门员工
+     */
+    default void getMineAddressBookDepartData(List<DepartStructure> departStructureList) {
+    }
+
 
     /**
      * 我的--会计账户

@@ -8,15 +8,12 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IBlockLogCallbacks;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Author: a797s
@@ -25,8 +22,7 @@ import java.util.List;
  */
 public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
 
-    private List<IBlockLogCallbacks> mBlockLogCallbacks = new ArrayList<>();
-
+    private IBlockLogCallbacks mBlockLogCallbacks;
     /*
     待办事项状态
      */
@@ -35,87 +31,62 @@ public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
     @Override
     public void requestStateData() {
         // 请求状态
-        for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-            blockLogCallback.getBlockState(Arrays.asList(states));
-        }
+        mBlockLogCallbacks.getBlockState(Arrays.asList(states));
     }
 
     /**
-     * 请求状态内容
+     * 待办事项详情
      *
-     * @param state 状态
+     * @param blockId
      */
     @Override
-    public void requestBlockData(String state) {
-        LogUtils.d("sxs", "----标题--- " + state);
-        for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-            if (state.equals(blockLogCallback.getState())) {
-                LogUtils.d("sxs", "--状态-- " + blockLogCallback.getState());
-                blockLogCallback.onLoading();
-            }
-        }
+    public void requestBlockDetail(String blockId) {
         RequestParams params = new RequestParams();
-        params.add("workFlow", state);
-        OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=home", params, this);
+        params.add("id", blockId);
+        OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=detail", params, this);
     }
 
     @Override
     public void registerViewCallback(IBlockLogCallbacks callback) {
-        if (!mBlockLogCallbacks.contains(callback)) {
-            mBlockLogCallbacks.add(callback);
-        }
+        mBlockLogCallbacks = callback;
     }
 
     @Override
     public void unregisterViewCallback(IBlockLogCallbacks callback) {
-        mBlockLogCallbacks.remove(callback);
+        mBlockLogCallbacks = null;
     }
 
     @Override
     public void onHttpFailure(HttpResponse result) {
-        for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-            if (result == null) {
-                blockLogCallback.onError();
-            }
-        }
+
     }
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-       // LogUtils.d("sxs", "result ---- " + result.body());
-        for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-            if (!(result.code() == 200)) {
-                blockLogCallback.onError();
-                break;
-            }
+        LogUtils.d("sxs", "result ---- " + result.body());
+        if (!(result.code() == 200)) {
+            mBlockLogCallbacks.onError();
+            return;
         }
         try {
             String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
-            for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-                if (!"success".equals(warn)) {
-                    blockLogCallback.onError(warn);
-                    return;
-                }
+            if (!"success".equals(warn)) {
+                mBlockLogCallbacks.onError(warn);
+                return;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // 待办事项列表
-        if (result.url().contains("cla=backlog&fun=home")) {
+        if (result.url().contains("cla=backlog&fun=detail")) {
             try {
-                List<BlockLog> blockLogList = JsonParser.parseJSONArray(BlockLog.class,
+                BlockLog blockLog = JsonParser.parseJSONObject(BlockLog.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("backlog"));
-                for (IBlockLogCallbacks blockLogCallback : mBlockLogCallbacks) {
-                    if (ListUtils.getSize(blockLogList) == 0) {
-                        blockLogCallback.onEmpty();
-                    } else {
-                        blockLogCallback.getBlockContent(blockLogList);
-                    }
-                }
+                mBlockLogCallbacks.getBlockLogDetail(blockLog);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
     }
 }

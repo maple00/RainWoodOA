@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
@@ -57,6 +58,12 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     private IBlockLogPresenter mBlockLogPresenter;
     private BlockPagerAdapter mBlockPagerAdapter;
+
+    private BottomNavigationView mBottomNavigationView;
+
+    public void setBottomNavigationView(BottomNavigationView bottomNavigationView) {
+        mBottomNavigationView = bottomNavigationView;
+    }
 
     @Override
     protected int getRootViewResId() {
@@ -136,7 +143,7 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     }
 
     @SingleClick
-    @OnClick({R.id.btn_dialog_pay, R.id.btn_date_timer, R.id.btn_date})
+    @OnClick({R.id.ll_network_error_tips, R.id.btn_dialog_pay, R.id.btn_date_timer, R.id.btn_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_dialog_pay:
@@ -215,6 +222,7 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         setUpState(State.SUCCESS);
         if (mBlockPagerAdapter != null) {
             mBlockPagerAdapter.setTitleList(stateList);
+            mBlockPagerAdapter.setBottomNavigationView(mBottomNavigationView);
         }
     }
 
@@ -236,7 +244,7 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     @Override
     protected void release() {
-        if (mBlockLogPresenter != null){
+        if (mBlockLogPresenter != null) {
             mBlockLogPresenter.unregisterViewCallback(this);
         }
     }

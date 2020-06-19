@@ -43,6 +43,24 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         OkHttp.post(Constants.BASE_URL + "cla=teamFund&fun=home", params, this);
     }
 
+    /**
+     * 行政处罚
+     *
+     * @param staffId
+     * @param money
+     * @param reason
+     * @param password
+     */
+    @Override
+    public void requestPunishStaff(String staffId, String money, String reason, String password) {
+        RequestParams params = new RequestParams();
+        params.add("stid", staffId);
+        params.add("money", money);
+        params.add("text", reason);
+        params.add("password", password);
+        OkHttp.post(Constants.BASE_URL + "cla=teamFund&fun=punish", params, this);
+    }
+
     @Override
     public void registerViewCallback(IFinancialCallbacks callback) {
         mFinancialCallbacks = callback;
@@ -92,6 +110,15 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                 List<Reimbursement> reimbursementList = JsonParser.parseJSONArray(Reimbursement.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
                 mFinancialCallbacks.getReimburseData(reimbursementList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政处罚
+        else if (result.url().contains("cla=teamFund&fun=punish")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mFinancialCallbacks.getPunishResult("success".equals(warn));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

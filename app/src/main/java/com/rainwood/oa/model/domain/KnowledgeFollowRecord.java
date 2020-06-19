@@ -10,21 +10,25 @@ import java.io.Serializable;
 public final class KnowledgeFollowRecord implements Serializable {
 
     /**
+     * 对象id
+     */
+    private String targetId;
+    /**
      * 记录类型
      * 如果是客户，可查看该客户详情
      * 如果是订单，可查看该订单详情
      */
-    private String type;
+    private String target;
 
     /**
      * 跟进记录名字
      */
-    private String name;
+    private String targetName;
 
     /**
      * 记录内容
      */
-    private String content;
+    private String text;
 
     /**
      * 跟进人
@@ -36,28 +40,36 @@ public final class KnowledgeFollowRecord implements Serializable {
      */
     private String time;
 
-    public String getType() {
-        return type;
+    public String getTargetId() {
+        return targetId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
     }
 
-    public String getName() {
-        return name;
+    public String getTarget() {
+        return target;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
-    public String getContent() {
-        return content;
+    public String getTargetName() {
+        return targetName;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTargetName(String targetName) {
+        this.targetName = targetName;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getStaffName() {

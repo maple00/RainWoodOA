@@ -1,23 +1,27 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.FollowRecordsAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
 
@@ -41,8 +45,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @ViewInject(R.id.rv_follow_records)
     private RecyclerView followRecords;
 
-    private FollowRecordsAdapter mRecordsAdapter;
     private IRecordManagerPresenter mRecordManagerPresenter;
+    private FollowRecordsAdapter mRecordsAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -68,6 +72,18 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     }
 
     @Override
+    protected void initPresenter() {
+        mRecordManagerPresenter = PresenterManager.getOurInstance().getRecordManagerPresenter();
+        mRecordManagerPresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        // 请求跟进记录数据
+        mRecordManagerPresenter.requestKnowledgeFollowRecords();
+    }
+
+    @Override
     protected void initEvent() {
         departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
             @Override
@@ -81,18 +97,28 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 toast("记录类型");
             }
         });
+        //
+        mRecordsAdapter.setTargetListener((record, position) -> {
+            switch (record.getTarget()) {
+                case "客户":
+                    PageJumpUtil.listJump2CustomDetail(FollowRecordActivity.this,
+                            CustomDetailActivity.class, record.getTargetId());
+                    break;
+                case "事务":
+                    toast("跳转到事务详情");
+                    break;
+            }
+        });
     }
 
-    @Override
-    protected void initPresenter() {
-        mRecordManagerPresenter = PresenterManager.getOurInstance().getRecordManagerPresenter();
-        mRecordManagerPresenter.registerViewCallback(this);
-    }
-
-    @Override
-    protected void loadData() {
-        // 请求跟进记录数据
-        mRecordManagerPresenter.requestKnowledgeFollowRecords();
+    @SingleClick
+    @OnClick(R.id.iv_page_back)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_page_back:
+                finish();
+                break;
+        }
     }
 
     @Override

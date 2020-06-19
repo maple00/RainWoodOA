@@ -16,8 +16,8 @@ public interface IBlockLogPresenter extends IBasePresenter<IBlockLogCallbacks> {
     void requestStateData();
 
     /**
-     * 请求状态内容
-     * @param state
+     * 请求待办事项详情
      */
-    void requestBlockData(String state);
+    void requestBlockDetail(String blockId);
+
 }

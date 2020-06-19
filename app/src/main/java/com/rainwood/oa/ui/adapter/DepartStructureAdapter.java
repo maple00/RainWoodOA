@@ -17,6 +17,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -51,20 +52,21 @@ public final class DepartStructureAdapter extends RecyclerView.Adapter<DepartStr
         holder.departName.setText(Html.fromHtml("<font color='" + mContext.getColor(R.color.fontColor)
                 + "'> " + mStructureList.get(position).getName() + "</font>"
                 + "<font color='" + mContext.getColor(R.color.labelColor) + "'> ("
-                + mStructureList.get(position).getDepartNum() + ")</font>"));
+                + mStructureList.get(position).getNum() + ")</font>"));
         holder.arrow.setImageDrawable(mStructureList.get(position).isSelected()
                 ? mContext.getDrawable(R.drawable.ic_up_arrow)
                 : mContext.getDrawable(R.drawable.ic_down_arrow));
 
         StaffListAdapter staffListAdapter = new StaffListAdapter();
         holder.departStaff.setAdapter(staffListAdapter);
-        staffListAdapter.setStaffStructureList(mStructureList.get(position).getStaffList());
+        staffListAdapter.setStaffStructureList(mStructureList.get(position).getArray());
         holder.departStaff.setVisibility(mStructureList.get(position).isSelected() ? View.VISIBLE : View.GONE);
         // 点击事件
         holder.departSelector.setOnClickListener(v -> {
             mStructureList.get(position).setSelected(!mStructureList.get(position).isSelected());
             notifyItemChanged(position);
         });
+        staffListAdapter.setStaffListener(mItemStaffListener);
     }
 
     @Override
@@ -86,5 +88,11 @@ public final class DepartStructureAdapter extends RecyclerView.Adapter<DepartStr
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    private StaffListAdapter.OnClickItemStaffListener mItemStaffListener;
+
+    public void setItemStaffListener(StaffListAdapter.OnClickItemStaffListener itemStaffListener) {
+        mItemStaffListener = itemStaffListener;
     }
 }

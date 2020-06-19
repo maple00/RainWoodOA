@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,7 +17,6 @@ import com.rainwood.oa.model.domain.StaffStructure;
 import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.utils.ClipboardUtil;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PhoneCallUtil;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -69,7 +69,7 @@ public final class StaffListAdapter extends BaseAdapter {
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
         holder.name.setText(getItem(position).getName());
-        holder.post.setText(getItem(position).getPost());
+        holder.post.setText(getItem(position).getJob());
         holder.telNum.setValue(getItem(position).getTel());
         holder.qqNumber.setValue(getItem(position).getTel());
         // 点击事件
@@ -82,10 +82,13 @@ public final class StaffListAdapter extends BaseAdapter {
             ClipboardUtil.clipFormat2Board((Activity) parent.getContext(), "qqNum", getItem(position).getQq());
             ToastUtils.show("已复制");
         });
+        holder.itemStaff.setOnClickListener(v -> mStaffListener.onClickItem(mStaffStructureList.get(position), position));
         return convertView;
     }
 
     private static class ViewHolder {
+        @ViewInject(R.id.rl_item_staff)
+        private RelativeLayout itemStaff;
         @ViewInject(R.id.iv_head_photo)
         private ImageView headPhoto;
         @ViewInject(R.id.tv_name)
@@ -96,5 +99,21 @@ public final class StaffListAdapter extends BaseAdapter {
         private GroupIconText telNum;
         @ViewInject(R.id.git_qq_number)
         private GroupIconText qqNumber;
+    }
+
+    public interface OnClickItemStaffListener {
+        /**
+         * 选中员工
+         *
+         * @param structure
+         * @param position
+         */
+        void onClickItem(StaffStructure structure, int position);
+    }
+
+    private OnClickItemStaffListener mStaffListener;
+
+    public void setStaffListener(OnClickItemStaffListener staffListener) {
+        mStaffListener = staffListener;
     }
 }

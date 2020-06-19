@@ -15,8 +15,11 @@ import com.rainwood.contactslibrary.decoration.DividerItemDecoration;
 import com.rainwood.contactslibrary.decoration.TitleItemDecoration;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.DepartStructure;
+import com.rainwood.oa.model.domain.StaffStructure;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.DepartStructureAdapter;
+import com.rainwood.oa.ui.adapter.StaffListAdapter;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.ClipboardUtil;
 import com.rainwood.oa.utils.PhoneCallUtil;
@@ -56,8 +59,6 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
     private IndexBar indexBar;
     @ViewInject(R.id.tv_sideBar_hint)
     private TextView sideBarHint;
-
-    private LinearLayoutManager mManager;
 
     // 联系人
     private ContactAdapter mContactAdapter;
@@ -109,7 +110,7 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
                 toast("部门职位");
             }
         });
-        // 选中员工
+        // 通讯录员工
         mContactAdapter.setContactListener(new ContactAdapter.OnClickContactListener() {
             @Override
             public void onClickItem(ContactsBean contact, int position) {
@@ -126,6 +127,13 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
             public void onClickQq(ContactsBean contact, int position) {
                 ClipboardUtil.clipFormat2Board(getActivity(), contact.getName() + "qq", contact.getQq());
                 toast("已复制" + contact.getName() + "的QQ：" + contact.getQq());
+            }
+        });
+        // 部门员工
+        mStructureAdapter.setItemStaffListener(new StaffListAdapter.OnClickItemStaffListener() {
+            @Override
+            public void onClickItem(StaffStructure structure, int position) {
+                toast("选中员工--" + structure.getName());
             }
         });
     }
@@ -146,15 +154,24 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
         员工列表
          */
         // 设置员工布局管理器
-        contactView.setLayoutManager(mManager = new LinearLayoutManager(this));
+        LinearLayoutManager manager;
+        contactView.setLayoutManager(manager = new LinearLayoutManager(this));
         contactView.addItemDecoration(new TitleItemDecoration(this, contactsList));
         contactView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         //使用indexBar
         indexBar.setmPressedShowTextView(sideBarHint)//设置HintTextView
                 .setNeedRealIndex(false)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
+                .setmLayoutManager(manager)//设置RecyclerView的LayoutManager
                 .setmSourceDatas(contactsList);//设置数据源
         mContactAdapter.setDatas(contactsList);
+    }
+
+    @Override
+    public void getMineAddressBookDepartData(List<DepartStructure> departStructureList) {
+          /*
+        部门结构员工列表
+         */
+        mStructureAdapter.setStructureList(departStructureList);
     }
 
     @Override

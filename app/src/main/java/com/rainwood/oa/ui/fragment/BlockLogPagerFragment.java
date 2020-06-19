@@ -1,22 +1,31 @@
 package com.rainwood.oa.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.BlockLog;
-import com.rainwood.oa.presenter.IBlockLogPresenter;
+import com.rainwood.oa.presenter.IBlockLogPagerPresenter;
+import com.rainwood.oa.ui.activity.BlockLogDetailActivity;
 import com.rainwood.oa.ui.adapter.BlockLogPagerAdapter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
-import com.rainwood.oa.view.IBlockLogCallbacks;
+import com.rainwood.oa.view.IBlockLogPagerCallbacks;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
 
@@ -27,13 +36,16 @@ import static com.rainwood.oa.utils.Constants.POSITION_BLOCK_PAGER_State;
  * @Date: 2020/6/17 15:01
  * @Desc: 待办事项子页面
  */
-public final class BlockLogPagerFragment extends BaseFragment implements IBlockLogCallbacks {
+public final class BlockLogPagerFragment extends BaseFragment implements IBlockLogPagerCallbacks {
 
-    private IBlockLogPresenter mBlockLogPresenter;
+    private IBlockLogPagerPresenter mBlockLogPagerPresenter;
     private BlockLogPagerAdapter mBlockLogPagerAdapter;
     private String mTitleState;
 
-    public static BlockLogPagerFragment getInstance(String title, int position) {
+    private static BottomNavigationView mBottomNavigationView;
+
+    public static BlockLogPagerFragment getInstance(String title, int position, BottomNavigationView bottomNavigationView) {
+        mBottomNavigationView = bottomNavigationView;
         BlockLogPagerFragment blockLogPagerFragment = new BlockLogPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.KEY_BLOCK_PAGER_State, title);
@@ -64,13 +76,13 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
         blockLogPagerView.setAdapter(mBlockLogPagerAdapter);
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
-        pagerRefresh.setEnableLoadmore(true);
+        pagerRefresh.setEnableLoadmore(false);
     }
 
     @Override
     protected void initPresenter() {
-        mBlockLogPresenter = PresenterManager.getOurInstance().getBlockLogPresenter();
-        mBlockLogPresenter.registerViewCallback(this);
+        mBlockLogPagerPresenter = PresenterManager.getOurInstance().getBlockLogPagerPresenter();
+        mBlockLogPagerPresenter.registerViewCallback(this);
     }
 
     @Override
@@ -79,8 +91,8 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
         if (bundle != null) {
             mTitleState = bundle.getString(Constants.KEY_BLOCK_PAGER_State);
             int defaultPos = bundle.getInt(POSITION_BLOCK_PAGER_State);
-            if (mBlockLogPresenter != null && defaultPos != -1) {
-                mBlockLogPresenter.requestBlockData(mTitleState);
+            if (mBlockLogPagerPresenter != null && defaultPos != -1) {
+                mBlockLogPagerPresenter.requestBlockData(mTitleState);
             }
         }
     }
@@ -92,18 +104,50 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
 
     @Override
     protected void initListener() {
-        mBlockLogPagerAdapter.setBlockListener(new BlockLogPagerAdapter.OnClickItemBlockListener() {
-            @Override
-            public void onClickItem(BlockLog blockLog, int position) {
-                toast("选中了--- " + blockLog.getId() + "---- position---" + position);
+        // 待办事项点击
+        mBlockLogPagerAdapter.setBlockListener((blockLog, position) -> {
+            if ("已完成".equals(blockLog.getWorkFlow())) {
+                PageJumpUtil.finishedBlock2Detail(getContext(), BlockLogDetailActivity.class, "详情", blockLog.getId());
+            } else {
+                toast(blockLog.getType());
             }
         });
+    }
+
+    @SingleClick
+    @OnClick(R.id.ll_network_error_tips)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                loadData();
+                break;
+        }
     }
 
     @Override
     public void getBlockContent(List<BlockLog> blockLogList) {
         setUpState(State.SUCCESS);
+        // 设置数据源
         mBlockLogPagerAdapter.setBlockLogList(blockLogList);
+        // 设置角标
+        //获取整个的NavigationView
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) mBottomNavigationView.getChildAt(0);
+        //这里就是获取所添加的每一个Tab(或者叫menu)，
+        View tab = menuView.getChildAt(2);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) tab;
+        //加载我们的角标View，新创建的一个布局
+        View badge = LayoutInflater.from(getContext()).inflate(R.layout.badge_block_log, menuView, false);
+        TextView msgCount = badge.findViewById(R.id.tv_msg_count);
+        //添加到Tab上
+        itemView.addView(badge);
+        int unDelBlockCount = 0;
+        for (BlockLog blockLog : blockLogList) {
+            if ("待处理".equals(blockLog.getWorkFlow())) {
+                unDelBlockCount++;
+            }
+        }
+        msgCount.setVisibility(unDelBlockCount == 0 ? View.GONE : View.VISIBLE);
+        msgCount.setText(unDelBlockCount > 99 ? (unDelBlockCount + "+") : String.valueOf(unDelBlockCount));
     }
 
     @Override
@@ -124,8 +168,8 @@ public final class BlockLogPagerFragment extends BaseFragment implements IBlockL
 
     @Override
     protected void release() {
-        if (mBlockLogPresenter != null) {
-            mBlockLogPresenter.unregisterViewCallback(this);
+        if (mBlockLogPagerPresenter != null) {
+            mBlockLogPagerPresenter.unregisterViewCallback(this);
         }
     }
 }

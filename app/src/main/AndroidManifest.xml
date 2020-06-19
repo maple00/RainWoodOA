@@ -524,6 +524,16 @@
             android:screenOrientation="fullSensor" />
 
         <!--
+        待办事项
+        -->
+        <!-- 待办事项详情 BlockLogDetailActivity-->
+        <activity
+            android:name=".ui.activity.BlockLogDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor" />
+
+        <!--
         三方集成
         -->
         <!-- TBS文件预览 TbsActivity-->

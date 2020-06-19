@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.AuditRecord;
+import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.MineData;
@@ -74,7 +75,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     }
 
     /**
-     * 申请通讯录数据
+     * 通讯录数据
      */
     @Override
     public void requestAddressBookData() {
@@ -406,9 +407,15 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         // 通讯录
         else if (result.url().contains("cla=my&fun=contacts")) {
             try {
+                // 员工列表
                 List<ContactsBean> contactsList = JsonParser.parseJSONArray(ContactsBean.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                // 部门列表
+                List<DepartStructure> departStructureList = JsonParser.parseJSONArray(DepartStructure.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("department"));
+
                 mMineCallbacks.getMineAddressBookData(contactsList);
+                mMineCallbacks.getMineAddressBookDepartData(departStructureList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

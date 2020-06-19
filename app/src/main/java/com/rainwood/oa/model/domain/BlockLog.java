@@ -34,6 +34,10 @@ public final class BlockLog implements Serializable {
     private String text;
 
     /**
+     * 提示日期
+     */
+    private String startDay;
+    /**
      * 事件时间
      */
     private String time;
@@ -76,6 +80,14 @@ public final class BlockLog implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(String startDay) {
+        this.startDay = startDay;
     }
 
     public String getTime() {

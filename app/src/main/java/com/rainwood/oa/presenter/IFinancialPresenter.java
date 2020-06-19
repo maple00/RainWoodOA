@@ -19,4 +19,13 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
      * 请求团队基金数据
      */
     void requestTeamFundsData(String direction);
+
+    /**
+     * 行政处罚
+     * @param staffId
+     * @param money
+     * @param reason
+     * @param password
+     */
+    void requestPunishStaff(String staffId, String money, String reason, String password);
 }
