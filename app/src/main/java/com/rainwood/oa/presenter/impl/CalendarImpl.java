@@ -97,7 +97,8 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
                             ? "0" + jsonArray.getString(i)
                             : jsonArray.getString(i)));
                 }
-                mCalendarCallbacks.getWorkDayData(dayList);
+                String dayNote = JsonParser.parseJSONObjectString(result.body()).getString("text");
+                mCalendarCallbacks.getWorkDayData(dayList,dayNote);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

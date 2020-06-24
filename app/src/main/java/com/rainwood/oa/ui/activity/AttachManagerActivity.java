@@ -1,33 +1,45 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.KnowledgeAttach;
+import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.ui.adapter.AttachKnowledgeAdapter;
+import com.rainwood.oa.ui.adapter.CommonGridAdapter;
+import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
+import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IAttachmentCallbacks;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.tools.wheel.aop.SingleClick;
 import com.rainwood.tools.wheel.view.RegexEditText;
 
 import java.util.List;
+
+import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
 
 /**
  * @Author: sxs
@@ -50,6 +62,9 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private GroupTextIcon objType;
     @ViewInject(R.id.gti_default_sort)
     private GroupTextIcon attachSorting;
+    @ViewInject(R.id.divider)
+    private View divider;
+
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_attach_list)
@@ -57,6 +72,16 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
 
     private IAttachmentPresenter mAttachmentPresenter;
     private AttachKnowledgeAdapter mAttachKnowledgeAdapter;
+    private CommonGridAdapter mSelectedAdapter;
+    private StaffDefaultSortAdapter mDefaultSortAdapter;
+    private View mMaskLayer;
+    private List<SelectedItem> mTargetList;
+    private List<SelectedItem> mSecretList;
+    private List<SelectedItem> mSortList;
+
+    private boolean CHECKED_TARGET_FLAG = false;
+    private boolean CHECKED_SECRET_FLAG = false;
+    private boolean CHECKED_SORT_FLAG = false;
 
     @Override
     protected int getLayoutResId() {
@@ -90,32 +115,38 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     protected void loadData() {
         mAttachmentPresenter.requestKnowledgeAttach();
+        // request Condition
+        mAttachmentPresenter.requestAttachCondition();
     }
 
     @Override
     protected void initEvent() {
-        departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("部门员工");
+        departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(AttachManagerActivity.this,
+                ContactsActivity.class, "通讯录", ""),
+                CHOOSE_STAFF_REQUEST_SIZE));
+
+        attachSecret.setOnItemClick(text -> {
+            CHECKED_SECRET_FLAG = !CHECKED_SECRET_FLAG;
+            attachSecret.setRightIcon(CHECKED_SECRET_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    CHECKED_SECRET_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (CHECKED_SECRET_FLAG) {
+                stateConditionPopDialog(mSecretList, attachSecret);
             }
         });
-        attachSecret.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("保密状态");
+        objType.setOnItemClick(text -> {
+            CHECKED_TARGET_FLAG = !CHECKED_TARGET_FLAG;
+            objType.setRightIcon(CHECKED_TARGET_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    CHECKED_TARGET_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (CHECKED_TARGET_FLAG) {
+                stateConditionPopDialog(mTargetList, objType);
             }
         });
-        objType.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("对象类型");
-            }
-        });
-        attachSorting.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("默认排序");
+        attachSorting.setOnItemClick(text -> {
+            CHECKED_SORT_FLAG = !CHECKED_SORT_FLAG;
+            attachSorting.setRightIcon(CHECKED_SORT_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    CHECKED_SORT_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (CHECKED_SORT_FLAG) {
+                defaultSortConditionPopDialog();
             }
         });
         // itemClickListener
@@ -148,6 +179,19 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+            String staff = data.getStringExtra("staff");
+            String staffId = data.getStringExtra("staffId");
+            String position = data.getStringExtra("position");
+
+            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+        }
+    }
+
+
     @SingleClick
     @OnClick(R.id.iv_page_back)
     public void onClick(View view) {
@@ -162,6 +206,90 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     public void getKnowledgeAttach(List<KnowledgeAttach> attachList) {
         mAttachKnowledgeAdapter.setAttachList(attachList);
     }
+
+    @Override
+    public void getAttachCondition(List<SelectedItem> targetList, List<SelectedItem> secretList,
+                                   List<SelectedItem> sortList) {
+        mTargetList = targetList;
+        mSecretList = secretList;
+        mSortList = sortList;
+    }
+
+    /**
+     * 状态选择
+     */
+    private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
+        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_grid_list)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setNumColumns(4);
+                    mSelectedAdapter = new CommonGridAdapter();
+                    contentList.setAdapter(mSelectedAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                })
+                .create();
+        mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            CHECKED_TARGET_FLAG = false;
+            CHECKED_SECRET_FLAG = false;
+            targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
+                CHECKED_TARGET_FLAG = false;
+                CHECKED_SECRET_FLAG = false;
+                targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+            }
+        });
+        mSelectedAdapter.setTextList(stateList);
+    }
+
+    /**
+     * 排序
+     */
+    private void defaultSortConditionPopDialog() {
+        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_grid_list)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setNumColumns(1);
+                    mDefaultSortAdapter = new StaffDefaultSortAdapter();
+                    contentList.setAdapter(mDefaultSortAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                })
+                .create();
+        mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            CHECKED_SORT_FLAG = false;
+            attachSorting.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
+                CHECKED_SORT_FLAG = false;
+                attachSorting.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+            }
+        });
+        // 筛选条件点击事件
+        mDefaultSortAdapter.setOnClickListener((selectedItem, position) -> {
+            for (SelectedItem item : mSortList) {
+                item.setHasSelected(false);
+            }
+            selectedItem.setHasSelected(true);
+        });
+        mDefaultSortAdapter.setItemList(mSortList);
+    }
+
 
     @Override
     public void onError() {

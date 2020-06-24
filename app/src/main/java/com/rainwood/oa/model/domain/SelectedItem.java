@@ -1,22 +1,33 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * create by a797s in 2020/5/14 17:09
  *
  * @Description : 选中的item
  * @Usage :
  **/
-public final class SelectedItem {
+public final class SelectedItem implements Serializable {
 
-    private String data;
+    private String id;
+    private String name;
     private boolean hasSelected;
 
-    public String getData() {
-        return data;
+    public String getId() {
+        return id;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isHasSelected() {
@@ -30,7 +41,7 @@ public final class SelectedItem {
     @Override
     public String toString() {
         return "SelectedItem{" +
-                "data='" + data + '\'' +
+                "name='" + name + '\'' +
                 ", hasSelected=" + hasSelected +
                 '}';
     }

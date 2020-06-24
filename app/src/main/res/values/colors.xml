@@ -21,7 +21,10 @@
     <color name="colorStockLine">#E1E1E1</color>
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#AAAAAA</color>
-
+    <!-- 对话框确认按钮文本颜色 -->
+    <color name="colorConfirm">#007AFF</color>
+    <!-- 对话框取消按钮文本颜色 -->
+    <color name="colorCancel">#F44336</color>
     <!-- 一般文字颜色-->
     <color name="tipsColor">#FFA627</color>
     <color name="tipsColor05">#FF8278</color>

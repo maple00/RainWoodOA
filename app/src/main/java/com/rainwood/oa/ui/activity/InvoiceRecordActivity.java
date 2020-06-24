@@ -1,11 +1,15 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,21 +17,30 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
+import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.FinancialInvoiceRecordAdapter;
 import com.rainwood.oa.ui.adapter.InvoiceRecordAdapter;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
+import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
+
+import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
 
 /**
  * @Author: sxs
@@ -66,6 +79,9 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private GroupTextIcon payTeam;
     @ViewInject(R.id.gti_period_time)
     private GroupTextIcon periodTime;
+    @ViewInject(R.id.divider)
+    private View divider;
+
     @ViewInject(R.id.ll_apply_invoice)
     private LinearLayout applyInvoice;
     @ViewInject(R.id.btn_apply_open)
@@ -73,9 +89,18 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pageRefresh;
 
+
     private IRecordManagerPresenter mRecordManagerPresenter;
     private InvoiceRecordAdapter mInvoiceRecordAdapter;
     private FinancialInvoiceRecordAdapter mFinancialInvoiceRecordAdapter;
+
+    private boolean selectedTimeFlag = false;
+    private boolean SELECTED_TYPE_FLAG = false;
+    private boolean SELECTED_SALE_FLAG = false;
+    private CommonGridAdapter mSelectedAdapter;
+    private View mMaskLayer;
+    private List<SelectedItem> mFinancialSaleList;
+    private List<SelectedItem> mFinancialTypeList;
 
     @Override
     protected int getLayoutResId() {
@@ -90,6 +115,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         invoiceRecordView.setLayoutManager(new GridLayoutManager(this, 1));
         invoiceRecordView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         if (Constants.CUSTOM_ID == null) {
+            // 财务管理 --- 开票记录
             pageTop.setVisibility(View.GONE);
             pageTopSearch.setVisibility(View.VISIBLE);
             StatusBarUtils.setPaddingSmart(this, pageTopSearch);
@@ -100,6 +126,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             mFinancialInvoiceRecordAdapter = new FinancialInvoiceRecordAdapter();
             invoiceRecordView.setAdapter(mFinancialInvoiceRecordAdapter);
         } else {
+            // 客户详情 -- 开票记录
             pageTop.setVisibility(View.VISIBLE);
             pageTopSearch.setVisibility(View.GONE);
             StatusBarUtils.setPaddingSmart(this, pageTop);
@@ -129,6 +156,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID);
         } else {
             mRecordManagerPresenter.requestInvoiceRecords("");
+            // 请求condition
+            mRecordManagerPresenter.requestInvoiceCondition();
         }
     }
 
@@ -139,33 +168,69 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             pageRefresh.setPadding(0, 0, 0, measuredHeight + 70);
         }
 
-        departStaff.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("部门员工");
+        departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(InvoiceRecordActivity.this,
+                ContactsActivity.class, "通讯录", ""),
+                CHOOSE_STAFF_REQUEST_SIZE));
+
+        typeView.setOnItemClick(text -> {
+            SELECTED_TYPE_FLAG = !SELECTED_TYPE_FLAG;
+            typeView.setRightIcon(SELECTED_TYPE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    SELECTED_TYPE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (SELECTED_TYPE_FLAG) {
+                stateConditionPopDialog(mFinancialTypeList, typeView);
             }
         });
-        typeView.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("支付类型");
+        payTeam.setOnItemClick(text -> {
+            SELECTED_SALE_FLAG = !SELECTED_SALE_FLAG;
+            payTeam.setRightIcon(SELECTED_SALE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    SELECTED_SALE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (SELECTED_SALE_FLAG) {
+                stateConditionPopDialog(mFinancialSaleList, payTeam);
             }
         });
-        payTeam.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("支付方");
-            }
-        });
-        periodTime.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("时间段");
-            }
+        periodTime.setOnItemClick(text -> {
+            selectedTimeFlag = !selectedTimeFlag;
+            new StartEndDateDialog.Builder(InvoiceRecordActivity.this, false)
+                    .setTitle(null)
+                    .setConfirm(getString(R.string.common_text_confirm))
+                    .setCancel(getString(R.string.common_text_clear_screen))
+                    .setAutoDismiss(false)
+                    //.setIgnoreDay()
+                    .setCanceledOnTouchOutside(false)
+                    .setListener(new StartEndDateDialog.OnListener() {
+                        @Override
+                        public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                            dialog.dismiss();
+                            toast("选中的时间段：" + startTime + "至" + endTime);
+                            selectedTimeFlag = false;
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                        }
+
+                        @Override
+                        public void onCancel(BaseDialog dialog) {
+                            dialog.dismiss();
+                            selectedTimeFlag = false;
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                        }
+                    })
+                    .show();
+            periodTime.setRightIcon(selectedTimeFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
         });
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+            String staff = data.getStringExtra("staff");
+            String staffId = data.getStringExtra("staffId");
+            String position = data.getStringExtra("position");
+
+            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+        }
+    }
 
     @SingleClick
     @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated})
@@ -236,6 +301,54 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     public void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords) {
         mFinancialInvoiceRecordAdapter.setRecordList(financialInvoiceRecords);
+    }
+
+    /**
+     * 财务管理 --- 开票记录condition
+     *
+     * @param saleList
+     * @param typeList
+     */
+    @Override
+    public void getInvoiceCondition(List<SelectedItem> saleList, List<SelectedItem> typeList) {
+        mFinancialSaleList = saleList;
+        mFinancialTypeList = typeList;
+    }
+
+
+    /**
+     * 类型选择
+     */
+    private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
+        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_grid_list)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setNumColumns(4);
+                    mSelectedAdapter = new CommonGridAdapter();
+                    contentList.setAdapter(mSelectedAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                })
+                .create();
+        mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            SELECTED_TYPE_FLAG = false;
+            SELECTED_SALE_FLAG = false;
+            targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
+                SELECTED_TYPE_FLAG = false;
+                SELECTED_SALE_FLAG = false;
+                targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+            }
+        });
+        mSelectedAdapter.setTextList(stateList);
     }
 
     @Override

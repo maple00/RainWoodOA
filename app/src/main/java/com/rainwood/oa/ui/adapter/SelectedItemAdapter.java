@@ -61,7 +61,7 @@ public final class SelectedItemAdapter extends BaseAdapter {
         holder.content.setTextColor(getItem(position).isHasSelected()
                 ? parent.getContext().getColor(R.color.colorPrimary)
                 : parent.getContext().getColor(R.color.colorMiddle));
-        holder.content.setText(getItem(position).getData());
+        holder.content.setText(getItem(position).getName());
         return convertView;
     }
 

@@ -42,7 +42,16 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     /**
      * 请求客户列表
      */
-    void getALlCustomData(int page);
+    void requestALlCustomData(int page);
+
+    /**
+     * 客户列表 -- 状态 condition
+     */
+    void requestStateCondition();
+    /**
+     * 客户列表 -- 区域 condition
+     */
+    void requestAreaCondition();
 
     /**
      * 查询状态
@@ -61,6 +70,7 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
 
     /**
      * 通过客户id查询其下的联系人列表
+     *
      * @param khid 客户id
      */
     void requestContactListByCustomId(String khid);
@@ -83,15 +93,17 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
 
     /**
      * 删除协作人
+     *
      * @param customId 客户id
-     * @param staffId 员工id
+     * @param staffId  员工id
      */
     void requestDeleteAssociates(String customId, String staffId);
 
     /**
      * 转让客户
+     *
      * @param customId 客户id
-     * @param staffId 被转让的员工ID
+     * @param staffId  被转让的员工ID
      */
     void requestRevCustom(String customId, String staffId);
 
@@ -99,5 +111,6 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      * 获取客户下的开票信息
      */
     void requestCustomInvoice(String customId);
+
 
 }

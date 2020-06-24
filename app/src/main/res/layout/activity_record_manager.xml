@@ -45,7 +45,9 @@
 
     </LinearLayout>
 
-    <View style="@style/HorizontalLineStyle" />
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
 
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout

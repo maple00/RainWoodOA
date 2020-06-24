@@ -266,12 +266,13 @@ public final class PageJumpUtil {
 
     /**
      * 已完成的待办事项列表跳转到详情页
+     *
      * @param context
      * @param clazz
      * @param title
      * @param blockId
      */
-    public static void finishedBlock2Detail(Context context, Class<? extends BaseActivity> clazz, String title,String blockId){
+    public static void finishedBlock2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String blockId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("blockId", blockId);
@@ -280,16 +281,64 @@ public final class PageJumpUtil {
 
     /**
      * 行政人事---加班列表跳转到详情页面
+     *
      * @param context
      * @param clazz
      * @param title
      * @param recordId
      */
-    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title,String recordId){
+    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
         sIntent.putExtra("menu", Constants.PERSONAL_OVER_TIME_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---请假列表跳转到详情页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void askLeaveList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---外出记录详情
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void askOutList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_ASK_OUT_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---补卡记录详情
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void ReissueCardList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_REISSUE_CARD_DETAIL_MENU);
         context.startActivity(sIntent);
     }
 }

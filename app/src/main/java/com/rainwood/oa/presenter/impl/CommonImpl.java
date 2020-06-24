@@ -12,6 +12,7 @@ import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.ICommonCallbacks;
 
+import org.joda.time.TimeOfDay;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
 
         Map<String, List<AuditRecords>> recordMap = new HashMap<>();
         recordMap.put("overtime", recordsList);
-        mCommonCallbacks.getAuditRecords(recordMap);
+     //   mCommonCallbacks.getAuditRecords(recordMap);
     }
 
     /**
@@ -56,6 +57,39 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
         RequestParams params = new RequestParams();
         params.add("workAddId", overTimeId);
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=detail", params, this);
+    }
+
+    /**
+     * 行政人事 --- 请假详情
+     * @param askLeaveId
+     */
+    @Override
+    public void requestAskLeaveById(String askLeaveId) {
+        RequestParams params = new RequestParams();
+        params.add("id", askLeaveId);
+        OkHttp.post(Constants.BASE_URL + "cla=work&fun=detail", params, this);
+    }
+
+    /**
+     * 行政人事 -- 外出记录详情
+     * @param staffId
+     */
+    @Override
+    public void requestAskOutByStaffId(String staffId) {
+        RequestParams params = new RequestParams();
+        params.add("workOutId", staffId);
+        OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=detail", params, this);
+    }
+
+    /**
+     * 行政人事 -- 补卡记录详情
+     * @param reissueId
+     */
+    @Override
+    public void requestReissueCardDetailById(String reissueId) {
+        RequestParams params = new RequestParams();
+        params.add("id", reissueId);
+        OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=detail", params, this);
     }
 
     @Override
@@ -96,6 +130,36 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
                 RecordsDetail recordsDetail = JsonParser.parseJSONObject(RecordsDetail.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("workAdd"));
                 mCommonCallbacks.getOverTimeDetail(recordsDetail);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政人事 -- 请假详情
+        else if (result.url().contains("cla=work&fun=detail")){
+            try {
+                RecordsDetail recordsDetail = JsonParser.parseJSONObject(RecordsDetail.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("work"));
+                mCommonCallbacks.getAskLeaveDetailData(recordsDetail);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政人事 -- 外出记录详情
+        else if (result.url().contains("cla=workOut&fun=detail")){
+            try {
+                RecordsDetail recordsDetail = JsonParser.parseJSONObject(RecordsDetail.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("workOut"));
+                mCommonCallbacks.getAskOutDetailData(recordsDetail);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 行政人事 -- 补卡记录详情
+        else if (result.url().contains("cla=workSignAdd&fun=detail")){
+            try {
+                RecordsDetail recordsDetail = JsonParser.parseJSONObject(RecordsDetail.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("add"));
+                mCommonCallbacks.getReissueDetailData(recordsDetail);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

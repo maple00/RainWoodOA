@@ -16,7 +16,7 @@ import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
 import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.sxs.verification.CheckUtil;
 import com.sxs.verification.VerificationView;
 

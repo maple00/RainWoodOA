@@ -21,4 +21,20 @@ public interface ICommonCallbacks extends IBaseCallback {
      * 加班详情
      */
     default void getOverTimeDetail(RecordsDetail recordsDetail){}
+
+    /**
+     * 请假详情
+     */
+    default void getAskLeaveDetailData(RecordsDetail recordsDetail){}
+
+    /**
+     * 外出详情
+     */
+    default void getAskOutDetailData(RecordsDetail recordsDetail){}
+
+    /**
+     * 补卡记录详情
+     * @param recordsDetail
+     */
+    default void getReissueDetailData(RecordsDetail recordsDetail){}
 }

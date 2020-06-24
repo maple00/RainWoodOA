@@ -10,6 +10,10 @@ import java.io.Serializable;
 public final class LeaveOutRecord implements Serializable {
 
     /**
+     * 员工id
+     */
+    private String stid;
+    /**
      * 外出员工
      */
     private String staffName;
@@ -33,6 +37,14 @@ public final class LeaveOutRecord implements Serializable {
      * 加班内容
      */
     private String text;
+
+    public String getStid() {
+        return stid;
+    }
+
+    public void setStid(String stid) {
+        this.stid = stid;
+    }
 
     public String getStaffName() {
         return staffName;

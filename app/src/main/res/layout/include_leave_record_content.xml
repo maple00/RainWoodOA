@@ -17,12 +17,11 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_apply_name"
+        android:id="@+id/tv_askLeave_apply_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
-        android:text="韩梅梅"
         android:textColor="@color/fontColor"
         android:textSize="15sp" />
 
@@ -33,7 +32,8 @@
         android:layout_marginTop="25dp"
         android:text="@string/text_record_depart_post"
         android:textColor="@color/labelColor"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_depart_post"
@@ -41,9 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
-        android:text="市场部-销售顾问"
         android:textColor="@color/fontColor"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,7 +60,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
-        android:text="2020.03.20 18:00 - 2020.03.20 20:00"
         android:textColor="@color/fontColor"
         android:textSize="15sp" />
 
@@ -81,7 +80,6 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="26dp"
         android:lineSpacingExtra="12dp"
-        android:text="事假"
         android:textColor="@color/fontColor"
         android:textSize="15sp" />
 
@@ -95,14 +93,13 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_reason"
+        android:id="@+id/tv_askLeave_reason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="26dp"
         android:lineSpacingExtra="12dp"
-        android:text="事假"
         android:textColor="@color/fontColor"
         android:textSize="15sp" />
 

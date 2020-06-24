@@ -1,9 +1,9 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Attachment;
-import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.OfficeFile;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -15,6 +15,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IAttachmentCallbacks;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
 
     /**
      * 通过客户id查询建客户附件
+     *
      * @param customId 客户id
      */
     @Override
@@ -77,12 +79,30 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     }
 
     /**
+     * 办公文件 -- condition
+     */
+    @Override
+    public void requestOfficeCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=search", params, this);
+    }
+
+    /**
      * 请求知识管理中的附件列表
      */
     @Override
     public void requestKnowledgeAttach() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=file&fun=home", params, this);
+    }
+
+    /**
+     * 知识管理 --附件管理condition
+     */
+    @Override
+    public void requestAttachCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=file&fun=search", params, this);
     }
 
     @Override
@@ -118,11 +138,11 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
         }
 
         // 客户附件管理
-        if (result.url().contains("cla=client&fun=fileLi")){
+        if (result.url().contains("cla=client&fun=fileLi")) {
             try {
                 List<Attachment> attachList = JsonParser.parseJSONArray(Attachment.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("file"));
-                if (ListUtils.getSize(attachList) == 0){
+                if (ListUtils.getSize(attachList) == 0) {
                     mAttachmentCallback.onEmpty();
                     return;
                 }
@@ -132,7 +152,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
             }
         }
         // 办公文件
-        else if (result.url().contains("cla=fileWork&fun=home")){
+        else if (result.url().contains("cla=fileWork&fun=home")) {
             try {
                 List<OfficeFile> officeFileList = JsonParser.parseJSONArray(OfficeFile.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("file"));
@@ -141,12 +161,91 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
                 e.printStackTrace();
             }
         }
+        // 办公文件 -- condition
+        else if (result.url().contains("cla=fileWork&fun=search")) {
+            try {
+                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("type"));
+                JSONArray formatArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("format"));
+                JSONArray secretArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("secret"));
+                JSONArray sortArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("orderBy"));
+                List<SelectedItem> typeList = new ArrayList<>();
+                List<SelectedItem> formatList = new ArrayList<>();
+                List<SelectedItem> secretList = new ArrayList<>();
+                List<SelectedItem> sortList = new ArrayList<>();
+                for (int i = 0; i < typeArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(typeArray.getString(i));
+                    typeList.add(item);
+                }
+                for (int i = 0; i < formatArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(formatArray.getString(i));
+                    formatList.add(item);
+                }
+                for (int i = 0; i < secretArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(secretArray.getString(i));
+                    secretList.add(item);
+                }
+                for (int i = 0; i < sortArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(sortArray.getString(i));
+                    sortList.add(item);
+                }
+                mAttachmentCallback.getOfficeCondition(typeList, formatList, secretList, sortList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         // 知识管理---附件管理
-        else if (result.url().contains("cla=file&fun=home")){
+        else if (result.url().contains("cla=file&fun=home")) {
             try {
                 List<KnowledgeAttach> attachList = JsonParser.parseJSONArray(KnowledgeAttach.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("file"));
                 mAttachmentCallback.getKnowledgeAttach(attachList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 知识管理 -- 附件管理condition
+        else if (result.url().contains("cla=file&fun=search")) {
+            try {
+                JSONArray targetArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("target"));
+                JSONArray secretArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("secret"));
+                JSONArray sortArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("orderBy"));
+                List<SelectedItem> targetList = new ArrayList<>();
+                List<SelectedItem> secretList = new ArrayList<>();
+                List<SelectedItem> sortList = new ArrayList<>();
+                for (int i = 0; i < targetArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(targetArray.getString(i));
+                    targetList.add(item);
+                }
+                for (int i = 0; i < secretArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(secretArray.getString(i));
+                    secretList.add(item);
+                }
+                for (int i = 0; i < sortArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(sortArray.getString(i));
+                    sortList.add(item);
+                }
+                mAttachmentCallback.getAttachCondition(targetList, secretList, sortList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

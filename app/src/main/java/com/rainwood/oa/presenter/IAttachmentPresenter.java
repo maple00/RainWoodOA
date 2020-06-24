@@ -17,6 +17,7 @@ public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallback
 
     /**
      * 通过客户id查询客户附件
+     *
      * @param customId 客户id
      */
     void requestCustomAttachData(String customId);
@@ -27,7 +28,17 @@ public interface IAttachmentPresenter extends IBasePresenter<IAttachmentCallback
     void requestOfficeFileData();
 
     /**
+     * 办公文件 -- condition
+     */
+    void requestOfficeCondition();
+
+    /**
      * 请求知识管理中的附件
      */
     void requestKnowledgeAttach();
+
+    /**
+     * 附件管理 -- condition
+     */
+    void requestAttachCondition();
 }

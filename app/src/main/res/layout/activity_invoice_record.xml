@@ -117,14 +117,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:status_text="类型" />
+            app:status_text="销售方" />
 
         <com.rainwood.oa.ui.widget.GroupTextIcon
             android:id="@+id/gti_pay_team"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:status_text="付款方" />
+            app:status_text="发票类型" />
 
         <com.rainwood.oa.ui.widget.GroupTextIcon
             android:id="@+id/gti_period_time"
@@ -135,6 +135,9 @@
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
     <RelativeLayout
         android:layout_width="match_parent"

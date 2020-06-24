@@ -8,8 +8,6 @@
 
     <include layout="@layout/include_search_click_view" />
 
-    <View style="@style/HorizontalLineStyle" />
-
     <LinearLayout
         android:id="@+id/ll_status_top"
         android:layout_width="match_parent"
@@ -49,6 +47,10 @@
             app:text_size="15" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
     <include layout="@layout/include_order_list" />
 

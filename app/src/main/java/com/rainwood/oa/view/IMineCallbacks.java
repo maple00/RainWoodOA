@@ -3,6 +3,7 @@ package com.rainwood.oa.view;
 import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.AuditRecord;
+import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.IconAndFont;
@@ -113,4 +114,10 @@ public interface IMineCallbacks extends IBaseCallback {
      */
     default void getLogout(boolean success) {
     }
+
+    /**
+     * 部门职位列表
+     * @param departList
+     */
+    default void getDepartListData(List<Depart> departList){}
 }

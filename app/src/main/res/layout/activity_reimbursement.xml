@@ -130,6 +130,10 @@
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
+
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"

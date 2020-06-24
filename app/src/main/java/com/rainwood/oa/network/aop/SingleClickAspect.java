@@ -1,4 +1,4 @@
-package com.rainwood.tools.wheel.aop;
+package com.rainwood.oa.network.aop;
 
 import android.util.Log;
 import android.view.View;
@@ -11,7 +11,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import java.util.Calendar;
 
 /**
- *    author : Android 轮子哥
+ *    author : a797s
  *    time   : 2019/12/06
  *    desc   : 防重复点击处理
  */
@@ -30,7 +30,7 @@ public class SingleClickAspect {
     /**
      * 方法切入点
      */
-    @Pointcut("execution(@com.rainwood.tools.wheel.aop.SingleClick * *(..))")
+    @Pointcut("execution(@com.rainwood.oa.network.aop.SingleClick * *(..))")
     public void method() {}
 
     /**

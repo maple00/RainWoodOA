@@ -25,7 +25,7 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IStaffCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 import java.util.Objects;

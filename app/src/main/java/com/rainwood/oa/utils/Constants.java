@@ -120,4 +120,6 @@ public final class Constants {
      */
     public static final String PERSONAL_OVER_TIME_DETAIL_MENU = "personalOverTimeDetail";
     public static final String PERSONAL_ASK_LEAVE_DETAIL_MENU = "personalAskLeaveDetail";
+    public static final String PERSONAL_ASK_OUT_DETAIL_MENU = "personalAskOutDetail";
+    public static final String PERSONAL_REISSUE_CARD_DETAIL_MENU = "personalReissueCardDetail";
 }

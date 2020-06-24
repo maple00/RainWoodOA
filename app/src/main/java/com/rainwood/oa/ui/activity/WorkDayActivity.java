@@ -2,6 +2,7 @@ package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,7 +18,7 @@ import com.rainwood.oa.view.ICalendarCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,11 +49,15 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
     private CalendarLayout mCalendarLayout;
     @ViewInject(R.id.calendarView)
     private CalendarView mCalendarView;
+    @ViewInject(R.id.fl_current)
+    private FrameLayout currentDay;
 
     @ViewInject(R.id.tv_calendar_info)
     private TextView calendarInfo;
     @ViewInject(R.id.tv_calendar_note)
     private TextView calendarNote;
+    @ViewInject(R.id.tv_day_note)
+    private TextView mTextDayNote;
 
     private int mYear;
     private ICalendarPresenter mCalendarPresenter;
@@ -121,6 +126,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
                 mTextMonth.setVisibility(View.INVISIBLE);
                 mTextYear.setVisibility(View.VISIBLE);
                 mTextYear.setText(mYear + "年");
+                currentDay.setVisibility(View.GONE);
                 break;
         }
     }
@@ -153,6 +159,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
     @SuppressLint("SetTextI18n")
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
+        currentDay.setVisibility(View.VISIBLE);
         mTextYear.setVisibility(View.VISIBLE);
         mTextMonth.setVisibility(View.VISIBLE);
         mTextYear.setText(calendar.getYear() + "年");
@@ -166,7 +173,8 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
     }
 
     @Override
-    public void getWorkDayData(List<String> dayList) {
+    public void getWorkDayData(List<String> dayList, String dayNote) {
+        mTextDayNote.setText(dayNote);
         int year = mCalendarView.getCurYear();
         int month = mCalendarView.getCurMonth();
 

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +36,7 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_apply_name"
+        android:id="@+id/tv_overtime_apply_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,7 +52,8 @@
         android:layout_marginTop="25dp"
         android:text="@string/record_overtime_obj"
         android:textColor="@color/labelColor"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_overtime_obj"
@@ -61,7 +63,8 @@
         android:layout_marginTop="15dp"
         android:text="客户 · 重庆红菊精密"
         android:textColor="@color/fontColor"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"

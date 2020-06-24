@@ -29,7 +29,9 @@
     <string name="time_title">请选择时间</string>
     <!-- 支付密码对话框 -->
     <string name="pay_title">请输入登录密码</string>
-
+    <!-- 地区对话框 -->
+    <string name="address_title">请选择地区</string>
+    <string name="address_hint">请选择</string>
     <!-- 支付密码对话框 -->
     <string name="select_min_hint">至少要选择 %d 项</string>
     <string name="select_max_hint">最多只能选择 %d 项</string>
@@ -125,6 +127,7 @@
     <string name="text_record_leave_content">请假事由</string>
     <string name="text_record_out_obj">外出对象</string>
     <string name="text_record_pre_out_time">预计外出时间</string>
+    <string name="text_record_actual_out_time">实际外出时间</string>
     <string name="text_record_out_reason">外出事由</string>
     <string name="text_record_reissue_time">补卡时间</string>
     <string name="text_record_reissue_reason">补卡事由</string>

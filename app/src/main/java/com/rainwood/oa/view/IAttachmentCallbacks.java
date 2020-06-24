@@ -4,6 +4,7 @@ import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.OfficeFile;
+import com.rainwood.oa.model.domain.SelectedItem;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,19 @@ public interface IAttachmentCallbacks extends IBaseCallback {
     default void getOfficeFileData(List<OfficeFile> fileList){}
 
     /**
+     * 办公文件 -- condition
+     */
+    default void getOfficeCondition(List<SelectedItem> typeList, List<SelectedItem> formatList,
+                                    List<SelectedItem> secretList, List<SelectedItem> sortList){}
+
+    /**
      * 附件管理（知识管理）
      */
     default void getKnowledgeAttach(List<KnowledgeAttach> attachList){}
+
+    /**
+     * 附件管理 -- condition
+     */
+    default void getAttachCondition(List<SelectedItem> targetList,
+                                    List<SelectedItem> secretList, List<SelectedItem> sortList){}
 }

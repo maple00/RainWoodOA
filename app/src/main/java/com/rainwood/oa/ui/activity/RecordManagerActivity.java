@@ -1,11 +1,15 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,29 +22,37 @@ import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.AdminLeaveOutAdapter;
 import com.rainwood.oa.ui.adapter.AdminOvertimeAdapter;
 import com.rainwood.oa.ui.adapter.CardRecordAdapter;
+import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.LeaveAdapter;
 import com.rainwood.oa.ui.adapter.LeaveOutAdapter;
 import com.rainwood.oa.ui.adapter.OvertimeAdapter;
 import com.rainwood.oa.ui.adapter.ReceivableRecordAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
+import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
+
+import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
 
 /**
  * @Author: a797s
@@ -67,6 +79,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     private GroupTextIcon departStaff;
     @ViewInject(R.id.gti_period_time)
     private GroupTextIcon periodTime;
+    @ViewInject(R.id.divider)
+    private View divider;
 
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
@@ -91,7 +105,16 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     // 选择flag
     private boolean selectedTimeFlag = false;
+    private boolean SELECTED_STATE_FLAG = false;
+    private boolean SELECTED_LEAVE_TYPE_FLAG = false;
+    private CommonGridAdapter mSelectedAdapter;
+    private View mMaskLayer;
     private AdminLeaveOutAdapter mAdminLeaveOutAdapter;
+    private List<SelectedItem> mOverTimeStateList;
+    private List<SelectedItem> mLeaveStateList;
+    private List<SelectedItem> mLeaveTypeList;
+    private List<SelectedItem> mLeaveOutList;
+    private List<SelectedItem> mReissueStateList;
 
     @Override
     protected int getLayoutResId() {
@@ -143,17 +166,21 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
             } else {
                 mRecordManagerPresenter.requestOvertimeRecord();
+                mRecordManagerPresenter.requestOverTimeStateData();
             }
         } else if (title.contains("请假")) {
             mRecordManagerPresenter.requestLeaveRecord();
+            mRecordManagerPresenter.requestLeaveCondition();
         } else if (title.contains("外出")) {
             if (Constants.CUSTOM_ID != null) {
                 mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
             } else {
                 mRecordManagerPresenter.requestGoOutRecord();
+                mRecordManagerPresenter.requestGoOutCondition();
             }
         } else if (title.contains("补卡")) {
             mRecordManagerPresenter.requestReissueRecord();
+            mRecordManagerPresenter.requestReissueCondition();
         } else if (title.contains("回款")) {
             mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID);
         }
@@ -167,9 +194,10 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     protected void initEvent() {
+
         if (title.contains("加班")) {
+            // 客户管理--加班详情
             mOvertimeAdapter.setItemOvertime(overtimeRecord -> {
-                // 客户管理--加班详情
                 toast("点击了---" + overtimeRecord.getStaffName());
                 startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
             });
@@ -179,22 +207,91 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 PageJumpUtil.overTimeList2Detail(RecordManagerActivity.this,
                         RecordDetailActivity.class, "加班详情", overtimeRecord.getId());
             });
+            topStatus.setOnItemClick(text -> {
+                if (ListUtils.getSize(mOverTimeStateList) == 0) {
+                    toast("无状态可选择");
+                    return;
+                }
+                SELECTED_STATE_FLAG = !SELECTED_STATE_FLAG;
+                topStatus.setRightIcon(SELECTED_STATE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        SELECTED_STATE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                if (SELECTED_STATE_FLAG) {
+                    stateConditionPopDialog(mOverTimeStateList, topStatus);
+                }
+            });
         } else if (title.contains("请假")) {
             mLeaveAdapter.setClickItemLeave(leaveRecord -> {
                 // 请假详情
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class,
-                        "请假详情", Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU));
+                PageJumpUtil.askLeaveList2Detail(RecordManagerActivity.this, RecordDetailActivity.class, "请假详情",
+                        leaveRecord.getId());
+            });
+            topStatus.setOnItemClick(text -> {
+                if (ListUtils.getSize(mLeaveStateList) == 0) {
+                    toast("无状态可选择");
+                    return;
+                }
+                SELECTED_STATE_FLAG = !SELECTED_STATE_FLAG;
+                topStatus.setRightIcon(SELECTED_STATE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        SELECTED_STATE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                if (SELECTED_STATE_FLAG) {
+                    stateConditionPopDialog(mLeaveStateList, topStatus);
+                }
+            });
+            topLeaveType.setOnItemClick(text -> {
+                if (ListUtils.getSize(mLeaveTypeList) == 0) {
+                    toast("无状态可选择");
+                    return;
+                }
+                SELECTED_LEAVE_TYPE_FLAG = !SELECTED_LEAVE_TYPE_FLAG;
+                topLeaveType.setRightIcon(SELECTED_LEAVE_TYPE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        SELECTED_LEAVE_TYPE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                if (SELECTED_LEAVE_TYPE_FLAG) {
+                    stateConditionPopDialog(mLeaveTypeList, topLeaveType);
+                }
             });
         } else if (title.contains("外出")) {
+            // 客户详情外出记录
             mOutAdapter.setItemGoOut(leaveOutRecord -> {
                 // 外出详情
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情", "外出详情"));
+                // startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情", "外出详情"));
+                PageJumpUtil.askLeaveList2Detail(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情",
+                        leaveOutRecord.getStid());
+            });
+            // 行政人事外出记录
+            mAdminLeaveOutAdapter.setItemGoOut(leaveOutRecord ->
+                    PageJumpUtil.askOutList2Detail(RecordManagerActivity.this,
+                            RecordDetailActivity.class, "外出详情", leaveOutRecord.getId()));
+
+            topStatus.setOnItemClick(text -> {
+                if (ListUtils.getSize(mLeaveOutList) == 0) {
+                    toast("无状态可选择");
+                    return;
+                }
+                SELECTED_STATE_FLAG = !SELECTED_STATE_FLAG;
+                topStatus.setRightIcon(SELECTED_STATE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        SELECTED_STATE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                if (SELECTED_STATE_FLAG) {
+                    stateConditionPopDialog(mLeaveOutList, topStatus);
+                }
             });
         } else if (title.contains("补卡")) {
             mCardRecordAdapter.setItemGoOut(cardRecord -> {
                 // 补卡详情
-                toast("查看详情---" + cardRecord.getStaffName());
-                startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "补卡详情", "补卡详情"));
+                // startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "补卡详情", "补卡详情"));
+                PageJumpUtil.ReissueCardList2Detail(RecordManagerActivity.this, RecordDetailActivity.class,
+                        "补卡详情", cardRecord.getId());
+            });
+            topStatus.setOnItemClick(text -> {
+                if (ListUtils.getSize(mReissueStateList) == 0) {
+                    toast("无状态可选择");
+                    return;
+                }
+                SELECTED_STATE_FLAG = !SELECTED_STATE_FLAG;
+                topStatus.setRightIcon(SELECTED_STATE_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        SELECTED_STATE_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                if (SELECTED_STATE_FLAG) {
+                    stateConditionPopDialog(mReissueStateList, topStatus);
+                }
             });
         } else if (title.contains("回款")) {
             mReceivableRecordAdapter.setClickReceivable((record, position) ->
@@ -232,6 +329,21 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                     selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
         });
 
+        departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(RecordManagerActivity.this,
+                ContactsActivity.class, "通讯录", ""),
+                CHOOSE_STAFF_REQUEST_SIZE));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+            String staff = data.getStringExtra("staff");
+            String staffId = data.getStringExtra("staffId");
+            String position = data.getStringExtra("position");
+
+            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+        }
     }
 
     @SingleClick
@@ -261,13 +373,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         mOutAdapter.setLeaveOutRecordList(leaveOutList);
     }
 
-    @SuppressWarnings("all")
-    @Override
-    public void getReissueRecords(List<CardRecord> cardRecordList) {
-        //  行政人事---补卡记录
-        mCardRecordAdapter.setLeaveOutRecordList(cardRecordList);
-    }
-
     @Override
     public void getCustomReceivableRecords(List<ReceivableRecord> receivableRecordList) {
         //  客户管理---回款记录
@@ -281,9 +386,22 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     }
 
     @Override
+    public void getAdminOverTimeState(List<SelectedItem> overTimeStateList) {
+        // 行政人事 -- 加班记录condition
+        mOverTimeStateList = overTimeStateList;
+    }
+
+    @Override
     public void getLeaveRecords(List<LeaveRecord> leaveRecordList) {
         //  行政人事---请假记录
         mLeaveAdapter.setLeaveList(leaveRecordList);
+    }
+
+    @Override
+    public void getLeaveConditionData(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList) {
+        // 行政人事 -- 请假记录condition
+        mLeaveStateList = stateList;
+        mLeaveTypeList = leaveTypeList;
     }
 
     @Override
@@ -293,6 +411,60 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     }
 
     @Override
+    public void getLeaveOutCondition(List<SelectedItem> leaveOutList) {
+        mLeaveOutList = leaveOutList;
+    }
+
+    @SuppressWarnings("all")
+    @Override
+    public void getReissueRecords(List<CardRecord> cardRecordList) {
+        //  行政人事---补卡记录
+        mCardRecordAdapter.setLeaveOutRecordList(cardRecordList);
+    }
+
+    @Override
+    public void getReissueCondition(List<SelectedItem> reissueStateList) {
+        //  行政人事---补卡记录condition
+        mReissueStateList = reissueStateList;
+    }
+
+    /**
+     * 状态选择
+     */
+    private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
+        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_grid_list)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setNumColumns(4);
+                    mSelectedAdapter = new CommonGridAdapter();
+                    contentList.setAdapter(mSelectedAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                })
+                .create();
+        mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            SELECTED_STATE_FLAG = false;
+            selectedTimeFlag = false;
+            SELECTED_LEAVE_TYPE_FLAG = false;
+            targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
+                SELECTED_STATE_FLAG = false;
+                selectedTimeFlag = false;
+                SELECTED_LEAVE_TYPE_FLAG = false;
+                targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+            }
+        });
+        mSelectedAdapter.setTextList(stateList);
+    }
+
     public void onError() {
 
     }

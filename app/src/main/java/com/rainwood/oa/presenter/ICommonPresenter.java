@@ -21,4 +21,19 @@ public interface ICommonPresenter extends IBasePresenter<ICommonCallbacks> {
      * 行政人事 --- 加班记录
      */
     void requestOverTimeRecordsById(String overTimeId);
+
+    /**
+     * 行政人事-- 请假详情
+     */
+    void requestAskLeaveById(String askLeaveId);
+
+    /**
+     * 行政人事 -- 外出详情
+     */
+    void requestAskOutByStaffId(String staffId);
+
+    /**
+     * 行政人事 -- 补卡记录详情
+     */
+    void requestReissueCardDetailById(String reissueId);
 }

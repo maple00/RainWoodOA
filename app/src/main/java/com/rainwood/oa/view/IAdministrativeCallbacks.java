@@ -4,7 +4,9 @@ import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
+import com.rainwood.oa.model.domain.RoleCondition;
 import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.model.domain.SelectedItem;
 
 import java.util.List;
 
@@ -24,7 +26,14 @@ public interface IAdministrativeCallbacks extends IBaseCallback {
     /**
      * 角色详情
      */
-    default void getRoleXPermissionDetail(RolePermission rolePermission){}
+    default void getRoleXPermissionDetail(RolePermission rolePermission) {
+    }
+
+    /**
+     * 角色筛选分类
+     */
+    default void getRoleScreenData(List<RoleCondition> roleConditionList) {
+    }
 
     /**
      * 部门管理列表data
@@ -32,6 +41,11 @@ public interface IAdministrativeCallbacks extends IBaseCallback {
     default void getDepartListData(List<Depart> departList) {
     }
 
+    /**
+     * 部门分类
+     */
+    default void getDepartTypeData(List<SelectedItem> departTypeList) {
+    }
 
     /**
      * 部门详情
@@ -48,6 +62,12 @@ public interface IAdministrativeCallbacks extends IBaseCallback {
      * @param postList
      */
     default void getPostListData(List<Post> postList) {
+    }
+
+    /**
+     * 职位管理--- 角色信息
+     */
+    default void getPostRoleData(List<SelectedItem> selectedList) {
     }
 
     /**

@@ -12,6 +12,7 @@ import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
+import com.rainwood.oa.model.domain.SelectedItem;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,15 @@ public interface IRecordCallbacks extends IBaseCallback {
     }
 
     /**
+     * 请假记录 condition
+     *
+     * @param stateList
+     * @param leaveTypeList
+     */
+    default void getLeaveConditionData(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList) {
+    }
+
+    /**
      * 获取所有的外出记录
      */
     default void getGoOutRecords(List<LeaveOutRecord> leaveOutList) {
@@ -50,9 +60,23 @@ public interface IRecordCallbacks extends IBaseCallback {
     }
 
     /**
+     * 行政人事 -- 外出记录condition
+     */
+    default void getLeaveOutCondition(List<SelectedItem> leaveOutList) {
+    }
+
+    /**
      * 获取所有的补卡记录
      */
     default void getReissueRecords(List<CardRecord> cardRecordList) {
+    }
+
+    /**
+     * 补卡记录的状态
+     *
+     * @param reissueStateList
+     */
+    default void getReissueCondition(List<SelectedItem> reissueStateList) {
     }
 
     /**
@@ -67,8 +91,6 @@ public interface IRecordCallbacks extends IBaseCallback {
     default void getCustomReceivableRecords(List<ReceivableRecord> receivableRecordList) {
     }
 
-    ;
-
     /**
      * 获取客户回款记录详情
      */
@@ -81,15 +103,18 @@ public interface IRecordCallbacks extends IBaseCallback {
     default void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList) {
     }
 
-    ;
-
     /**
-     * 财务管理下开票记录
+     * 财务管理 --- 开票记录
      *
      * @param financialInvoiceRecords
      */
     default void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords) {
     }
+
+    /**
+     * 财务管理 -- 开票记录condition
+     */
+    default void getInvoiceCondition(List<SelectedItem> saleList, List<SelectedItem> typeList){}
 
     /**
      * 客户新建开票记录的页面数据
@@ -118,5 +143,14 @@ public interface IRecordCallbacks extends IBaseCallback {
      */
     default void getAdminOverTimeRecords(List<AdminOverTime> adminOverTimeList) {
     }
+
+    /**
+     * 行政人事 -- 加班状态
+     *
+     * @param overTimeStateList
+     */
+    default void getAdminOverTimeState(List<SelectedItem> overTimeStateList) {
+    }
+
 
 }

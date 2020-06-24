@@ -16,6 +16,11 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     void requestAllDepartData();
 
     /**
+     * 请求查询条件
+     */
+    void requestQueryCondition();
+
+    /**
      * 请求所有的员工
      */
     void requestAllStaff(String postId);

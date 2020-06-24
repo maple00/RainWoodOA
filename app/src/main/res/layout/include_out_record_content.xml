@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:visibility="gone">
+    android:visibility="visible">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_apply_name"
+        android:id="@+id/tv_out_apply_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -33,7 +33,8 @@
         android:layout_marginTop="25dp"
         android:text="@string/text_record_out_obj"
         android:textColor="@color/labelColor"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_out_obj"
@@ -43,7 +44,8 @@
         android:layout_marginTop="15dp"
         android:text="重庆博得瑞科技有限公司"
         android:textColor="@color/fontColor"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,21 +71,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="25dp"
-        android:text="@string/text_record_out_reason"
+        android:text="@string/text_record_actual_out_time"
         android:textColor="@color/labelColor"
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/tv_reason"
+        android:id="@+id/tv_out_actual_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="26dp"
         android:lineSpacingExtra="12dp"
-        android:text="去渝北财富中心重庆博得瑞科技有限公司跟客户谈网站需求"
         android:textColor="@color/fontColor"
-        android:textSize="15sp" />
+        android:textSize="15sp"/>
 
 
 </LinearLayout>

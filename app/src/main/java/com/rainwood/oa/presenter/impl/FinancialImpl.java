@@ -1,6 +1,7 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Reimbursement;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.TeamFunds;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -12,8 +13,10 @@ import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IFinancialCallbacks;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +28,22 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
 
     private IFinancialCallbacks mFinancialCallbacks;
 
+    /**
+     * 费用报销
+     */
     @Override
     public void requestReimburseData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=cost&fun=home", params, this);
+    }
+
+    /**
+     * 费用报销 -- condition
+     */
+    @Override
+    public void requestReimburseCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=cost&fun=search", params, this);
     }
 
     /**
@@ -60,6 +75,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         params.add("password", password);
         OkHttp.post(Constants.BASE_URL + "cla=teamFund&fun=punish", params, this);
     }
+
 
     @Override
     public void registerViewCallback(IFinancialCallbacks callback) {
@@ -110,6 +126,30 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                 List<Reimbursement> reimbursementList = JsonParser.parseJSONArray(Reimbursement.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
                 mFinancialCallbacks.getReimburseData(reimbursementList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 费用报销 --- condition
+        else if (result.url().contains("cla=cost&fun=search")){
+            try {
+                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("type"));
+                JSONArray payerArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("payer"));
+                List<SelectedItem> typeSelectedList = new ArrayList<>();
+                List<SelectedItem> payerSelectedList = new ArrayList<>();
+                for (int i = 0; i < typeArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(typeArray.getString(i));
+                    typeSelectedList.add(item);
+                }
+                for (int i = 0; i < payerArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(payerArray.getString(i));
+                    payerSelectedList.add(item);
+                }
+                mFinancialCallbacks.getReimburseCondition(typeSelectedList, payerSelectedList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

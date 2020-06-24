@@ -1,6 +1,7 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
@@ -25,6 +26,15 @@ public interface IStaffCallbacks extends IBaseCallback {
      */
     default void getAllDepart(List<StaffDepart> departList){};
 
+    /**
+     * 获取查询条件
+     * @param defaultSortList
+     * @param sexList
+     * @param socialList
+     * @param gateList
+     */
+    default void getQueryCondition(List<SelectedItem> defaultSortList, List<SelectedItem> sexList,
+                                   List<SelectedItem> socialList, List<SelectedItem> gateList){}
 
     /**
      * 获取所有的员工

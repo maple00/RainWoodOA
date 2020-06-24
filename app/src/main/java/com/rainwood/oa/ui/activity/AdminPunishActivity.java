@@ -20,7 +20,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
 

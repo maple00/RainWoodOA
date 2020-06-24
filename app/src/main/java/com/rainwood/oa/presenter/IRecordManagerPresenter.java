@@ -12,9 +12,15 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
 
     /**
      * 客户下的加班记录
+     *
      * @param customId
      */
     void requestOvertimeRecord(String customId);
+
+    /**
+     * 请求记录状态
+     */
+    void requestOverTimeStateData();
 
     /**
      * 行政人事--加班记录
@@ -27,6 +33,11 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     void requestLeaveRecord();
 
     /**
+     * 请求请假的查询条件
+     */
+    void requestLeaveCondition();
+
+    /**
      * 请求外出记录
      */
     void requestGoOutRecord(String customId);
@@ -37,9 +48,19 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     void requestGoOutRecord();
 
     /**
+     * 行政人事 -- 外出记录condition
+     */
+    void requestGoOutCondition();
+
+    /**
      * 请求补卡记录
      */
     void requestReissueRecord();
+
+    /**
+     * 行政人事 -- 补卡记录condition
+     */
+    void requestReissueCondition();
 
     /**
      * 请求客户的跟进记录
@@ -67,6 +88,11 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     void requestInvoiceRecords(String type);
 
     /**
+     * 开票记录 -- condition
+     */
+    void requestInvoiceCondition();
+
+    /**
      * 请求客户下的开票记录中的开票参数
      */
     void requestCustomInvoiceParams();
@@ -74,11 +100,12 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 新建开票记录
      */
-    void CreateInvoiceRecord(String seller, String type, String money,  String note,
+    void CreateInvoiceRecord(String seller, String type, String money, String note,
                              String customId);
 
     /**
      * 知识管理中的跟进记录
      */
     void requestKnowledgeFollowRecords();
+
 }

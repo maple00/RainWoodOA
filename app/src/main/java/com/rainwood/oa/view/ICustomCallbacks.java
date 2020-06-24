@@ -4,6 +4,7 @@ import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.CustomInvoice;
 import com.rainwood.oa.model.domain.CustomStaff;
+import com.rainwood.oa.model.domain.SelectedItem;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,11 @@ public interface ICustomCallbacks extends IBaseCallback {
      * @param customList
      */
     default void getAllCustomList(List customList){};
+
+    /**
+     * 客户列表状态
+     */
+    default void getStateCondition(List<SelectedItem> stateList){}
 
     /**
      * 获取所有的状态

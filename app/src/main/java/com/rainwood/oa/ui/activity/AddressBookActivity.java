@@ -1,6 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,23 +17,30 @@ import com.rainwood.contactslibrary.decoration.DividerItemDecoration;
 import com.rainwood.contactslibrary.decoration.TitleItemDecoration;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.DepartStructure;
+import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.StaffStructure;
 import com.rainwood.oa.presenter.IMinePresenter;
+import com.rainwood.oa.ui.adapter.DepartGroupScreenAdapter;
+import com.rainwood.oa.ui.adapter.DepartScreenAdapter;
 import com.rainwood.oa.ui.adapter.DepartStructureAdapter;
 import com.rainwood.oa.ui.adapter.StaffListAdapter;
+import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.utils.ClipboardUtil;
 import com.rainwood.oa.utils.PhoneCallUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
+import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,8 +73,17 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
     private ContactAdapter mContactAdapter;
     // 组织结构
     private DepartStructureAdapter mStructureAdapter;
-
+    private View mMaskLayer;
+    private List<Depart> departConditionList = new ArrayList<>();
+    private DepartScreenAdapter mDepartScreenAdapter;
+    private DepartGroupScreenAdapter mDepartGroupScreenAdapter;
+    private RecyclerView mModule;
+    private RecyclerView mSecondModule;
+    private CommonPopupWindow mStatusPopWindow;
+    private TextView mTextClearScreen;
+    private TextView mTextConfirm;
     private IMinePresenter mMinePresenter;
+    private boolean selectedDepartFlag = false;
 
     @Override
     protected int getLayoutResId() {
@@ -88,6 +106,8 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
         // 设置适配器
         contactView.setAdapter(mContactAdapter);
         StructureView.setAdapter(mStructureAdapter);
+        //
+        initPopDepartDialog();
     }
 
     @Override
@@ -100,14 +120,19 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
     protected void loadData() {
         // 请求通讯录数据
         mMinePresenter.requestAddressBookData();
+        // 请求部门职位列表
+        mMinePresenter.requestAllDepartData();
     }
 
     @Override
     protected void initEvent() {
-        pageRight.setOnItemClick(new GroupTextIcon.onItemClick() {
-            @Override
-            public void onItemClick(String text) {
-                toast("部门职位");
+        pageRight.setOnItemClick(text -> {
+            //toast("部门职位");
+            selectedDepartFlag = !selectedDepartFlag;
+            pageRight.setRightIcon(selectedDepartFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedDepartFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            if (selectedDepartFlag) {
+                showPopDepartScreen();
             }
         });
         // 通讯录员工
@@ -173,6 +198,101 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
          */
         mStructureAdapter.setStructureList(departStructureList);
     }
+
+    @Override
+    public void getDepartListData(List<Depart> departList) {
+        departConditionList.clear();
+        departConditionList.addAll(departList);
+    }
+
+    private int tempPos = -1;
+
+    /**
+     * 初始化所属部门
+     */
+    private void initPopDepartDialog() {
+        mStatusPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_role_screen)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    mModule = view.findViewById(R.id.rv_module);
+                    mSecondModule = view.findViewById(R.id.rv_second_module);
+                    // 设置布局管理器
+                    mModule.setLayoutManager(new GridLayoutManager(AddressBookActivity.this, 1));
+                    mModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 10));
+                    mSecondModule.setLayoutManager(new GridLayoutManager(AddressBookActivity.this, 1));
+                    mSecondModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 10));
+                    // 创建适配器
+                    mDepartScreenAdapter = new DepartScreenAdapter();
+                    mDepartGroupScreenAdapter = new DepartGroupScreenAdapter();
+                    // 设置适配器
+                    mModule.setAdapter(mDepartScreenAdapter);
+                    mSecondModule.setAdapter(mDepartGroupScreenAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                    // 确定、清空
+                    mTextClearScreen = view.findViewById(R.id.tv_clear_screen);
+                    mTextConfirm = view.findViewById(R.id.tv_confirm);
+                })
+                .create();
+        mTextClearScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempPos = -1;
+                toast("清空筛选");
+            }
+        });
+        mTextConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempPos = -1;
+                toast("确定");
+            }
+        });
+    }
+
+    /**
+     * 展示所属部门
+     */
+    private void showPopDepartScreen() {
+        // 设置数据 -- 默认选中第一项
+        departConditionList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
+        mDepartScreenAdapter.setList(departConditionList);
+        mDepartGroupScreenAdapter.setList(departConditionList.get(tempPos == -1 ? 0 : tempPos).getArray());
+        mStatusPopWindow.showAsDropDown(pageTop, Gravity.BOTTOM, 0, 0);
+
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            tempPos = -1;
+            selectedDepartFlag = false;
+            pageRight.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
+                tempPos = -1;
+                selectedDepartFlag = false;
+                pageRight.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            }
+        });
+        // 点击事件
+        mDepartScreenAdapter.setRoleCondition(((condition, position) -> {
+            for (Depart departCondition : departConditionList) {
+                departCondition.setHasSelected(false);
+            }
+            condition.setHasSelected(true);
+            tempPos = position;
+            mDepartGroupScreenAdapter.setList(departConditionList.get(position).getArray());
+        }));
+        mDepartGroupScreenAdapter.setSecondRoleCondition((secondCondition, position) -> {
+            for (ProjectGroup group : departConditionList.get(tempPos == -1 ? 0 : tempPos).getArray()) {
+                group.setSelected(false);
+            }
+            secondCondition.setSelected(true);
+        });
+    }
+
 
     @Override
     public void onError() {

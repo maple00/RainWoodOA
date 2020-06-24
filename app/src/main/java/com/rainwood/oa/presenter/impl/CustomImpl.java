@@ -151,9 +151,26 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      * @param pageCount 分页页码
      */
     @Override
-    public void getALlCustomData(int pageCount) {
+    public void requestALlCustomData(int pageCount) {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=home&page=" + pageCount, params, this);
+    }
+
+    /**
+     * 客户列表 -- 状态 condition
+     */
+    @Override
+    public void requestStateCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=clientWorkFlow", params, this);
+    }
+
+    /**
+     * 客户列表 -- 区域condition
+     */
+    @Override
+    public void requestAreaCondition() {
+
     }
 
     @Override
@@ -165,25 +182,25 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             item.setHasSelected(false);
             switch (i) {
                 case 0:
-                    item.setData("全部");
+                    item.setName("全部");
                     break;
                 case 1:
-                    item.setData("已签约");
+                    item.setName("已签约");
                     break;
                 case 2:
-                    item.setData("优质");
+                    item.setName("优质");
                     break;
                 case 3:
-                    item.setData("一般");
+                    item.setName("一般");
                     break;
                 case 4:
-                    item.setData("很差");
+                    item.setName("很差");
                     break;
                 case 5:
-                    item.setData("待联系");
+                    item.setName("待联系");
                     break;
                 case 6:
-                    item.setData("已放弃");
+                    item.setName("已放弃");
                     break;
             }
             selectedList.add(item);
@@ -378,17 +395,18 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             e.printStackTrace();
         }
 
-        //mCustomCallback.onLoading();
+        //   跟进状态
         if (result.url().contains("cla=client&fun=clientWorkFlow")) {
-            // 跟进状态
             try {
                 JSONArray jsonArray = JsonParser.parseJSONArrayString(
                         JsonParser.parseJSONObjectString(result.body()).getString("para"));
-                List<String> followStatus = new ArrayList<>();
+                List<SelectedItem> stateList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    followStatus.add(jsonArray.getString(i));
+                    SelectedItem item = new SelectedItem();
+                    item.setName(jsonArray.getString(i));
+                    stateList.add(item);
                 }
-                mCustomCallback.getFollowData(followStatus);
+                mCustomCallback.getStateCondition(stateList);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -425,7 +443,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             }
         }
         // 新建介绍客户
-        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=share")){
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=share")) {
             try {
                 // 介绍人
                 String introduce = JsonParser.parseJSONObjectString(result.body()).getString("share");
@@ -456,7 +474,24 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=detail")) {
+        }
+        // 客户列表 ---- 状态condition
+      /*  else if (result.url().contains("cla=client&fun=clientWorkFlow")) {
+            try {
+                JSONArray stateArray = JsonParser.parseJSONArrayString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("para"));
+                List<SelectedItem> stateList = new ArrayList<>();
+                for (int i = 0; i < stateArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(stateArray.getString(i));
+                    stateList.add(item);
+                }
+                mCustomCallback.getStateCondition(stateList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }*/
+        else if (result.url().contains("cla=client&fun=detail")) {
             // 客户详情
             CustomDetail customDetail = JsonParser.parseJSONObject(CustomDetail.class, result.body());
             HashMap<String, CustomDetail> dataDetailMap = new HashMap<String, CustomDetail>();

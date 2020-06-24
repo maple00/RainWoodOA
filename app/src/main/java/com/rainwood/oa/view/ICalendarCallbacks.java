@@ -20,6 +20,7 @@ public interface ICalendarCallbacks extends IBaseCallback {
     /**
      * 当前工作月工作日
      * @param dayList
+     * @param dayNote
      */
-    default void getWorkDayData(List<String> dayList){}
+    default void getWorkDayData(List<String> dayList, String dayNote){}
 }

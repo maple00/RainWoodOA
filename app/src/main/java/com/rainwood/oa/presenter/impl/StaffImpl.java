@@ -2,6 +2,7 @@ package com.rainwood.oa.presenter.impl;
 
 import android.text.TextUtils;
 
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
@@ -42,6 +43,15 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=department", params, this);
+    }
+
+    /**
+     * 请求查询条件
+     */
+    @Override
+    public void requestQueryCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=search", params, this);
     }
 
     /**
@@ -182,6 +192,30 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                     }
                 }
                 mStaffCallbacks.getAllDepart(departmentList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 员工查询条件
+        else if (result.url().contains("cla=staff&fun=search")) {
+            try {
+                // 默认排序
+                List<SelectedItem> defaultSortList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("list"));
+                // 性别
+                List<SelectedItem> sexList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("sex"));
+                // 是否购买社保
+                List<SelectedItem> socialList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("socialSecurity"));
+                // 是否有大门钥匙
+                List<SelectedItem> gateList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("gateKey"));
+                mStaffCallbacks.getQueryCondition(defaultSortList, sexList, socialList, gateList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

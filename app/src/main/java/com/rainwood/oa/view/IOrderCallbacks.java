@@ -4,6 +4,7 @@ import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.CustomOrder;
 import com.rainwood.oa.model.domain.Order;
 import com.rainwood.oa.model.domain.PrimaryKey;
+import com.rainwood.oa.model.domain.SelectedItem;
 
 import java.util.List;
 import java.util.Map;
@@ -28,30 +29,42 @@ public interface IOrderCallbacks extends IBaseCallback {
      *
      * @param orderListData 订单列表信息
      */
-    default void getAllOrderPage(Map orderListData) { }
+    default void getAllOrderPage(Map orderListData) {
+    }
 
     /**
      * 获取客户下的订单列表
      */
-    default void getCustomOrderList(List<CustomOrder> customOrderList){}
+    default void getCustomOrderList(List<CustomOrder> customOrderList) {
+    }
 
     /**
      * 通过关键字查询客户名称
      */
-    default void getCustomDataByKey(List<PrimaryKey> customDataList){}
+    default void getCustomDataByKey(List<PrimaryKey> customDataList) {
+    }
 
     /**
      * 创建订单
      */
-    default void getCreateResult(boolean success){}
+    default void getCreateResult(boolean success) {
+    }
 
     /**
      * 订单列表数据
      */
-    default void getOrderList(List<Order> orderList){}
+    default void getOrderList(List<Order> orderList) {
+    }
+
+    /**
+     * 订单列表-- condition
+     */
+    default void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sorting) {
+    }
 
     /**
      * 订单详情数据
      */
-    default void getOrderDetail(Map orderDetailMap){}
+    default void getOrderDetail(Map orderDetailMap) {
+    }
 }

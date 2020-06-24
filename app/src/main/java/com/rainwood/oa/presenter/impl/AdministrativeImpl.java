@@ -1,9 +1,12 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Depart;
+import com.rainwood.oa.model.domain.DepartType;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
+import com.rainwood.oa.model.domain.RoleCondition;
 import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -49,12 +52,30 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     }
 
     /**
+     * 角色列表筛选条件
+     */
+    @Override
+    public void requestRoleScreenCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=role&fun=power", params, this);
+    }
+
+    /**
      * 部门管理列表
      */
     @Override
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=home", params, this);
+    }
+
+    /**
+     * 部门筛选条件
+     */
+    @Override
+    public void requestDepartScreenCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=department&fun=type", params, this);
     }
 
     /**
@@ -76,6 +97,15 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     public void requestPostListData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=job&fun=home", params, this);
+    }
+
+    /**
+     * 请求职位管理中的角色信息
+     */
+    @Override
+    public void requestPostRoleCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=job&fun=role", params, this);
     }
 
     /**
@@ -132,6 +162,16 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
                 e.printStackTrace();
             }
         }
+        // 角色筛选分类
+        else if (result.url().contains("cla=role&fun=power")){
+            try {
+                List<RoleCondition> conditionList = JsonParser.parseJSONArray(RoleCondition.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("power"));
+                mAdministrativeCallbacks.getRoleScreenData(conditionList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         // 角色权限详情
         else if (result.url().contains("cla=role&fun=detail")) {
             try {
@@ -152,6 +192,16 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
                 e.printStackTrace();
             }
         }
+        // 部门分类
+        else if (result.url().contains("cla=department&fun=type")){
+            try {
+                List<SelectedItem> departList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("type"));
+                mAdministrativeCallbacks.getDepartTypeData(departList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         // 部门详情
         else if (result.url().contains("cla=department&fun=detail")) {
             try {
@@ -168,6 +218,16 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
                 List<Post> postList = JsonParser.parseJSONArray(Post.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("job"));
                 mAdministrativeCallbacks.getPostListData(postList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 职位管理中的角色信息
+        else if (result.url().contains("cla=job&fun=role")){
+            try {
+                List<SelectedItem> postList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("role"));
+                mAdministrativeCallbacks.getPostRoleData(postList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

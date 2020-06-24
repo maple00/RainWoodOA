@@ -16,6 +16,7 @@ import com.rainwood.oa.model.domain.OrderReceivable;
 import com.rainwood.oa.model.domain.OrderTask;
 import com.rainwood.oa.model.domain.OrderValues;
 import com.rainwood.oa.model.domain.PrimaryKey;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -28,6 +29,7 @@ import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.toast.ToastUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -106,6 +108,15 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     public void requestOrderList() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=home", params, this);
+    }
+
+    /**
+     * 订单列表 -- condition
+     */
+    @Override
+    public void requestCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=search", params, this);
     }
 
     /**
@@ -468,13 +479,38 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                 }
                 orderMap.put("showData", showDataList);
                 orderMap.put("hideData", hideDataList);
-                if (!TextUtils.isEmpty(orderBaseValues.getWorkFlow())){
+                if (!TextUtils.isEmpty(orderBaseValues.getWorkFlow())) {
                     orderMap.put("orderStatus", orderBaseValues.getWorkFlow());
                 }
                 mOrderEditCallbacks.getOrderDetail(orderMap);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        // 订单 --condition
+        else if (result.url().contains("cla=order&fun=search")) {
+            try {
+                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("workFlow"));
+                JSONArray payerArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("orderBy"));
+                List<SelectedItem> stateList = new ArrayList<>();
+                List<SelectedItem> sortList = new ArrayList<>();
+                for (int i = 0; i < typeArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(typeArray.getString(i));
+                    stateList.add(item);
+                }
+                for (int i = 0; i < payerArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(payerArray.getString(i));
+                    sortList.add(item);
+                }
+                mOrderEditCallbacks.getOrderCondition(stateList, sortList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

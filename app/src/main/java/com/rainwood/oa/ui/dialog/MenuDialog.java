@@ -15,7 +15,7 @@ import com.rainwood.tools.wheel.BaseAdapter;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.MyAdapter;
 import com.rainwood.tools.wheel.action.AnimAction;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.ArrayList;
 import java.util.Arrays;

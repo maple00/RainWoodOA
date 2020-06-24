@@ -25,6 +25,7 @@ public final class CommonGridAdapter extends BaseAdapter {
 
     public void setTextList(List<SelectedItem> textList) {
         mTextList = textList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -53,7 +54,7 @@ public final class CommonGridAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.text.setText(getItem(position).getData());
+        holder.text.setText(getItem(position).getName());
         return convertView;
     }
 

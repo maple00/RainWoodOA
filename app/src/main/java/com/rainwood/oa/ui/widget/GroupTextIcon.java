@@ -17,7 +17,7 @@ import com.rainwood.oa.R;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * @Author: a797s

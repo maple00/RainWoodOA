@@ -21,9 +21,19 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
     void requestRoleDetailById(String roleId);
 
     /**
+     * 请求角色的筛选条件
+     */
+    void requestRoleScreenCondition();
+
+    /**
      * 部门管理列表
      */
     void requestAllDepartData();
+
+    /**
+     * 部门筛选条件
+     */
+    void requestDepartScreenCondition();
 
     /**
      * 通过部门id查询部门详情
@@ -34,6 +44,11 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
      * 职位列表
      */
     void requestPostListData();
+
+    /**
+     * 请求职位管理中的角色condition
+     */
+    void requestPostRoleCondition();
 
     /**
      * 通过职位id查询职位详情

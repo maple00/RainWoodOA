@@ -10,7 +10,7 @@ import androidx.annotation.StringRes;
 
 import com.rainwood.oa.R;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * author : Android 轮子哥

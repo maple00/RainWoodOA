@@ -254,6 +254,9 @@ public final class ItemModuleAdapter extends BaseAdapter {
                 case "团队基金":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AccountFundsActivity.class, "团队基金", "teamFunds"));
                     break;
+                case "收支平衡":
+                    ToastUtils.show("收支平衡");
+                    break;
                 // 知识管理
                 case "办公文件":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), OfficeFileActivity.class, "办公文件", "办公文件"));
