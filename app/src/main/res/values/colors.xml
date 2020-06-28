@@ -59,6 +59,7 @@
     <color name="red05">#FF686D</color>
     <color name="red10">#FF3E18</color>
     <color name="red15">#FF7462</color>
+    <color name="red20">#FF8471</color>
     <!-- 蓝色-->
     <color name="blue05">#4575AA</color>
     <color name="blue10">#E8EDF4</color>
@@ -70,5 +71,6 @@
     <color name="orange10">#FDE2C3</color>
     <color name="orange15">#FFFDE5</color>
     <color name="orange20">#8B5B23</color>
+    <color name="orange25">#FFBC28</color>
 
 </resources>

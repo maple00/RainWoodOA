@@ -114,7 +114,8 @@ public interface IRecordCallbacks extends IBaseCallback {
     /**
      * 财务管理 -- 开票记录condition
      */
-    default void getInvoiceCondition(List<SelectedItem> saleList, List<SelectedItem> typeList){}
+    default void getInvoiceCondition(List<SelectedItem> saleList, List<SelectedItem> typeList) {
+    }
 
     /**
      * 客户新建开票记录的页面数据
@@ -137,6 +138,14 @@ public interface IRecordCallbacks extends IBaseCallback {
     }
 
     /**
+     * 知识管理 --- 跟进记录 （记录类型）
+     *
+     * @param typeList
+     */
+    default void getRecordsTypes(List<SelectedItem> typeList) {
+    }
+
+    /**
      * 行政人事--- 加班记录
      *
      * @param adminOverTimeList
@@ -151,6 +160,5 @@ public interface IRecordCallbacks extends IBaseCallback {
      */
     default void getAdminOverTimeState(List<SelectedItem> overTimeStateList) {
     }
-
 
 }

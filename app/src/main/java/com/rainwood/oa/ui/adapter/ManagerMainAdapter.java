@@ -27,7 +27,6 @@ public final class ManagerMainAdapter extends RecyclerView.Adapter<ManagerMainAd
 
     private List<ManagerMain> mData;
 
-
     public void setData(List<ManagerMain> data) {
         mData = data;
     }
@@ -43,7 +42,7 @@ public final class ManagerMainAdapter extends RecyclerView.Adapter<ManagerMainAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LogUtils.d(this, "onBindViewHolder....." + position);
-        holder.title.setText(mData.get(position).getTitle());
+        holder.title.setText(mData.get(position).getName());
         holder.image.setImageResource(mData.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         holder.managerTop.setOnClickListener(v -> {
             mData.get(position).setHasSelected(!mData.get(position).isHasSelected());
@@ -51,7 +50,7 @@ public final class ManagerMainAdapter extends RecyclerView.Adapter<ManagerMainAd
         });
         // 子项
         ItemModuleAdapter moduleAdapter = new ItemModuleAdapter();
-        moduleAdapter.setList(mData.get(position).getIconAndFontList());
+        moduleAdapter.setList(mData.get(position).getArray());
         holder.managerItem.setAdapter(moduleAdapter);
         if (!mData.get(position).isHasSelected()){   // 子项的隐藏显示
             holder.managerItem.setVisibility(View.GONE);

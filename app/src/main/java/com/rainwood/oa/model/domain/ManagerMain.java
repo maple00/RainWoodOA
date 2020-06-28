@@ -1,5 +1,6 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,18 +8,18 @@ import java.util.List;
  * @Date: 2020/4/28 10:51
  * @Desc: 管理页面图标
  */
-public final class ManagerMain {
+public final class ManagerMain implements Serializable {
 
-    private String title;           // 标题
-    private boolean hasSelected = false;    // 是否选中
-    private List<IconAndFont> mIconAndFontList;
+    private String name;           // 标题
+    private boolean hasSelected = true;    // 是否选中
+    private List<IconAndFont> array;
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isHasSelected() {
@@ -29,11 +30,11 @@ public final class ManagerMain {
         this.hasSelected = hasSelected;
     }
 
-    public List<IconAndFont> getIconAndFontList() {
-        return mIconAndFontList;
+    public List<IconAndFont> getArray() {
+        return array;
     }
 
-    public void setIconAndFontList(List<IconAndFont> iconAndFontList) {
-        mIconAndFontList = iconAndFontList;
+    public void setArray(List<IconAndFont> array) {
+        this.array = array;
     }
 }

@@ -23,7 +23,10 @@ import com.rainwood.oa.ui.activity.AddressBookActivity;
 import com.rainwood.oa.ui.activity.AdminPunishActivity;
 import com.rainwood.oa.ui.activity.AttachManagerActivity;
 import com.rainwood.oa.ui.activity.AttendanceActivity;
+import com.rainwood.oa.ui.activity.BalanceCurveActivity;
+import com.rainwood.oa.ui.activity.BalanceRecordActivity;
 import com.rainwood.oa.ui.activity.BillingDataActivity;
+import com.rainwood.oa.ui.activity.ClassificationStaticsActivity;
 import com.rainwood.oa.ui.activity.CommonActivity;
 import com.rainwood.oa.ui.activity.CustomFollowRecordActivity;
 import com.rainwood.oa.ui.activity.CustomIntroduceActivity;
@@ -254,8 +257,17 @@ public final class ItemModuleAdapter extends BaseAdapter {
                 case "团队基金":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AccountFundsActivity.class, "团队基金", "teamFunds"));
                     break;
-                case "收支平衡":
-                    ToastUtils.show("收支平衡");
+                case "收支平衡": // 收支记录列表
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceRecordActivity.class, "收支平衡", "balanceRecord"));
+                    break;
+                case "分类统计":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), ClassificationStaticsActivity.class, "分类统计", "classificationStatics"));
+                    break;
+                case "收支曲线":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceCurveActivity.class, "收支曲线", "balanceCurve"));
+                    break;
+                case "员工数曲线":
+                    ToastUtils.show("员工数曲线");
                     break;
                 // 知识管理
                 case "办公文件":

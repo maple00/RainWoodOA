@@ -262,6 +262,15 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     }
 
+    /**
+     * 知识管理 -- 跟进记录（记录类型）
+     */
+    @Override
+    public void requestRecordType() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=follow&fun=search", params, this);
+    }
+
     @Override
     public void registerViewCallback(IRecordCallbacks callback) {
         mRecordCallbacks = callback;
@@ -534,6 +543,22 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 List<KnowledgeFollowRecord> knowledgeFollowRecordList = JsonParser.parseJSONArray(KnowledgeFollowRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("follow"));
                 mRecordCallbacks.getKnowledgeFollowRecords(knowledgeFollowRecordList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 知识管理 -- 跟进记录 （记录类型）
+        else if (result.url().contains("cla=follow&fun=search")){
+            try {
+                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));
+                List<SelectedItem> typeList = new ArrayList<>();
+                for (int i = 0; i < typeArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(typeArray.getString(i));
+                    typeList.add(item);
+                }
+                mRecordCallbacks.getRecordsTypes(typeList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

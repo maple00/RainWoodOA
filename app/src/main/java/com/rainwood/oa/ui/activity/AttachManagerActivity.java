@@ -73,8 +73,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private IAttachmentPresenter mAttachmentPresenter;
     private AttachKnowledgeAdapter mAttachKnowledgeAdapter;
     private CommonGridAdapter mSelectedAdapter;
-    private StaffDefaultSortAdapter mDefaultSortAdapter;
     private View mMaskLayer;
+    private StaffDefaultSortAdapter mDefaultSortAdapter;
     private List<SelectedItem> mTargetList;
     private List<SelectedItem> mSecretList;
     private List<SelectedItem> mSortList;
@@ -190,7 +190,6 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
         }
     }
-
 
     @SingleClick
     @OnClick(R.id.iv_page_back)

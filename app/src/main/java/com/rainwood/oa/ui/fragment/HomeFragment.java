@@ -33,6 +33,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.utils.DateTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +88,12 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         } else {
             StatusBarUtils.darkMode(getActivity(), false);
         }
-        // 加载数据
-        mHomePresenter.requestSalaryData("2020-01", "2020-05");
+        // 加载数据 -- 当月1号到currentDay
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
     }
 
     @SingleClick

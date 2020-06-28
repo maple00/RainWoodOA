@@ -34,4 +34,24 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
      * 费用报销 --- 类型condition
      */
     void requestReimburseCondition();
+
+    /**
+     * 收支记录列表
+     */
+    void requestBalanceRecords();
+
+    /**
+     * 收支记录列表 condition
+     */
+    void requestBalanceCondition();
+
+    /**
+     * 请求分类统计数据
+     */
+    void requestClassStatics(String startTime, String endTime);
+
+    /**
+     * 请求收支曲线 -- 按月
+     */
+    void requestBalanceByMonth();
 }

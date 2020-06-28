@@ -14,4 +14,9 @@ public interface ILogcatPresenter extends IBasePresenter<ILogcatCallbacks> {
      * 请求获取系统日志
      */
     void requestLogcatData();
+
+    /**
+     * 请求查询日志类型
+     */
+    void requestLogcatType();
 }

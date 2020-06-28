@@ -108,4 +108,8 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      */
     void requestKnowledgeFollowRecords();
 
+    /**
+     * 请求记录类型
+     */
+    void requestRecordType();
 }

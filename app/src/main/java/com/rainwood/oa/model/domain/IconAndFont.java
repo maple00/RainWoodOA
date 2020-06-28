@@ -26,6 +26,40 @@ public final class IconAndFont implements Serializable {
      */
     private String ico;
 
+    /**
+     * 标识符
+     */
+    private String key;
+
+    /**
+     * 是否选中
+     */
+    private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getLocalMipmap() {
+        return localMipmap;
+    }
+
+    public void setLocalMipmap(int localMipmap) {
+        this.localMipmap = localMipmap;
+    }
+
     public String getMenu() {
         return menu;
     }
@@ -42,19 +76,11 @@ public final class IconAndFont implements Serializable {
         this.ico = ico;
     }
 
-    public int getLocalMipmap() {
-        return localMipmap;
+    public String getKey() {
+        return key;
     }
 
-    public void setLocalMipmap(int localMipmap) {
-        this.localMipmap = localMipmap;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setKey(String key) {
+        this.key = key;
     }
 }
