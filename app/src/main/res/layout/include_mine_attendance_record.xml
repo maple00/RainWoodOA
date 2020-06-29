@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/assistColor15">
+
+    <!--suppress AndroidElementNotAllowed -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 提示:本年月平均工作(小时)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/shape_miui10_bg"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <TextView
+                android:id="@+id/tv_current_average_hour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dialog_ui_round_size"
+                android:paddingBottom="@dimen/dialog_ui_round_size"
+                android:text="本年月平均工作(小时)："
+                android:textColor="@color/labelColor"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- 当日考勤-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dialog_ui_round_size"
+            android:paddingBottom="@dimen/dialog_ui_round_size"
+            android:text="@string/attendance_current_day"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <com.rainwood.oa.ui.widget.MeasureGridView
+            android:id="@+id/mgv_day_attendance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default_white_bg"
+            android:paddingTop="15dp"
+            android:paddingBottom="20dp" />
+
+        <!-- 本月考勤-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dialog_ui_round_size"
+            android:paddingBottom="@dimen/dialog_ui_round_size"
+            android:text="@string/attendance_current_month"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <com.rainwood.oa.ui.widget.MeasureGridView
+            android:id="@+id/mgv_month_attendance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default_white_bg"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
+
+        <com.rainwood.oa.ui.widget.MeasureGridView
+            android:id="@+id/mgv_month_attendance_normal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_default_white_bg"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
+
+        <!-- 本月工资-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dialog_ui_round_size"
+            android:paddingBottom="@dimen/dialog_ui_round_size"
+            android:text="@string/salary_current_day"
+            android:textColor="@color/fontColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <com.rainwood.oa.ui.widget.MeasureGridView
+            android:id="@+id/mgv_month_salary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/shape_default_white_bg"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

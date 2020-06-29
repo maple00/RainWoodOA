@@ -54,4 +54,14 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
      * 请求收支曲线 -- 按月
      */
     void requestBalanceByMonth();
+
+    /**
+     * 请求收支曲线 -- 按年
+     */
+    void requestBalanceByYear();
+
+    /**
+     * 请求员工数量
+     */
+    void requestStaffNum();
 }

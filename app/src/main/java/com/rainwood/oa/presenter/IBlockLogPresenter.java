@@ -20,4 +20,9 @@ public interface IBlockLogPresenter extends IBasePresenter<IBlockLogCallbacks> {
      */
     void requestBlockDetail(String blockId);
 
+    /**
+     * 请i去待办事想列表
+     */
+    void requestBlockLogList();
+
 }

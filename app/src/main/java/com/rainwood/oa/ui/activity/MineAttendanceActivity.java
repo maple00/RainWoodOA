@@ -1,54 +1,37 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-import com.necer.calendar.BaseCalendar;
 import com.necer.calendar.Miui9Calendar;
 import com.necer.enumeration.CheckModel;
-import com.necer.enumeration.DateChangeBehavior;
-import com.necer.listener.OnCalendarChangedListener;
 import com.necer.painter.InnerPainter;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.AttendanceData;
 import com.rainwood.oa.model.domain.CalendarStatics;
-import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.ui.adapter.CalendarStaticsAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
-import com.rainwood.oa.utils.LogUtils;
-import com.rainwood.oa.utils.PresenterManager;
-import com.rainwood.oa.view.ICalendarCallback;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 
-import org.joda.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
-
 /**
  * @Author: a797s
  * @Date: 2020/5/9 17:49
- * @Desc: 行政人事 --- 考勤记录
+ * @Desc: 我的考勤
  */
-public final class AttendanceActivity extends BaseActivity implements ICalendarCallback {
+public final class MineAttendanceActivity extends BaseActivity {
 
     // page
     @ViewInject(R.id.rl_pager_top)
@@ -57,15 +40,13 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;
-    @ViewInject(R.id.iv_menu)
-    private ImageView rightMenu;
     // content
     @ViewInject(R.id.tv_current_month)
     private TextView currentMonth;
     @ViewInject(R.id.mc_calendar_9)
     private Miui9Calendar mMiui9Calendar;
     // 本月平均工作小时数
-    @ViewInject(R.id.tv_work_duration)
+    @ViewInject(R.id.tv_current_average_hour)
     private TextView averageHour;
     // 当日考勤
     @ViewInject(R.id.mgv_day_attendance)
@@ -80,7 +61,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private MeasureGridView monthSalary;
 
     // 固定页面数据
-    private String monthAvgWorkHours = "164.47";
+    private String monthAvgWorkHours = "本年月平均工作(小时)：";
 
     private CalendarStaticsAdapter mDayAdapter;
     private CalendarStaticsAdapter mMonthAdapterOne;
@@ -92,6 +73,10 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private List<CalendarStatics> mMonthDescTwoList;
     private List<CalendarStatics> mMonthSalaryList;
 
+    /*
+     * 本Activity数据
+     * + this.getDrawable(R.drawable.ic_doubt)
+     */
     // 当日考勤
     private String[] currentDayDecs = {"打卡时间(上班)", "打卡时间(下班)", "今日打卡(次)", "今日工时(小时)"};
     // 本月考勤
@@ -102,12 +87,9 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private String[] currentMonthSalary = {"基本工资(元)", "岗位津贴(元)", "全勤奖(元)",
             "实得工资(元)"};
 
-    private ICalendarPresenter mCalendarPresenter;
-    private String mStaffId;
-
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_attendance;
+        return R.layout.activity_mine_attendance;
     }
 
     @SuppressLint("SetTextI18n")
@@ -115,7 +97,6 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setPaddingSmart(this, pageTop);
-        rightMenu.setImageResource(R.drawable.ic_triangle_down);
         //StatusBarUtil.setStatusBarColor(this, this.getColor(R.color.assistColor15));
         // 设置日历选中当前日期
         mMiui9Calendar.setCheckMode(CheckModel.SINGLE_DEFAULT_CHECKED);  // 设置当前选中
@@ -150,7 +131,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     @Override
     protected void initData() {
         mPageTitle.setText(title);
-        mPageRightTitle.setText("部门员工");
+        mPageRightTitle.setText(this.getString(R.string.back_today));
         averageHour.setText(monthAvgWorkHours);
         // 当日考勤
         for (String currentDayDec : currentDayDecs) {
@@ -185,23 +166,11 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     @Override
     protected void initPresenter() {
-        mCalendarPresenter = PresenterManager.getOurInstance().getCalendarPresenter();
-        mCalendarPresenter.registerViewCallback(this);
+
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
-        // 日历选择Listener
-        mMiui9Calendar.setOnCalendarChangedListener(new OnCalendarChangedListener() {
-            @Override
-            public void onCalendarChange(BaseCalendar baseCalendar, int year, int month, LocalDate localDate, DateChangeBehavior dateChangeBehavior) {
-                currentMonth.setText(year + "年" + month + "月");
-                Log.d(TAG, "当前页面选中：：" + localDate);
-                mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
-                        year + "-" + (month < 10 ? "0" + month : month));
-            }
-        });
          /*
         统计信息
          */
@@ -216,6 +185,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
         // 本月工资
         mMonthSalaryAdapter.setLineCount(2);
         mMonthSalaryAdapter.setList(mMonthSalaryList);
+
         /*
         模拟日历信息
          */
@@ -253,26 +223,24 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
         Map<String, Integer> colorMap = new HashMap<>();
         colorMap.put(DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY), Color.parseColor("#11CA8D"));
         innerPainter.setReplaceLunarColorMap(colorMap);
+
         // TODO: 设置日历表的标记的背景drawable
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            // 选择被介绍员工
-            if (data != null) {
-                String staff = data.getStringExtra("staff");
-                String position = data.getStringExtra("position");
-                mStaffId = data.getStringExtra("staffId");
-                toast("员工：" + staff + "\n职位：" + position + "\n员工id：" + mStaffId);
-            }
-        }
+    protected void initEvent() {
+        super.initEvent();
+        // 设置日历单选
+        mMiui9Calendar.setOnCalendarChangedListener((baseCalendar, year, month, localDate, dateChangeBehavior) -> {
+            currentMonth.setText(year + "年" + month + "月");
+            Log.d(TAG, "当前页面选中：：" + localDate);
+        });
+
     }
 
     @OnClick({R.id.iv_lastMonth, R.id.iv_next_month, R.id.tv_page_right_title,
-            R.id.iv_page_back, R.id.iv_menu})
+            R.id.iv_page_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_lastMonth:
@@ -284,10 +252,8 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                 mMiui9Calendar.toNextPager();
                 break;
             case R.id.tv_page_right_title:
-            case R.id.iv_menu:
                 // 回到今天
-                startActivityForResult(getNewIntent(this, ContactsActivity.class, "通讯录", ""),
-                        CHOOSE_STAFF_REQUEST_SIZE);
+                mMiui9Calendar.toToday();
                 break;
             case R.id.iv_page_back:
                 finish();
@@ -295,31 +261,4 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
         }
     }
 
-    @Override
-    public void getAttendanceData(AttendanceData attendanceData) {
-        // TODO: 将考勤数据展示 ---> 根据dateSelectedListener 展示当天得数据
-        LogUtils.d("sxs", "-- 当月考勤--- " + attendanceData);
-    }
-
-    @Override
-    public void onError(String tips) {
-        toast(tips);
-    }
-
-    @Override
-    public void onLoading() {
-
-    }
-
-    @Override
-    public void onEmpty() {
-
-    }
-
-    @Override
-    protected void release() {
-        if (mCalendarPresenter != null) {
-            mCalendarPresenter.unregisterViewCallback(this);
-        }
-    }
 }

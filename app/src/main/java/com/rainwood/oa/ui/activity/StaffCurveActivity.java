@@ -18,12 +18,12 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceCurveListData;
+import com.rainwood.oa.model.domain.StaffCurve;
+import com.rainwood.oa.model.domain.StaffCurveList;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
-import com.rainwood.oa.ui.adapter.BalanceCurveAdapter;
-import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.ui.adapter.StaffCurveAdapter;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.ui.widget.MyMarkerView;
 import com.rainwood.oa.utils.ListUtils;
@@ -33,7 +33,6 @@ import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,47 +40,38 @@ import java.util.Random;
 
 /**
  * @Author: a797s
- * @Date: 2020/6/28 16:04
- * @Desc: 收支曲线
+ * @Date: 2020/6/29 13:38
+ * @Desc: 员工数曲线
  */
-public final class BalanceCurveActivity extends BaseActivity implements IFinancialCallbacks {
+public final class StaffCurveActivity extends BaseActivity implements IFinancialCallbacks {
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
-
     @ViewInject(R.id.tv_date)
     private TextView date;
-    @ViewInject(R.id.tv_year)
-    private TextView mTextYear;
-    @ViewInject(R.id.tv_month)
-    private TextView mTextMonth;
-
-    @ViewInject(R.id.lc_salary_chart)
-    private LineChart mSalaryChart;
-    @ViewInject(R.id.mlv_salary_list)
-    private MeasureListView salaryListView;
+    @ViewInject(R.id.lc_staff_chart)
+    private LineChart staffCurveView;
+    @ViewInject(R.id.mlv_staff_list)
+    private MeasureListView staffListView;
 
     private IFinancialPresenter mFinancialPresenter;
-    private BalanceCurveAdapter mBalanceCurveAdapter;
-    //flag
-    private boolean SELECTED_MONTH = true;
-    private boolean SELECTED_YEAR = false;
+    private StaffCurveAdapter mStaffCurveAdapter;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_balance_cruve;
+        return R.layout.activity_staff_curve;
     }
 
     @Override
     protected void initView() {
         StatusBarUtils.setPaddingSmart(this, pageTop);
         pageTitle.setText(title);
-        // 创建适配器
-        mBalanceCurveAdapter = new BalanceCurveAdapter();
+        // 创建创适配器
+        mStaffCurveAdapter = new StaffCurveAdapter();
         // 设置适配器
-        salaryListView.setAdapter(mBalanceCurveAdapter);
+        staffListView.setAdapter(mStaffCurveAdapter);
     }
 
     @Override
@@ -92,106 +82,40 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     protected void loadData() {
-        // 工资曲线，默认查询月
-        mFinancialPresenter.requestBalanceByMonth();
+        mFinancialPresenter.requestStaffNum();
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_month, R.id.tv_year, R.id.tv_date})
+    @OnClick({R.id.tv_date, R.id.iv_page_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-            case R.id.tv_year:
-                setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg, R.color.white, R.color.colorPrimary);
-                //
-                SELECTED_MONTH = false;
-                SELECTED_YEAR = true;
-                mFinancialPresenter.requestBalanceByYear();
-                break;
-            case R.id.tv_month:
-                setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg, R.color.colorPrimary, R.color.white);
-                //
-                SELECTED_MONTH = true;
-                SELECTED_YEAR = false;
-                mFinancialPresenter.requestBalanceByMonth();
-                break;
             case R.id.tv_date:
-                // 默认选择月
-                new StartEndDateDialog.Builder(this, false)
-                        .setTitle(null)
-                        .setConfirm(getString(R.string.common_text_confirm))
-                        .setCancel(getString(R.string.common_text_clear_screen))
-                        .setAutoDismiss(false)
-                        .setCanceledOnTouchOutside(false)
-                        .setIgnoreDay()
-                        .setListener(new StartEndDateDialog.OnListener() {
-                            @Override
-                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
-                            }
-
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                toast("时间");
                 break;
         }
     }
 
-    private void setUI(int p, int p2, int p3, int p4) {
-        mTextYear.setBackgroundResource(p);
-        mTextMonth.setBackgroundResource(p2);
-        mTextYear.setTextColor(getColor(p3));
-        mTextMonth.setTextColor(getColor(p4));
-    }
-
-    /**
-     * 收支曲线 -- 按月
-     *
-     * @param balanceYearMonth X轴
-     * @param monthBalanceList Y轴
-     */
     @Override
-    public void getBalanceMonthData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
-        // 统计图展示
-        setStaticsChart(balanceYearMonth, monthBalanceList);
-    }
-
-
-    @Override
-    public void getBalanceYearData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> yearBalanceList) {
-        // 统计图展示
-        setStaticsChart(balanceYearMonth, yearBalanceList);
-    }
-
-    /**
-     * 统计图展示
-     *
-     * @param balanceYearMonth X轴数据
-     * @param monthBalanceList Y轴数据
-     */
-    private void setStaticsChart(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
-        if (ListUtils.getSize(monthBalanceList) == 0) {
-            mSalaryChart.setNoDataText("当前暂无收支数据");
+    public void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList) {
+        if (ListUtils.getSize(staffNumList) == 0) {
+            staffCurveView.setNoDataText("当前暂无收支数据");
             return;
         }
         List<ILineDataSet> lineDataSetList = new ArrayList<>();
-        float yMinValues = initSalaryChartValues(balanceYearMonth);
+        float yMinValues = initSalaryChartValues(xValues);
         LogUtils.d("sxs", "--- Y轴的最小值 ---- " + yMinValues);
-        for (int i = 0; i < ListUtils.getSize(monthBalanceList); i++) {
+        for (int i = 0; i < ListUtils.getSize(staffNumList); i++) {
             List<Entry> entryList = new ArrayList<>();
-            for (int j = 0; j < ListUtils.getSize(monthBalanceList.get(i).getData()); j++) {
-                entryList.add(new Entry(j, monthBalanceList.get(i).getData().get(j).getMoney()));
+            for (int j = 0; j < ListUtils.getSize(staffNumList.get(i).getData()); j++) {
+                entryList.add(new Entry(j, staffNumList.get(i).getData().get(j).getNum()));
             }
             //随机颜色
             Random random = new Random();
             int color = 0xff000000 | random.nextInt(0xffffff);
-            LineDataSet lineDataSet = new LineDataSet(entryList, monthBalanceList.get(i).getName());
+            LineDataSet lineDataSet = new LineDataSet(entryList, staffNumList.get(i).getName());
             lineDataSet.setLineWidth(2.5f);
             lineDataSet.setCircleRadius(4.5f);
             lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
@@ -205,33 +129,22 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             lineDataSetList.add(lineDataSet);
         }
         // 标注
-        MyMarkerView mv = new MyMarkerView(this, R.layout.marker_salary_marker, balanceYearMonth, monthBalanceList, null);
+        MyMarkerView mv = new MyMarkerView(this, R.layout.marker_salary_marker, xValues, null, staffNumList);
         mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        mSalaryChart.setMarker(mv);
-        mSalaryChart.setData(new LineData(lineDataSetList));
+        staffCurveView.setMarker(mv);
+        staffCurveView.setData(new LineData(lineDataSetList));
 
         // 列表展示
-        List<BalanceCurveListData> curveListData = new ArrayList<>();
-        for (int i = 0; i < ListUtils.getSize(balanceYearMonth); i++) {
-            BalanceCurveListData listData = new BalanceCurveListData();
-            listData.setMonth(balanceYearMonth.get(i));
-            for (BalanceByMonthOrYear balanceByMonthOrYear : monthBalanceList) {
-                if (balanceByMonthOrYear.getName().contains("收入")) {
-                    listData.setIncome(String.valueOf(balanceByMonthOrYear.getData().get(i).getMoney()));
-                }
-                if (balanceByMonthOrYear.getName().contains("支出")) {
-                    listData.setOutcome(String.valueOf(balanceByMonthOrYear.getData().get(i).getMoney()));
-                }
-                if (balanceByMonthOrYear.getName().contains("工资")) {
-                    listData.setSalary(String.valueOf(balanceByMonthOrYear.getData().get(i).getMoney()));
-                }
-                if (balanceByMonthOrYear.getName().contains("结余")) {
-                    listData.setSettlement(String.valueOf(balanceByMonthOrYear.getData().get(i).getMoney()));
-                }
+        List<StaffCurveList> curveListData = new ArrayList<>();
+        for (int i = 0; i < ListUtils.getSize(xValues); i++) {
+            StaffCurveList listData = new StaffCurveList();
+            listData.setMonth(xValues.get(i));
+            for (StaffCurve balanceByMonthOrYear : staffNumList) {
+                listData.setNumber(String.valueOf(balanceByMonthOrYear.getData().get(i).getNum()));
             }
             curveListData.add(listData);
         }
-        mBalanceCurveAdapter.setCurveListData(curveListData);
+        mStaffCurveAdapter.setCurveList(curveListData);
     }
 
     /**
@@ -245,29 +158,29 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         Description description = new Description();
         description.setEnabled(false);
         description.setText("收支曲线图");
-        mSalaryChart.setDescription(description);
+        staffCurveView.setDescription(description);
         // 设置是否可以触摸
-        mSalaryChart.setTouchEnabled(true);
+        staffCurveView.setTouchEnabled(true);
         // 设置是否可以拖拽
-        mSalaryChart.setDragEnabled(true);
+        staffCurveView.setDragEnabled(true);
         // 设置是否可以缩放
-        mSalaryChart.setScaleEnabled(true);
+        staffCurveView.setScaleEnabled(true);
         // Y轴的值是否跟随图表缩放
-        mSalaryChart.setPinchZoom(false);
+        staffCurveView.setPinchZoom(false);
         // 是否允许双击进行缩放
-        mSalaryChart.setDoubleTapToZoomEnabled(true);
+        staffCurveView.setDoubleTapToZoomEnabled(true);
         // 是否以X轴进行缩放
-        mSalaryChart.setScaleXEnabled(false);
+        staffCurveView.setScaleXEnabled(false);
         // 是否显示表格颜色
-        mSalaryChart.setBackgroundColor(Color.TRANSPARENT);
+        staffCurveView.setBackgroundColor(Color.TRANSPARENT);
         // 设置动画
-        mSalaryChart.animateY(1000, Easing.Linear);
+        staffCurveView.animateY(1000, Easing.Linear);
         // 防止底部数据显示不完整，设置底部偏移量
-        mSalaryChart.setExtraBottomOffset(5f);
+        staffCurveView.setExtraBottomOffset(5f);
         /*
          X轴配置
          */
-        XAxis xAxis = mSalaryChart.getXAxis();
+        XAxis xAxis = staffCurveView.getXAxis();
         // 是否可用
         xAxis.setEnabled(true);
         // 是否显示数值
@@ -302,7 +215,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         /*
         左Y轴配置
          */
-        YAxis lyAxis = mSalaryChart.getAxisLeft();
+        YAxis lyAxis = staffCurveView.getAxisLeft();
         lyAxis.setEnabled(true);//是否可用
         lyAxis.setDrawLabels(true);//是否显示数值
         lyAxis.setDrawAxisLine(false);//是否显示坐标线
@@ -325,13 +238,14 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         /*
         右Y轴配置
          */
-        YAxis ryAxis = mSalaryChart.getAxisRight();
+        YAxis ryAxis = staffCurveView.getAxisRight();
         ryAxis.setEnabled(false);//是否可用
         //标签配置
-        Legend legend = mSalaryChart.getLegend();
+        Legend legend = staffCurveView.getLegend();
         legend.setEnabled(true);//是否可用
         return yMinValues;
     }
+
 
     @Override
     public void onLoading() {

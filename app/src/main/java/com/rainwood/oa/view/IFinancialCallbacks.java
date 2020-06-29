@@ -1,12 +1,13 @@
 package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
+import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceRecord;
-import com.rainwood.oa.model.domain.BalanceType;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.TeamFunds;
 
 import java.util.List;
@@ -69,4 +70,25 @@ public interface IFinancialCallbacks extends IBaseCallback {
      */
     default void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList) {
     }
+
+    /**
+     * 收支曲线 -- 按月
+     * @param balanceYearMonth
+     * @param monthBalanceList
+     */
+    default void getBalanceMonthData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList){}
+
+    /**
+     * 收支曲线 -- 按年
+     * @param balanceYearMonth
+     * @param monthBalanceList
+     */
+    default void getBalanceYearData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList){}
+
+    /**
+     * 员工数量曲线
+     * @param xValues
+     * @param staffNumList
+     */
+    default void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList){};
 }

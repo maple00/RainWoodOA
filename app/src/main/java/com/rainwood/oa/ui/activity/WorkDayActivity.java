@@ -14,7 +14,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Month;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.utils.PresenterManager;
-import com.rainwood.oa.view.ICalendarCallbacks;
+import com.rainwood.oa.view.ICalendarCallback;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @Date: 2020/6/8 16:33
  * @Desc: 工作日
  */
-public final class WorkDayActivity extends BaseActivity implements ICalendarCallbacks, CalendarView.OnCalendarSelectListener,
+public final class WorkDayActivity extends BaseActivity implements ICalendarCallback, CalendarView.OnCalendarSelectListener,
         CalendarView.OnYearChangeListener {
 
     // actionBar

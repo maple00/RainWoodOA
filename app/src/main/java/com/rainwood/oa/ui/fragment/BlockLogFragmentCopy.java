@@ -1,52 +1,65 @@
 package com.rainwood.oa.ui.fragment;
 
-import android.view.LayoutInflater;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
-import com.rainwood.oa.model.domain.BlockLog;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
-import com.rainwood.oa.ui.activity.BlockLogDetailActivity;
-import com.rainwood.oa.ui.adapter.BlockLogPagerAdapter;
-import com.rainwood.oa.utils.PageJumpUtil;
+import com.rainwood.oa.ui.adapter.BlockPagerAdapter;
+import com.rainwood.oa.ui.dialog.PayPasswordDialog;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.ui.dialog.TimerDialog;
+import com.rainwood.oa.ui.widget.GlueTabLayout;
+import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
-import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IBlockLogCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.List;
+
+import static com.rainwood.tools.utils.SmartUtil.dp2px;
 
 /**
  * @Author: a797s
  * @Date: 2020/4/27 17:45
  * @Desc: 待办事项fragment
  */
-public final class BlockLogFragment extends BaseFragment implements IBlockLogCallbacks {
+public final class BlockLogFragmentCopy extends BaseFragment implements IBlockLogCallbacks {
 
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout searchView;
     @ViewInject(R.id.iv_page_back)
     private ImageView pageBack;
     // content
-    @ViewInject(R.id.rv_block_log_list)
-    private RecyclerView blockLogView;
+    @ViewInject(R.id.tl_state)
+    private GlueTabLayout stateLayout;
+    @ViewInject(R.id.vp_block_log)
+    private ViewPager blockLogPager;
+    @ViewInject(R.id.gti_default_sort)
+    private GroupTextIcon defaultSortView;
+    @ViewInject(R.id.gti_depart_staff)
+    private GroupTextIcon departStaffView;
+    @ViewInject(R.id.gti_type)
+    private GroupTextIcon typeView;
+    @ViewInject(R.id.gti_period_time)
+    private GroupTextIcon periodTimeView;
+
+    private IBlockLogPresenter mBlockLogPresenter;
+    private BlockPagerAdapter mBlockPagerAdapter;
 
     private BottomNavigationView mBottomNavigationView;
-    private BlockLogPagerAdapter mBlockLogPagerAdapter;
-    private IBlockLogPresenter mBlockLogPresenter;
 
     public void setBottomNavigationView(BottomNavigationView bottomNavigationView) {
         mBottomNavigationView = bottomNavigationView;
@@ -54,7 +67,7 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     @Override
     protected int getRootViewResId() {
-        return R.layout.fragment_blocklog;
+        return R.layout.fragment_blocklog_copy;
     }
 
     @Override
@@ -63,13 +76,30 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         StatusBarUtils.immersive(getActivity());
         StatusBarUtils.setMargin(getContext(), searchView);
         pageBack.setVisibility(View.GONE);
-        // 设置布局管理器
-        blockLogView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        blockLogView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         // 创建适配器
-        mBlockLogPagerAdapter = new BlockLogPagerAdapter();
+        mBlockPagerAdapter = new BlockPagerAdapter(getChildFragmentManager());
         // 设置适配器
-        blockLogView.setAdapter(mBlockLogPagerAdapter);
+        blockLogPager.setAdapter(mBlockPagerAdapter);
+        blockLogPager.setOffscreenPageLimit(2);
+        // 设置TabLayout属性
+        stateLayout.setTabMode(GlueTabLayout.GRAVITY_CENTER);
+        // 设置指示器下划线高度和颜色
+        stateLayout.setSelectedTabIndicatorHeight(dp2px(3));
+        stateLayout.setSelectedTabIndicatorColor(getContext().getColor(R.color.colorPrimary));
+        //GlueTabLayout 设置下划线指示器圆角
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setCornerRadius(dp2px(2));
+        stateLayout.setSelectedTabIndicator(gradientDrawable);
+        //GlueTabLayout 设置点击动画为水波纹扩散效果
+        stateLayout.setUnboundedRipple(false);
+        //GlueTabLayout 设置下划线指示器的宽度为原来的一半
+        stateLayout.setTabIndicatorWidth(0.3f);
+        // 设置点击时的背景
+        stateLayout.setTabRippleColor(ColorStateList.valueOf(getContext().getColor(R.color.transparent)));
+        // 设置字体颜色字体
+        stateLayout.setTabTextColors(getContext().getColor(R.color.colorMiddle), getContext().getColor(R.color.fontColor));
+        // 给ViewPager设置适配器
+        stateLayout.setupWithViewPager(blockLogPager);
     }
 
     @Override
@@ -80,26 +110,43 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     @Override
     protected void loadData() {
+        // 请求TabLayout状态
         mBlockLogPresenter.requestStateData();
-        mBlockLogPresenter.requestBlockLogList();
     }
 
     @Override
     protected void initListener() {
-        mBlockLogPagerAdapter.setBlockListener((blockLog, position) -> {
-            if ("已完成".equals(blockLog.getWorkFlow())) {
-                PageJumpUtil.finishedBlock2Detail(getContext(), BlockLogDetailActivity.class, "详情", blockLog.getId());
-            } else {
-                toast(blockLog.getType());
+        defaultSortView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("默认排序");
+            }
+        });
+        departStaffView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("部门员工");
+            }
+        });
+        typeView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("类型");
+            }
+        });
+        periodTimeView.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @Override
+            public void onItemClick(String text) {
+                toast("时间段");
             }
         });
     }
 
     @SingleClick
-    @OnClick({R.id.ll_network_error_tips})
+    @OnClick({R.id.ll_network_error_tips, R.id.btn_dialog_pay, R.id.btn_date_timer, R.id.btn_date})
     public void onClick(View view) {
         switch (view.getId()) {
-          /*  case R.id.btn_dialog_pay:
+            case R.id.btn_dialog_pay:
                 // 支付密码输入对话框
                 new PayPasswordDialog.Builder(view.getContext())
                         .setTitle(getString(R.string.pay_title))
@@ -166,38 +213,17 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
                             }
                         })
                         .show();
-                break;*/
+                break;
         }
     }
 
     @Override
     public void getBlockState(List<String> stateList) {
-        setUpState(State.LOADING);
-    }
-
-    @Override
-    public void getBlockContent(List<BlockLog> blockLogList) {
         setUpState(State.SUCCESS);
-        mBlockLogPagerAdapter.setBlockLogList(blockLogList);
-        // 设置角标
-        //获取整个的NavigationView
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) mBottomNavigationView.getChildAt(0);
-        //这里就是获取所添加的每一个Tab(或者叫menu)，
-        View tab = menuView.getChildAt(2);
-        BottomNavigationItemView itemView = (BottomNavigationItemView) tab;
-        //加载我们的角标View，新创建的一个布局
-        View badge = LayoutInflater.from(getContext()).inflate(R.layout.badge_block_log, menuView, false);
-        TextView msgCount = badge.findViewById(R.id.tv_msg_count);
-        //添加到Tab上
-        itemView.addView(badge);
-        int unDelBlockCount = 0;
-        for (BlockLog blockLog : blockLogList) {
-            if ("待处理".equals(blockLog.getWorkFlow())) {
-                unDelBlockCount++;
-            }
+        if (mBlockPagerAdapter != null) {
+            mBlockPagerAdapter.setTitleList(stateList);
+            mBlockPagerAdapter.setBottomNavigationView(mBottomNavigationView);
         }
-        msgCount.setVisibility(unDelBlockCount == 0 ? View.GONE : View.VISIBLE);
-        msgCount.setText(unDelBlockCount > 99 ? (unDelBlockCount + "+") : String.valueOf(unDelBlockCount));
     }
 
     @Override

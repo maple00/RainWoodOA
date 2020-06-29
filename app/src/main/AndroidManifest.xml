@@ -113,7 +113,7 @@
 
         <!-- 考勤模块 AttendanceActivity-->
         <activity
-            android:name=".ui.activity.AttendanceActivity"
+            android:name=".ui.activity.MineAttendanceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
@@ -387,6 +387,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
 
+        <!-- 员工数曲线 StaffCurveActivity-->
+        <activity
+            android:name=".ui.activity.StaffCurveActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
         <!-- 管理制度 ManagerSystemActivity-->
         <activity
             android:name=".ui.activity.ManagerSystemActivity"
@@ -418,6 +425,13 @@
         <!-- 行政处罚 AdminPunishActivity-->
         <activity
             android:name=".ui.activity.AdminPunishActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 考勤记录 AttendanceActivity-->
+        <activity
+            android:name=".ui.activity.AttendanceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />

@@ -14,6 +14,7 @@ import com.rainwood.oa.view.IBlockLogCallbacks;
 import org.json.JSONException;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Author: a797s
@@ -44,6 +45,12 @@ public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
         RequestParams params = new RequestParams();
         params.add("id", blockId);
         OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=detail", params, this);
+    }
+
+    @Override
+    public void requestBlockLogList() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=home", params, this);
     }
 
     @Override
@@ -83,6 +90,16 @@ public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
                 BlockLog blockLog = JsonParser.parseJSONObject(BlockLog.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("backlog"));
                 mBlockLogCallbacks.getBlockLogDetail(blockLog);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 待办事项列表
+        else if (result.url().contains("cla=backlog&fun=home")) {
+            try {
+                List<BlockLog> blockLogList = JsonParser.parseJSONArray(BlockLog.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("backlog"));
+                mBlockLogCallbacks.getBlockContent(blockLogList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

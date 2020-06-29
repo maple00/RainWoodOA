@@ -40,6 +40,7 @@ import com.rainwood.oa.ui.activity.HelperActivity;
 import com.rainwood.oa.ui.activity.InvoiceRecordActivity;
 import com.rainwood.oa.ui.activity.LogcatActivity;
 import com.rainwood.oa.ui.activity.ManagerSystemActivity;
+import com.rainwood.oa.ui.activity.MineAttendanceActivity;
 import com.rainwood.oa.ui.activity.MineInvoiceRecordActivity;
 import com.rainwood.oa.ui.activity.MineRecordsActivity;
 import com.rainwood.oa.ui.activity.MineReissueCardActivity;
@@ -50,13 +51,13 @@ import com.rainwood.oa.ui.activity.PostManagerActivity;
 import com.rainwood.oa.ui.activity.RecordManagerActivity;
 import com.rainwood.oa.ui.activity.ReimbursementActivity;
 import com.rainwood.oa.ui.activity.RoleManagerActivity;
+import com.rainwood.oa.ui.activity.StaffCurveActivity;
 import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.oa.ui.activity.WorkDayActivity;
 import com.rainwood.oa.ui.widget.svgcode.SvgSoftwareLayerSetter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.toast.ToastUtils;
 
 import java.util.List;
 
@@ -140,7 +141,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
             switch (getItem(position).getName()) {
                 case "我的考勤":
                     if ("myworkSign".equals(getItem(position).getMenu())) {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), AttendanceActivity.class, "我的考勤", "myworkSign"));
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), MineAttendanceActivity.class, "我的考勤", "myworkSign"));
                     }
                     break;
                 // 客户管理模块
@@ -241,7 +242,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "回款记录", "回款记录"));
                     break;
                 case "考勤记录":
-                    ToastUtils.show("考勤记录");
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AttendanceActivity.class, "考勤记录", "考勤记录"));
                     break;
                 case "行政处罚":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AdminPunishActivity.class, "行政处罚", "行政处罚"));
@@ -267,7 +268,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceCurveActivity.class, "收支曲线", "balanceCurve"));
                     break;
                 case "员工数曲线":
-                    ToastUtils.show("员工数曲线");
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), StaffCurveActivity.class, "员工曲线数", "staffCurve"));
                     break;
                 // 知识管理
                 case "办公文件":

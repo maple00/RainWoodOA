@@ -178,6 +178,10 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         }
         salaryChartView.setNoDataText("您当前还没有工资数据哦~~~");
         salaryChartView.setData(new LineData(setDrawLine(salaryList, 1, "工资曲线")));
+        // 标注
+        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_salary_marker, monthList, this);
+        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
+        salaryChartView.setMarker(mv);
         // banner---模拟加载返回的图片
         mStackBanner.setTransitionEffect(TransitionEffect.Accordion);
         loadBannerData(mStackBanner, 3);
@@ -278,10 +282,6 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         //标签配置
         Legend legend = salaryChartView.getLegend();
         legend.setEnabled(true);//是否可用
-        // 标注
-        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_salary_marker, monthList);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        salaryChartView.setMarkerView(mv);
     }
 
     /**

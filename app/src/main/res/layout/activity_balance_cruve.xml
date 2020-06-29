@@ -89,13 +89,73 @@
                 android:layout_height="320dp"
                 android:layout_marginTop="20dp" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:background="@color/gray55"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="月份"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="收入(元)"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="支出(元)"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="结余(元)"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="结余(元)"
+                    android:textColor="@color/labelColor"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
             <!-- 列表数据-->
             <com.rainwood.oa.ui.widget.MeasureListView
                 android:id="@+id/mlv_salary_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@color/transparent"
-                android:dividerHeight="15dp" />
+                android:dividerHeight="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp" />
 
         </LinearLayout>
 

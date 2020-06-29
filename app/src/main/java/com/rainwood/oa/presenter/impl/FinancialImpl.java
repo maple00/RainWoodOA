@@ -1,10 +1,12 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.TeamFunds;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -88,6 +90,24 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     public void requestBalanceByMonth() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitMoon", params, this);
+    }
+
+    /**
+     * 收支曲线 -- 按年
+     */
+    @Override
+    public void requestBalanceByYear() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitYear", params, this);
+    }
+
+    /**
+     * 员工数曲线图 ---
+     */
+    @Override
+    public void requestStaffNum() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=staffNum", params, this);
     }
 
     /**
@@ -270,8 +290,8 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                 e.printStackTrace();
             }
         }
-        // 收支曲线
-        if (result.url().contains("cla=profit&fun=profitMoon")) {
+        // 收支曲线　－－　按月
+        else if (result.url().contains("cla=profit&fun=profitMoon")) {
             try {
                 JSONArray abscissaArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("abscissa"));
                 // 按月收支曲线 X轴
@@ -280,8 +300,45 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                     balanceYearMonth.add(abscissaArray.getString(i));
                 }
                 // Y轴数据
-                // TODO: 收支曲线
+                List<BalanceByMonthOrYear> monthBalanceList = JsonParser.parseJSONArray(BalanceByMonthOrYear.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("array"));
+                mFinancialCallbacks.getBalanceMonthData(balanceYearMonth, monthBalanceList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 收支曲线 -- 按年
+        else if (result.url().contains("cla=profit&fun=profitYear")) {
+            try {
+                // 按年收支曲线 X轴
+                JSONArray abscissaArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("abscissa"));
+                List<String> balanceYearMonth = new ArrayList<>();
+                for (int i = 0; i < abscissaArray.length(); i++) {
+                    balanceYearMonth.add(abscissaArray.getString(i));
+                }
+                // 按年收支曲线 Y轴
+                // Y轴数据
+                List<BalanceByMonthOrYear> monthBalanceList = JsonParser.parseJSONArray(BalanceByMonthOrYear.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("array"));
+                mFinancialCallbacks.getBalanceYearData(balanceYearMonth, monthBalanceList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
+        }
+        // 员工数量曲线
+        else if (result.url().contains("cla=profit&fun=staffNum")) {
+            try {
+                // X轴
+                JSONArray abscissaArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("abscissa"));
+                List<String> xValues = new ArrayList<>();
+                for (int i = 0; i < abscissaArray.length(); i++) {
+                    xValues.add(abscissaArray.getString(i));
+                }
+                // Y轴数据
+                List<StaffCurve> staffNumList = JsonParser.parseJSONArray(StaffCurve.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("array"));
+                mFinancialCallbacks.getStaffNumByCurve(xValues, staffNumList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
