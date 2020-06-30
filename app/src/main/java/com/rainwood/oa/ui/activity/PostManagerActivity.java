@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.DepartGroupScreenAdapter;
@@ -24,6 +26,7 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -34,7 +37,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +52,8 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchContent;
-    @ViewInject(R.id.tv_search)
-    private TextView searchTV;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     // content
     @ViewInject(R.id.divider)
     private View divider;
@@ -69,6 +69,8 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     // 选择flag
     private boolean selectedDepartFlag = false;
     private boolean selectedRoleFlag = false;
+    private String mDepartName;
+    private String mDepartId;
 
     private IAdministrativePresenter mAdministrativePresenter;
     private PostManagerAdapter mPostManagerAdapter;
@@ -84,6 +86,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private CommonGridAdapter mGridAdapter;
     private List<SelectedItem> mSelectedList;
 
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_post_manager;
@@ -91,19 +94,19 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
 
     @Override
     protected void initView() {
-        StatusBarUtils.immersive(this);
-        StatusBarUtils.setMargin(this, pageTop);
-        searchTV.setText(getString(R.string.text_common_search));
+        StatusBarUtils.setPaddingSmart(this, pageTop);
+        pageTitle.setText(title);
         // 设置布局管理器
         postListView.setLayoutManager(new GridLayoutManager(this, 1));
-        postListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, FontSwitchUtil.dip2px(this, 10f)));
+        postListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
         // 创建适配器
         mPostManagerAdapter = new PostManagerAdapter();
         // 设置适配器
         postListView.setAdapter(mPostManagerAdapter);
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
-        pagerRefresh.setEnableLoadmore(true);
+        pagerRefresh.setEnableLoadmore(false);
         // initial popWindow
         initPopDepartDialog();
     }
@@ -118,9 +121,9 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     @Override
     protected void loadData() {
         // 职位列表
-        mAdministrativePresenter.requestPostListData();
+        mAdministrativePresenter.requestPostListData("", "", "");
         // 所属部门数据
-        mAdministrativePresenter.requestAllDepartData();
+        mAdministrativePresenter.requestAllDepartData("", "");
         // 角色查询
         mAdministrativePresenter.requestPostRoleCondition();
     }
@@ -152,18 +155,20 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             if (selectedRoleFlag) {
                 // initial role popWindow
                 roleConditionPopDialog();
-                showRoleData();
             }
         });
         //
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_search:
+                PageJumpUtil.page2SearchView(this, SearchActivity.class, "职位管理", "postManager", "请输入职位");
                 break;
         }
     }
@@ -196,11 +201,10 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
      */
     @Override
     public void getPostRoleData(List<SelectedItem> selectedList) {
-
         mSelectedList = selectedList;
     }
 
-    private int tempPos = -1;
+    private static int tempPos = -1;
 
     /**
      * 初始化所属部门
@@ -231,18 +235,41 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                     mTextConfirm = view.findViewById(R.id.tv_confirm);
                 })
                 .create();
-        mTextClearScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempPos = -1;
-                toast("清空筛选");
+        mTextClearScreen.setOnClickListener(v -> {
+            for (Depart depart : departConditionList) {
+                depart.setHasSelected(false);
+                for (ProjectGroup group : depart.getArray()) {
+                    group.setSelected(false);
+                }
             }
+            tempPos = -1;
+            mStatusPopWindow.dismiss();
+            // TODO: 清空筛选
+            mAdministrativePresenter.requestPostListData("", "", "");
         });
         mTextConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tempPos = -1;
-                toast("确定");
+                for (Depart depart : departConditionList) {
+                    if (depart.isHasSelected()) {
+                        for (ProjectGroup group : depart.getArray()) {
+                            if (group.isSelected()) {
+                                mDepartName = group.getName();
+                                mDepartId = group.getId();
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (TextUtils.isEmpty(mDepartId)) {
+                    toast("请选择部门");
+                    return;
+                }
+                mStatusPopWindow.dismiss();
+                // TODO：带部门条件查询
+                mAdministrativePresenter.requestPostListData("", mDepartId, "");
+                mDepartId = "";
             }
         });
     }
@@ -252,6 +279,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
      */
     private void showPopDepartScreen() {
         // 设置数据 -- 默认选中第一项
+        LogUtils.d("sxs", "-- tempPos=== " + tempPos);
         departConditionList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
         mDepartScreenAdapter.setList(departConditionList);
         mDepartGroupScreenAdapter.setList(departConditionList.get(tempPos == -1 ? 0 : tempPos).getArray());
@@ -259,16 +287,14 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
 
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
-            tempPos = -1;
             selectedDepartFlag = false;
-            departGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            departGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
-                tempPos = -1;
                 selectedDepartFlag = false;
-                departGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                departGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
         // 点击事件
@@ -309,19 +335,26 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
             selectedRoleFlag = false;
-            roleGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            roleGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
                 selectedRoleFlag = false;
-                roleGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                roleGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-    }
 
-    private void showRoleData() {
         mGridAdapter.setTextList(mSelectedList);
+        mGridAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : mSelectedList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            // TODO: 通过角色查询职位
+            mAdministrativePresenter.requestPostListData("", "", item.getId());
+        });
     }
 
     @Override

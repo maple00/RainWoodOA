@@ -23,6 +23,7 @@ import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.AdminLeaveOutAdapter;
 import com.rainwood.oa.ui.adapter.AdminOvertimeAdapter;
@@ -48,7 +49,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -165,7 +165,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             if (Constants.CUSTOM_ID != null) {
                 mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
             } else {
-                mRecordManagerPresenter.requestOvertimeRecord();
+                mRecordManagerPresenter.requestOvertimeRecord("", "", "", "");
                 mRecordManagerPresenter.requestOverTimeStateData();
             }
         } else if (title.contains("请假")) {
@@ -186,6 +186,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         }
     }
 
+    // TODO: 记录列表带条件查询
+
     @Override
     protected void initPresenter() {
         mRecordManagerPresenter = PresenterManager.getOurInstance().getRecordManagerPresenter();
@@ -194,7 +196,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     protected void initEvent() {
-
         if (title.contains("加班")) {
             // 客户管理--加班详情
             mOvertimeAdapter.setItemOvertime(overtimeRecord -> {
@@ -312,16 +313,35 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                         @Override
                         public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                             dialog.dismiss();
-                            toast("选中的时间段：" + startTime + "至" + endTime);
+                            //toast("选中的时间段：" + startTime + "至" + endTime);
                             selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                            if (title.contains("加班")) {
+                                if (Constants.CUSTOM_ID != null) {
+                                    mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
+                                } else {
+                                    mRecordManagerPresenter.requestOvertimeRecord("", "", startTime, endTime);
+                                }
+                            } else if (title.contains("请假")) {
+                                mRecordManagerPresenter.requestLeaveRecord();
+                            } else if (title.contains("外出")) {
+                                if (Constants.CUSTOM_ID != null) {
+                                    mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
+                                } else {
+                                    mRecordManagerPresenter.requestGoOutRecord();
+                                }
+                            } else if (title.contains("补卡")) {
+                                mRecordManagerPresenter.requestReissueRecord();
+                            } else if (title.contains("回款")) {
+                                mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID);
+                            }
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
                             dialog.dismiss();
                             selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                         }
                     })
                     .show();
@@ -334,6 +354,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 CHOOSE_STAFF_REQUEST_SIZE));
     }
 
+    @SuppressWarnings("all")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -343,6 +364,26 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             String position = data.getStringExtra("position");
 
             toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+            // TODO: 通过员工查询
+            if (title.contains("加班")) {
+                if (Constants.CUSTOM_ID != null) {
+                    mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
+                } else {
+                    mRecordManagerPresenter.requestOvertimeRecord(staffId, "", "", "");
+                }
+            } else if (title.contains("请假")) {
+                mRecordManagerPresenter.requestLeaveRecord();
+            } else if (title.contains("外出")) {
+                if (Constants.CUSTOM_ID != null) {
+                    mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
+                } else {
+                    mRecordManagerPresenter.requestGoOutRecord();
+                }
+            } else if (title.contains("补卡")) {
+                mRecordManagerPresenter.requestReissueRecord();
+            } else if (title.contains("回款")) {
+                mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID);
+            }
         }
     }
 
@@ -359,14 +400,12 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         }
     }
 
-    @SuppressWarnings("all")
     @Override
     public void getOvertimeRecords(List<OvertimeRecord> overtimeRecords) {
         // 客户管理---加班记录
         mOvertimeAdapter.setOvertimeRecordList(overtimeRecords);
     }
 
-    @SuppressWarnings("all")
     @Override
     public void getGoOutRecords(List<LeaveOutRecord> leaveOutList) {
         // 客户管理--- 外出记录
@@ -415,7 +454,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         mLeaveOutList = leaveOutList;
     }
 
-    @SuppressWarnings("all")
     @Override
     public void getReissueRecords(List<CardRecord> cardRecordList) {
         //  行政人事---补卡记录
@@ -463,6 +501,33 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            // TODO : 请求记录状态列表
+            if (title.contains("加班")) {
+                if (Constants.CUSTOM_ID != null) {
+                    mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID);
+                } else {
+                    mRecordManagerPresenter.requestOvertimeRecord("", item.getName(), "", "");
+                }
+            } else if (title.contains("请假")) {
+                mRecordManagerPresenter.requestLeaveRecord();
+            } else if (title.contains("外出")) {
+                if (Constants.CUSTOM_ID != null) {
+                    mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID);
+                } else {
+                    mRecordManagerPresenter.requestGoOutRecord();
+                }
+            } else if (title.contains("补卡")) {
+                mRecordManagerPresenter.requestReissueRecord();
+            } else if (title.contains("回款")) {
+                mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID);
+            }
+        });
     }
 
     public void onError() {

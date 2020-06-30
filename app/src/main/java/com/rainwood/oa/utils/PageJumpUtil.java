@@ -329,6 +329,7 @@ public final class PageJumpUtil {
 
     /**
      * 行政人事---补卡记录详情
+     *
      * @param context
      * @param clazz
      * @param title
@@ -339,6 +340,23 @@ public final class PageJumpUtil {
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
         sIntent.putExtra("menu", Constants.PERSONAL_REISSUE_CARD_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到搜索页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param pageFlag
+     * @param tips
+     */
+    public static void page2SearchView(Context context, Class<? extends BaseActivity> clazz, String title, String pageFlag, String tips) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("pageFlag", pageFlag);
+        sIntent.putExtra("tips", tips);
         context.startActivity(sIntent);
     }
 }

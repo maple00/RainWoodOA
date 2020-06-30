@@ -1,6 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +16,25 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RoleCondition;
 import com.rainwood.oa.model.domain.RolePermission;
 import com.rainwood.oa.model.domain.RoleSecondCondition;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.RoleManagerAdapter;
 import com.rainwood.oa.ui.adapter.RoleScreenAdapter;
 import com.rainwood.oa.ui.adapter.RoleSecondScreenAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +44,8 @@ import java.util.List;
  * @Date: 2020/5/21 13:12
  * @Desc: 角色管理pager
  */
-public final class RoleManagerActivity extends BaseActivity implements IAdministrativeCallbacks, RoleManagerAdapter.OnClickRoleItem {
+public final class RoleManagerActivity extends BaseActivity implements
+        IAdministrativeCallbacks, RoleManagerAdapter.OnClickRoleItem {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -70,6 +75,11 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
     private CommonPopupWindow mStatusPopWindow;
     private TextView mTextClearScreen;
     private TextView mTextConfirm;
+    private int page = 0;
+    // 一级分类
+    private String mConditionTypeFirst;
+    // 二级分类
+    private String mConditionTypeSecond;
 
     @Override
     protected int getLayoutResId() {
@@ -99,20 +109,6 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
     }
 
     @Override
-    protected void initEvent() {
-        mRoleManagerAdapter.setClickRoleItem(this);
-        // 筛选分类
-        screenTitle.setOnItemClick(text -> {
-            selectedStatusFlag = !selectedStatusFlag;
-            screenTitle.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
-            if (selectedStatusFlag) {
-                showPopScreen();
-            }
-        });
-    }
-
-    @Override
     protected void initPresenter() {
         mRoleManagerPresenter = PresenterManager.getOurInstance().getAdministrativePresenter();
         mRoleManagerPresenter.registerViewCallback(this);
@@ -121,16 +117,48 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
     @Override
     protected void loadData() {
         // 请求数据 -- 角色列表 -- 筛选条件
-        mRoleManagerPresenter.requestAllRole();
+        page = 0;
+        mRoleManagerPresenter.requestAllRole("", "", "", page);
         mRoleManagerPresenter.requestRoleScreenCondition();
     }
 
+    @Override
+    protected void initEvent() {
+        mRoleManagerAdapter.setClickRoleItem(this);
+        // 筛选分类
+        screenTitle.setOnItemClick(text -> {
+            if (ListUtils.getSize(roleConditionList) == 0) {
+                toast("当前暂无分类");
+                return;
+            }
+            selectedStatusFlag = !selectedStatusFlag;
+            screenTitle.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                    selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.fontColor));
+            if (selectedStatusFlag) {
+                showPopScreen();
+            }
+        });
+        // 刷新
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                // TODO: 加载更多
+                mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, ++page);
+            }
+        });
+    }
+
     @SingleClick
-    @OnClick({R.id.iv_page_back})
+    @OnClick({R.id.iv_page_back, R.id.tv_search_tips, R.id.ll_search_view})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.ll_search_view:
+            case R.id.tv_search_tips:
+                PageJumpUtil.page2SearchView(this, SearchActivity.class, "角色管理",
+                        "roleManager", "请输入角色名称");
                 break;
         }
     }
@@ -158,13 +186,13 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
             selectedStatusFlag = false;
-            screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
                 selectedStatusFlag = false;
-                screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
         // 点击事件
@@ -181,14 +209,22 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
                 roleSecondCondition.setSelected(false);
             }
             secondCondition.setSelected(true);
-
         });
     }
 
     @Override
     public void getAllData2List(List<RolePermission> rolePermissions) {
+        pagerRefresh.finishLoadmore();
         // 得到数据
-        mRoleManagerAdapter.setPermissionList(rolePermissions);
+        if (page == 0) {
+            // 初始化或者条件查询第一页
+            mRoleManagerAdapter.setPermissionList(rolePermissions);
+            mRoleManagerAdapter.setLoaded(false);
+        } else {
+            // 加载
+            mRoleManagerAdapter.setPermissionList(rolePermissions);
+            mRoleManagerAdapter.setLoaded(true);
+        }
     }
 
     @Override
@@ -233,16 +269,31 @@ public final class RoleManagerActivity extends BaseActivity implements IAdminist
                     secondCondition.setSelected(false);
                 }
             }
+            // TODO: 清空分类接口
+            page = 0;
+            mConditionTypeFirst = "";
+            mConditionTypeSecond = "";
+            mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, page);
             showPopScreen();
             tempPos = -1;
-            //toast("清空筛选");
         });
-        mTextConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempPos = -1;
-                toast("确定");
+        mTextConfirm.setOnClickListener(v -> {
+            for (RoleCondition condition : roleConditionList) {
+                if (condition.isSelected()) {
+                    if (ListUtils.getSize(condition.getArray()) != 0) {
+                        if (condition.getArray().get(tempPos).isSelected()) {
+                            // TODO: 查询分类接口
+                            mConditionTypeFirst = condition.getName();
+                            mConditionTypeSecond = condition.getArray().get(tempPos).getName();
+                        }
+                    }
+                }
             }
+            page = 0;
+            mRoleManagerPresenter.requestAllRole("", TextUtils.isEmpty(mConditionTypeFirst) ? "" : mConditionTypeFirst,
+                    TextUtils.isEmpty(mConditionTypeSecond) ? "" : mConditionTypeSecond, page);
+            tempPos = -1;
+            mStatusPopWindow.dismiss();
         });
     }
 

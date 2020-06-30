@@ -11,6 +11,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.RoleDetailModuleAdapter;
 import com.rainwood.oa.utils.AppBarStateChangeListener;
@@ -21,7 +22,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * @Author: a797s

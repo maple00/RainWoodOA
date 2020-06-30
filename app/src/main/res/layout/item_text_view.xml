@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:paddingTop="10dp"
-    android:background="@drawable/shape_salary_click_bg"
+    android:background="@drawable/shape_condition_unclick_bg"
     android:paddingBottom="10dp"
     android:text="全部">
 

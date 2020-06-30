@@ -21,9 +21,17 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     void requestQueryCondition();
 
     /**
-     * 请求所有的员工
+     * 查询员工
+     *
+     * @param postId  职位id
+     * @param name    姓名
+     * @param sex     性别
+     * @param social  是否购买社保
+     * @param gateKey 是否有大门钥匙
+     * @param orderBy 排序方式
      */
-    void requestAllStaff(String postId);
+    void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
+                         String orderBy);
 
     /**
      * 请求员工资料data

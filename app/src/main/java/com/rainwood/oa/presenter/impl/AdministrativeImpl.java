@@ -1,7 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Depart;
-import com.rainwood.oa.model.domain.DepartType;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.RoleCondition;
@@ -14,7 +13,6 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IAdministrativeCallbacks;
 
 import org.json.JSONException;
@@ -34,9 +32,12 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
      * 角色管理列表
      */
     @Override
-    public void requestAllRole() {
+    public void requestAllRole(String roleName, String moduleFirst, String moduleSecond, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=role&fun=home", params, this);
+        params.add("name", roleName);
+        params.add("powerOne", moduleFirst);
+        params.add("powerTwo", moduleSecond);
+        OkHttp.post(Constants.BASE_URL + "cla=role&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -62,10 +63,15 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
 
     /**
      * 部门管理列表
+     *
+     * @param departName
+     * @param departType
      */
     @Override
-    public void requestAllDepartData() {
+    public void requestAllDepartData(String departName, String departType) {
         RequestParams params = new RequestParams();
+        params.add("name", departName);
+        params.add("type", departType);
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=home", params, this);
     }
 
@@ -92,10 +98,16 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
 
     /**
      * 获取职位列表
+     *
+     * @param positionName
+     * @param departId
      */
     @Override
-    public void requestPostListData() {
+    public void requestPostListData(String positionName, String departId, String roleId) {
         RequestParams params = new RequestParams();
+        params.add("name", positionName);
+        params.add("departmentId", departId);
+        params.add("roleId", roleId);
         OkHttp.post(Constants.BASE_URL + "cla=job&fun=home", params, this);
     }
 
@@ -137,7 +149,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        LogUtils.d("sxs", "result ---- " + result.body());
+        //LogUtils.d("sxs", "result ---- " + result.body());
         if (!(result.code() == 200)) {
             mAdministrativeCallbacks.onError();
             return;
@@ -153,7 +165,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
         }
 
         // 角色列表
-        if (result.url().contains("cla=role&fun=home")) {
+        if (result.url().contains("cla=role&fun=home&page")) {
             try {
                 List<RolePermission> rolePermissionList = JsonParser.parseJSONArray(RolePermission.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("role"));
@@ -163,7 +175,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
             }
         }
         // 角色筛选分类
-        else if (result.url().contains("cla=role&fun=power")){
+        else if (result.url().contains("cla=role&fun=power")) {
             try {
                 List<RoleCondition> conditionList = JsonParser.parseJSONArray(RoleCondition.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("power"));
@@ -193,10 +205,13 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
             }
         }
         // 部门分类
-        else if (result.url().contains("cla=department&fun=type")){
+        else if (result.url().contains("cla=department&fun=type")) {
             try {
                 List<SelectedItem> departList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("type"));
+                SelectedItem item = new SelectedItem();
+                item.setName("全部");
+                departList.add(0, item);
                 mAdministrativeCallbacks.getDepartTypeData(departList);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -223,7 +238,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
             }
         }
         // 职位管理中的角色信息
-        else if (result.url().contains("cla=job&fun=role")){
+        else if (result.url().contains("cla=job&fun=role")) {
             try {
                 List<SelectedItem> postList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("role"));

@@ -46,6 +46,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_position"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_name"
@@ -94,6 +95,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_base_salary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2000"
@@ -119,6 +121,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_post_allowance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2000"
@@ -130,7 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="基本工资(元)"
+                        android:text="岗位津贴(元)"
                         android:textColor="@color/labelColor"
                         android:textSize="11sp"
                         tools:ignore="SmallSp" />
@@ -144,6 +147,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_account_account"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2000"
@@ -155,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="基本工资(元)"
+                        android:text="会计账户(元)"
                         android:textColor="@color/labelColor"
                         android:textSize="11sp"
                         tools:ignore="SmallSp" />
@@ -169,7 +173,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_salary"
+                        android:id="@+id/tv_settlement_account"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2000"
@@ -181,7 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="基本工资(元)"
+                        android:text="结算账户(元)"
                         android:textColor="@color/labelColor"
                         android:textSize="11sp"
                         tools:ignore="SmallSp" />

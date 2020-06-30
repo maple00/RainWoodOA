@@ -14,6 +14,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.DepartManagerAdapter;
@@ -32,7 +33,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -41,7 +41,8 @@ import java.util.List;
  * @Date: 2020/5/21 16:59
  * @Desc: 部门管理
  */
-public final class DepartManagerActivity extends BaseActivity implements IAdministrativeCallbacks, ProjectGroupsAdapter.OnClickGroup {
+public final class DepartManagerActivity extends BaseActivity implements IAdministrativeCallbacks,
+        ProjectGroupsAdapter.OnClickGroup {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -125,7 +126,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     @Override
     protected void loadData() {
         // 请求数据---数据列表、筛选条件
-        mAdministrativePresenter.requestAllDepartData();
+        mAdministrativePresenter.requestAllDepartData("", "");
         mAdministrativePresenter.requestDepartScreenCondition();
     }
 
@@ -136,11 +137,16 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.tv_search_tips, R.id.ll_search_view})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.tv_search_tips:
+            case R.id.ll_search_view:
+                PageJumpUtil.page2SearchView(this, SearchActivity.class, "部门管理",
+                        "departManager", "输入部门名称");
                 break;
         }
     }
@@ -184,14 +190,25 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
         mMaskLayer.setOnClickListener(v -> {
             mDepartTypePopWindow.dismiss();
             selectedStatusFlag = false;
-            screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mDepartTypePopWindow.setOnDismissListener(() -> {
             mDepartTypePopWindow.dismiss();
             if (!mDepartTypePopWindow.isShowing()) {
                 selectedStatusFlag = false;
-                screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
+        });
+        mGridAdapter.setTextList(mDepartTypeList);
+        mGridAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : mDepartTypeList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            // TODO: 查询分类接口
+            mAdministrativePresenter.requestAllDepartData("",
+                    item.getName().equals("全部") ? "" : item.getName());
+            mDepartTypePopWindow.dismiss();
         });
     }
 
@@ -199,7 +216,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
      * 筛选条件
      */
     private void showConditionFilter() {
-        mGridAdapter.setTextList(mDepartTypeList);
+
 
     }
 

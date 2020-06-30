@@ -15,6 +15,7 @@ import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffDepart;
 import com.rainwood.oa.model.domain.StaffPost;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
@@ -34,7 +35,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -50,10 +50,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     // action Bar
     @ViewInject(value = R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchContent;
-    @ViewInject(R.id.tv_search)
-    private TextView searchTV;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     // content
     @ViewInject(R.id.gti_default_sort)
     private GroupTextIcon defaultSort;
@@ -75,7 +73,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private StaffLeftAdapter mLeftAdapter;
     private List<StaffDepart> mDepartList;
     private StaffRightAdapter mRightAdapter;
-
+    private String mPostId;
     //
     private boolean DEFAULT_SORT_FLAG = false;
     private boolean SEX_FLAG = false;
@@ -89,6 +87,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private CommonGridAdapter mGateViewAdapter;
     private List<SelectedItem> mSocialList;
     private List<SelectedItem> mGateList;
+    private CommonPopupWindow mStatusPopWindow;
 
     @Override
     protected int getLayoutResId() {
@@ -97,9 +96,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
     @Override
     protected void initView() {
-        StatusBarUtils.immersive(this);
-        StatusBarUtils.setMargin(this, pageTop);
-        searchTV.setText(getString(R.string.text_common_search));
+        StatusBarUtils.setPaddingSmart(this, pageTop);
+        pageTitle.setText(title);
         // 设置布局管理器
         departPostView.setLayoutManager(new GridLayoutManager(this, 1));
         departPostView.addItemDecoration(new SpacesItemDecoration(0, 0,
@@ -140,7 +138,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         defaultSort.setOnItemClick(text -> {
             DEFAULT_SORT_FLAG = !DEFAULT_SORT_FLAG;
             defaultSort.setRightIcon(DEFAULT_SORT_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    DEFAULT_SORT_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                    DEFAULT_SORT_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.fontColor));
             if (DEFAULT_SORT_FLAG) {
                 defaultSortConditionPopDialog();
             }
@@ -148,16 +146,15 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         sexScreen.setOnItemClick(text -> {
             SEX_FLAG = !SEX_FLAG;
             sexScreen.setRightIcon(SEX_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    SEX_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                    SEX_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.fontColor));
             if (SEX_FLAG) {
                 sexConditionPopDialog();
-                setSexShowPop();
             }
         });
         screenAll.setOnItemClick(text -> {
             SCREEN_ALL_FLAG = !SCREEN_ALL_FLAG;
             screenAll.setRightIcon(SCREEN_ALL_FLAG ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    SCREEN_ALL_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                    SCREEN_ALL_FLAG ? getColor(R.color.colorPrimary) : getColor(R.color.fontColor));
             if (SCREEN_ALL_FLAG) {
                 queryScreenAllConditionPopDialog();
             }
@@ -165,11 +162,14 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_search:
+                PageJumpUtil.page2SearchView(this, SearchActivity.class, "员工管理", "staffManager", "请输入员工姓名");
                 break;
         }
     }
@@ -195,12 +195,16 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @Override
     public void onClickPost(int parentPos, int position) {
         // 选择职位
-        for (StaffPost staffPost : mDepartList.get(parentPos).getArray()) {
-            staffPost.setSelected(false);
+        for (StaffDepart staffDepart : mDepartList) {
+            staffDepart.setSelected(false);
+            for (StaffPost staffPost : staffDepart.getArray()) {
+                staffPost.setSelected(false);
+            }
         }
         mDepartList.get(parentPos).getArray().get(position).setSelected(true);
         // 根据职位/部门id查询该所属员工
-        mStaffPresenter.requestAllStaff(mDepartList.get(parentPos).getArray().get(position).getId());
+        mPostId = mDepartList.get(parentPos).getArray().get(position).getId();
+        mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", "");
     }
 
     /**
@@ -226,7 +230,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         for (StaffDepart depart : departList) {
             for (int i = 0; i < depart.getArray().size(); i++) {
                 if (depart.getArray().get(i).isSelected()) {
-                    mStaffPresenter.requestAllStaff(depart.getArray().get(i).getId());
+                    mPostId = depart.getArray().get(i).getId();
+                    mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", "");
                     break;
                 }
             }
@@ -281,19 +286,26 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
             SEX_FLAG = false;
-            sexScreen.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            sexScreen.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
                 SEX_FLAG = false;
-                sexScreen.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                sexScreen.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-    }
-
-    private void setSexShowPop() {
         mSexSelectedAdapter.setTextList(mSexSelectedList);
+        mSexSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : mSexSelectedList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            // TODO : 通过性别筛选
+            mStaffPresenter.requestAllStaff(mPostId, "", item.getName().equals("不限") ? "" : item.getName(),
+                    "", "", "");
+        });
     }
 
     /**
@@ -317,13 +329,13 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
             DEFAULT_SORT_FLAG = false;
-            defaultSort.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            defaultSort.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
                 DEFAULT_SORT_FLAG = false;
-                defaultSort.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                defaultSort.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
         // 筛选条件点击事件
@@ -332,6 +344,9 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 item.setHasSelected(false);
             }
             selectedItem.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            //TODO: 通过排序查询
+            mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", selectedItem.getName());
         });
         mDefaultSortAdapter.setItemList(mDefaultSortSelectedList);
     }
@@ -341,7 +356,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      * 全部筛选
      */
     private void queryScreenAllConditionPopDialog() {
-        CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
+        mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
                 .setView(R.layout.pop_screen_query_staff_all)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -359,17 +374,33 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                     TextView clearScreen = view.findViewById(R.id.tv_clear_screen);
                     TextView confirm = view.findViewById(R.id.tv_confirm);
-                    clearScreen.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            toast("清空筛选");
+                    clearScreen.setOnClickListener(v -> {
+                        toast("清空筛选");
+                        for (SelectedItem item : mSocialList) {
+                            item.setHasSelected(false);
                         }
+                        for (SelectedItem item : mGateList) {
+                            item.setHasSelected(false);
+                        }
+                        mStatusPopWindow.dismiss();
                     });
-                    confirm.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            toast("确认");
+                    confirm.setOnClickListener(v -> {
+                        mStatusPopWindow.dismiss();
+                        String socialStr = "";
+                        String gateKeyStr = "";
+                        for (SelectedItem item : mSocialList) {
+                            if (item.isHasSelected()) {
+                                socialStr = item.getName();
+                            }
                         }
+                        for (SelectedItem item : mGateList) {
+                            if (item.isHasSelected()) {
+                                gateKeyStr = item.getName();
+                            }
+                        }
+                        // TODO : 查询全部筛选
+                        mStaffPresenter.requestAllStaff(mPostId, "", "", "不限".equals(socialStr) ? "" : socialStr,
+                                "不限".equals(gateKeyStr) ? "" : gateKeyStr, "");
                     });
                 })
                 .create();
@@ -377,17 +408,31 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mMaskLayer.setOnClickListener(v -> {
             mStatusPopWindow.dismiss();
             SCREEN_ALL_FLAG = false;
-            screenAll.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+            screenAll.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
             mStatusPopWindow.dismiss();
             if (!mStatusPopWindow.isShowing()) {
                 SCREEN_ALL_FLAG = false;
-                screenAll.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                screenAll.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
         mSocialViewAdapter.setTextList(mSocialList);
         mGateViewAdapter.setTextList(mGateList);
+        mSocialViewAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : mSocialList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            // TODO: 查询是否购买社保
+        });
+        mGateViewAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : mGateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            // TODO：查询是否有大门钥匙
+        });
     }
 
     @Override

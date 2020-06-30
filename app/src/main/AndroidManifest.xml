@@ -568,6 +568,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
 
+        <!-- 搜索Activity SearchActivity-->
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
         <!--
         三方集成
         -->

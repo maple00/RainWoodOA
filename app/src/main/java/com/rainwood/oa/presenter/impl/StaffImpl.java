@@ -60,9 +60,15 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * @param postId
      */
     @Override
-    public void requestAllStaff(String postId) {
+    public void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
+                                String orderBy) {
         RequestParams params = new RequestParams();
-        params.add("id", postId);
+        params.add("departmentId", postId);
+        params.add("name", name);
+        params.add("sex", sex);
+        params.add("socialSecurity", social);
+        params.add("gateKey", gateKey);
+        params.add("orderBy", orderBy);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home", params, this);
     }
 

@@ -65,8 +65,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 行政人事--- 加班记录
      */
     @Override
-    public void requestOvertimeRecord() {
+    public void requestOvertimeRecord(String staffId, String state, String startTime, String endTime) {
         RequestParams params = new RequestParams();
+        params.add("stid", staffId);
+        params.add("workFlow", state);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home", params, this);
     }
 
@@ -548,7 +552,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             }
         }
         // 知识管理 -- 跟进记录 （记录类型）
-        else if (result.url().contains("cla=follow&fun=search")){
+        else if (result.url().contains("cla=follow&fun=search")) {
             try {
                 JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));

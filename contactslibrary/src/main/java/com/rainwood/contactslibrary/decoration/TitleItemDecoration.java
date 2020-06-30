@@ -31,8 +31,8 @@ public class TitleItemDecoration extends RecyclerView.ItemDecoration {
     private LayoutInflater mInflater;
 
     private int mTitleHeight;//title的高
-    private static int COLOR_TITLE_BG = Color.parseColor("#FFDFDFDF");
-    private static int COLOR_TITLE_FONT = Color.parseColor("#FF999999");
+    private static int COLOR_TITLE_BG = Color.parseColor("#FFF6F6F6");
+    private static int COLOR_TITLE_FONT = Color.parseColor("#FF666666");
     private static int mTitleFontSize;//title字体大小
 
 

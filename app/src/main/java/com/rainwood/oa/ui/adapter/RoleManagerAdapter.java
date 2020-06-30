@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,11 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.RolePermission;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.toast.ToastUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,11 +28,22 @@ import java.util.List;
  */
 public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAdapter.ViewHolder> {
 
-    private List<RolePermission> mPermissionList;
+    private List<RolePermission> mPermissionList = new ArrayList<>();
+    // 是否是加载数据 --- 默认不是
+    private boolean Loaded = false;
 
     public void setPermissionList(List<RolePermission> permissionList) {
-        mPermissionList = permissionList;
+        if (!Loaded) {
+            mPermissionList.clear();
+        } else {
+            ToastUtils.show("本次加载了" + ListUtils.getSize(permissionList) + "条数据");
+        }
+        mPermissionList.addAll(permissionList);
         notifyDataSetChanged();
+    }
+
+    public void setLoaded(boolean Loaded) {
+        this.Loaded = Loaded;
     }
 
     @NonNull

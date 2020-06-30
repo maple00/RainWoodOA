@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -57,10 +58,25 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     protected String moduleMenu;
     public CommonPopupWindow mCommonPopupWindow;
 
+    private State currentState = State.NONE;
+    private View mLoadingView;
+    private View mSuccessView;
+    private View mErrorView;
+    private View mEmptyView;
+
+    public enum State {
+        NONE, LOADING, SUCCESS, ERROR, EMPTY
+    }
+
+    private FrameLayout mBaseContainer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
+//        setContentView(R.layout.activity_base_layout);
+//        mBaseContainer = findViewById(R.id.base_container);
+//        loadStateView();
         ViewBind.inject(this);
         title = getIntent().getStringExtra("title") == null ? "" : getIntent().getStringExtra("title");
         moduleMenu = getIntent().getStringExtra("menu") == null ? "" : getIntent().getStringExtra("menu");
@@ -70,6 +86,27 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         initPresenter();
         initData();
         loadData();
+    }
+
+    /***
+     * 各种成功的状态View
+     */
+    private void loadStateView() {
+        // 成功的View
+        loadSuccessView();
+
+        // LoadingView
+
+        // 错误页面
+
+
+        // 空白页面
+
+    }
+
+    protected void loadSuccessView() {
+        int resId = getLayoutResId();
+        setContentView(resId);
     }
 
     /**
@@ -253,6 +290,11 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
             }
         }
     }
+
+    /**
+     * 设置状态页面
+     */
+
 
     /**
      * 设置必填信息

@@ -25,7 +25,7 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 行政人事--加班记录
      */
-    void requestOvertimeRecord();
+    void requestOvertimeRecord(String staffId, String state, String startTime, String endTime);
 
     /**
      * 请求请假记录
