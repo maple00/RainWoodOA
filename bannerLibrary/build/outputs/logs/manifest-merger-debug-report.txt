@@ -1,25 +1,25 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
+ADDED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
 	package
-		ADDED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:11-43
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		ADDED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:11-43
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
+		ADDED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml:1:1-45
 uses-sdk
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-		ADDED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		ADDED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-		ADDED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
-		INJECTED from D:\MY_DEV\rainwood\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		ADDED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
+		INJECTED from D:\My_Dev\AndroidSpace\RainWoodOA\bannerLibrary\src\main\AndroidManifest.xml
