@@ -22,10 +22,12 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.FileManagerUtil;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IAttachmentCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -43,8 +45,8 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchTips;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     //content
     @ViewInject(R.id.gti_type)
     private GroupTextIcon fileType;
@@ -76,6 +78,11 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     private boolean CHECKED_FORMAT_FLAG = false;
     private boolean CHECKED_SECRET_FLAG = false;
     private boolean CHECKED_SORT_FLAG = false;
+    private int pageCount = 1;
+    private String mClassify;
+    private String mFormat;
+    private String mSecret;
+    private String mSorting;
 
     @Override
     protected int getLayoutResId() {
@@ -84,9 +91,8 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
 
     @Override
     protected void initView() {
-        StatusBarUtils.immersive(this);
-        StatusBarUtils.setMargin(this, pageTop);
-        searchTips.setText("输入文件名称");
+        StatusBarUtils.setPaddingSmart(this, pageTop);
+        pageTitle.setText(title);
         // 设置布局管理器
         officeFileView.setLayoutManager(new GridLayoutManager(this, 1));
         officeFileView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
@@ -107,7 +113,8 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
 
     @Override
     protected void loadData() {
-        mAttachmentPresenter.requestOfficeFileData();
+        // list
+        mAttachmentPresenter.requestOfficeFileData("", "", "", "", "", pageCount);
         // condition
         mAttachmentPresenter.requestOfficeCondition();
     }
@@ -160,20 +167,39 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                         file.getName(), file.getFormat());
             }
         });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mAttachmentPresenter.requestOfficeFileData("", mClassify, mFormat, mSecret, mSorting, ++pageCount);
+            }
+        });
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_search:
+                toast("搜索");
                 break;
         }
     }
 
     @Override
     public void getOfficeFileData(List<OfficeFile> fileList) {
+        if (ListUtils.getSize(fileList) == 0) {
+            toast("当前数据为空");
+            return;
+        }
+        mOfficeFileAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            pageRefresh.finishLoadmore();
+            toast("为您加载了" + ListUtils.getSize(fileList) + "条数据");
+        }
         mOfficeFileAdapter.setFileList(fileList);
     }
 
@@ -209,6 +235,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             CHECKED_TYPE_FLAG = false;
             CHECKED_FORMAT_FLAG = false;
             CHECKED_SECRET_FLAG = false;
+            CHECKED_SORT_FLAG = false;
             targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
         });
         mStatusPopWindow.setOnDismissListener(() -> {
@@ -217,10 +244,30 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                 CHECKED_TYPE_FLAG = false;
                 CHECKED_FORMAT_FLAG = false;
                 CHECKED_SECRET_FLAG = false;
+                CHECKED_SORT_FLAG = false;
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((selectedItem, position) -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
+            }
+            selectedItem.setHasSelected(true);
+            // TODO: 条件查询
+            mClassify = "";
+            mFormat = "";
+            mSecret = "";
+            if (CHECKED_TYPE_FLAG) {
+                mClassify = selectedItem.getName();
+            } else if (CHECKED_FORMAT_FLAG) {
+                mFormat = selectedItem.getName();
+            } else if (CHECKED_SECRET_FLAG) {
+                mSecret = selectedItem.getName();
+            }
+            mAttachmentPresenter.requestOfficeFileData("", mClassify, mFormat, mSecret, "", pageCount = 1);
+            mStatusPopWindow.dismiss();
+        });
     }
 
     /**
@@ -254,13 +301,18 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             }
         });
         // 筛选条件点击事件
+        mDefaultSortAdapter.setItemList(mSortList);
         mDefaultSortAdapter.setOnClickListener((selectedItem, position) -> {
             for (SelectedItem item : mSortList) {
                 item.setHasSelected(false);
             }
             selectedItem.setHasSelected(true);
+            // TODO： 查询排序条件
+            mSorting = selectedItem.getName();
+            mAttachmentPresenter.requestOfficeFileData("", "", "", "", mSorting, pageCount = 1);
+
+            mStatusPopWindow.dismiss();
         });
-        mDefaultSortAdapter.setItemList(mSortList);
     }
 
     @Override

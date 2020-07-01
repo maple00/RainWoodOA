@@ -157,8 +157,8 @@ public final class ClassificationStaticsActivity extends BaseActivity
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                                 dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
-
+                                // TODO: 时间段查询
+                                mFinancialPresenter.requestClassStatics(startTime, endTime);
                             }
 
                             @Override

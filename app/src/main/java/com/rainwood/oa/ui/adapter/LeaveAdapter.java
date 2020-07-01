@@ -16,6 +16,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,11 +26,19 @@ import java.util.List;
  */
 public final class LeaveAdapter extends RecyclerView.Adapter<LeaveAdapter.ViewHolder> {
 
-    private List<LeaveRecord> mLeaveList;
+    private List<LeaveRecord> mLeaveList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setLeaveList(List<LeaveRecord> leaveList) {
-        mLeaveList = leaveList;
+        if (loaded) {
+            mLeaveList.clear();
+        }
+        mLeaveList.addAll(leaveList);
         notifyDataSetChanged();
     }
 

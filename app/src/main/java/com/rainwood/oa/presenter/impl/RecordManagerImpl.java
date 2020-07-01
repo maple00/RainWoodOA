@@ -65,22 +65,35 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 行政人事--- 加班记录
      */
     @Override
-    public void requestOvertimeRecord(String staffId, String state, String startTime, String endTime) {
+    public void requestOvertimeRecord(String staffId, String state, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
         params.add("stid", staffId);
         params.add("workFlow", state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
-        OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home&page=" + pageCount, params, this);
     }
 
     /**
-     * 请假记录
+     * 行政人事 --- 请假记录
+     *
+     * @param staffId   员工id
+     * @param type      请假类型
+     * @param state     状态
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param page      页码
      */
     @Override
-    public void requestLeaveRecord() {
+    public void requestLeaveRecord(String staffId, String type, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=work&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("type", type);
+        params.add("workFlow", state);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        LogUtils.d("sxs", "--- type -- " + type + " --- state ---- " + state);
+        OkHttp.post(Constants.BASE_URL + "cla=work&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -105,12 +118,23 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     }
 
     /**
-     * 行政人事--外出记录
+     * 行政人事 -- 外出记录
+     *
+     * @param staffId   员工id
+     * @param state     状态
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param page      页码
      */
     @Override
-    public void requestGoOutRecord() {
+    public void requestGoOutRecord(String staffId, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("workFlow", state);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        LogUtils.d("sxs", "---------- 状态 -------- " + state);
+        OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -124,11 +148,21 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     /**
      * 行政人事---补卡记录
+     *
+     * @param staffId   员工id
+     * @param state     状态
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param page      页码
      */
     @Override
-    public void requestReissueRecord() {
+    public void requestReissueRecord(String staffId, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("workFlow", state);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -189,15 +223,27 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     }
 
     /**
-     * 财务管理---开票记录
+     * 财务管理  -- 开票记录
      *
-     * @param type 为空queryAll， 已拨付：是，未拨付：否
+     * @param type        是否已开票 为空queryAll， 已拨付：是，未拨付：否
+     * @param staffId     员工id
+     * @param company     销售方
+     * @param invoiceType 发票类型
+     * @param startTime   开始时间
+     * @param endTime     结束时间
+     * @param page        页码
      */
     @Override
-    public void requestInvoiceRecords(String type) {
+    public void requestInvoiceRecords(String type, String staffId, String company, String invoiceType,
+                                      String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("open", type);
-        OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("company", company);
+        params.add("type", invoiceType);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -243,27 +289,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 知识管理--跟进记录
      */
     @Override
-    public void requestKnowledgeFollowRecords() {
-        // 模拟知识管理中的跟进记录
-        List<KnowledgeFollowRecord> recordList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            KnowledgeFollowRecord record = new KnowledgeFollowRecord();
-            record.setTarget((i % 2 == 0) ? " 客户" : "订单");
-            record.setTargetName("重庆市永川区兴永建设发展有限公司项目管理");
-            record.setText("在全球，随着Flutter被越来越多的知名公司应用在自己的商业APP中，" +
-                    "Flutter这门新技术也逐渐进入了移动开发者的视野，尤其是当Google在2018年IO大会上发布了第一个" +
-                    "Preview版本后，国内刮起来一股学习Flutter的热潮。\n\n为了更好的方便帮助中国开发者了解这门新技术" +
-                    "，我们，Flutter中文网，前后发起了Flutter翻译计划、Flutter开源计划，前者主要的任务是翻译" +
-                    "Flutter官方文档，后者则主要是开发一些常用的包来丰富Flutter生态，帮助开发者提高开发效率。而时" +
-                    "至今日，这两件事取得的效果还都不错！");
-            record.setStaffName("Android攻城狮");
-            record.setTime("  2020.04.10 13:37");
-            recordList.add(record);
-        }
-
+    public void requestKnowledgeFollowRecords(String staffId, String target, String searchText, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=follow&fun=home", params, this);
-
+        params.add("stid", staffId);
+        params.add("target", target);
+        params.add("text", searchText);
+        OkHttp.post(Constants.BASE_URL + "cla=follow&fun=home&page=" + page, params, this);
     }
 
     /**

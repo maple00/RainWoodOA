@@ -45,9 +45,15 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     void requestALlCustomData(int page);
 
     /**
-     * 客户列表 -- 状态 condition
+     * 客户列表 -- condition
+     */
+    void requestCustomCondition();
+
+    /**
+     * 客户列表状态 --- condition
      */
     void requestStateCondition();
+
     /**
      * 客户列表 -- 区域 condition
      */
@@ -111,6 +117,5 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      * 获取客户下的开票信息
      */
     void requestCustomInvoice(String customId);
-
 
 }

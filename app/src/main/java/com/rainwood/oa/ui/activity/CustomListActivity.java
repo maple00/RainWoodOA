@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomScreenAll;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.CustomListAdapter;
@@ -31,7 +33,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -92,7 +93,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         searchContent.setOnFocusChangeListener((v, hasFocus) -> searchTV.setText(hasFocus ? getString(R.string.text_common_search) : getString(R.string.custom_text_manager)));
         // 设置布局管理器
         customView.setLayoutManager(new GridLayoutManager(this, 1));
-        customView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, FontSwitchUtil.dip2px(this, 10f)));
+        customView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
         // 创建适配器
         mCustomAdapter = new CustomListAdapter();
         // 设置适配器
@@ -114,6 +116,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         mCustomListPresenter.requestALlCustomData(pageCount);
         // request condition
         mCustomListPresenter.requestStateCondition();
+        mCustomListPresenter.requestCustomCondition();
         mCustomListPresenter.requestAreaCondition();
     }
 
@@ -142,27 +145,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                     selectedAreaFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
             if (selectedAreaFlag) {
                 toast(text);
-                /*new AddressDialog.Builder(this)
-                        .setTitle(getString(R.string.address_title))
-                        // 设置默认省份
-                        //.setProvince("广东省")
-                        // 设置默认城市（必须要先设置默认省份）
-                        //.setCity("广州市")
-                        // 不选择县级区域
-                        //.setIgnoreArea()
-                        .setListener(new AddressDialog.OnListener() {
-
-                            @Override
-                            public void onSelected(BaseDialog dialog, String province, String city, String area) {
-                                toast(province + city + area);
-                            }
-
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                                toast("取消了");
-                            }
-                        })
-                        .show();*/
             }
         });
         selectedFilter.setOnItemClick(text -> {
@@ -221,6 +203,17 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     }
 
     /**
+     * 列表筛选条件
+     *
+     * @param customListCondition
+     */
+    @Override
+    public void getCustomListCondition(List<CustomScreenAll> customListCondition) {
+        // TODO : 客户筛选条件
+        // TODO: 区域选择
+    }
+
+    /**
      * 类型选择
      */
     private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
@@ -251,6 +244,12 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+        });
     }
 
     @Override

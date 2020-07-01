@@ -102,12 +102,21 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     }
 
     /**
-     * 请求订单列表
+     * 订单列表
+     *
+     * @param orderName 搜索关键字
+     * @param state     状态
+     * @param staffId   部门员工
+     * @param sorting   排序
      */
     @Override
-    public void requestOrderList() {
+    public void requestOrderList(String orderName, String state, String staffId, String sorting, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=order&fun=home", params, this);
+        params.add("name", orderName);
+        params.add("workFlow", state);
+        params.add("stid", staffId);
+        params.add("orderBy", sorting);
+        OkHttp.post(Constants.BASE_URL + "cla=order&fun=home&page=" + page, params, this);
     }
 
     /**

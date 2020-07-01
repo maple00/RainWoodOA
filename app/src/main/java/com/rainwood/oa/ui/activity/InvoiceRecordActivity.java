@@ -18,6 +18,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.FinancialInvoiceRecordAdapter;
@@ -27,16 +28,17 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -65,10 +67,16 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private LinearLayout invoiceStatus;
     @ViewInject(R.id.ll_type_invoice)
     private LinearLayout invoiceType;
+    @ViewInject(R.id.tv_query_all)
+    private TextView mTextQueryAll;
     @ViewInject(R.id.line_all)
     private View lineAll;
+    @ViewInject(R.id.tv_allocated)
+    private TextView mTextAllocated;
     @ViewInject(R.id.line_allocated)
     private View lineAllocated;
+    @ViewInject(R.id.tv_un_allocated)
+    private TextView mTextUnAllocated;
     @ViewInject(R.id.line_un_allocated)
     private View lineUnAllocated;
     @ViewInject(R.id.gti_depart_staff)
@@ -101,6 +109,13 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private View mMaskLayer;
     private List<SelectedItem> mFinancialSaleList;
     private List<SelectedItem> mFinancialTypeList;
+    private int pageCount = 1;
+    private String selectedAllocated = "";
+    private String mStaffId;
+    private String mSeller;
+    private String mAllocated;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -140,6 +155,9 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         // 设置刷新属性
         pageRefresh.setEnableLoadmore(true);
         pageRefresh.setEnableRefresh(false);
+        // 设置TextView加粗
+        mTextQueryAll.getPaint().setFakeBoldText(true);
+        mTextQueryAll.invalidate();
     }
 
     @Override
@@ -155,7 +173,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             // 从客户详情中点击
             mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID);
         } else {
-            mRecordManagerPresenter.requestInvoiceRecords("");
+            mRecordManagerPresenter.requestInvoiceRecords("", "", "", "", "", "", pageCount = 1);
             // 请求condition
             mRecordManagerPresenter.requestInvoiceCondition();
         }
@@ -201,9 +219,14 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                         @Override
                         public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                             dialog.dismiss();
-                            toast("选中的时间段：" + startTime + "至" + endTime);
                             selectedTimeFlag = false;
                             periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                            if (Constants.CUSTOM_ID == null) {
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                mRecordManagerPresenter.requestInvoiceRecords("", "",
+                                        "", "", mStartTime, mEndTime, pageCount = 1);
+                            }
                         }
 
                         @Override
@@ -217,6 +240,16 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             periodTime.setRightIcon(selectedTimeFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
         });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                if (Constants.CUSTOM_ID == null) {
+                    mRecordManagerPresenter.requestInvoiceRecords(selectedAllocated, mStaffId,
+                            mSeller, mAllocated, mStartTime, mEndTime, (++pageCount));
+                }
+            }
+        });
 
     }
 
@@ -225,15 +258,19 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
             String staff = data.getStringExtra("staff");
-            String staffId = data.getStringExtra("staffId");
+            mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+            if (Constants.CUSTOM_ID == null) {
+                mRecordManagerPresenter.requestInvoiceRecords("", mStaffId, "", "", "", "", pageCount = 1);
+            }
         }
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated})
+    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated,
+            R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
@@ -248,26 +285,51 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 break;
             case R.id.tv_query_all:
                 //toast("全部");
+                selectedAllocated = "";
                 setStatusLine(true, false, false);
+                setTextViewBold(true, false, false);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("");
+                    mRecordManagerPresenter.requestInvoiceRecords("", "", "", "", "", "", pageCount = 1);
                 }
                 break;
             case R.id.tv_allocated:
                 //toast("已拨付");
+                selectedAllocated = "是";
                 setStatusLine(false, true, false);
+                setTextViewBold(false, true, false);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("是");
+                    mRecordManagerPresenter.requestInvoiceRecords("是", "", "", "", "", "", pageCount = 1);
                 }
                 break;
             case R.id.tv_un_allocated:
                 //toast("未拨付");
+                selectedAllocated = "否";
                 setStatusLine(false, false, true);
+                setTextViewBold(false, false, true);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("否");
+                    mRecordManagerPresenter.requestInvoiceRecords("否", "", "", "", "", "", pageCount = 1);
                 }
                 break;
+            case R.id.iv_search:
+                toast("搜索");
+                break;
         }
+    }
+
+    /**
+     * 设置字体加粗
+     *
+     * @param b
+     * @param b2
+     * @param b3
+     */
+    private void setTextViewBold(boolean b, boolean b2, boolean b3) {
+        mTextQueryAll.getPaint().setFakeBoldText(b);
+        mTextAllocated.getPaint().setFakeBoldText(b2);
+        mTextUnAllocated.getPaint().setFakeBoldText(b3);
+        mTextQueryAll.invalidate();
+        mTextAllocated.invalidate();
+        mTextUnAllocated.invalidate();
     }
 
     /**
@@ -300,6 +362,11 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
      */
     @Override
     public void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords) {
+        pageRefresh.finishLoadmore();
+        mFinancialInvoiceRecordAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            toast("为您加载了" + ListUtils.getSize(financialInvoiceRecords) + "条数据");
+        }
         mFinancialInvoiceRecordAdapter.setRecordList(financialInvoiceRecords);
     }
 
@@ -314,7 +381,6 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         mFinancialSaleList = saleList;
         mFinancialTypeList = typeList;
     }
-
 
     /**
      * 类型选择
@@ -349,6 +415,24 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            mSeller = "";
+            mAllocated = "";
+            if (SELECTED_TYPE_FLAG) {
+                mAllocated = item.getName();
+            }
+            if (SELECTED_SALE_FLAG) {
+                mSeller = item.getName();
+            }
+            if (Constants.CUSTOM_ID == null) {
+                mRecordManagerPresenter.requestInvoiceRecords("", "", mSeller, mAllocated, "", "", pageCount = 1);
+            }
+            mStatusPopWindow.dismiss();
+        });
     }
 
     @Override

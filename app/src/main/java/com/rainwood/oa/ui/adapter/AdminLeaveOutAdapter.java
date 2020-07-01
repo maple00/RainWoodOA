@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +28,19 @@ import java.util.List;
  */
 public final class AdminLeaveOutAdapter extends RecyclerView.Adapter<AdminLeaveOutAdapter.ViewHolder> {
 
-    private List<AdminLeaveOut> mLeaveOutRecordList;
+    private List<AdminLeaveOut> mLeaveOutRecordList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setLeaveOutRecordList(List<AdminLeaveOut> leaveOutRecordList) {
-        mLeaveOutRecordList = leaveOutRecordList;
+        if (loaded) {
+            mLeaveOutRecordList.clear();
+        }
+        mLeaveOutRecordList.addAll(leaveOutRecordList);
         notifyDataSetChanged();
     }
 

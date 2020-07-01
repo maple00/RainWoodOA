@@ -37,7 +37,7 @@ import java.util.Random;
 /**
  * @Author: a797s
  * @Date: 2020/4/27 17:45
- * @Desc: 线性图表
+ * @Desc: 自定义绘制线性图表
  */
 public class LineChartView extends View {
 

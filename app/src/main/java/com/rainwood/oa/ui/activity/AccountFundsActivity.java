@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.TeamFunds;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.TeamFundsAdapter;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
@@ -27,7 +29,7 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.List;
 
@@ -54,10 +56,16 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     private TextView balanceValue;
     @ViewInject(R.id.tv_balance)
     private TextView balanceDesc;
+    @ViewInject(R.id.tv_query_all)
+    private TextView mTextQueryAll;
     @ViewInject(R.id.line_all)
     private View lineAll;
+    @ViewInject(R.id.tv_allocated)
+    private TextView mTextAllocated;
     @ViewInject(R.id.line_allocated)
     private View lineAllocated;
+    @ViewInject(R.id.tv_un_allocated)
+    private TextView mTextUnAllocated;
     @ViewInject(R.id.line_un_allocated)
     private View lineUnAllocated;
     @ViewInject(R.id.trl_pager_refresh)
@@ -107,6 +115,9 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
         pagerRefresh.setEnableLoadmore(true);
+        // 设置TextView加粗
+        mTextQueryAll.getPaint().setFakeBoldText(true);
+        mTextQueryAll.invalidate();
     }
 
     @Override
@@ -120,6 +131,32 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     @Override
     protected void loadData() {
         requestData("");
+    }
+
+    /**
+     * 请求数据
+     *
+     * @param type
+     */
+    private void requestData(String type) {
+        switch (moduleMenu) {
+            case "teamFunds":
+                // 管理--团队基金
+                mFinancialPresenter.requestTeamFundsData(type);
+                break;
+            case "accountAccount":
+                // 个人中心---会计账户
+                mMinePresenter.requestAccountingAccount(type);
+                break;
+            case "settlementAccount":
+                // 个人中心---结算账户
+                mMinePresenter.requestSettlementAccount(type);
+                break;
+            case "personTeamAccount":
+                // 个人中心---团队基金
+                mFinancialPresenter.requestTeamFundsData(type);
+                break;
+        }
     }
 
     @Override
@@ -167,49 +204,54 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                 break;
             case R.id.iv_screen_time:
             case R.id.tv_screen_time:
-                toast("选择时间");
+                new StartEndDateDialog.Builder(this, false)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        //.setIgnoreDay()
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new StartEndDateDialog.OnListener() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
             case R.id.tv_query_all:
                 // toast("全部");
+                setTextBold(true, false, false);
                 setStatusLine(true, false, false);
                 requestData("");
                 break;
             case R.id.tv_allocated:
                 // toast("收入");
+                setTextBold(false, true, false);
                 setStatusLine(false, true, false);
                 requestData("收入");
                 break;
             case R.id.tv_un_allocated:
                 // toast("支出");
+                setTextBold(false, false, true);
                 setStatusLine(false, false, true);
                 requestData("支出");
                 break;
         }
     }
 
-    /**
-     * 请求数据
-     * @param type
-     */
-    private void requestData(String type) {
-        switch (moduleMenu) {
-            case "teamFunds":
-                // 管理--团队基金
-                mFinancialPresenter.requestTeamFundsData(type);
-                break;
-            case "accountAccount":
-                // 个人中心---会计账户
-                mMinePresenter.requestAccountingAccount(type);
-                break;
-            case "settlementAccount":
-                // 个人中心---结算账户
-                mMinePresenter.requestSettlementAccount(type);
-                break;
-            case "personTeamAccount":
-                // 个人中心---团队基金
-                mFinancialPresenter.requestTeamFundsData(type);
-                break;
-        }
+    private void setTextBold(boolean b, boolean b2, boolean b3) {
+        mTextQueryAll.getPaint().setFakeBoldText(b);
+        mTextAllocated.getPaint().setFakeBoldText(b2);
+        mTextUnAllocated.getPaint().setFakeBoldText(b3);
+        mTextQueryAll.invalidate();
+        mTextAllocated.invalidate();
+        mTextUnAllocated.invalidate();
     }
 
     /**

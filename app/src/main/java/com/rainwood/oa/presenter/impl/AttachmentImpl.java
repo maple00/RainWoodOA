@@ -19,9 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: sxs
@@ -31,30 +29,6 @@ import java.util.Map;
 public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListener {
 
     private IAttachmentCallbacks mAttachmentCallback;
-
-    @Override
-    public void getAttachmentData() {
-
-        Map<String, List<Attachment>> attachmentMap = new HashMap<>();
-        List<Attachment> attachmentList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            Attachment attachment = new Attachment();
-            if (i == 0) {
-                attachment.setName("客户需求整理.doc");
-            } else if (i == 1) {
-                attachment.setName("客户需求整理客户需求整理客户需求整理客户需求整理客户需求.pdf");
-            } else if (i == 2) {
-                attachment.setName("客户需求整理客户需求整理.zip");
-            } else {
-                attachment.setName("客户公司logo文件.jpg");
-            }
-            attachment.setStaffName("韩梅梅");
-            attachment.setTime("2020.04.10 13:37");
-            attachmentList.add(attachment);
-        }
-        attachmentMap.put("attachment", attachmentList);
-        mAttachmentCallback.getAllAttachment(attachmentMap);
-    }
 
     /**
      * 通过客户id查询建客户附件
@@ -70,12 +44,23 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     }
 
     /**
-     * 请求办公文件(知识管理)
+     * 知识管理 -- 办公文件
+     *
+     * @param searchText 搜索内容
+     * @param classify   分类
+     * @param format     格式
+     * @param secret     保密状态
+     * @param sorting    默认排序
      */
     @Override
-    public void requestOfficeFileData() {
+    public void requestOfficeFileData(String searchText, String classify, String format, String secret, String sorting, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=home", params, this);
+        params.add("name", searchText);
+        params.add("type", classify);
+        params.add("format", format);
+        params.add("secret", secret);
+        params.add("orderBy", sorting);
+        OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -88,12 +73,24 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     }
 
     /**
-     * 请求知识管理中的附件列表
+     * 知识管理 --- 附件列表
+     *
+     * @param attachName 附件名称
+     * @param staffId    上传者
+     * @param secret     保密状态
+     * @param target     对象类型
+     * @param sorting    排序方式
+     * @param page       页码
      */
     @Override
-    public void requestKnowledgeAttach() {
+    public void requestKnowledgeAttach(String attachName, String staffId, String secret, String target, String sorting, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=file&fun=home", params, this);
+        params.add("name", attachName);
+        params.add("stid", staffId);
+        params.add("secret", secret);
+        params.add("target", target);
+        params.add("orderBy", sorting);
+        OkHttp.post(Constants.BASE_URL + "cla=file&fun=home&page=" + page, params, this);
     }
 
     /**

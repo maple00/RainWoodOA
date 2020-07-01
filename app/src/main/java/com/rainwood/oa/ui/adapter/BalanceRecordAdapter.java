@@ -17,6 +17,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,18 @@ import java.util.List;
 public final class BalanceRecordAdapter extends RecyclerView.Adapter<BalanceRecordAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<BalanceRecord> mRecordList;
+    private List<BalanceRecord> mRecordList = new ArrayList<>();
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setRecordList(List<BalanceRecord> recordList) {
-        mRecordList = recordList;
+        if (loaded) {
+            mRecordList.clear();
+        }
+        mRecordList.addAll(recordList);
         notifyDataSetChanged();
     }
 

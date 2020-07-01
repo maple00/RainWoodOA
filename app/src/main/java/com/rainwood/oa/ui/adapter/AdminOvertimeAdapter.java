@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +28,19 @@ import java.util.List;
  */
 public final class AdminOvertimeAdapter extends RecyclerView.Adapter<AdminOvertimeAdapter.ViewHolder> {
 
-    private List<AdminOverTime> mOvertimeRecordList;
+    private List<AdminOverTime> mOvertimeRecordList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setOvertimeRecordList(List<AdminOverTime> overtimeRecordList) {
-        mOvertimeRecordList = overtimeRecordList;
+        if (loaded) {
+            mOvertimeRecordList.clear();
+        }
+        mOvertimeRecordList.addAll(overtimeRecordList);
         notifyDataSetChanged();
     }
 

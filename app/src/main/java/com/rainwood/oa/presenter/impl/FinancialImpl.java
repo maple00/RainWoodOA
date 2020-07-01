@@ -35,11 +35,28 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
 
     /**
      * 费用报销
+     *
+     * @param allocated  拨付状态
+     * @param staffId    员工ID
+     * @param type       类型
+     * @param payer      付款方
+     * @param startTime  开始时间
+     * @param endTime    结束时间
+     * @param searchText 搜索内容
+     * @param page       页码
      */
     @Override
-    public void requestReimburseData() {
+    public void requestReimburseData(String allocated, String staffId, String type, String payer, String startTime, String endTime,
+                                     String searchText, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=cost&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("type", type);
+        params.add("payer", payer);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        params.add("text", searchText);
+        params.add("pay", allocated);
+        OkHttp.post(Constants.BASE_URL + "cla=cost&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -53,11 +70,27 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
 
     /**
      * 收支记录列表
+     *
+     * @param staffId    员工id
+     * @param origin     来源
+     * @param classify   分类
+     * @param startTime  开始时间
+     * @param endTime    结束时间
+     * @param searchText 搜索内容
+     * @param page       页码
      */
     @Override
-    public void requestBalanceRecords() {
+    public void requestBalanceRecords(String staffId, String origin, String classify, String startTime,
+                                      String endTime, String searchText, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=home", params, this);
+        params.add("stid", staffId);
+        params.add("target", origin);
+        params.add("direction", classify);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        params.add("text", searchText);
+        LogUtils.d("sxs", "-- start ------ " + startTime + "-------endTime -----" + endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=home&page=" + page, params, this);
     }
 
     /**

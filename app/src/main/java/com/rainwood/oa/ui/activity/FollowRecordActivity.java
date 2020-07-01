@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,11 +22,13 @@ import com.rainwood.oa.ui.adapter.FollowRecordsAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -46,6 +49,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     // content
     @ViewInject(R.id.gti_depart_staff)
     private GroupTextIcon departStaff;
@@ -65,6 +70,9 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
     private boolean CHECKED_SECRET_FLAG = false;
     private List<SelectedItem> mTypeList;
+    private int pageCount = 1;
+    private String mStaffId;
+    private String mTarget;
 
     @Override
     protected int getLayoutResId() {
@@ -73,8 +81,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
     @Override
     protected void initView() {
-        StatusBarUtils.immersive(this);
-        StatusBarUtils.setMargin(this, pageTop);
+        StatusBarUtils.setPaddingSmart(this, pageTop);
+        pageTitle.setText(title);
         // 设置布局管理器
         followRecords.setLayoutManager(new GridLayoutManager(this, 1));
         followRecords.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
@@ -98,7 +106,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @Override
     protected void loadData() {
         // 请求跟进记录数据
-        mRecordManagerPresenter.requestKnowledgeFollowRecords();
+        mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", "", pageCount);
         // 请求跟进记录
         mRecordManagerPresenter.requestRecordType();
     }
@@ -124,8 +132,15 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                             CustomDetailActivity.class, record.getTargetId());
                     break;
                 case "事务":
-                    toast("跳转到事务详情");
+                    toast("事务类型");
                     break;
+            }
+        });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, "", "", ++pageCount);
             }
         });
     }
@@ -135,25 +150,33 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
             String staff = data.getStringExtra("staff");
-            String staffId = data.getStringExtra("staffId");
+            mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+            mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, mTarget, "", pageCount = 1);
         }
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_search:
+                toast("搜索");
                 break;
         }
     }
 
     @Override
     public void getKnowledgeFollowRecords(List<KnowledgeFollowRecord> recordList) {
+        if (ListUtils.getSize(recordList) == 0) {
+            toast("当前记录为空");
+            return;
+        }
         mRecordsAdapter.setRecordList(recordList);
     }
 
@@ -193,6 +216,16 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            // TODO: 查询记录类型
+            mTarget = item.getName();
+            mRecordManagerPresenter.requestKnowledgeFollowRecords("", mTarget, "", pageCount = 1);
+            mStatusPopWindow.dismiss();
+        });
     }
 
     @Override

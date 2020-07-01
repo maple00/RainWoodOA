@@ -36,9 +36,13 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
     void requestCustomName(String key);
 
     /**
-     * 请求订单列表
+     * 订单列表
+     * @param orderName 搜索关键字
+     * @param state 状态
+     * @param staffId 部门员工
+     * @param sorting 排序
      */
-    void requestOrderList();
+    void requestOrderList(String orderName, String state, String staffId, String sorting, int page);
 
     /**
      * 条件查询

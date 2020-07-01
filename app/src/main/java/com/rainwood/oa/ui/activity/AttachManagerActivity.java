@@ -24,12 +24,14 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.FileManagerUtil;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IAttachmentCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -51,8 +53,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     //actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchTips;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     // content
     @ViewInject(R.id.gti_depart_staff)
     private GroupTextIcon departStaff;
@@ -82,6 +84,11 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private boolean CHECKED_TARGET_FLAG = false;
     private boolean CHECKED_SECRET_FLAG = false;
     private boolean CHECKED_SORT_FLAG = false;
+    private int pageCount = 1;
+    private String mStaffId;
+    private String mSecret;
+    private String mTargetType;
+    private String mDefaultSorting;
 
     @Override
     protected int getLayoutResId() {
@@ -92,7 +99,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
-        searchTips.setHint("输入文件名称");
+        pageTitle.setText(title);
         // 设置布局管理器
         attachView.setLayoutManager(new GridLayoutManager(this, 1));
         attachView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
@@ -114,7 +121,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
 
     @Override
     protected void loadData() {
-        mAttachmentPresenter.requestKnowledgeAttach();
+        // list
+        mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", "", pageCount);
         // request Condition
         mAttachmentPresenter.requestAttachCondition();
     }
@@ -177,6 +185,14 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 FileManagerUtil.filePreview(AttachManagerActivity.this, TbsActivity.class, attach.getSrc(), attach.getName(), attach.getFormat());
             }
         });
+
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, mSecret, mTargetType, mDefaultSorting, ++pageCount);
+            }
+        });
     }
 
     @Override
@@ -184,25 +200,38 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
             String staff = data.getStringExtra("staff");
-            String staffId = data.getStringExtra("staffId");
+            mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+            mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, "", "", "", pageCount = 1);
         }
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_search:
+                toast("搜索");
                 break;
         }
     }
 
     @Override
     public void getKnowledgeAttach(List<KnowledgeAttach> attachList) {
+        if (ListUtils.getSize(attachList) == 0) {
+            toast("当前内容为空");
+            return;
+        }
+        mAttachKnowledgeAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            pageRefresh.finishLoadmore();
+            toast("为您加载了" + ListUtils.getSize(attachList) + "条数据");
+        }
         mAttachKnowledgeAdapter.setAttachList(attachList);
     }
 
@@ -247,6 +276,22 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             }
         });
         mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
+            }
+            item.setHasSelected(true);
+            // TODO: 条件查询
+            mSecret = "";
+            mTargetType = "";
+            if (CHECKED_SECRET_FLAG) {
+                mSecret = item.getName();
+            } else if (CHECKED_TARGET_FLAG) {
+                mTargetType = item.getName();
+            }
+            mAttachmentPresenter.requestKnowledgeAttach("", "", mSecret, mTargetType, "", pageCount = 1);
+            mStatusPopWindow.dismiss();
+        });
     }
 
     /**
@@ -280,13 +325,17 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             }
         });
         // 筛选条件点击事件
+        mDefaultSortAdapter.setItemList(mSortList);
         mDefaultSortAdapter.setOnClickListener((selectedItem, position) -> {
             for (SelectedItem item : mSortList) {
                 item.setHasSelected(false);
             }
             selectedItem.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            // TODO: 排序方式查询
+            mDefaultSorting = selectedItem.getName();
+            mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", mDefaultSorting, pageCount = 1);
         });
-        mDefaultSortAdapter.setItemList(mSortList);
     }
 
 

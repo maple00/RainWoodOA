@@ -52,7 +52,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     private TextView pageTitle;
 
     @ViewInject(R.id.tv_date)
-    private TextView date;
+    private TextView mTextDate;
     @ViewInject(R.id.tv_year)
     private TextView mTextYear;
     @ViewInject(R.id.tv_month)
@@ -82,6 +82,12 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         mBalanceCurveAdapter = new BalanceCurveAdapter();
         // 设置适配器
         salaryListView.setAdapter(mBalanceCurveAdapter);
+    }
+
+    @Override
+    protected void initData() {
+        // 默认按月 -- 当前月的前6个月
+        // mTextDate.setText();
     }
 
     @Override

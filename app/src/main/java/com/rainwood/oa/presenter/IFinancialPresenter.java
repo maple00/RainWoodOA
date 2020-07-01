@@ -11,9 +11,19 @@ import com.rainwood.oa.view.IFinancialCallbacks;
 public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks> {
 
     /**
-     * 请求费用报销数据
+     * 财务管理 -- 费用报销
+     *
+     * @param allocated  拨付状态 -- 默认查询所有
+     * @param staffId    员工ID
+     * @param type       类型
+     * @param payer      付款方
+     * @param startTime  开始时间
+     * @param endTime    结束时间
+     * @param searchText 搜索内容
+     * @param page       页码
      */
-    void requestReimburseData();
+    void requestReimburseData(String allocated, String staffId, String type, String payer, String startTime, String endTime,
+                              String searchText, int page);
 
     /**
      * 请求团队基金数据
@@ -37,8 +47,17 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
 
     /**
      * 收支记录列表
+     *
+     * @param staffId    员工id
+     * @param origin     来源
+     * @param classify   分类
+     * @param startTime  开始时间
+     * @param endTime    结束时间
+     * @param searchText 搜索内容
+     * @param page       页码
      */
-    void requestBalanceRecords();
+    void requestBalanceRecords(String staffId, String origin, String classify, String startTime,
+                               String endTime, String searchText, int page);
 
     /**
      * 收支记录列表 condition

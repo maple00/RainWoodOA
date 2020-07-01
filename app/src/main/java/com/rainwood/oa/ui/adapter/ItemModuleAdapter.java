@@ -185,7 +185,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), OrderListActivity.class, "订单列表", "订单列表"));
                     }
                     break;
-                case "沟通技巧":
+                case "业务技能":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), ExchangeSkillActivity.class, "沟通技巧", "沟通技巧"));
                     break;
                 // 行政人事
@@ -231,7 +231,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "外出记录", "外出记录"));
                     }
                     break;
-                case "补卡记录":
+                case "补卡单":
                     if ("myworkSignAdd".equals(getItem(position).getMenu())) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), MineReissueCardActivity.class, "我的补卡记录", "补卡记录"));
                     } else {
@@ -259,7 +259,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), AccountFundsActivity.class, "团队基金", "teamFunds"));
                     break;
                 case "收支平衡": // 收支记录列表
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceRecordActivity.class, "收支平衡", "balanceRecord"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceRecordActivity.class, "收支记录", "balanceRecord"));
                     break;
                 case "分类统计":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), ClassificationStaticsActivity.class, "分类统计", "classificationStatics"));
