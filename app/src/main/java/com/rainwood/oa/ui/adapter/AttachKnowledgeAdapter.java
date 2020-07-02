@@ -19,6 +19,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,11 +29,19 @@ import java.util.List;
  */
 public final class AttachKnowledgeAdapter extends RecyclerView.Adapter<AttachKnowledgeAdapter.ViewHolder> {
 
-    private List<KnowledgeAttach> mAttachList;
+    private List<KnowledgeAttach> mAttachList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setAttachList(List<KnowledgeAttach> attachList) {
-        mAttachList = attachList;
+        if (loaded){
+            mAttachList.clear();
+        }
+        mAttachList.addAll(attachList);
         notifyDataSetChanged();
     }
 
@@ -68,6 +77,13 @@ public final class AttachKnowledgeAdapter extends RecyclerView.Adapter<AttachKno
                 + "\">" + mAttachList.get(position).getTarget() + "·" + "</font>"
                 + "<font color=\"" + mContext.getColor(R.color.blue05) + "\">" + mAttachList.get(position).getTargetName() + "</font>"));
         holder.nameTime.setText(mAttachList.get(position).getStaffName() + " " + mAttachList.get(position).getTime());
+        if (mAttachList.get(position).getSrc().endsWith(".zip")) {
+            holder.previewTV.setVisibility(View.GONE);
+            holder.previewIV.setVisibility(View.GONE);
+        } else {
+            holder.previewTV.setVisibility(View.VISIBLE);
+            holder.previewIV.setVisibility(View.VISIBLE);
+        }
         // 点击事件
         holder.attachTargetName.setOnClickListener(v -> mClickAttach.onClickTarget(mAttachList.get(position), position));
 

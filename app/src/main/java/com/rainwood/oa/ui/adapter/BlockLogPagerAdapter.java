@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,8 @@ public final class BlockLogPagerAdapter extends RecyclerView.Adapter<BlockLogPag
     private Context mContext;
 
     public void setBlockLogList(List<BlockLog> blockLogList) {
-        mBlockLogList = blockLogList;
+        mBlockLogList.clear();
+        mBlockLogList.addAll(blockLogList);
         notifyDataSetChanged();
     }
 
@@ -42,10 +44,18 @@ public final class BlockLogPagerAdapter extends RecyclerView.Adapter<BlockLogPag
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.content.setText(mBlockLogList.get(position).getContent());
+        holder.content.setText(mBlockLogList.get(position).getText());
         holder.time.setText(mBlockLogList.get(position).getTime());
+        if ("已完成".equals(mBlockLogList.get(position).getWorkFlow())) {
+            holder.content.setTextColor(mContext.getColor(R.color.labelColor));
+            holder.time.setTextColor(mContext.getColor(R.color.labelColor));
+        } else {
+            holder.content.setTextColor(mContext.getColor(R.color.fontColor));
+            holder.time.setTextColor(mContext.getColor(R.color.fontColor));
+        }
         // 点击事件
         holder.itemBlock.setOnClickListener(v -> mBlockListener.onClickItem(mBlockLogList.get(position), position));
     }

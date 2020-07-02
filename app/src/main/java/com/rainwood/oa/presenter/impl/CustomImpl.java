@@ -5,6 +5,7 @@ import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
 import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomInvoice;
+import com.rainwood.oa.model.domain.CustomScreenAll;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.SelectedItem;
@@ -121,7 +122,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     }
 
     /**
-     * 创建新建客户
+     * 创建介绍客户
      *
      * @param companyName  公司名称
      * @param contact      联系人
@@ -151,9 +152,35 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      * @param pageCount 分页页码
      */
     @Override
-    public void getALlCustomData(int pageCount) {
+    public void requestALlCustomData(int pageCount) {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=home&page=" + pageCount, params, this);
+    }
+
+    /**
+     * 客户列表 -- condition
+     */
+    @Override
+    public void requestCustomCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=search", params, this);
+    }
+
+    /**
+     * 客户列表 --- 状态 condition
+     */
+    @Override
+    public void requestStateCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=clientWorkFlow", params, this);
+    }
+
+    /**
+     * 客户列表 -- 区域condition
+     */
+    @Override
+    public void requestAreaCondition() {
+
     }
 
     @Override
@@ -165,25 +192,25 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             item.setHasSelected(false);
             switch (i) {
                 case 0:
-                    item.setData("全部");
+                    item.setName("全部");
                     break;
                 case 1:
-                    item.setData("已签约");
+                    item.setName("已签约");
                     break;
                 case 2:
-                    item.setData("优质");
+                    item.setName("优质");
                     break;
                 case 3:
-                    item.setData("一般");
+                    item.setName("一般");
                     break;
                 case 4:
-                    item.setData("很差");
+                    item.setName("很差");
                     break;
                 case 5:
-                    item.setData("待联系");
+                    item.setName("待联系");
                     break;
                 case 6:
-                    item.setData("已放弃");
+                    item.setName("已放弃");
                     break;
             }
             selectedList.add(item);
@@ -191,7 +218,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
 
         Map<String, List<SelectedItem>> selectedMap = new HashMap<>();
         selectedMap.put("selectedItem", selectedList);
-        mCustomCallback.getALlStatus(selectedMap);
+        // mCustomCallback.getALlStatus(selectedMap);
     }
 
 
@@ -378,17 +405,18 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             e.printStackTrace();
         }
 
-        //mCustomCallback.onLoading();
+        //   跟进状态
         if (result.url().contains("cla=client&fun=clientWorkFlow")) {
-            // 跟进状态
             try {
                 JSONArray jsonArray = JsonParser.parseJSONArrayString(
                         JsonParser.parseJSONObjectString(result.body()).getString("para"));
-                List<String> followStatus = new ArrayList<>();
+                List<SelectedItem> stateList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    followStatus.add(jsonArray.getString(i));
+                    SelectedItem item = new SelectedItem();
+                    item.setName(jsonArray.getString(i));
+                    stateList.add(item);
                 }
-                mCustomCallback.getFollowData(followStatus);
+                mCustomCallback.getStateCondition(stateList);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -425,7 +453,22 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             }
         }
         // 新建介绍客户
-        else if (result.url().contains("cla=client&fun=share")){
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=share")) {
+            try {
+                // 介绍人
+                String introduce = JsonParser.parseJSONObjectString(result.body()).getString("share");
+                // 被介绍人
+                String introduced = JsonParser.parseJSONObjectString(result.body()).getString("staffName");
+                // 客户名称
+                String customName = JsonParser.parseJSONObjectString(result.body()).getString("companyName");
+                Map<String, String> map = new HashMap<>();
+                map.put("introduce", introduce);
+                map.put("introduced", introduced);
+                map.put("customName", customName);
+                mCustomCallback.getIntroduceCreateData(map);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }
         // 客户列表
@@ -441,14 +484,43 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=detail")) {
-            // 客户详情
+        }
+        // 客户列表 ---- condition
+        else if (result.url().contains("cla=client&fun=search")) {
+            try {
+                List<CustomScreenAll> customListCondition = JsonParser.parseJSONArray(CustomScreenAll.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("search"));
+                //
+                mCustomCallback.getCustomListCondition(customListCondition);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+       /* // 客户列表状态condition
+        else if (result.url().contains("cla=client&fun=clientWorkFlow")) {
+            try {
+                JSONArray stateArray = JsonParser.parseJSONArrayString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("para"));
+                List<SelectedItem> stateList = new ArrayList<>();
+                for (int i = 0; i < stateArray.length(); i++) {
+                    SelectedItem item = new SelectedItem();
+                    item.setName(stateArray.getString(i));
+                    stateList.add(item);
+                }
+                mCustomCallback.getStateCondition(stateList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }*/
+        // 客户详情
+        else if (result.url().contains("cla=client&fun=detail")) {
             CustomDetail customDetail = JsonParser.parseJSONObject(CustomDetail.class, result.body());
             HashMap<String, CustomDetail> dataDetailMap = new HashMap<String, CustomDetail>();
             dataDetailMap.put("custom", customDetail);
             mCustomCallback.getCustomDetailValues(dataDetailMap);
-        } else if (result.url().contains("cla=client&fun=kehuStaff")) {
-            // 客户下的联系人列表
+        }
+        // 客户下的联系人列表
+        else if (result.url().contains("cla=client&fun=kehuStaff")) {
             try {
                 List<Contact> contactList = JsonParser.parseJSONArray(Contact.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("kehuStaff"));
@@ -456,16 +528,18 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=kehuStaffEdit")) {
-            // 创建/新建联系人
+        }
+        // 创建/新建联系人
+        else if (result.url().contains("cla=client&fun=kehuStaffEdit")) {
             JSONObject jsonObject = JsonParser.parseJSONObjectString(result.body());
             try {
                 mCustomCallback.createContactData(jsonObject.get("warn").equals("success"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=staffClientEdit")) {
-            // 客户下的联系人列表
+        }
+        // 客户下的联系人列表
+        else if (result.url().contains("cla=client&fun=staffClientEdit")) {
             try {
                 List<CustomStaff> customStaffList = JsonParser.parseJSONArray(CustomStaff.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("staff"));
@@ -473,16 +547,21 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else if (result.url().contains("cla=client&fun=cooperate")) {
-            // 添加协作人
+        }
+        // 添加协作人
+        else if (result.url().contains("cla=client&fun=cooperate")) {
 
-        } else if (result.url().contains("cla=client&fun=cooperateDel")) {
-            // 删除协作人
+        }
+        // 删除协作人
+        else if (result.url().contains("cla=client&fun=cooperateDel")) {
 
-        } else if (result.url().contains("cla=client&fun=move")) {
-            // 客户转让
-        } else if (result.url().contains("cla=client&fun=invoice")) {
-            // 开票信息获取
+        }
+        // 客户转让
+        else if (result.url().contains("cla=client&fun=move")) {
+
+        }
+        // 开票信息获取
+        else if (result.url().contains("cla=client&fun=invoice")) {
             try {
                 CustomInvoice customInvoice = JsonParser.parseJSONObject(CustomInvoice.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("invoice"));

@@ -36,7 +36,6 @@
         <item name="android:activityCloseExitAnimation">@anim/anim_slide_out_right</item>
     </style>
 
-
     <!-- 默认水平分割线样式 -->
     <style name="HorizontalLineStyle">
         <item name="android:layout_width">match_parent</item>
@@ -117,6 +116,13 @@
         <item name="android:textColorHint">@color/labelColor2</item>
         <item name="editTextColor">@color/green05</item>
     </style>
+
+    <!-- 设置 EditView 下划线的颜色-->
+    <style name="AreaEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/transparent</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
+
 
     <!-- 默认文本框样式 -->
     <style name="EditTextStyle">

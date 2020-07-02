@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.ui.fragment.BlockLogPagerFragment;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
@@ -21,9 +22,15 @@ import java.util.List;
 public final class BlockPagerAdapter extends FragmentPagerAdapter {
 
     private List<String> titleList = new ArrayList<>();
+    private BottomNavigationView mBottomNavigationView;
+
+    public void setBottomNavigationView(BottomNavigationView bottomNavigationView) {
+        mBottomNavigationView = bottomNavigationView;
+    }
 
     public void setTitleList(List<String> titleList) {
-        this.titleList = titleList;
+        this.titleList.clear();
+        this.titleList.addAll(titleList);
         notifyDataSetChanged();
     }
 
@@ -34,8 +41,7 @@ public final class BlockPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        LogUtils.d("sxs", "getItem ---- > " + position);
-        BlockLogPagerFragment pagerFragment = BlockLogPagerFragment.getInstance(titleList.get(position));
+        BlockLogPagerFragment pagerFragment = BlockLogPagerFragment.getInstance(titleList.get(position), position, mBottomNavigationView);
         return pagerFragment;
     }
 
@@ -49,4 +55,5 @@ public final class BlockPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return ListUtils.getSize(titleList);
     }
+
 }

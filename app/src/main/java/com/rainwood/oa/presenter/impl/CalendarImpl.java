@@ -1,5 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.oa.model.domain.AttendanceData;
 import com.rainwood.oa.model.domain.Month;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -9,7 +10,7 @@ import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
-import com.rainwood.oa.view.ICalendarCallbacks;
+import com.rainwood.oa.view.ICalendarCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
 
-    private ICalendarCallbacks mCalendarCallbacks;
+    private ICalendarCallback mCalendarCallbacks;
 
     /**
      * 生成月份
@@ -35,7 +36,6 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
         // 12月份
         for (int i = 0; i < 12; i++) {
             Month month = new Month();
-            //month.setMonth(i + 1 == currentMonth ? "本" : String.valueOf(i + 1));
             month.setMonth(String.valueOf(i + 1));
             months.add(month);
         }
@@ -54,13 +54,26 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=workDay&fun=home", params, this);
     }
 
+    /**
+     * 请求当月的考勤信息
+     *
+     * @param currentMonth
+     */
     @Override
-    public void registerViewCallback(ICalendarCallbacks callback) {
+    public void requestCurrentDayAttendance(String staffId, String currentMonth) {
+        RequestParams params = new RequestParams();
+        params.add("stid", staffId);
+        params.add("month", currentMonth);
+        OkHttp.post(Constants.BASE_URL + "cla=workSign&fun=home", params, this);
+    }
+
+    @Override
+    public void registerViewCallback(ICalendarCallback callback) {
         mCalendarCallbacks = callback;
     }
 
     @Override
-    public void unregisterViewCallback(ICalendarCallbacks callback) {
+    public void unregisterViewCallback(ICalendarCallback callback) {
         mCalendarCallbacks = null;
     }
 
@@ -94,14 +107,20 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
                 // json数据处理
                 List<String> dayList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    dayList.add("2020-06-" + (Integer.parseInt(jsonArray.getString(i)) < 10
+                    dayList.add((Integer.parseInt(jsonArray.getString(i)) < 10
                             ? "0" + jsonArray.getString(i)
                             : jsonArray.getString(i)));
                 }
-                mCalendarCallbacks.getWorkDayData(dayList);
+                String dayNote = JsonParser.parseJSONObjectString(result.body()).getString("text");
+                mCalendarCallbacks.getWorkDayData(dayList, dayNote);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        // 考勤
+        else if (result.url().contains("cla=workSign&fun=home")){
+            AttendanceData attendanceData = JsonParser.parseJSONObject(AttendanceData.class, result.body());
+            mCalendarCallbacks.getAttendanceData(attendanceData);
         }
     }
 }

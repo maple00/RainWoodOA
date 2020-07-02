@@ -26,6 +26,11 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     void requestAddressBookData();
 
     /**
+     * 部门管理列表
+     */
+    void requestAllDepartData();
+
+    /**
      * 请求我的会计账户
      */
     void requestAccountingAccount(String type);

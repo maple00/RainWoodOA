@@ -15,7 +15,6 @@ import com.rainwood.oa.model.domain.Month;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.utils.DateTimeUtils;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ public final class HorizontalMonthAdapter extends RecyclerView.Adapter<Horizonta
 
     private List<Month> mMonthList;
     private Context mContext;
-    private String currentYear;
 
     public void setMonthList(List<Month> monthList) {
         mMonthList = monthList;
@@ -48,8 +46,7 @@ public final class HorizontalMonthAdapter extends RecyclerView.Adapter<Horizonta
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // 获取真实的地址
         int realPosition = position % ListUtils.getSize(mMonthList);
-        if (mMonthList.get(realPosition).getMonth().equals(getCurrentMonth())
-                && currentYear.contains(getCurrentYear())) {
+        if (mMonthList.get(realPosition).isSelected()) {
             holder.month.setBackground(mContext.getDrawable(R.drawable.shape_oval_theme));
             holder.month.setTextColor(mContext.getColor(R.color.white));
             holder.month.setText(mMonthList.get(realPosition).getMonth() + "月");
@@ -59,33 +56,18 @@ public final class HorizontalMonthAdapter extends RecyclerView.Adapter<Horizonta
             holder.month.setText(mMonthList.get(realPosition).getMonth() + "月");
             holder.month.setTextColor(mContext.getColor(R.color.fontColor));
         }
+        // 点击事件
+        holder.month.setOnClickListener(v -> {
+            if (mClickItemMonth != null) {
+                mClickItemMonth.onClickItem(mMonthList.get(position), position);
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
         return ListUtils.getSize(mMonthList);
-    }
-
-    public void setYear(String year) {
-        currentYear = year;
-    }
-
-    /**
-     * 当前月份
-     *
-     * @return
-     */
-    private String getCurrentMonth() {
-        return String.valueOf(DateTimeUtils.getNowMonth());
-    }
-
-    /**
-     * 当前年份
-     *
-     * @return
-     */
-    private String getCurrentYear() {
-        return String.valueOf(DateTimeUtils.getNowYear());
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -97,5 +79,21 @@ public final class HorizontalMonthAdapter extends RecyclerView.Adapter<Horizonta
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickItemMonth {
+        /**
+         * 选中item
+         *
+         * @param month
+         * @param position
+         */
+        void onClickItem(Month month, int position);
+    }
+
+    private OnClickItemMonth mClickItemMonth;
+
+    public void setClickItemMonth(OnClickItemMonth clickItemMonth) {
+        mClickItemMonth = clickItemMonth;
     }
 }

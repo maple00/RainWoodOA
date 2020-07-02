@@ -16,6 +16,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +26,19 @@ import java.util.List;
  */
 public final class CardRecordAdapter extends RecyclerView.Adapter<CardRecordAdapter.ViewHolder> {
 
-    private List<CardRecord> mCardRecordList;
+    private List<CardRecord> mCardRecordList = new ArrayList<>();
+
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setLeaveOutRecordList(List<CardRecord> cardRecordList) {
-        mCardRecordList = cardRecordList;
+        if (loaded){
+            mCardRecordList.clear();
+        }
+        mCardRecordList.addAll(cardRecordList);
         notifyDataSetChanged();
     }
 

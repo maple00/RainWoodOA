@@ -47,4 +47,13 @@ public final class Depart {
     public void setArray(List<ProjectGroup> array) {
         this.array = array;
     }
+
+    @Override
+    public String toString() {
+        return "Depart{" +
+                "name='" + name + '\'' +
+                ", hasSelected=" + hasSelected +
+                ", array=" + array +
+                '}';
+    }
 }

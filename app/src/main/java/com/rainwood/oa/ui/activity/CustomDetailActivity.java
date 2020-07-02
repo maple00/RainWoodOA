@@ -20,7 +20,6 @@ import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.oa.model.domain.IconAndFont;
-import com.rainwood.oa.model.domain.MessageEvent;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AssociatesAdapter;
 import com.rainwood.oa.ui.adapter.ContactAdapter;
@@ -38,9 +37,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
-
-import org.greenrobot.eventbus.EventBus;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 import java.util.Map;
@@ -237,15 +234,16 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     @SuppressLint("SetTextI18n")
     private void setValues(CustomDetail data) {
         Glide.with(this).load(data.getStaff().getIco())
-                .error(R.drawable.bg_monkey_king)
-                .placeholder(R.drawable.bg_monkey_king)
+                .error(R.drawable.ic_default_head)
+                .placeholder(R.drawable.ic_default_head)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(employeeHeadSrc);
         employeeName.setText(data.getStaff().getName());
         depart.setText(data.getStaff().getJob());
+        // 介绍人
         Glide.with(this).load(data.getShare().getIco())
-                .error(R.drawable.bg_monkey_king)
-                .placeholder(R.drawable.bg_monkey_king)
+                .error(R.drawable.ic_default_head)
+                .placeholder(R.drawable.ic_default_head)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(referHeadSrc);
         referName.setText(data.getShare().getName());

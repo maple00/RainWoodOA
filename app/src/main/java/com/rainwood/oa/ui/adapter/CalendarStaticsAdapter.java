@@ -13,10 +13,8 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.CalendarStatics;
 import com.rainwood.oa.ui.dialog.MessageDialog;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.List;
@@ -35,6 +33,7 @@ public final class CalendarStaticsAdapter extends BaseAdapter {
 
     public void setList(List<CalendarStatics> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     public void setLineCount(int lineCount) {
@@ -59,7 +58,6 @@ public final class CalendarStaticsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LogUtils.d("sxs", "绘制---- " + position);
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
@@ -95,7 +93,7 @@ public final class CalendarStaticsAdapter extends BaseAdapter {
         // 点击事件
         holder.doubtItem.setOnClickListener(v -> {
             if (getItem(position).getDescIcon() != 0)
-                showDoubtDialog(position, parent.getContext(), holder);
+                showDoubtDialog(position, parent.getContext(), holder, getItem(position).getNote());
         });
         return convertView;
     }
@@ -106,27 +104,23 @@ public final class CalendarStaticsAdapter extends BaseAdapter {
      * @param position
      * @param context
      * @param holder
+     * @param note
      */
-    private void showDoubtDialog(int position, Context context, ViewHolder holder) {
+    private void showDoubtDialog(int position, Context context, ViewHolder holder, String note) {
         new MessageDialog.Builder(context)
-                .setTitle("当月超出法定小时数记为加班，计算公式：")
-                .setMessage("【（基本工资+岗位津贴）/本年每月平均工作小时数】*本月实际加班小时数*1.5")
+                .setTitle(null)
+                .setMessage(note)
                 .setConfirm(context.getString(R.string.common_confirm))
                 .setCancel(null)
                 .setShowConfirm(false)
-                //.setAutoDismiss(false)
                 .setListener(new MessageDialog.OnListener() {
-
                     @Override
                     public void onConfirm(BaseDialog dialog) {
-                        //  toast("确定了");
-                        ToastUtils.show("确定了");
                     }
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
                         dialog.dismiss();
-                        ToastUtils.show("取消了");
                     }
                 })
                 .show();

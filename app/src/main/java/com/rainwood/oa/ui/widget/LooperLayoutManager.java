@@ -1,10 +1,12 @@
 package com.rainwood.oa.ui.widget;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.utils.LogUtils;
@@ -25,6 +27,7 @@ public final class LooperLayoutManager extends LinearLayoutManager {
 
     /**
      * 设置是否可滑动---默认可滑动
+     *
      * @param looperEnable
      */
     public void setLooperEnable(boolean looperEnable) {
@@ -39,6 +42,7 @@ public final class LooperLayoutManager extends LinearLayoutManager {
 
     /**
      * 横向、纵向滑动
+     *
      * @return
      */
     @Override
@@ -192,7 +196,29 @@ public final class LooperLayoutManager extends LinearLayoutManager {
                 }
             }
         }
-
     }
 
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
+        smoothScroller.setTargetPosition(position);
+        startSmoothScroll(smoothScroller);
+    }
+
+    private static class CenterSmoothScroller extends LinearSmoothScroller {
+
+        CenterSmoothScroller(Context context) {
+            super(context);
+        }
+
+        @Override
+        public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
+            return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2);
+        }
+
+        @Override
+        protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+            return 100f / displayMetrics.densityDpi;
+        }
+    }
 }

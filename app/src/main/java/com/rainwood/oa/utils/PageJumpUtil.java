@@ -9,6 +9,8 @@ import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.TempData;
 
+import java.util.Map;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/18 18:21
@@ -242,6 +244,119 @@ public final class PageJumpUtil {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到成功页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param data
+     */
+    public static void jump2SuccessPage(Context context, Class<? extends BaseActivity> clazz, String title, Map<String, String> data) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("introduce", data.get("introduce"));
+        sIntent.putExtra("introduced", data.get("introduced"));
+        sIntent.putExtra("customName", data.get("customName"));
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 已完成的待办事项列表跳转到详情页
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param blockId
+     */
+    public static void finishedBlock2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String blockId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("blockId", blockId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---加班列表跳转到详情页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_OVER_TIME_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---请假列表跳转到详情页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void askLeaveList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---外出记录详情
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void askOutList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_ASK_OUT_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 行政人事---补卡记录详情
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void ReissueCardList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        sIntent.putExtra("menu", Constants.PERSONAL_REISSUE_CARD_DETAIL_MENU);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到搜索页面
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param pageFlag
+     * @param tips
+     */
+    public static void page2SearchView(Context context, Class<? extends BaseActivity> clazz, String title, String pageFlag, String tips) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("pageFlag", pageFlag);
+        sIntent.putExtra("tips", tips);
         context.startActivity(sIntent);
     }
 }

@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.AuditRecords;
+import com.rainwood.oa.model.domain.RecordApproval;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -21,10 +21,11 @@ import java.util.List;
  */
 public final class AuditRecordAdapter extends BaseAdapter {
 
-    private List<AuditRecords> mAuditRecordsList;
+    private List<RecordApproval> mAuditRecordsList;
 
-    public void setAuditRecordsList(List<AuditRecords> auditRecordsList) {
+    public void setAuditRecordsList(List<RecordApproval> auditRecordsList) {
         mAuditRecordsList = auditRecordsList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -33,7 +34,7 @@ public final class AuditRecordAdapter extends BaseAdapter {
     }
 
     @Override
-    public AuditRecords getItem(int position) {
+    public RecordApproval getItem(int position) {
         return mAuditRecordsList.get(position);
     }
 
@@ -45,20 +46,20 @@ public final class AuditRecordAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if (convertView == null){
+        if (convertView == null) {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_audit_records, parent, false);
             ViewBind.inject(holder, convertView);
             convertView.setTag(holder);
-        }else {
-           holder = (ViewHolder) convertView.getTag();
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        holder.record.setText(getItem(position).getContent());
+        holder.record.setText(getItem(position).getText());
         holder.time.setText(getItem(position).getTime());
         return convertView;
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         @ViewInject(R.id.tv_record)
         private TextView record;
         @ViewInject(R.id.tv_time)

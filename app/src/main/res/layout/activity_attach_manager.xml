@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_search_click_view" />
+    <include layout="@layout/include_search_glass_view" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,6 +44,10 @@
             app:status_text="默认排序" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"

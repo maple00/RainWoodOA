@@ -20,6 +20,7 @@ import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.utils.FontSwitchUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,11 +30,19 @@ import java.util.List;
  */
 public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<FinancialInvoiceRecordAdapter.ViewHolder> {
 
-    private List<FinancialInvoiceRecord> mRecordList;
+    private List<FinancialInvoiceRecord> mRecordList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded = false;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setRecordList(List<FinancialInvoiceRecord> recordList) {
-        mRecordList = recordList;
+        if (loaded){
+            mRecordList.clear();
+        }
+        mRecordList.addAll(recordList);
         notifyDataSetChanged();
     }
 

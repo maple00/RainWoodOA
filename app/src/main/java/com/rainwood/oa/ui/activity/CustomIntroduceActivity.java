@@ -18,13 +18,14 @@ import com.rainwood.oa.ui.dialog.MessageDialog;
 import com.rainwood.oa.ui.dialog.SelectorListDialog;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,7 @@ public final class CustomIntroduceActivity extends BaseActivity implements ICust
     private List<String> mFollows;
     private List<String> mOriginList;
     private String mWarnPrompt;
+    private String mStaffId;
 
     @Override
     protected int getLayoutResId() {
@@ -188,9 +190,8 @@ public final class CustomIntroduceActivity extends BaseActivity implements ICust
                 String followStateStr = followStatus.getText().toString().trim();
                 String originStr = customOrigin.getText().toString().trim();
                 String demandDescStr = demandDesc.getText().toString().trim();
-                String introduceStaffStr = introduceObj.getText().toString().trim();
                 mCustomPresenter.createIntroduceCustom(companyNameStr, contactStr, telNumberStr, demandDescStr,
-                        originStr, followStateStr, introduceStaffStr);
+                        originStr, followStateStr, mStaffId);
                 break;
         }
     }
@@ -199,14 +200,16 @@ public final class CustomIntroduceActivity extends BaseActivity implements ICust
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CUSTOM_DEMAND_WRITE_SIZE && resultCode == CUSTOM_DEMAND_WRITE_SIZE) {
+            // 需求
             if (data != null) {
                 String demand = data.getStringExtra("demand");
-                LogUtils.d("sxs", "数据----------- " + demand);
                 demandDesc.setText(demand);
             }
         } else if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+            // 选择被介绍员工
             if (data != null) {
                 String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
                 introduceObj.setText(staff);
             }
         }
@@ -293,6 +296,11 @@ public final class CustomIntroduceActivity extends BaseActivity implements ICust
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public void getIntroduceCreateData(Map<String, String> createMap) {
+        PageJumpUtil.jump2SuccessPage(this, CustomSuccessActivity.class, "提示", createMap);
     }
 
     @Override

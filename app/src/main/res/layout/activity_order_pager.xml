@@ -6,9 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_search_click_view" />
-
-    <View style="@style/HorizontalLineStyle" />
+    <include layout="@layout/include_search_glass_view" />
 
     <LinearLayout
         android:id="@+id/ll_status_top"
@@ -49,6 +47,10 @@
             app:text_size="15" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
     <include layout="@layout/include_order_list" />
 

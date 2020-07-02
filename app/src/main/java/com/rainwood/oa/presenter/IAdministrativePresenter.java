@@ -13,7 +13,7 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
     /**
      * 请求角色列表的所有角色信息
      */
-    void requestAllRole();
+    void requestAllRole(String roleName, String moduleFirst, String moduleSecond, int page);
 
     /**
      * 请求角色详情
@@ -21,9 +21,21 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
     void requestRoleDetailById(String roleId);
 
     /**
-     * 部门管理列表
+     * 请求角色的筛选条件
      */
-    void requestAllDepartData();
+    void requestRoleScreenCondition();
+
+    /**
+     * 部门管理列表
+     * @param departName
+     * @param departType
+     */
+    void requestAllDepartData(String departName, String departType);
+
+    /**
+     * 部门筛选条件
+     */
+    void requestDepartScreenCondition();
 
     /**
      * 通过部门id查询部门详情
@@ -32,11 +44,19 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
 
     /**
      * 职位列表
+     * @param positionName
+     * @param departId
      */
-    void requestPostListData();
+    void requestPostListData(String positionName, String departId, String roleId);
+
+    /**
+     * 请求职位管理中的角色condition
+     */
+    void requestPostRoleCondition();
 
     /**
      * 通过职位id查询职位详情
+     *
      * @param postId
      */
     void requestPostDetailById(String postId);

@@ -3,10 +3,17 @@ package com.rainwood.oa.presenter.impl;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.ManagerMain;
+import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
+import com.rainwood.oa.network.okhttp.OkHttp;
 import com.rainwood.oa.network.okhttp.OnHttpListener;
+import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IManagerPresenter;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IManagerCallbacks;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +48,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
         List<ManagerMain> mainList1 = new ArrayList<>();
         for (int i = 0; i < data.length; i++) {
             ManagerMain managerMain = new ManagerMain();
-            managerMain.setTitle(data[i]);
+            managerMain.setName(data[i]);
             // 设置默认打开
             if (i == 0) {
             }
@@ -55,7 +62,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         moduleItemList.add(andFont);
                     }
-                    managerMain.setIconAndFontList(moduleItemList);
+                    managerMain.setArray(moduleItemList);
                     break;
                 case 1:     // 财务管理
                     List<IconAndFont> financialList = new ArrayList<>();
@@ -65,7 +72,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         financialList.add(andFont);
                     }
-                    managerMain.setIconAndFontList(financialList);
+                    managerMain.setArray(financialList);
                     break;
                 case 2:     // 客户管理
                     List<IconAndFont> customList = new ArrayList<>();
@@ -75,7 +82,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         customList.add(andFont);
                     }
-                    managerMain.setIconAndFontList(customList);
+                    managerMain.setArray(customList);
                     break;
                 case 3:     // 知识管理
                     List<IconAndFont> knowledgeList = new ArrayList<>();
@@ -85,7 +92,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         knowledgeList.add(andFont);
                     }
-                    managerMain.setIconAndFontList(knowledgeList);
+                    managerMain.setArray(knowledgeList);
                     break;
                 case 4:     // 系统设置
                     List<IconAndFont> systemList = new ArrayList<>();
@@ -95,12 +102,16 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
                         andFont.setLocalMipmap(R.mipmap.ic_temp_module);
                         systemList.add(andFont);
                     }
-                    managerMain.setIconAndFontList(systemList);
+                    managerMain.setArray(systemList);
                     break;
             }
             mainList1.add(managerMain);
         }
-        mCallback.getMainManagerData(mainList1);
+
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=manage&fun=menu", params, this);
+
+
     }
 
 
@@ -116,12 +127,34 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
 
     @Override
     public void onHttpFailure(HttpResponse result) {
-
+        mCallback.onError();
     }
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        LogUtils.d("sxs", "result ---- " + result.body());
+        if (!(result.code() == 200)) {
+            mCallback.onError();
+            return;
+        }
+        try {
+            String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+            if (!"success".equals(warn)) {
+                mCallback.onError(warn);
+                return;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+        if (result.url().contains("cla=manage&fun=menu")) {
+            try {
+                List<ManagerMain> menuList = JsonParser.parseJSONArray(ManagerMain.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("menu"));
+                mCallback.getMainManagerData(menuList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
 }

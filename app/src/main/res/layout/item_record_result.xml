@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingStart="15dp"
+    android:paddingTop="15dp"
+    android:paddingEnd="15dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_result_obj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="客户"
+            android:textColor="@color/labelColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="1.10 小时"
+            android:textColor="@color/labelColor"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:lineSpacingExtra="9dp"
+        android:text="修改海联购提出来的问题，商品列表搜索，快递单打印样式调整，以及订单导入问题"
+        android:textColor="@color/labelColor"
+        android:textSize="12sp" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+</LinearLayout>

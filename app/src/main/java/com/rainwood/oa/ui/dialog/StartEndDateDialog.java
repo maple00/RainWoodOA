@@ -13,13 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PickerLayoutManager;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.MyAdapter;
-import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -156,14 +156,14 @@ public final class StartEndDateDialog {
                 startTime.requestFocus();
                 // startTime.setSelection(index);
                 startTime.setText(calendar.get(Calendar.YEAR) + "-"
-                        + (calendar.get(Calendar.MONTH) + 1)
+                        + ((calendar.get(Calendar.MONTH) + 1) < 10 ? "0" + (calendar.get(Calendar.MONTH) + 1) : (calendar.get(Calendar.MONTH) + 1))
                         + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
             }
             // 结束时间焦点监听
             endTime.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
                     endTime.setText(calendar.get(Calendar.YEAR) + "-"
-                            + (calendar.get(Calendar.MONTH) + 1)
+                            + ((calendar.get(Calendar.MONTH) + 1) < 10 ? "0" + (calendar.get(Calendar.MONTH) + 1) : (calendar.get(Calendar.MONTH) + 1))
                             + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
                     endTime.setTextColor(getResources().getColor(R.color.colorPrimary));
                 } else {
@@ -295,12 +295,16 @@ public final class StartEndDateDialog {
             }
             // 有焦点则说明值需更改，没有焦点的时候保留之前的（滚动改变值）
             startTime.setText(startTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
-                    + "-" + (mMonthManager.getPickedPosition() + 1)
-                    + (hasIgnoreDay ? "" : "-" + (mDayManager.getPickedPosition() + 1)))
+                    + "-" + ((mMonthManager.getPickedPosition() + 1) < 10 ? "0"
+                    + (mMonthManager.getPickedPosition() + 1) : (mMonthManager.getPickedPosition() + 1))
+                    + (hasIgnoreDay ? "" : "-" + ((mDayManager.getPickedPosition() + 1) < 10 ? "0"
+                    + (mDayManager.getPickedPosition() + 1) : (mDayManager.getPickedPosition() + 1))))
                     : (TextUtils.isEmpty(startTime.getText()) ? "" : startTime.getText().toString().trim()));
             endTime.setText(endTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
-                    + "-" + (mMonthManager.getPickedPosition() + 1)
-                    + (hasIgnoreDay ? "" : "-" + (mDayManager.getPickedPosition() + 1)))
+                    + "-" + ((mMonthManager.getPickedPosition() + 1) < 10 ? "0"
+                    + (mMonthManager.getPickedPosition() + 1) : (mMonthManager.getPickedPosition() + 1))
+                    + (hasIgnoreDay ? "" : "-" + ((mDayManager.getPickedPosition() + 1) < 10 ? "0"
+                    + (mDayManager.getPickedPosition() + 1) : (mDayManager.getPickedPosition() + 1))))
                     : (TextUtils.isEmpty(endTime.getText()) ? "" : endTime.getText().toString().trim()));
         }
 

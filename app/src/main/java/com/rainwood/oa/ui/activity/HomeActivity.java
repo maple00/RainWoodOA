@@ -2,11 +2,15 @@ package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
@@ -42,7 +46,7 @@ public final class HomeActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
-        // 注册
+        // 注册EventBus
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -104,6 +108,9 @@ public final class HomeActivity extends BaseActivity {
         //如果上一个fragment跟当前要切换的fragment是同一个，那么不需要切换
         if (lastOneFragment == targetFragment) {
             return;
+        }
+        if (targetFragment instanceof BlockLogFragment){
+            mBlockLogFragment.setBottomNavigationView(mBottomNavigationView);
         }
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();

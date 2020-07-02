@@ -25,6 +25,7 @@ public final class CommonGridAdapter extends BaseAdapter {
 
     public void setTextList(List<SelectedItem> textList) {
         mTextList = textList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -53,12 +54,35 @@ public final class CommonGridAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.text.setText(getItem(position).getData());
+        holder.text.setText(getItem(position).getName());
+        holder.text.setBackgroundResource(getItem(position).isHasSelected()
+                ? R.drawable.shape_condition_click_bg : R.drawable.shape_condition_unclick_bg);
+        // 点击事件
+        holder.text.setOnClickListener(v -> {
+            mOnClickListener.onClickItem(getItem(position), position);
+            notifyDataSetChanged();
+        });
         return convertView;
     }
 
     private static class ViewHolder {
         @ViewInject(R.id.tv_text)
         private TextView text;
+    }
+
+    public interface OnClickListener {
+        /**
+         * 选中item
+         *
+         * @param item
+         * @param position
+         */
+        void onClickItem(SelectedItem item, int position);
+    }
+
+    private OnClickListener mOnClickListener;
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
     }
 }

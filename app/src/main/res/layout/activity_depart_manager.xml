@@ -7,7 +7,9 @@
 
     <include layout="@layout/include_search_screen_view" />
 
-    <View style="@style/HorizontalLineStyle" />
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"
@@ -18,5 +20,6 @@
             android:id="@+id/rv_depart_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

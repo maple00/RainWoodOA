@@ -84,6 +84,7 @@ public final class Constants {
     public static final int CHOOSE_STAFF_REQUEST_SIZE = 0x1002;
 
     public static final String KEY_BLOCK_PAGER_State = "0x1003";
+    public static final String POSITION_BLOCK_PAGER_State = "0x1004";
 
     /**
      * IMEI
@@ -114,4 +115,11 @@ public final class Constants {
      */
     public static String CUSTOM_ID;
 
+    /**
+     * 页面跳转menu
+     */
+    public static final String PERSONAL_OVER_TIME_DETAIL_MENU = "personalOverTimeDetail";
+    public static final String PERSONAL_ASK_LEAVE_DETAIL_MENU = "personalAskLeaveDetail";
+    public static final String PERSONAL_ASK_OUT_DETAIL_MENU = "personalAskOutDetail";
+    public static final String PERSONAL_REISSUE_CARD_DETAIL_MENU = "personalReissueCardDetail";
 }

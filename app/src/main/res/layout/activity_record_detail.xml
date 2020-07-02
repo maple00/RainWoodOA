@@ -30,6 +30,7 @@
                 android:orientation="vertical">
 
                 <com.rainwood.oa.ui.widget.GroupIconText
+                    android:id="@+id/git_state"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_record_status_bg"
@@ -43,34 +44,76 @@
 
                 <include layout="@layout/include_overtime_content" />
 
-                <include layout="@layout/include_leave_record_content"/>
+                <include layout="@layout/include_leave_record_content" />
 
-                <include layout="@layout/include_out_record_content"/>
+                <include layout="@layout/include_out_record_content" />
 
-                <include layout="@layout/include_card_record_content"/>
+                <include layout="@layout/include_card_record_content" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
                     android:layout_marginTop="27dp"
-                    android:background="@color/assistColor10" />
+                    android:background="@color/gray40" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="25dp"
-                    android:text="审核记录"
-                    android:textColor="@color/labelColor"
-                    android:textSize="13sp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_audit_records"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="25dp"
+                        android:text="@string/text_audit_records"
+                        android:textColor="@color/labelColor"
+                        android:textSize="13sp" />
+
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_audit_records"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+                </LinearLayout>
+
+
+                <!-- 记录成果-->
+                <LinearLayout
+                    android:id="@+id/ll_record_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:layout_marginTop="27dp"
+                        android:background="@color/gray40" />
+
+                    <TextView
+                        android:id="@+id/tv_record_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="25dp"
+                        android:textColor="@color/labelColor"
+                        android:textSize="13sp" />
+
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_record_result"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+                </LinearLayout>
+
 
             </LinearLayout>
 

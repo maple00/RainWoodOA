@@ -3,6 +3,7 @@ package com.rainwood.oa.utils;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
+import com.rainwood.oa.presenter.IBlockLogPagerPresenter;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.presenter.ICommonPresenter;
@@ -15,11 +16,13 @@ import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
+import com.rainwood.oa.presenter.ISearchPresenter;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.presenter.impl.AdministrativeImpl;
 import com.rainwood.oa.presenter.impl.ArticleImpl;
 import com.rainwood.oa.presenter.impl.AttachmentImpl;
 import com.rainwood.oa.presenter.impl.BlockLogImpl;
+import com.rainwood.oa.presenter.impl.BlockLogPagerImpl;
 import com.rainwood.oa.presenter.impl.CalendarImpl;
 import com.rainwood.oa.presenter.impl.CommonImpl;
 import com.rainwood.oa.presenter.impl.CustomImpl;
@@ -31,6 +34,7 @@ import com.rainwood.oa.presenter.impl.ManagerMainImpl;
 import com.rainwood.oa.presenter.impl.MineImpl;
 import com.rainwood.oa.presenter.impl.OrderImpl;
 import com.rainwood.oa.presenter.impl.RecordManagerImpl;
+import com.rainwood.oa.presenter.impl.SearchImpl;
 import com.rainwood.oa.presenter.impl.StaffImpl;
 
 /**
@@ -57,6 +61,8 @@ public final class PresenterManager {
     private final IArticlePresenter mArticlePresenter;
     private final ICalendarPresenter mCalendarPresenter;
     private final IBlockLogPresenter mBlockLogPresenter;
+    private final IBlockLogPagerPresenter mBlockLogPagerPresenter;
+    private final ISearchPresenter mSearchPresenter;
 
     public IMinePresenter getIMinePresenter() {
         return mIMinePresenter;
@@ -126,6 +132,14 @@ public final class PresenterManager {
         return mBlockLogPresenter;
     }
 
+    public IBlockLogPagerPresenter getBlockLogPagerPresenter() {
+        return mBlockLogPagerPresenter;
+    }
+
+    public ISearchPresenter getSearchPresenter() {
+        return mSearchPresenter;
+    }
+
     public PresenterManager() {
         mIManagerPresenter = new ManagerMainImpl();
         mIMinePresenter = new MineImpl();
@@ -143,5 +157,7 @@ public final class PresenterManager {
         mArticlePresenter = new ArticleImpl();
         mCalendarPresenter = new CalendarImpl();
         mBlockLogPresenter = new BlockLogImpl();
+        mBlockLogPagerPresenter = new BlockLogPagerImpl();
+        mSearchPresenter = new SearchImpl();
     }
 }

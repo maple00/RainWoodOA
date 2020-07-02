@@ -30,7 +30,6 @@ public final class GroupIconText extends LinearLayout {
     @ViewInject(R.id.tv_values)
     private TextView values;
 
-    private String value;
 
     public GroupIconText(Context context) {
         this(context, null);
@@ -71,10 +70,14 @@ public final class GroupIconText extends LinearLayout {
     }
 
     public void setValue(String value) {
-        this.value = value;
         if (!TextUtils.isEmpty(value)) {
             values.setText(value);
         }
     }
 
+    public void setIcon(int resId){
+        if (resId != 0){
+            iconIV.setImageResource(resId);
+        }
+    }
 }

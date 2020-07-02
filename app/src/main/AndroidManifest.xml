@@ -26,12 +26,12 @@
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_logo_mdpi"
+        android:icon="@mipmap/img_logo_v1"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_logo"
+        android:roundIcon="@mipmap/img_logo_v1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -59,7 +59,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!--
         四种启动模式的区别和常用场景：
@@ -86,7 +86,7 @@
             android:name=".ui.activity.LoginActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="unspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -101,7 +101,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 首页 HomeActivity-->
         <activity
@@ -109,15 +109,15 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTask"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 考勤模块 AttendanceActivity-->
         <activity
-            android:name=".ui.activity.AttendanceActivity"
+            android:name=".ui.activity.MineAttendanceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!--
             客户管理模块
@@ -128,98 +128,98 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 填写需求 DemandWriteActivity-->
         <activity
             android:name=".ui.activity.DemandWriteActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 客户详情 CustomDetailActivity-->
         <activity
             android:name=".ui.activity.CustomDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 联系人 ContactActivity-->
         <activity
             android:name=".ui.activity.CommonActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 添加联系人 AddContactActivity-->
         <activity
             android:name=".ui.activity.AddContactActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 介绍客户 CustomIntroduceActivity-->
         <activity
             android:name=".ui.activity.CustomIntroduceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 客户管理成功页面 CustomSuccessActivity-->
         <activity
             android:name=".ui.activity.CustomSuccessActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 客户列表 CustomListActivity-->
         <activity
             android:name=".ui.activity.CustomListActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 跟进记录 FollowRecordActivity-->
         <activity
             android:name=".ui.activity.CustomFollowRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 回款记录详情 ReceivableDetailActivity-->
         <activity
             android:name=".ui.activity.ReceivableDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 开票信息 BillingDataActivity-->
         <activity
             android:name=".ui.activity.BillingDataActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 客户开票记录 InvoiceRecordActivity-->
         <activity
             android:name=".ui.activity.InvoiceRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 开票申请  InvoiceApplyActivity-->
         <activity
             android:name=".ui.activity.InvoiceApplyActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 新建订单 OrderNewActivity-->
         <activity
             android:name=".ui.activity.OrderNewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 订单编辑 OrderEditActivity-->
         <activity
@@ -227,7 +227,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 订单详情 OrderDetailActivity-->
         <activity
@@ -235,42 +235,42 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 添加费用计提 AddProvisionActivity-->
         <activity
             android:name=".ui.activity.AddProvisionActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 新增跟进记录 AddFollowRecordActivity-->
         <activity
             android:name=".ui.activity.AddFollowRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 订单列表 OrderListActivity-->
         <activity
             android:name=".ui.activity.OrderListActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 客户订单列表 CustomOrderListActivity-->
         <activity
             android:name=".ui.activity.CustomOrderListActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 沟通技巧 ExchangeSkillActivity-->
         <activity
             android:name=".ui.activity.ExchangeSkillActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!--
         行政管理
@@ -280,126 +280,161 @@
             android:name=".ui.activity.RoleManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 角色详情 RoleDetailActivity-->
         <activity
             android:name=".ui.activity.RoleDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 部门管理 DepartManagerActivity-->
         <activity
             android:name=".ui.activity.DepartManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 部门详情 DepartDetailActivity-->
         <activity
             android:name=".ui.activity.DepartDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 职位管理 PostManagerActivity-->
         <activity
             android:name=".ui.activity.PostManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 职位详情 PostDetailActivity-->
         <activity
             android:name=".ui.activity.PostDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 员工管理 staffManagerActivity-->
         <activity
             android:name=".ui.activity.StaffManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 工作日 WorkDayActivity-->
         <activity
             android:name=".ui.activity.WorkDayActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 通讯录 AddressBookActivity-->
         <activity
             android:name=".ui.activity.AddressBookActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 联系人 ContactsActivity-->
         <activity
             android:name=".ui.activity.ContactsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 员工 staffMainActivity-->
         <activity
             android:name=".ui.activity.StaffMainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 工作经历详情 ExperienceDetailActivity-->
         <activity
             android:name=".ui.activity.ExperienceDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
+
+        <!-- 收支记录列表 BalanceRecordActivity-->
+        <activity
+            android:name=".ui.activity.BalanceRecordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
 
         <!-- 收支详情 PaymentDetailActivity-->
         <activity
             android:name=".ui.activity.PaymentDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
+
+        <!-- 分类统计 ClassificationStaticsActivity-->
+        <activity
+            android:name=".ui.activity.ClassificationStaticsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 收支曲线 BalanceCurveActivity-->
+        <activity
+            android:name=".ui.activity.BalanceCurveActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 员工数曲线 StaffCurveActivity-->
+        <activity
+            android:name=".ui.activity.StaffCurveActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
 
         <!-- 管理制度 ManagerSystemActivity-->
         <activity
             android:name=".ui.activity.ManagerSystemActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 文章管理详情 ArticleDetailActivity-->
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 记录管理 RecordManagerActivity-->
         <activity
             android:name=".ui.activity.RecordManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 记录详情 RecordDetailActivity-->
         <activity
             android:name=".ui.activity.RecordDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 行政处罚 AdminPunishActivity-->
         <activity
             android:name=".ui.activity.AdminPunishActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
+
+        <!-- 考勤记录 AttendanceActivity-->
+        <activity
+            android:name=".ui.activity.AttendanceActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
 
         <!--
         财务管理
@@ -409,21 +444,21 @@
             android:name=".ui.activity.ReimbursementActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 费用详情 CostDetailActivity-->
         <activity
             android:name=".ui.activity.CostDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 账户金额 AccountFundsActivity-->
         <activity
             android:name=".ui.activity.AccountFundsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!--
         知识管理
@@ -433,21 +468,21 @@
             android:name=".ui.activity.OfficeFileActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 附件管理 AttachManagerActivity-->
         <activity
             android:name=".ui.activity.AttachManagerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 跟进记录 FollowRecordActivity-->
         <activity
             android:name=".ui.activity.FollowRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!--
         系统设置
@@ -457,21 +492,21 @@
             android:name=".ui.activity.LogcatActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 日志详情 LogcatDetailActivity-->
         <activity
             android:name=".ui.activity.LogcatDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 帮助中心 HelperActivity-->
         <activity
             android:name=".ui.activity.HelperActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 个人中心-->
         <!-- 个人资料 MineInfoActivity-->
@@ -479,49 +514,66 @@
             android:name=".ui.activity.MineInfoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 我的补卡记录 MineReissueCardActivity-->
         <activity
             android:name=".ui.activity.MineReissueCardActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 补卡申请 ReissueApplyActivity-->
         <activity
             android:name=".ui.activity.ReissueApplyActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 我的公共页面 MineCommonActivity-->
         <activity
             android:name=".ui.activity.MineCommonActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 我的请假记录 MineRecordsActivity-->
         <activity
             android:name=".ui.activity.MineRecordsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 我的开票记录 MineInvoiceRecordActivity-->
         <activity
             android:name=".ui.activity.MineInvoiceRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <!-- 修改密码 ChangePwdActivity-->
         <activity
             android:name=".ui.activity.ChangePwdActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
+
+        <!--
+        待办事项
+        -->
+        <!-- 待办事项详情 BlockLogDetailActivity-->
+        <activity
+            android:name=".ui.activity.BlockLogDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 搜索Activity SearchActivity-->
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
 
         <!--
         三方集成
@@ -531,7 +583,7 @@
             android:name=".ui.activity.TbsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
     </application>
 

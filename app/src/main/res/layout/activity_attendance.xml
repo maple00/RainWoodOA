@@ -10,11 +10,7 @@
     ,SmallSp,UselessParent，HardcodedText">
 
     <!-- title-->
-    <include
-        layout="@layout/include_title_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="10dp" />
+    <include layout="@layout/include_title_bar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,7 +68,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white" />
-
 
         <com.necer.calendar.Miui9Calendar
             android:id="@+id/mc_calendar_9"

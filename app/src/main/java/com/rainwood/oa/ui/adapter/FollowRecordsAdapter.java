@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.utils.FontSwitchUtil;
@@ -54,23 +53,23 @@ public final class FollowRecordsAdapter extends RecyclerView.Adapter<FollowRecor
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.type.setText(mRecordList.get(position).getType() + " · ");
-        holder.name.setText(mRecordList.get(position).getName());
+        holder.type.setText(mRecordList.get(position).getTarget() + " · ");
+        holder.name.setText(mRecordList.get(position).getTargetName());
         holder.nameTime.setText(Html.fromHtml("<font size=\"" + FontSwitchUtil.dip2px(mContext, 13f) + "\">"
                 + mRecordList.get(position).getStaffName() + "  </font>"
                 + "<font size=\"" + FontSwitchUtil.dip2px(mContext, 12f) + "\"> " + mRecordList.get(position).getTime() + "</font>"));
-        int minimumWidth = holder.content.getMeasuredWidth();
-        LogUtils.d("sxs", "--- measuredWidth --- " + minimumWidth);
-        holder.content.initWidth(FontSwitchUtil.dip2px(mContext, minimumWidth));
+        // 点击展开收缩的时候会存在一定的bug
+        holder.content.initWidth(default_width);
         holder.content.setMaxLines(4);
         holder.content.setHasAnimation(true);
-        holder.content.setCloseInNewLine(true);
+        holder.content.setCloseInNewLine(false);
         holder.content.setOpenSuffix("展开");
         holder.content.setCloseSuffix("收起");
         holder.content.setCloseSuffixColor(mContext.getColor(R.color.blue05));
         holder.content.setOpenSuffixColor(mContext.getColor(R.color.blue05));
-        holder.content.setOriginalText(mRecordList.get(position).getContent());
-        //TODO: ExTextView 有bug
+        holder.content.setOriginalText(mRecordList.get(position).getText());
+        // 点击事件
+        holder.name.setOnClickListener(v -> mTargetListener.onClickTarget(mRecordList.get(position), position));
     }
 
     @Override
@@ -95,5 +94,21 @@ public final class FollowRecordsAdapter extends RecyclerView.Adapter<FollowRecor
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickTargetListener {
+        /**
+         * 查询target对象详解
+         *
+         * @param record
+         * @param position
+         */
+        void onClickTarget(KnowledgeFollowRecord record, int position);
+    }
+
+    private OnClickTargetListener mTargetListener;
+
+    public void setTargetListener(OnClickTargetListener targetListener) {
+        mTargetListener = targetListener;
     }
 }

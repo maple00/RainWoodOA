@@ -3,19 +3,18 @@ package com.rainwood.oa.ui.activity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomScreenAll;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
 import com.rainwood.oa.ui.adapter.CustomListAdapter;
@@ -23,20 +22,19 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.tools.wheel.aop.SingleClick;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: a797s
@@ -68,6 +66,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
 
+    // 分页
+    private int pageCount = 0;
     // 选中标记
     private boolean selectedStatusFlag = false;
     private boolean selectedHeadFlag = false;
@@ -78,6 +78,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
     private ICustomPresenter mCustomListPresenter;
     private View mMaskLayer;
+    private CommonGridAdapter mSelectedAdapter;
+    private List<SelectedItem> mStateList;
 
     @Override
     protected int getLayoutResId() {
@@ -91,7 +93,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         searchContent.setOnFocusChangeListener((v, hasFocus) -> searchTV.setText(hasFocus ? getString(R.string.text_common_search) : getString(R.string.custom_text_manager)));
         // 设置布局管理器
         customView.setLayoutManager(new GridLayoutManager(this, 1));
-        customView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, FontSwitchUtil.dip2px(this, 10f)));
+        customView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
         // 创建适配器
         mCustomAdapter = new CustomListAdapter();
         // 设置适配器
@@ -107,12 +110,14 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         mCustomListPresenter.registerViewCallback(this);
     }
 
-    private int pageCount = 0;
-
     @Override
     protected void loadData() {
         // 从这里请求数据 -------- 默认从第一页开始加载
-        mCustomListPresenter.getALlCustomData(pageCount);
+        mCustomListPresenter.requestALlCustomData(pageCount);
+        // request condition
+        mCustomListPresenter.requestStateCondition();
+        mCustomListPresenter.requestCustomCondition();
+        mCustomListPresenter.requestAreaCondition();
     }
 
     @Override
@@ -121,29 +126,34 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         mStatus.setOnItemClick(text -> {
             selectedStatusFlag = !selectedStatusFlag;
             mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedStatusFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
-            LogUtils.d("sxs", "选中状态---- " + selectedStatusFlag);
-            // TODO: 查询状态
-            if (selectedStatusFlag)
-                mCustomListPresenter.getStatus();
+                    selectedStatusFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
+            if (selectedStatusFlag) {
+                stateConditionPopDialog(mStateList, mStatus);
+            }
         });
         mHeadMan.setOnItemClick(text -> {
             selectedHeadFlag = !selectedHeadFlag;
             mHeadMan.setRightIcon(selectedHeadFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedHeadFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
-            // TODO：查询负责人
+                    selectedHeadFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
+            if (selectedHeadFlag) {
+                toast(text);
+            }
         });
         mArea.setOnItemClick(text -> {
             selectedAreaFlag = !selectedAreaFlag;
             mArea.setRightIcon(selectedAreaFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedAreaFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
-            // TODO: 查询区域
+                    selectedAreaFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
+            if (selectedAreaFlag) {
+                toast(text);
+            }
         });
         selectedFilter.setOnItemClick(text -> {
             selectedFilterFlag = !selectedFilterFlag;
             selectedFilter.setRightIcon(selectedFilterFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedFilterFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.labelColor));
-            // TODO: 全部筛选
+                    selectedFilterFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
+            if (selectedFilterFlag) {
+                toast(text);
+            }
         });
 
         // 查看详情
@@ -153,7 +163,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 if (mCustomListPresenter != null) {
-                    mCustomListPresenter.getALlCustomData(++pageCount);
+                    mCustomListPresenter.requestALlCustomData(++pageCount);
                 }
             }
         });
@@ -187,50 +197,58 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         }
     }
 
-    @SuppressWarnings("all")
     @Override
-    public void getALlStatus(Map statusMap) {
-        // 获取到状态信息
-        List<SelectedItem> selectedItems = (List<SelectedItem>) statusMap.get("selectedItem");
-        // popWindow
+    public void getStateCondition(List<SelectedItem> stateList) {
+        mStateList = stateList;
+    }
+
+    /**
+     * 列表筛选条件
+     *
+     * @param customListCondition
+     */
+    @Override
+    public void getCustomListCondition(List<CustomScreenAll> customListCondition) {
+        // TODO : 客户筛选条件
+        // TODO: 区域选择
+    }
+
+    /**
+     * 类型选择
+     */
+    private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
                 .setView(R.layout.pop_grid_list)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                .setViewOnclickListener(new CommonPopupWindow.ViewInterface() {
-                    @Override
-                    public void getChildView(View view, int layoutResId) {
-                        MeasureGridView contentList = view.findViewById(R.id.mgv_content);
-                        contentList.setNumColumns(4);
-                        CommonGridAdapter gridAdapter = new CommonGridAdapter();
-                        contentList.setAdapter(gridAdapter);
-                        gridAdapter.setTextList(selectedItems);
-
-                        mMaskLayer = view.findViewById(R.id.mask_layer);
-                        TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
-                    }
+                .setViewOnclickListener((view, layoutResId) -> {
+                    MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setNumColumns(4);
+                    mSelectedAdapter = new CommonGridAdapter();
+                    contentList.setAdapter(mSelectedAdapter);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
                 .create();
         mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
-        mMaskLayer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mStatusPopWindow.dismiss();
+        mMaskLayer.setOnClickListener(v -> {
+            mStatusPopWindow.dismiss();
+            selectedStatusFlag = false;
+            targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mStatusPopWindow.setOnDismissListener(() -> {
+            mStatusPopWindow.dismiss();
+            if (!mStatusPopWindow.isShowing()) {
                 selectedStatusFlag = false;
-                mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                        selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mStatusPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mStatusPopWindow.dismiss();
-                if (!mStatusPopWindow.isShowing()) {
-                    selectedStatusFlag = false;
-                    mStatus.setRightIcon(selectedStatusFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                            selectedStatusFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
-                }
+        mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+            for (SelectedItem selectedItem : stateList) {
+                selectedItem.setHasSelected(false);
             }
+            item.setHasSelected(true);
         });
     }
 

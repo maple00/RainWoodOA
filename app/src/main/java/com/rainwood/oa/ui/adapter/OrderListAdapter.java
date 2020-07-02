@@ -19,6 +19,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,11 +29,19 @@ import java.util.List;
  */
 public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.ViewHolder> {
 
-    private List<Order> mList;
+    private List<Order> mList = new ArrayList<>();
     private Context mContext;
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setList(List<Order> list) {
-        mList = list;
+        if (loaded){
+            mList.clear();
+        }
+        mList.addAll(list);
         notifyDataSetChanged();
     }
 

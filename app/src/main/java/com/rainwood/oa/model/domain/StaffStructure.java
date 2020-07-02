@@ -10,6 +10,10 @@ import java.io.Serializable;
 public final class StaffStructure implements Serializable {
 
     /**
+     * 员工id
+     */
+    private String stid;
+    /**
      * 姓名
      */
     private String name;
@@ -17,12 +21,12 @@ public final class StaffStructure implements Serializable {
     /**
      * 头像
      */
-    private String headPhoto;
+    private String ico;
 
     /**
      * 职位
      */
-    private String post;
+    private String job;
 
     /**
      * 电话
@@ -42,20 +46,20 @@ public final class StaffStructure implements Serializable {
         this.name = name;
     }
 
-    public String getHeadPhoto() {
-        return headPhoto;
+    public String getIco() {
+        return ico;
     }
 
-    public void setHeadPhoto(String headPhoto) {
-        this.headPhoto = headPhoto;
+    public void setIco(String ico) {
+        this.ico = ico;
     }
 
-    public String getPost() {
-        return post;
+    public String getJob() {
+        return job;
     }
 
-    public void setPost(String post) {
-        this.post = post;
+    public void setJob(String job) {
+        this.job = job;
     }
 
     public String getTel() {

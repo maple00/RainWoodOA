@@ -99,7 +99,6 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
         return inflater.inflate(R.layout.fragment_error, container, false);
     }
 
-
     protected View loadEmptyView(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.fragment_empty, container, false);
     }

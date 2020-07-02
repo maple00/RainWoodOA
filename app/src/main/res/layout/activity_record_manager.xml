@@ -45,7 +45,9 @@
 
     </LinearLayout>
 
-    <View style="@style/HorizontalLineStyle" />
+    <View
+        android:id="@+id/divider"
+        style="@style/HorizontalLineStyle" />
 
 
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
@@ -56,7 +58,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_record_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbarSize="@dimen/button_round_size_2"
+            android:scrollbars="vertical" />
 
     </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

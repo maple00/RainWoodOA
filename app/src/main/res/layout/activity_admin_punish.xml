@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -74,7 +75,9 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        android:hint="@string/custom_input_please" />
+        android:hint="@string/custom_input_please"
+        android:inputType="number"
+        app:regexType="count" />
 
     <TextView
         android:id="@+id/tv_punish_reason"
@@ -93,7 +96,8 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        android:hint="@string/custom_input_please" />
+        android:hint="@string/custom_input_please"
+        android:inputType="text" />
 
 
     <Button

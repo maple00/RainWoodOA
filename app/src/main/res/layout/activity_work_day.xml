@@ -7,42 +7,115 @@
     android:background="@color/assistColor15"
     android:orientation="vertical">
 
-    <include layout="@layout/include_title_bar_none_menu" />
-
-    <View style="@style/HorizontalLineStyle" />
-
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rl_page_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/assistColor15"
-        android:orientation="horizontal"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:elevation="0dp"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="15dp"
+        tools:ignore="ContentDescription,RelativeOverlap">
+
+        <ImageView
+            android:id="@+id/iv_page_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:paddingStart="5dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_page_back" />
 
         <TextView
-            android:id="@+id/tv_year"
+            android:id="@+id/tv_page_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:text="2020年"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="11dp"
+            android:layout_toEndOf="@+id/iv_page_back"
             android:textColor="@color/fontColor"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
-        <View
-            style="@style/VerticalLineStyle"
-            android:background="@color/labelColor" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_work_month"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="8dp"
-            tools:itemCount="6" />
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/tv_page_title"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp">
 
-    </LinearLayout>
+            <View
+                style="@style/VerticalLineStyle"
+                android:layout_height="20dp"
+                android:background="@color/labelColor" />
+
+            <TextView
+                android:id="@+id/tv_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:text="2020年"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                android:text="6月"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_current"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_ripple">
+
+            <ImageView
+                android:id="@+id/ib_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_calendar"
+                android:tint="#000000" />
+
+            <TextView
+                android:id="@+id/tv_current_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="13"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <View style="@style/HorizontalLineStyle" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +123,8 @@
         android:background="@color/assistColor15"
         android:orientation="vertical"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:paddingEnd="10dp"
+        android:visibility="gone">
 
         <!-- 周视图-->
         <com.necer.view.WeekBar
@@ -106,5 +180,84 @@
 
         </com.necer.calendar.Miui10Calendar>
     </LinearLayout>
+
+    <com.haibin.calendarview.CalendarLayout
+        android:id="@+id/calendarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:calendar_content_view_id="@+id/recyclerView"
+        app:default_status="expand">
+
+        <com.haibin.calendarview.CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_white_8dp"
+            app:calendar_padding="10dp"
+            app:current_month_lunar_text_color="#CFCFCF"
+            app:current_month_text_color="#333333"
+            app:max_year="2199"
+            app:min_year="1972"
+            app:month_view="com.rainwood.oa.ui.calendar.custom.CustomMonthView"
+            app:month_view_show_mode="mode_only_current"
+            app:other_month_lunar_text_color="#e1e1e1"
+            app:other_month_text_color="#e1e1e1"
+            app:scheme_text="假"
+            app:scheme_text_color="@color/fontColor"
+            app:scheme_theme_color="#128c4b"
+            app:selected_lunar_text_color="@color/white"
+            app:selected_text_color="@color/white"
+            app:selected_theme_color="@color/colorPrimary"
+            app:week_background="#fff"
+            app:week_start_with="sun"
+            app:week_text_color="@color/labelColor"
+            app:week_view="com.rainwood.oa.ui.calendar.custom.CustomWeekView"
+            app:week_view_scrollable="true"
+            app:year_view="com.rainwood.oa.ui.calendar.custom.CustomYearView"
+            app:year_view_day_text_color="@color/fontColor"
+            app:year_view_day_text_size="9sp"
+            app:year_view_month_text_color="@color/fontColor"
+            app:year_view_month_text_size="20sp"
+            app:year_view_scheme_color="@color/blue25" />
+
+
+        <!--<com.rainwood.oa.ui.widget.group.GroupRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_white_8dp"
+            app:group_center="false"
+            app:group_has_header="false"
+            app:group_height="42dp"
+            app:group_padding_left="16dp"
+            app:group_padding_right="16dp"
+            app:group_text_color="#555555"
+            app:group_text_size="14sp" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/tv_day_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_white_8dp"
+                android:paddingStart="15dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorMiddle"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </com.haibin.calendarview.CalendarLayout>
 
 </LinearLayout>

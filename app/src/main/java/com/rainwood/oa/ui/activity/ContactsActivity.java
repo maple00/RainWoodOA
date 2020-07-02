@@ -22,7 +22,7 @@ import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -82,6 +82,8 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
         mContactsAdapter.setContactListener((contact, position) -> {
             Intent intent = new Intent();
             intent.putExtra("staff", contact.getName());
+            intent.putExtra("staffId", contact.getStid());
+            intent.putExtra("position", contact.getJob());
             setResult(Constants.CHOOSE_STAFF_REQUEST_SIZE, intent);
             finish();
         });

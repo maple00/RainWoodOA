@@ -21,7 +21,10 @@
     <color name="colorStockLine">#E1E1E1</color>
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#AAAAAA</color>
-
+    <!-- 对话框确认按钮文本颜色 -->
+    <color name="colorConfirm">#007AFF</color>
+    <!-- 对话框取消按钮文本颜色 -->
+    <color name="colorCancel">#F44336</color>
     <!-- 一般文字颜色-->
     <color name="tipsColor">#FFA627</color>
     <color name="tipsColor05">#FF8278</color>
@@ -47,6 +50,7 @@
     <color name="gray40">#47454A</color>
     <color name="gray45">#404454</color>
     <color name="gray50">#E8E8E8</color>
+    <color name="gray55">#FAFAFA</color>
     <!-- 绿色-->
     <color name="green05">#11CA8D</color>
     <color name="green10">#3AD7A9</color>
@@ -56,15 +60,18 @@
     <color name="red05">#FF686D</color>
     <color name="red10">#FF3E18</color>
     <color name="red15">#FF7462</color>
+    <color name="red20">#FF8471</color>
     <!-- 蓝色-->
     <color name="blue05">#4575AA</color>
     <color name="blue10">#E8EDF4</color>
     <color name="blue15">#F2F4FF</color>
     <color name="blue20">#5373FF</color>
+    <color name="blue25">#5AA1FF</color>
     <!-- 橙色-->
     <color name="orange5">#FFB500</color>
     <color name="orange10">#FDE2C3</color>
     <color name="orange15">#FFFDE5</color>
     <color name="orange20">#8B5B23</color>
+    <color name="orange25">#FFBC28</color>
 
 </resources>

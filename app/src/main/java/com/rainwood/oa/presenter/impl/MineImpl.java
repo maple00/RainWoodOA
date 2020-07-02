@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.rainwood.contactslibrary.ContactsBean;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.AuditRecord;
+import com.rainwood.oa.model.domain.Depart;
+import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.MineData;
@@ -74,12 +76,21 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     }
 
     /**
-     * 申请通讯录数据
+     * 通讯录数据
      */
     @Override
     public void requestAddressBookData() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=contacts", params, this);
+    }
+
+    /**
+     * 部门职位
+     */
+    @Override
+    public void requestAllDepartData() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=department&fun=home", params, this);
     }
 
     /**
@@ -406,9 +417,25 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         // 通讯录
         else if (result.url().contains("cla=my&fun=contacts")) {
             try {
+                // 员工列表
                 List<ContactsBean> contactsList = JsonParser.parseJSONArray(ContactsBean.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                // 部门列表
+                List<DepartStructure> departStructureList = JsonParser.parseJSONArray(DepartStructure.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("department"));
+
                 mMineCallbacks.getMineAddressBookData(contactsList);
+                mMineCallbacks.getMineAddressBookDepartData(departStructureList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 部门职位列表
+        else if (result.url().contains("cla=department&fun=home")){
+            try {
+                List<Depart> departList = JsonParser.parseJSONArray(Depart.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("department"));
+                mMineCallbacks.getDepartListData(departList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

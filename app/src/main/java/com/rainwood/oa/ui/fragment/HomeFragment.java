@@ -32,7 +32,8 @@ import com.rainwood.oa.view.IHomeCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.wheel.aop.SingleClick;
+import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.utils.DateTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +88,12 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         } else {
             StatusBarUtils.darkMode(getActivity(), false);
         }
-        // 加载数据
-        mHomePresenter.requestSalaryData("2020-01", "2020-05");
+        // 加载数据 -- 当月1号到currentDay
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
     }
 
     @SingleClick
@@ -173,6 +178,10 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         }
         salaryChartView.setNoDataText("您当前还没有工资数据哦~~~");
         salaryChartView.setData(new LineData(setDrawLine(salaryList, 1, "工资曲线")));
+        // 标注
+        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_salary_marker, monthList, this);
+        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
+        salaryChartView.setMarker(mv);
         // banner---模拟加载返回的图片
         mStackBanner.setTransitionEffect(TransitionEffect.Accordion);
         loadBannerData(mStackBanner, 3);
@@ -273,10 +282,6 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         //标签配置
         Legend legend = salaryChartView.getLegend();
         legend.setEnabled(true);//是否可用
-        // 标注
-        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_salary_marker, monthList);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        salaryChartView.setMarkerView(mv);
     }
 
     /**

@@ -47,8 +47,8 @@ public final class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.
         holder.staffName.setText(contactsBean.getName());
         holder.position.setText(contactsBean.getJob());
         Glide.with(mContext).load(contactsBean.getIco())
-                .placeholder(mContext.getDrawable(com.rainwood.contactslibrary.R.drawable.ic_default_head))
-                .error(mContext.getDrawable(com.rainwood.contactslibrary.R.drawable.ic_default_head))
+                .placeholder(mContext.getDrawable(R.drawable.ic_default_head))
+                .error(mContext.getDrawable(R.drawable.ic_default_head))
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
         holder.itemView.setOnClickListener(new View.OnClickListener() {

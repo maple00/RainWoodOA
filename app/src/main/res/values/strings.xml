@@ -7,7 +7,7 @@
     <string name="navigation_backlog">待办事项</string>
     <string name="navigation_mine">我的</string>
     <string name="text_network_error">网络出错，请点击重试</string>
-    <string name="text_loading">玩命加载中</string>
+    <string name="text_loading">努力加载中</string>
     <string name="text_mine_account">会计账户(元)</string>
     <string name="text_mine_manager">我的管理</string>
     <string name="text_home_salary_line_curve">工资曲线</string>
@@ -29,7 +29,9 @@
     <string name="time_title">请选择时间</string>
     <!-- 支付密码对话框 -->
     <string name="pay_title">请输入登录密码</string>
-
+    <!-- 地区对话框 -->
+    <string name="address_title">请选择地区</string>
+    <string name="address_hint">请选择</string>
     <!-- 支付密码对话框 -->
     <string name="select_min_hint">至少要选择 %d 项</string>
     <string name="select_max_hint">最多只能选择 %d 项</string>
@@ -111,6 +113,7 @@
     <string name="record_apply_man">申请人</string>
     <string name="record_overtime_obj">加班对象</string>
     <string name="record_pre_time">预计加班时间</string>
+    <string name="record_actual_time">实际加班时间</string>
     <string name="record_overtime_reason">加班事由</string>
     <string name="text_common_reject">驳回</string>
     <string name="text_common_through">通过</string>
@@ -124,6 +127,7 @@
     <string name="text_record_leave_content">请假事由</string>
     <string name="text_record_out_obj">外出对象</string>
     <string name="text_record_pre_out_time">预计外出时间</string>
+    <string name="text_record_actual_out_time">实际外出时间</string>
     <string name="text_record_out_reason">外出事由</string>
     <string name="text_record_reissue_time">补卡时间</string>
     <string name="text_record_reissue_reason">补卡事由</string>
@@ -142,5 +146,6 @@
     <string name="text_complete">全部</string>
     <string name="text_income">收入</string>
     <string name="text_speeding">支出</string>
+    <string name="text_audit_records">审核记录</string>
 
 </resources>
