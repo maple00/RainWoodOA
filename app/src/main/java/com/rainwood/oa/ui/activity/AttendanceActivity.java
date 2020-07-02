@@ -124,11 +124,11 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     private ICalendarPresenter mCalendarPresenter;
     private String mStaffId;
-    private List<AttendanceCalendarData> mCurrentDayData;
 
-    private int tempYear = 0;
-    private int tempMonth = 0;
+    private List<AttendanceCalendarData> mCurrentDayData;
     private InnerPainter mInnerPainter;
+    private int tempMonth = 0;
+    private int tempYear = 0;
 
     @Override
     protected int getLayoutResId() {
@@ -346,7 +346,6 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     @Override
     public void getAttendanceData(AttendanceData attendanceData) {
-        // TODO: 将考勤数据展示 ---> 根据dateSelectedListener 展示当天得数据
         /*
         个人信息
          */

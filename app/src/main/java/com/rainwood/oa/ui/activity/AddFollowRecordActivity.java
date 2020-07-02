@@ -1,6 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.ui.dialog.DateDialog;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -31,6 +34,8 @@ public final class AddFollowRecordActivity extends BaseActivity {
     // content
     @ViewInject(R.id.cet_choose_time)
     private EditText chooseTime;
+    @ViewInject(R.id.cet_follow_content)
+    private EditText followContent;
 
     @Override
     protected int getLayoutResId() {
@@ -58,7 +63,6 @@ public final class AddFollowRecordActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.cet_choose_time:
-                //toast("选择时间");
                 new DateDialog.Builder(this)
                         .setTitle(getString(R.string.date_title))
                         .setConfirm(getString(R.string.common_confirm))
@@ -70,7 +74,6 @@ public final class AddFollowRecordActivity extends BaseActivity {
                             @SuppressLint("SetTextI18n")
                             @Override
                             public void onSelected(BaseDialog dialog, int year, int month, int day) {
-                                toast(year + getString(R.string.common_year) + month + getString(R.string.common_month) + day + getString(R.string.common_day));
                                 chooseTime.setText(year + "-" + month + "-" + day);
                             }
 
@@ -82,7 +85,18 @@ public final class AddFollowRecordActivity extends BaseActivity {
                         .show();
                 break;
             case R.id.btn_confirm:
-                toast("确定了");
+                if (TextUtils.isEmpty(chooseTime.getText())) {
+                    toast("请填写下次跟进时间");
+                    return;
+                }
+                if (TextUtils.isEmpty(followContent.getText())) {
+                    toast("请填写跟进记录");
+                    return;
+                }
+                Intent demandIntent = new Intent();
+                demandIntent.putExtra("time", chooseTime.getText().toString().trim());
+                demandIntent.putExtra("follow", followContent.getText().toString().trim());
+                setResult(Constants.FOLLOW_OF_RECORDS, demandIntent);
                 finish();
                 break;
         }

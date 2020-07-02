@@ -40,7 +40,7 @@
                 android:paddingStart="15dp"
                 android:paddingTop="20dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_contact"
@@ -69,9 +69,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_tel_number"
@@ -100,9 +100,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_wx_number"
@@ -131,9 +131,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_qq_number"
@@ -162,9 +162,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_post"
@@ -208,9 +208,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_follow_status"
@@ -244,9 +244,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -291,9 +291,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_budget"
@@ -321,9 +321,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -349,9 +349,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_demand_detail"
@@ -400,9 +400,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_company_name"
@@ -431,9 +431,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -461,9 +461,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -489,9 +489,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -517,9 +517,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -545,9 +545,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"
@@ -575,9 +575,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:layout_width="90dp"

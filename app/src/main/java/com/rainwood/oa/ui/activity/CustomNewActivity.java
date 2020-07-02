@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.CustomDemand;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.dialog.SelectorListDialog;
 import com.rainwood.oa.utils.ListUtils;
@@ -23,7 +25,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -115,7 +116,14 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
 
     @Override
     protected void initData() {
-        super.initData();
+        CustomDemand customDemand = (CustomDemand) getIntent().getSerializableExtra("demand");
+        if (customDemand != null) {
+            followStatus.setText(customDemand.getWorkFlow());
+            customOrigin.setText(customDemand.getSource());
+            budget.setText(customDemand.getBudget());
+            industry.setText(customDemand.getIndustry());
+            demandContent.setText(customDemand.getText());
+        }
     }
 
     @Override
@@ -216,7 +224,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
                 break;
             case R.id.tv_demand_detail_content:
                 // 填写需求详情
-                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情","需求详情"),
+                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情", "需求详情"),
                         CUSTOM_DEMAND_WRITE_SIZE);
                 break;
             case R.id.btn_confirm:
@@ -296,10 +304,10 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
 
     @Override
     public void createCustomData(boolean isSuccess, String warn) {
-        if (isSuccess){
+        if (isSuccess) {
             startActivity(getNewIntent(this, CustomDetailActivity.class, "客户详情", "客户详情"));
-        }else {
-           toast(warn);
+        } else {
+            toast(warn);
         }
     }
 

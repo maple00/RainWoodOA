@@ -9,7 +9,7 @@
     tools:ignore="UselessLeaf">
 
 
-    <include layout="@layout/include_search_click_view" />
+    <include layout="@layout/include_search_glass_view" />
 
     <!-- tabLayout-->
     <LinearLayout

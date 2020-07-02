@@ -82,10 +82,10 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         moduleMenu = getIntent().getStringExtra("menu") == null ? "" : getIntent().getStringExtra("menu");
         setStatusBar();
         initView();
-        initEvent();
-        initPresenter();
         initData();
+        initPresenter();
         loadData();
+        initEvent();
     }
 
     /***
@@ -280,7 +280,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     /**
      * 隐藏软键盘
      */
-    private void hideSoftKeyboard() {
+    public void hideSoftKeyboard() {
         // 隐藏软键盘，避免软键盘引发的内存泄露
         View view = getCurrentFocus();
         if (view != null) {
@@ -290,11 +290,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
             }
         }
     }
-
-    /**
-     * 设置状态页面
-     */
-
 
     /**
      * 设置必填信息

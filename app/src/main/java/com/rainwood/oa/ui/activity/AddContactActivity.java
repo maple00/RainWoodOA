@@ -27,7 +27,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 public final class AddContactActivity extends BaseActivity implements ICustomCallbacks {
 
     // actionBar
-    @ViewInject(R.id.rl_page_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;

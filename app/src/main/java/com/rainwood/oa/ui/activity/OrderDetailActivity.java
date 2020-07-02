@@ -2,6 +2,7 @@ package com.rainwood.oa.ui.activity;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.rainwood.oa.model.domain.OrderFollow;
 import com.rainwood.oa.model.domain.OrderPayed;
 import com.rainwood.oa.model.domain.OrderReceivable;
 import com.rainwood.oa.model.domain.OrderTask;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.OrderCostAdapter;
 import com.rainwood.oa.ui.adapter.OrderDataAdapter;
@@ -25,12 +27,12 @@ import com.rainwood.oa.ui.adapter.OrderReceivableAdapter;
 import com.rainwood.oa.ui.adapter.OrderTaskAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.MeasureListView;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,8 @@ import java.util.Map;
  */
 public final class OrderDetailActivity extends BaseActivity implements IOrderCallbacks {
 
+    @ViewInject(R.id.ll_page_parent)
+    private LinearLayout pageParent;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
@@ -143,6 +147,23 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
         }
     }
 
+    @Override
+    protected void initEvent() {
+        mAttachAdapter.setOnClickAttachListener(new OrderDetailAttachAdapter.OnClickAttachListener() {
+            @Override
+            public void onClickDownload(OrderDetailAttachment attachment, int position) {
+                FileManagerUtil.fileDownload(OrderDetailActivity.this, null, attachment.getSrc(),
+                        attachment.getName(), attachment.getFormat());
+            }
+
+            @Override
+            public void onClickPreview(OrderDetailAttachment attachment, int position) {
+                FileManagerUtil.filePreview(OrderDetailActivity.this, TbsActivity.class,
+                        attachment.getSrc(), attachment.getName(), attachment.getFormat());
+            }
+        });
+    }
+
     @SingleClick
     @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.iv_arrow, R.id.tv_order_attach_all, R.id.tv_order_cost_all,
             R.id.tv_order_follow_all, R.id.iv_follow_record, R.id.tv_follow_record, R.id.tv_order_task_all,
@@ -156,7 +177,7 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
                 toast("审核记录");
                 break;
             case R.id.iv_menu:
-                toast("menu");
+                showQuickFunction(this, pageParent);
                 break;
             case R.id.iv_arrow:
                 if (selectedArrowFlag) {

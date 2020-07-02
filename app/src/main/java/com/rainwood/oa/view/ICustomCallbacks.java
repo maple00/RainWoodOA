@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Contact;
+import com.rainwood.oa.model.domain.CustomArea;
 import com.rainwood.oa.model.domain.CustomInvoice;
 import com.rainwood.oa.model.domain.CustomScreenAll;
 import com.rainwood.oa.model.domain.CustomStaff;
@@ -125,5 +126,50 @@ public interface ICustomCallbacks extends IBaseCallback {
     default void getCustomListCondition(List<CustomScreenAll> customListCondition) {
     }
 
-    ;
+    /**
+     * 客户列表condition -- province
+     *
+     * @param provinceList
+     */
+    default void getCustomListProvince(List<CustomArea> provinceList) {
+    }
+
+    /**
+     * 客户列表condition -- city
+     *
+     * @param cityList
+     */
+    default void getCustomCity(List<CustomArea> cityList) {
+    }
+
+    /**
+     * 客户列表condition -- area
+     *
+     * @param areaList
+     */
+    default void getCustomArea(List<CustomArea> areaList) {
+    }
+
+    /**
+     * 添加协作人
+     *
+     * @param success
+     * @param warn
+     */
+    default void getAssociatesResult(boolean success, String warn) {
+    }
+
+    /**
+     * 删除协作人
+     * @param success
+     * @param warn
+     */
+    default void getDeleteAssociatesResult(boolean success, String warn){}
+
+    /**
+     * 转让客户
+     * @param success
+     * @param warn
+     */
+    default void getMoveCustomResult(boolean success, String warn){}
 }

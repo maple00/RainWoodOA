@@ -1,5 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +15,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomArea;
 import com.rainwood.oa.model.domain.CustomScreenAll;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
+import com.rainwood.oa.ui.adapter.CustomAreaAdapter;
 import com.rainwood.oa.ui.adapter.CustomListAdapter;
+import com.rainwood.oa.ui.adapter.CustomListFilterAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -46,10 +53,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchContent;
-    @ViewInject(R.id.tv_search)
-    private TextView searchTV;
+    @ViewInject(R.id.tv_page_title)
+    private TextView pageTitle;
     // content
     @ViewInject(R.id.gti_status)
     private GroupTextIcon mStatus;
@@ -67,7 +72,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private TwinklingRefreshLayout pagerRefresh;
 
     // 分页
-    private int pageCount = 0;
+    private int pageCount = 1;
     // 选中标记
     private boolean selectedStatusFlag = false;
     private boolean selectedHeadFlag = false;
@@ -80,6 +85,17 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private View mMaskLayer;
     private CommonGridAdapter mSelectedAdapter;
     private List<SelectedItem> mStateList;
+    private RecyclerView mAddressListView;
+    private TextView mClearScreenView;
+    private TextView mConfirmView;
+    private CustomAreaAdapter mCustomAreaAdapter;
+    // 省数据
+    private List<CustomArea> mProvinceList;
+    private TextView mProvinceEt;
+    private TextView mCityEt;
+    private TextView mAreaEt;
+    private RecyclerView mScreenAllView;
+    private List<CustomScreenAll> mCustomListConditionList;
 
     @Override
     protected int getLayoutResId() {
@@ -90,7 +106,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
-        searchContent.setOnFocusChangeListener((v, hasFocus) -> searchTV.setText(hasFocus ? getString(R.string.text_common_search) : getString(R.string.custom_text_manager)));
+        pageTitle.setText(title);
         // 设置布局管理器
         customView.setLayoutManager(new GridLayoutManager(this, 1));
         customView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
@@ -113,11 +129,12 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @Override
     protected void loadData() {
         // 从这里请求数据 -------- 默认从第一页开始加载
-        mCustomListPresenter.requestALlCustomData(pageCount);
+        mCustomListPresenter.requestALlCustomData("", "", "", "",
+                "", "", "", "", "", pageCount);
         // request condition
         mCustomListPresenter.requestStateCondition();
         mCustomListPresenter.requestCustomCondition();
-        mCustomListPresenter.requestAreaCondition();
+        mCustomListPresenter.requestProvinceCondition();
     }
 
     @Override
@@ -144,7 +161,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             mArea.setRightIcon(selectedAreaFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedAreaFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
             if (selectedAreaFlag) {
-                toast(text);
+                chooseArea();
             }
         });
         selectedFilter.setOnItemClick(text -> {
@@ -152,7 +169,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             selectedFilter.setRightIcon(selectedFilterFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedFilterFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
             if (selectedFilterFlag) {
-                toast(text);
+                screenQueryAll();
             }
         });
 
@@ -163,20 +180,21 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 if (mCustomListPresenter != null) {
-                    mCustomListPresenter.requestALlCustomData(++pageCount);
+                    mCustomListPresenter.requestALlCustomData("", "", "", "",
+                            "", "", "", "", "", ++pageCount);
                 }
             }
         });
     }
 
     @SingleClick
-    @OnClick({R.id.tv_search_tips, R.id.iv_page_back})
+    @OnClick({R.id.iv_search, R.id.iv_page_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-            case R.id.tv_search_tips:
+            case R.id.iv_search:
                 toast("搜索");
                 break;
         }
@@ -186,7 +204,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @Override
     public void getAllCustomList(List customList) {
         // 拿到客户列表
-        if (pageCount != 0) {
+        if (pageCount != 1) {
             if (pagerRefresh != null) {
                 pagerRefresh.finishLoadmore();
             }
@@ -202,15 +220,55 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         mStateList = stateList;
     }
 
+    @Override
+    public void getCustomListProvince(List<CustomArea> provinceList) {
+        mProvinceList = provinceList;
+        if (selectedAreaFlag) {
+            mCustomAreaAdapter.setAreaList(mProvinceList);
+            mCustomAreaAdapter.setAreaListener((area, position) -> {
+                for (CustomArea customArea : mProvinceList) {
+                    customArea.setSelected(false);
+                }
+                area.setSelected(true);
+                mProvinceEt.setText(area.getName());
+            });
+        }
+    }
+
+    @Override
+    public void getCustomCity(List<CustomArea> cityList) {
+        mCustomAreaAdapter.setAreaList(cityList);
+        mCustomAreaAdapter.setAreaListener((area, position) -> {
+            for (CustomArea customArea : cityList) {
+                customArea.setSelected(false);
+            }
+            area.setSelected(true);
+            mCityEt.setText(area.getName());
+        });
+    }
+
+    @Override
+    public void getCustomArea(List<CustomArea> areaList) {
+        mCustomAreaAdapter.setAreaList(areaList);
+        mCustomAreaAdapter.setAreaListener((area, position) -> {
+            for (CustomArea customArea : areaList) {
+                customArea.setSelected(false);
+            }
+            area.setSelected(true);
+            mAreaEt.setText(area.getName());
+            mAreaEt.setHint(area.getId());
+        });
+    }
+
     /**
      * 列表筛选条件
      *
-     * @param customListCondition
+     * @param customListConditionList
      */
     @Override
-    public void getCustomListCondition(List<CustomScreenAll> customListCondition) {
+    public void getCustomListCondition(List<CustomScreenAll> customListConditionList) {
         // TODO : 客户筛选条件
-        // TODO: 区域选择
+        mCustomListConditionList = customListConditionList;
     }
 
     /**
@@ -249,6 +307,252 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 selectedItem.setHasSelected(false);
             }
             item.setHasSelected(true);
+            mStatusPopWindow.dismiss();
+            // TODO: 状态查询
+            mCustomListPresenter.requestALlCustomData("", "", "",
+                    ("全部".equals(item.getName()) ? "" : item.getName()),
+                    "", "", "", "", "", pageCount = 1);
+        });
+    }
+
+    /**
+     * 区域选择 -- TODO：需要做数据缓存
+     */
+    private void chooseArea() {
+        CommonPopupWindow areaPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_area_choose)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    mProvinceEt = view.findViewById(R.id.tv_province);
+                    mCityEt = view.findViewById(R.id.tv_city);
+                    mAreaEt = view.findViewById(R.id.tv_area);
+                    mAddressListView = view.findViewById(R.id.rv_region_list);
+                    mClearScreenView = view.findViewById(R.id.tv_clear_screen);
+                    mConfirmView = view.findViewById(R.id.tv_confirm);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                    // 设置布局管理器
+                    mAddressListView.setLayoutManager(new GridLayoutManager(CustomListActivity.this, 1));
+                    mAddressListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
+                    // 点击地区
+                    mProvinceEt.setOnClickListener(v -> {
+                        LogUtils.d("sxs", "点击了");
+                        mProvinceEt.setText(null);
+                        mCityEt.setText(null);
+                        mAreaEt.setText(null);
+                        mAreaEt.setHint(null);
+                    });
+                    mCityEt.setOnClickListener(v -> {
+                        mCityEt.setText(null);
+                        mAreaEt.setText(null);
+                        mAreaEt.setHint(null);
+                    });
+                })
+                .create();
+        areaPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        // 创建适配器
+        mCustomAreaAdapter = new CustomAreaAdapter();
+        mAddressListView.setAdapter(mCustomAreaAdapter);
+        // 设置数据(注意加上EditText的判断) -- 默认展示省
+        if (TextUtils.isEmpty(mProvinceEt.getText())) {
+            mCityEt.setVisibility(View.GONE);
+            mAreaEt.setVisibility(View.GONE);
+            mCustomAreaAdapter.setAreaList(mProvinceList);
+            mCustomAreaAdapter.setAreaListener((area, position) -> {
+                for (CustomArea customArea : mProvinceList) {
+                    customArea.setSelected(false);
+                }
+                area.setSelected(true);
+                mProvinceEt.setText(area.getName());
+            });
+        }
+        // 区域选择监听
+        mProvinceEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(s)) {
+                    mCityEt.setVisibility(View.VISIBLE);
+                    mAreaEt.setVisibility(View.GONE);
+                    // TODO: 请求市
+                    mCustomListPresenter.requestCityByProvince(s.toString());
+                } else {
+                    // TODO：请求省
+                    mCustomListPresenter.requestProvinceCondition();
+                    mCityEt.setVisibility(View.GONE);
+                    mAreaEt.setVisibility(View.GONE);
+                }
+            }
+        });
+        mCityEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(s)) {
+                    mAreaEt.setVisibility(View.VISIBLE);
+                    // TODO: 请求区
+                    mCustomListPresenter.requestAreaByProvinceCity(mProvinceEt.getText().toString().trim(), s.toString());
+                } else {
+                    // TODO: 请求市 -- 点击了市-- 去除点击省的情况
+                    if (!TextUtils.isEmpty(mProvinceEt.getText())) {
+                        mCustomListPresenter.requestCityByProvince(mProvinceEt.getText().toString().trim());
+                        mAreaEt.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+
+        mAreaEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 此处的省市区数据都齐全
+                if (!TextUtils.isEmpty(mProvinceEt.getText()) && !TextUtils.isEmpty(mCityEt.getText())
+                        && !TextUtils.isEmpty(mAreaEt.getText())) {
+                    LogUtils.d("sxs", mProvinceEt.getText() + "-" + mCityEt.getText() + "-" + mAreaEt.getText());
+                }
+            }
+        });
+
+        mMaskLayer.setOnClickListener(v -> {
+            areaPopWindow.dismiss();
+            selectedAreaFlag = false;
+            mArea.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        areaPopWindow.setOnDismissListener(() -> {
+            areaPopWindow.dismiss();
+            selectedAreaFlag = false;
+            mArea.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mClearScreenView.setOnClickListener(v -> {
+            mProvinceEt.setText(null);
+            mCityEt.setText(null);
+            mAreaEt.setText(null);
+            mAreaEt.setHint(null);
+            // 清空筛选
+            mCustomListPresenter.requestProvinceCondition();
+            areaPopWindow.dismiss();
+        });
+        mConfirmView.setOnClickListener(v -> {
+            // TODO: 查询客户列表
+            if (TextUtils.isEmpty(mProvinceEt.getText()) || TextUtils.isEmpty(mCityEt.getText())
+                    || TextUtils.isEmpty(mAreaEt.getText())) {
+                toast("请选择区域");
+                return;
+            }
+            //toast(mProvinceEt.getText() + "-" + mCityEt.getText() + "-" + mAreaEt.getText());
+            mCustomListPresenter.requestALlCustomData("", "", "", "",
+                    "", mProvinceEt.getText().toString().trim(), mCityEt.getText().toString().trim(),
+                    mAreaEt.getHint().toString().trim(), "", pageCount = 1);
+            areaPopWindow.dismiss();
+        });
+    }
+
+    /**
+     * 全部筛选
+     */
+    private void screenQueryAll() {
+        CommonPopupWindow screenAllPopWindow = new CommonPopupWindow.Builder(this)
+                .setAnimationStyle(R.style.IOSAnimStyle)
+                .setView(R.layout.pop_custom_screen_all)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setViewOnclickListener((view, layoutResId) -> {
+                    mScreenAllView = view.findViewById(R.id.rv_screen_all);
+                    mClearScreenView = view.findViewById(R.id.tv_clear_screen);
+                    mConfirmView = view.findViewById(R.id.tv_confirm);
+                    mMaskLayer = view.findViewById(R.id.mask_layer);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                    // 设置布局管理器
+                    mScreenAllView.setLayoutManager(new GridLayoutManager(CustomListActivity.this, 1));
+                })
+                .create();
+        screenAllPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
+        mMaskLayer.setOnClickListener(v -> {
+            screenAllPopWindow.dismiss();
+            selectedFilterFlag = false;
+            selectedFilter.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        screenAllPopWindow.setOnDismissListener(() -> {
+            screenAllPopWindow.dismiss();
+            selectedFilterFlag = false;
+            selectedFilter.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+        });
+        mClearScreenView.setOnClickListener(v -> {
+            for (CustomScreenAll screenAll : mCustomListConditionList) {
+                for (CustomScreenAll.InnerCustomScreen screen : screenAll.getArray()) {
+                    screen.setSelected(false);
+                }
+            }
+            screenAllPopWindow.dismiss();
+            // TODO: 清空筛选
+            mCustomListPresenter.requestALlCustomData("", "", "", "",
+                    "", "", "", "", "", pageCount = 1);
+        });
+        mConfirmView.setOnClickListener(v -> {
+            String headMan = "";
+            String introduceMan = "";
+            String origin = "";
+            String sorting = "";
+            for (CustomScreenAll screenAll : mCustomListConditionList) {
+                for (CustomScreenAll.InnerCustomScreen customScreen : screenAll.getArray()) {
+                    if (customScreen.isSelected()) {
+                        switch (screenAll.getTitle()) {
+                            case "负责人":
+                                headMan = customScreen.getName();
+                                break;
+                            case "介绍人":
+                                introduceMan = customScreen.getName();
+                                break;
+                            case "客户来源":
+                                origin = customScreen.getName();
+                                break;
+                            case "排序方式":
+                                sorting = customScreen.getName();
+                                break;
+                        }
+                    }
+                }
+            }
+            screenAllPopWindow.dismiss();
+            // TODO: 请求接口
+            mCustomListPresenter.requestALlCustomData("", headMan, introduceMan, "",
+                    origin, "", "", "", sorting, pageCount = 1);
+        });
+        // 设置数据
+        CustomListFilterAdapter customListFilterAdapter = new CustomListFilterAdapter();
+        mScreenAllView.setAdapter(customListFilterAdapter);
+        customListFilterAdapter.setScreenAllList(mCustomListConditionList);
+        customListFilterAdapter.setOnClickListener((item, position, screenAll, parentPos) -> {
+            for (CustomScreenAll.InnerCustomScreen customScreen : screenAll.getArray()) {
+                customScreen.setSelected(false);
+            }
+            screenAll.getArray().get(position).setSelected(true);
         });
     }
 
@@ -277,7 +581,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
     @Override
     public void onEmpty() {
-        toast("没有更多的数据了");
+        toast("数据为空");
+        mCustomAdapter.setList(null);
         if (pagerRefresh != null) {
             pagerRefresh.finishLoadmore();
         }

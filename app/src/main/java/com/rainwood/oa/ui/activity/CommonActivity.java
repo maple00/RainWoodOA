@@ -97,6 +97,11 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
         // 创建适配器
         mContactListAdapter = new ContactListAdapter();
         mAttachAdapter = new AttachAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         switch (title) {
             case "联系人":
                 emptyTips.setText("还没有联系人");

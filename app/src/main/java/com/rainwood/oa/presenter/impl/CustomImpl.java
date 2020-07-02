@@ -3,6 +3,7 @@ package com.rainwood.oa.presenter.impl;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.model.domain.Custom;
+import com.rainwood.oa.model.domain.CustomArea;
 import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomInvoice;
 import com.rainwood.oa.model.domain.CustomScreenAll;
@@ -147,14 +148,33 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     }
 
     /**
-     * 请求客户列表
+     * 客户列表
      *
-     * @param pageCount 分页页码
+     * @param companyName 公司名称
+     * @param headMan     负责人
+     * @param references  介绍人
+     * @param state       跟进状态
+     * @param origin      客户来源
+     * @param province    省
+     * @param city        市
+     * @param area        区
+     * @param sorting     排序方式
+     * @param page        页码
      */
     @Override
-    public void requestALlCustomData(int pageCount) {
+    public void requestALlCustomData(String companyName, String headMan, String references, String state,
+                                     String origin, String province, String city, String area, String sorting, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=client&fun=home&page=" + pageCount, params, this);
+        params.add("companyName", companyName);
+        params.add("stid", headMan);
+        params.add("shareId", references);
+        params.add("workFlow", state);
+        params.add("source", origin);
+        params.add("province", province);
+        params.add("city", city);
+        params.add("area", area);
+        params.add("orderBy", sorting);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -179,8 +199,35 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      * 客户列表 -- 区域condition
      */
     @Override
-    public void requestAreaCondition() {
+    public void requestProvinceCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=province", params, this);
+    }
 
+    /**
+     * 客户列表 -- 通过省查询市
+     *
+     * @param province
+     */
+    @Override
+    public void requestCityByProvince(String province) {
+        RequestParams params = new RequestParams();
+        params.add("province", province);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=city", params, this);
+    }
+
+    /**
+     * 通过省市查询区
+     *
+     * @param province
+     * @param city
+     */
+    @Override
+    public void requestAreaByProvinceCity(String province, String city) {
+        RequestParams params = new RequestParams();
+        params.add("province", province);
+        params.add("city", city);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=area", params, this);
     }
 
     @Override
@@ -220,7 +267,6 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         selectedMap.put("selectedItem", selectedList);
         // mCustomCallback.getALlStatus(selectedMap);
     }
-
 
     /**
      * 客户模块，暂时先固定
@@ -320,8 +366,6 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestPlusAssociates(String customId, String staffId) {
         RequestParams params = new RequestParams();
-        LogUtils.d("sxs", "customId ---- " + customId);
-        LogUtils.d("sxs", "staffId ---- " + staffId);
         params.add("khid", customId);
         params.add("staffId", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=cooperate", params, this);
@@ -416,6 +460,9 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
                     item.setName(jsonArray.getString(i));
                     stateList.add(item);
                 }
+                SelectedItem item = new SelectedItem();
+                item.setName("全部");
+                stateList.set(0, item);
                 mCustomCallback.getStateCondition(stateList);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -496,22 +543,50 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
                 e.printStackTrace();
             }
         }
-       /* // 客户列表状态condition
-        else if (result.url().contains("cla=client&fun=clientWorkFlow")) {
+        // 客户列表condition -- 省
+        else if (result.url().contains("cla=client&fun=province")) {
             try {
-                JSONArray stateArray = JsonParser.parseJSONArrayString(
-                        JsonParser.parseJSONObjectString(result.body()).getString("para"));
-                List<SelectedItem> stateList = new ArrayList<>();
-                for (int i = 0; i < stateArray.length(); i++) {
-                    SelectedItem item = new SelectedItem();
-                    item.setName(stateArray.getString(i));
-                    stateList.add(item);
+                JSONArray provinceArray = JsonParser.parseJSONArrayString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("province"));
+                List<CustomArea> provinceList = new ArrayList<>();
+                for (int i = 0; i < provinceArray.length(); i++) {
+                    CustomArea area = new CustomArea();
+                    area.setName(provinceArray.getString(i));
+                    provinceList.add(area);
                 }
-                mCustomCallback.getStateCondition(stateList);
+
+                mCustomCallback.getCustomListProvince(provinceList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
+        // 客户列表 condition -- 市
+        else if (result.url().contains("cla=client&fun=city")) {
+            try {
+                JSONArray provinceArray = JsonParser.parseJSONArrayString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("city"));
+                List<CustomArea> cityList = new ArrayList<>();
+                for (int i = 0; i < provinceArray.length(); i++) {
+                    CustomArea area = new CustomArea();
+                    area.setName(provinceArray.getString(i));
+                    cityList.add(area);
+                }
+
+                mCustomCallback.getCustomCity(cityList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 客户列表 condition --  区域  AreaData
+        else if (result.url().contains("cla=client&fun=area")) {
+            try {
+                List<CustomArea> areaList = JsonParser.parseJSONArray(CustomArea.class,
+                        JsonParser.parseJSONObjectString(result.body()).getString("area"));
+                mCustomCallback.getCustomArea(areaList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         // 客户详情
         else if (result.url().contains("cla=client&fun=detail")) {
             CustomDetail customDetail = JsonParser.parseJSONObject(CustomDetail.class, result.body());
@@ -549,16 +624,31 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             }
         }
         // 添加协作人
-        else if (result.url().contains("cla=client&fun=cooperate")) {
-
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=cooperate")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mCustomCallback.getAssociatesResult("success".equals(warn), warn);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // 删除协作人
-        else if (result.url().contains("cla=client&fun=cooperateDel")) {
-
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=cooperateDel")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mCustomCallback.getDeleteAssociatesResult("success".equals(warn), warn);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // 客户转让
         else if (result.url().contains("cla=client&fun=move")) {
-
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mCustomCallback.getMoveCustomResult("success".equals(warn), warn);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // 开票信息获取
         else if (result.url().contains("cla=client&fun=invoice")) {

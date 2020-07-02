@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
+import com.rainwood.oa.model.domain.CustomDemand;
 import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.TempData;
@@ -357,6 +358,22 @@ public final class PageJumpUtil {
         sIntent.putExtra("title", title);
         sIntent.putExtra("pageFlag", pageFlag);
         sIntent.putExtra("tips", tips);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 编辑客户需求
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param menu
+     */
+    public static void customEditDemand(Context context, Class<? extends BaseActivity> clazz, String title, String menu, CustomDemand demand) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("menu", menu);
+        sIntent.putExtra("demand", demand);
         context.startActivity(sIntent);
     }
 }

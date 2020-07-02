@@ -14,6 +14,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,10 +24,11 @@ import java.util.List;
  */
 public final class ProvisionAdapter extends BaseAdapter {
 
-    List<Provision> mList;
+    private List<Provision> mList = new ArrayList<>();
 
     public void setList(List<Provision> list) {
-        mList = list;
+        mList.addAll(list);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -56,7 +58,7 @@ public final class ProvisionAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.money.setText(parent.getContext().getDrawable(R.drawable.ic_money_logo) + "" + getItem(position).getMoney());
+        holder.money.setText("￥" + getItem(position).getMoney());
         holder.used.setText(getItem(position).getUsed());
         // 点击事件
         holder.wasteClear.setOnClickListener(v -> mOnClickWaste.onClickProvisionWaste(position));
@@ -72,9 +74,10 @@ public final class ProvisionAdapter extends BaseAdapter {
         private ImageView wasteClear;
     }
 
-    public interface OnClickWaste{
+    public interface OnClickWaste {
         /**
          * 删除
+         *
          * @param position
          */
         void onClickProvisionWaste(int position);

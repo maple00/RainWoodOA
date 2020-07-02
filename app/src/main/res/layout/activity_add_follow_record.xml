@@ -33,6 +33,7 @@
                 android:verticalSpacing="10dp" />
 
             <com.rainwood.tools.wheel.view.ClearEditText
+                android:id="@+id/cet_follow_content"
                 style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

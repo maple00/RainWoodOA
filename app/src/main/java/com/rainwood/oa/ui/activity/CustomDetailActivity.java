@@ -20,6 +20,7 @@ import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.oa.model.domain.IconAndFont;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AssociatesAdapter;
 import com.rainwood.oa.ui.adapter.ContactAdapter;
@@ -37,7 +38,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ import java.util.Map;
 /**
  * create by a797s in 2020/5/14 17:58
  *
- * @Description : &#x5ba2;&#x6237;&#x8be6;&#x60c5;
+ * @Description : 客户详情
  * @Usage :
  **/
 public final class CustomDetailActivity extends BaseActivity implements ICustomCallbacks {
@@ -117,6 +117,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     private String mCustomId;
     // 是转让还是添加协作人 -- 默认是转让
     private boolean plusFlag = false;
+    private List<CustomStaff> mCustomStaffList;
+    private CustomDetail mCustomDetailData;
 
     @Override
     protected int getLayoutResId() {
@@ -165,6 +167,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
         // 加载数据
         mCustomPresenter.getDetailData();
         mCustomPresenter.requestCustomDetailById(mCustomId);
+        // 查询项目相关的员工
+        mCustomPresenter.requestCustomStaff();
     }
 
     @SingleClick
@@ -180,13 +184,13 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
             case R.id.btn_transfer_custom:
                 // 转让客户
                 plusFlag = false;
-                mCustomPresenter.requestCustomStaff();
+                setValue();
                 break;
             case R.id.tv_add_associates:
             case R.id.iv_add_associates:
                 // 添加协作人
                 plusFlag = true;
-                mCustomPresenter.requestCustomStaff();
+                setValue();
                 break;
             case R.id.tv_query_all_contact:
                 // 查看全部联系人
@@ -196,7 +200,8 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
             case R.id.tv_requested_edit:
                 // 编辑客户需求-- 返回新增页面进行重新编辑
                 //toast("编辑客户需求");
-                startActivity(getNewIntent(this, CustomNewActivity.class, "新建客户", "新建客户"));
+                PageJumpUtil.customEditDemand(this, CustomNewActivity.class, "编辑客户需求", "editDemand",
+                        mCustomDetailData.getDemand());
                 break;
             case R.id.btn_copy_custom_id:
                 // 复制客户id
@@ -210,6 +215,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
         }
     }
 
+
     @SuppressWarnings("all")
     @Override
     public void getCustomDetailData(Map<String, List> contentMap) {
@@ -219,10 +225,40 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
 
     @Override
     public void getCustomDetailValues(Map dataMap) {
-        CustomDetail customDetail = (CustomDetail) dataMap.get("custom");
+        mCustomDetailData = (CustomDetail) dataMap.get("custom");
         // setValues()
-        if (customDetail != null) {
-            setValues(customDetail);
+        if (mCustomDetailData != null) {
+            setValues(mCustomDetailData);
+        }
+    }
+
+    @Override
+    public void getAssociatesResult(boolean success, String warn) {
+        if (success) {
+            toast("添加成功");
+            mCustomPresenter.requestCustomDetailById(mCustomId);
+        } else {
+            toast(warn);
+        }
+    }
+
+    @Override
+    public void getDeleteAssociatesResult(boolean success, String warn) {
+        if (success) {
+            toast("删除成功");
+            mCustomPresenter.requestCustomDetailById(mCustomId);
+        } else {
+            toast(warn);
+        }
+    }
+
+    @Override
+    public void getMoveCustomResult(boolean success, String warn) {
+        if (success) {
+            toast("转让成功");
+            mCustomPresenter.requestCustomDetailById(mCustomId);
+        } else {
+            toast(warn);
         }
     }
 
@@ -302,16 +338,12 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     }
 
     /**
-     * 客户员工列表
-     *
-     * @param customStaffList
+     * 添加协作人/转让客户
      */
-    @Override
-    public void getCustomOfStaff(List<CustomStaff> customStaffList) {
-
+    private void setValue() {
         new BottomCustomDialog.Builder(this)
                 .setTitle(plusFlag ? "添加协作人" : "转让给")
-                .setList(customStaffList)
+                .setList(mCustomStaffList)
                 .setGravity(Gravity.BOTTOM)
                 .setAutoDismiss(false)
                 .setTipsVisibility(plusFlag ? "客户所有权属于您，协作人则拥有与您同样的客户编辑权限。" : null)
@@ -339,6 +371,21 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
 
                 })
                 .show();
+    }
+
+    /**
+     * 客户员工列表
+     *
+     * @param customStaffList
+     */
+    @Override
+    public void getCustomOfStaff(List<CustomStaff> customStaffList) {
+        mCustomStaffList = customStaffList;
+    }
+
+    @Override
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override

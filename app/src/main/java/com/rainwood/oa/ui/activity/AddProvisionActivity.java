@@ -1,5 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -7,6 +9,7 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
@@ -61,8 +64,18 @@ public final class AddProvisionActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_page_right_title:
-                //
-                toast("确定了");
+                if (TextUtils.isEmpty(provisionMoney.getText())) {
+                    toast("请填写计提金额");
+                    return;
+                }
+                if (TextUtils.isEmpty(feeDesc.getText())) {
+                    toast("请填写费用说明");
+                    return;
+                }
+                Intent demandIntent = new Intent();
+                demandIntent.putExtra("money", provisionMoney.getText().toString().trim());
+                demandIntent.putExtra("used", feeDesc.getText().toString().trim());
+                setResult(Constants.COST_OF_PROVISION, demandIntent);
                 finish();
                 break;
         }

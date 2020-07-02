@@ -40,9 +40,21 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
                                String followState, String introduceObj);
 
     /**
-     * 请求客户列表
+     * 客户列表
+     *
+     * @param companyName 公司名称
+     * @param headMan     负责人
+     * @param references  介绍人
+     * @param state       跟进状态
+     * @param origin      客户来源
+     * @param province    省
+     * @param city        市
+     * @param area        区
+     * @param sorting     排序方式
+     * @param page        页码
      */
-    void requestALlCustomData(int page);
+    void requestALlCustomData(String companyName, String headMan, String references, String state,
+                              String origin, String province, String city, String area, String sorting, int page);
 
     /**
      * 客户列表 -- condition
@@ -55,9 +67,22 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     void requestStateCondition();
 
     /**
-     * 客户列表 -- 区域 condition
+     * 客户列表 -- 省 condition
      */
-    void requestAreaCondition();
+    void requestProvinceCondition();
+
+    /**
+     * 客户列表 -- 通过 省 查询市
+     */
+    void requestCityByProvince(String province);
+
+    /**
+     * 通过省市查询区
+     *
+     * @param province
+     * @param city
+     */
+    void requestAreaByProvinceCity(String province, String city);
 
     /**
      * 查询状态

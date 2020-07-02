@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,11 @@ import java.util.List;
  */
 public final class ExaminationAdapter extends BaseAdapter {
 
-    List<Examination> mList;
+    private List<Examination> mList = new ArrayList<>();
 
     public void setList(List<Examination> list) {
-        mList = list;
+        mList.addAll(list);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -100,9 +102,10 @@ public final class ExaminationAdapter extends BaseAdapter {
         private TextView departPost;
     }
 
-    public interface OnClickClear{
+    public interface OnClickClear {
         /**
          * 删除
+         *
          * @param position
          */
         void onClickExaminationClear(int position);

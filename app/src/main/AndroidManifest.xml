@@ -223,7 +223,7 @@
 
         <!-- 订单编辑 OrderEditActivity-->
         <activity
-            android:name=".ui.activity.OrderActivity"
+            android:name=".ui.activity.OrderEditActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"

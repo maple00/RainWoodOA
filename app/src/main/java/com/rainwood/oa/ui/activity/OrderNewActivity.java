@@ -220,7 +220,7 @@ public final class OrderNewActivity extends BaseActivity implements IOrderCallba
             return;
         }
         toast("创建成功");
-        PageJumpUtil.orderNew2OrderEditPage(this, OrderActivity.class, mTempData);
+        PageJumpUtil.orderNew2OrderEditPage(this, OrderEditActivity.class, mTempData);
     }
 
     @Override
