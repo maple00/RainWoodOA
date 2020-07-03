@@ -45,7 +45,6 @@
                 android:textSize="13sp" />
 
             <TextView
-                android:id="@+id/tv_apply_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -102,7 +101,6 @@
                 android:textSize="13sp" />
 
             <TextView
-                android:id="@+id/tv_cost_team"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

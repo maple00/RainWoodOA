@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_search_glass_view" />
+    <include layout="@layout/include_search_title_view" />
 
     <LinearLayout
         android:layout_width="match_parent"

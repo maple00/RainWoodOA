@@ -118,10 +118,14 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
 
     /**
      * 收支曲线 -- 按月
+     * @param startMonth 开始月份
+     * @param endMonth 结束月份
      */
     @Override
-    public void requestBalanceByMonth() {
+    public void requestBalanceByMonth(String startMonth, String endMonth) {
         RequestParams params = new RequestParams();
+        params.add("startMoon", startMonth);
+        params.add("endMoon", endMonth);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitMoon", params, this);
     }
 

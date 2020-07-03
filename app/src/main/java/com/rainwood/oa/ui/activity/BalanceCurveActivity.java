@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -99,7 +100,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     @Override
     protected void loadData() {
         // 工资曲线，默认查询月
-        mFinancialPresenter.requestBalanceByMonth();
+        mFinancialPresenter.requestBalanceByMonth("", "");
     }
 
     @SingleClick
@@ -121,7 +122,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
                 //
                 SELECTED_MONTH = true;
                 SELECTED_YEAR = false;
-                mFinancialPresenter.requestBalanceByMonth();
+                mFinancialPresenter.requestBalanceByMonth("", "");
                 break;
             case R.id.tv_date:
                 // 默认选择月
@@ -129,14 +130,15 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
                         .setTitle(null)
                         .setConfirm(getString(R.string.common_text_confirm))
                         .setCancel(getString(R.string.common_text_clear_screen))
-                        .setAutoDismiss(false)
+                        .setAutoDismiss(true)
                         .setCanceledOnTouchOutside(false)
                         .setIgnoreDay()
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                                 dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                mFinancialPresenter.requestBalanceByMonth(startTime, startTime);
                             }
 
                             @Override
@@ -181,11 +183,13 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
      * @param balanceYearMonth X轴数据
      * @param monthBalanceList Y轴数据
      */
+    @SuppressLint("SetTextI18n")
     private void setStaticsChart(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
         if (ListUtils.getSize(monthBalanceList) == 0) {
             mSalaryChart.setNoDataText("当前暂无收支数据");
             return;
         }
+        mTextDate.setText(balanceYearMonth.get(0) + "--" + balanceYearMonth.get(ListUtils.getSize(balanceYearMonth) - 1));
         List<ILineDataSet> lineDataSetList = new ArrayList<>();
         float yMinValues = initSalaryChartValues(balanceYearMonth);
         LogUtils.d("sxs", "--- Y轴的最小值 ---- " + yMinValues);

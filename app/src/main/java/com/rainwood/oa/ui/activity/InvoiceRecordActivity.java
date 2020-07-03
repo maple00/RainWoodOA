@@ -1,6 +1,9 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +46,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: sxs
@@ -58,6 +62,10 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private RelativeLayout pageTopSearch;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.rv_invoice_records)
     private RecyclerView invoiceRecordView;
@@ -116,6 +124,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private String mAllocated;
     private String mStartTime;
     private String mEndTime;
+    private String mKeyWord;
 
     @Override
     protected int getLayoutResId() {
@@ -250,20 +259,49 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 }
             }
         });
+        // 搜索条件监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+
+                } else {
+
+                }
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            // 选择员工
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            if (Constants.CUSTOM_ID == null) {
-                mRecordManagerPresenter.requestInvoiceRecords("", mStaffId, "", "", "", "", pageCount = 1);
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                if (Constants.CUSTOM_ID == null) {
+                    mRecordManagerPresenter.requestInvoiceRecords("", mStaffId, "", "", "", "", pageCount = 1);
+                }
+            }
+            // 搜索结果
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchTipsView.setText(mKeyWord);
+
             }
         }
     }
@@ -311,7 +349,12 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 }
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                toast("搜索 -- 暂无接口字段");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "invoiceRecord");
+                intent.putExtra("title", "开票记录");
+                intent.putExtra("tips", "请输入备注信息");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }

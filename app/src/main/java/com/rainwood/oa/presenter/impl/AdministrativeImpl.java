@@ -13,6 +13,7 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IAdministrativeCallbacks;
 
 import org.json.JSONException;
@@ -149,7 +150,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        //LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.body());
         if (!(result.code() == 200)) {
             mAdministrativeCallbacks.onError();
             return;

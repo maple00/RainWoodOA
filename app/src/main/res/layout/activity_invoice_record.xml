@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:ignore="SmallSp,DisableBaselineAlignment">
 
-    <include layout="@layout/include_search_glass_view" />
+    <include layout="@layout/include_search_title_view" />
 
     <include layout="@layout/include_title_bar" />
 

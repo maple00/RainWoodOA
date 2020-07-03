@@ -94,7 +94,6 @@
             android:background="@drawable/bg_ripple">
 
             <ImageView
-                android:id="@+id/ib_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
@@ -135,7 +134,6 @@
 
         <!-- 日历表-->
         <com.necer.calendar.Miui10Calendar
-            android:id="@+id/mc10_calendar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/shape_white_bottom_8dp"
@@ -213,9 +211,9 @@
             app:selected_text_color="@color/white"
             app:selected_theme_color="@color/colorPrimary"
             app:week_background="#fff"
-            app:week_start_with="sun"
+            app:week_start_with="mon"
             app:week_text_color="@color/labelColor"
-            app:week_view="com.rainwood.oa.ui.calendar.custom.CustomWeekView"
+            app:week_view="com.rainwood.oa.ui.calendar.custom.CustomWeekBar"
             app:week_view_scrollable="true"
             app:year_view="com.rainwood.oa.ui.calendar.custom.CustomYearView"
             app:year_view_day_text_color="@color/fontColor"

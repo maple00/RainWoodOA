@@ -92,6 +92,8 @@ public final class Constants {
     public static final int FOLLOW_OF_RECORDS = 0x1004;
     // 选择附件
     public static final int FILE_SELECT_CODE = 0x1005;
+    // 职位搜索
+    public static final int PAGE_SEARCH_CODE = 0x1006;
 
     /**
      * IMEI

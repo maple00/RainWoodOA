@@ -232,10 +232,11 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     }
                     break;
                 case "补卡单":
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "补卡记录", "补卡记录"));
+                    break;
+                case "补卡记录":
                     if ("myworkSignAdd".equals(getItem(position).getMenu())) {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), MineReissueCardActivity.class, "我的补卡记录", "补卡记录"));
-                    } else {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "补卡记录", "补卡记录"));
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), MineReissueCardActivity.class, "我的补卡记录", "myworkSignAdd"));
                     }
                     break;
                 case "回款记录":

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription" >
+
+    <include layout="@layout/include_title_bar_none_menu" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/tv_leave_type"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/colorMiddle"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_leave_type_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/text_choose_please"
+            android:textColor="@color/fontColor"
+            android:textColorHint="@color/labelColor2"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_right_arrow" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/colorMiddle"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_start_time_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/text_choose_please"
+            android:textColor="@color/fontColor"
+            android:textColorHint="@color/labelColor2"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_right_arrow" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/tv_end_time"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/colorMiddle"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_end_time_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/text_choose_please"
+            android:textColor="@color/fontColor"
+            android:textColorHint="@color/labelColor2"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_right_arrow" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/tv_leave_reason"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/colorMiddle"
+            android:textSize="15sp" />
+
+        <com.rainwood.tools.wheel.view.ClearEditText
+            android:id="@+id/et_leave_reason"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_leave_reason"
+            android:hint="@string/custom_input_please"
+            android:minLines="1"
+            android:padding="0dp"
+            android:textColor="@color/fontColor"
+            android:textColorHint="@color/labelColor2"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_commit"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/text_commit" />
+
+</LinearLayout>

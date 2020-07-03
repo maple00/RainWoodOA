@@ -13,6 +13,7 @@ import com.rainwood.oa.model.domain.MineInvoice;
 import com.rainwood.oa.model.domain.MineRecordTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.MineReimbursement;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.TeamFunds;
 
 import java.util.List;
@@ -120,4 +121,11 @@ public interface IMineCallbacks extends IBaseCallback {
      * @param departList
      */
     default void getDepartListData(List<Depart> departList){}
+
+    /**
+     * 我的请假记录 -- condition
+     * @param stateList
+     * @param leaveTypeList
+     */
+    default void getMineLeaveRecords(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList){}
 }

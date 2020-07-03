@@ -298,9 +298,9 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      * @param s             value
      */
     public void setRequiredValue(TextView requestedText, String s) {
-        requestedText.setText(Html.fromHtml("<font color=" + this.getColor(R.color.colorMiddle)
+        requestedText.setText(Html.fromHtml("<font color=" + getColor(R.color.colorMiddle)
                 + " size=" + FontSwitchUtil.dip2px(this, 16f) + ">" + s + "</font>" +
-                "<font color=" + this.getColor(R.color.red05) + " size= "
+                "<font color=" + getColor(R.color.red05) + " size= "
                 + FontSwitchUtil.dip2px(this, 13f) + ">*</font>"));
     }
 

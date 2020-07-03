@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.CustomStaff;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseAdapter;
@@ -49,7 +50,7 @@ public final class BottomCustomDialog {
         private final TextView mTitle;
         private final TextView mTips;
 
-        private List<CustomStaff> mData;
+        private List<SelectedItem> mData;
 
         public Builder(Context context) {
             super(context);
@@ -173,10 +174,10 @@ public final class BottomCustomDialog {
                 dismiss();
             }
 
-            for (CustomStaff selectedItem : mData) {
-                selectedItem.setSelected(false);
+            for (SelectedItem selectedItem : mData) {
+                selectedItem.setHasSelected(false);
             }
-            mData.get(position).setSelected(true);
+            mData.get(position).setHasSelected(true);
             tempPos = position;
             mAdapter.notifyDataSetChanged();
         }

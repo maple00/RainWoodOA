@@ -15,6 +15,7 @@ import com.rainwood.oa.model.domain.MineInvoice;
 import com.rainwood.oa.model.domain.MineRecordTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.MineReimbursement;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.TeamFunds;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -120,13 +121,17 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     /**
      * 我的补卡记录
      *
-     * @param state 状态
+     * @param state     状态
+     * @param startTime
+     * @param endTime
      */
     @Override
-    public void requestMineReissueCards(String state) {
+    public void requestMineReissueCards(String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("workFlow", state);
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workSignAdd", params, this);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workSignAdd&page=" + page, params, this);
     }
 
     /**
@@ -151,11 +156,27 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
 
     /**
      * 我的请假记录
+     *
+     * @param state     状态
+     * @param type      类型
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param page      页码
      */
     @Override
-    public void requestAskLeaveRecords() {
+    public void requestAskLeaveRecords(String state, String type, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=work", params, this);
+        params.add("workFlow", state);
+        params.add("type", type);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=work&page=" + page, params, this);
+    }
+
+    @Override
+    public void requestMineLeaveCondition() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=work&fun=search", params, this);
     }
 
     /**
@@ -224,6 +245,24 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     public void requestLogout() {
         RequestParams params = new RequestParams();
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=loginOut", params, this);
+    }
+
+    /**
+     * 请假申请
+     * @param leaveType 请假类型
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param leaveReason 请假事由
+     */
+    @Override
+    public void createMineLeaveRecord(String id, String leaveType, String startTime, String endTime, String leaveReason) {
+        RequestParams params = new RequestParams();
+        params.add("id", id);
+        params.add("type", leaveType);
+        params.add("startTime", startTime);
+        params.add("endTime", endTime);
+        params.add("text", leaveReason);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workHolidayEdit", params, this);
     }
 
     @Override
@@ -317,7 +356,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             }
         }
         // 我的补卡记录
-        else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=workSignAdd")) {
+        else if (result.url().contains("cla=my&fun=workSignAdd&page=")) {
             try {
                 List<MineRecords> reissueList = JsonParser.parseJSONArray(MineRecords.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("add"));
@@ -337,7 +376,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             }
         }
         // 请假记录
-        else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=work")) {
+        else if (result.url().contains(Constants.BASE_URL + "cla=my&fun=work&page=")) {
             try {
                 List<MineRecords> recordsList = JsonParser.parseJSONArray(MineRecords.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("work"));
@@ -346,6 +385,20 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
                 e.printStackTrace();
             }
 
+        }
+        // 请假记录 -- condition
+        else if (result.url().contains("cla=work&fun=search")) {
+            try {
+                List<SelectedItem> stateList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("workFlow"));
+                List<SelectedItem> leaveTypeList = JsonParser.parseJSONArray(SelectedItem.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
+                                result.body()).getString("search")).getString("type"));
+                mMineCallbacks.getMineLeaveRecords(stateList, leaveTypeList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // 加班记录
         else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=workAdd")) {
@@ -431,7 +484,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             }
         }
         // 部门职位列表
-        else if (result.url().contains("cla=department&fun=home")){
+        else if (result.url().contains("cla=department&fun=home")) {
             try {
                 List<Depart> departList = JsonParser.parseJSONArray(Depart.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("department"));

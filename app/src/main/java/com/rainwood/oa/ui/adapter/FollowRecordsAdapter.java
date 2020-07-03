@@ -20,6 +20,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.widget.ExpandTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,16 +30,24 @@ import java.util.List;
  */
 public final class FollowRecordsAdapter extends RecyclerView.Adapter<FollowRecordsAdapter.ViewHolder> {
 
-    private List<KnowledgeFollowRecord> mRecordList;
+    private List<KnowledgeFollowRecord> mRecordList = new ArrayList<>();
     private Context mContext;
     private int default_width;
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setDefault_width(int default_width) {
         this.default_width = default_width;
     }
 
     public void setRecordList(List<KnowledgeFollowRecord> recordList) {
-        mRecordList = recordList;
+        if (loaded) {
+            mRecordList.clear();
+        }
+        mRecordList.addAll(recordList);
         notifyDataSetChanged();
     }
 

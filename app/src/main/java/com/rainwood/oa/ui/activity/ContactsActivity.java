@@ -84,6 +84,7 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
             intent.putExtra("staff", contact.getName());
             intent.putExtra("staffId", contact.getStid());
             intent.putExtra("position", contact.getJob());
+            intent.putExtra("headPhoto", contact.getIco());
             setResult(Constants.CHOOSE_STAFF_REQUEST_SIZE, intent);
             finish();
         });

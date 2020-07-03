@@ -44,6 +44,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -90,7 +91,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     private TextView mTextConfirm;
     private int tempPos = -1;
     private List<ManagerMain> mBalanceTypeList;
-    private int pageCount = 0;
+    private int pageCount = 1;
     private String mSelectedType;
     private String mStaffId;
     private String mOrigin;
@@ -129,7 +130,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     protected void loadData() {
         // list
         mFinancialPresenter.requestBalanceRecords("", "", "", "",
-                "", "", pageCount = 0);
+                "", "", pageCount = 1);
         // condition
         mFinancialPresenter.requestBalanceCondition();
     }
@@ -204,15 +205,26 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            // 部门员工
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mFinancialPresenter.requestBalanceRecords(mStaffId, "", "", "",
-                    "", "", pageCount = 0);
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                mFinancialPresenter.requestBalanceRecords(mStaffId, "", "", "",
+                        "", "", pageCount = 1);
+            }
+            // 记录搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                String keyWord = data.getStringExtra("keyWord");
+                LogUtils.d("sxs", "---- keyWord -- " + keyWord);
+                mFinancialPresenter.requestBalanceRecords("", "", "", "",
+                        "", keyWord, pageCount = 1);
+            }
         }
+
     }
 
     @SingleClick
@@ -223,15 +235,23 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "balanceRecord");
+                intent.putExtra("title", "收支记录");
+                intent.putExtra("tips", "请输入备注信息");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }
 
     @Override
     public void getBalanceRecords(List<BalanceRecord> balanceRecordList) {
-        mBalanceRecordAdapter.setLoaded(pageCount == 0);
-        if (pageCount != 0) {
+        if (ListUtils.getSize(balanceRecordList) == 0) {
+            toast("收支记录为空");
+            return;
+        }
+        mBalanceRecordAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
             pageRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(balanceRecordList) + "条数据");
         }
@@ -282,7 +302,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
             // TODO: 查询来源
             mOrigin = item.getName();
             mFinancialPresenter.requestBalanceRecords("", mOrigin, "", "",
-                    "", "", pageCount = 0);
+                    "", "", pageCount = 1);
         });
     }
 
@@ -326,7 +346,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
             mStatusPopWindow.dismiss();
             // TODO: 清空筛选
             mFinancialPresenter.requestBalanceRecords("", "", "", "",
-                    "", "", pageCount = 0);
+                    "", "", pageCount = 1);
         });
         mTextConfirm.setOnClickListener(v -> {
             mSelectedType = "";
@@ -346,7 +366,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
             mStatusPopWindow.dismiss();
             // TODO: 查询分类列表
             mFinancialPresenter.requestBalanceRecords("", "", mSelectedType, "",
-                    "", "", pageCount = 0);
+                    "", "", pageCount = 1);
         });
     }
 

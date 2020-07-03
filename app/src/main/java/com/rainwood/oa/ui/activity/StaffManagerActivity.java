@@ -1,11 +1,17 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +31,7 @@ import com.rainwood.oa.ui.adapter.StaffRightAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -38,6 +45,8 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 
 import java.util.List;
 
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/22 10:35
@@ -48,10 +57,14 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         StaffRightAdapter.OnClickStaffRight {
 
     // action Bar
-    @ViewInject(value = R.id.rl_search_click)
+    @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.gti_default_sort)
     private GroupTextIcon defaultSort;
@@ -159,6 +172,58 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 queryScreenAllConditionPopDialog();
             }
         });
+        // UI变化监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    searchView.setVisibility(View.GONE);
+                    departPostView.setVisibility(View.VISIBLE);
+                    String postId = "";
+                    String tempPostId = "";
+                    for (StaffDepart staffDepart : mDepartList) {
+                        if (staffDepart.isSelected()) {
+                            for (StaffPost staffPost : staffDepart.getArray()) {
+                                if (staffPost.isSelected()){
+                                    postId = staffPost.getId();
+                                }
+                            }
+                            tempPostId = staffDepart.getArray().get(0).getId();
+                        }
+                    }
+                    if (!TextUtils.isEmpty(postId)) {
+                        mStaffPresenter.requestAllStaff(postId, "", "", "", "", "");
+                    }else {
+                        mStaffPresenter.requestAllStaff(tempPostId, "", "", "", "", "");
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            // 员工搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                String keyWord = data.getStringExtra("keyWord");
+                mStaffPresenter.requestAllStaff("", keyWord, "", "", "", "");
+                searchView.setVisibility(View.VISIBLE);
+                searchTipsView.setText(keyWord);
+                departPostView.setVisibility(View.GONE);
+            }
+        }
     }
 
     @SingleClick
@@ -169,7 +234,12 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 finish();
                 break;
             case R.id.iv_search:
-                PageJumpUtil.page2SearchView(this, SearchActivity.class, "员工管理", "staffManager", "请输入员工姓名");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "staffManager");
+                intent.putExtra("title", "员工管理");
+                intent.putExtra("tips", "请输入员工姓名");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                // PageJumpUtil.page2SearchView(this, SearchActivity.class, "员工管理", "staffManager", "请输入员工姓名");
                 break;
         }
     }
@@ -245,6 +315,10 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void getAllStaff(List<Staff> staffList) {
+        if (ListUtils.getSize(staffList) == 0) {
+            toast("抱歉，没有该员工");
+            return;
+        }
         mRightAdapter.setStaffList(staffList);
     }
 

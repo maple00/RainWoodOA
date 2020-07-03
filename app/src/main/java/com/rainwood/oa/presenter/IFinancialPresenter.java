@@ -71,8 +71,10 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
 
     /**
      * 请求收支曲线 -- 按月
+     * @param startMonth 开始月份
+     * @param endMonth 结束月份
      */
-    void requestBalanceByMonth();
+    void requestBalanceByMonth(String startMonth, String endMonth);
 
     /**
      * 请求收支曲线 -- 按年

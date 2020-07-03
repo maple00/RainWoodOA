@@ -38,12 +38,12 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     /**
      * 请求我的结算账户
      */
-    void requestSettlementAccount(String  type);
+    void requestSettlementAccount(String type);
 
     /**
      * 请求我的补卡记录
      */
-    void requestMineReissueCards(String state);
+    void requestMineReissueCards(String state, String startTime, String endTime, int page);
 
     /**
      * 我的补卡记录申请
@@ -57,8 +57,24 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
 
     /**
      * 请求我的请假列表
+     *
+     * @param state     状态
+     * @param type      类型
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param page      页码
      */
-    void requestAskLeaveRecords();
+    void requestAskLeaveRecords(String state, String type, String startTime, String endTime, int page);
+
+    /**
+     * 我的请假记录 -- condition
+     */
+    void requestMineLeaveCondition();
+
+    /**
+     * 提交请假申请
+     */
+
 
     /**
      * 请求我的加班列表
@@ -95,4 +111,13 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
      */
     void requestLogout();
 
+    /**
+     * 请假申请
+     *
+     * @param leaveType   请假类型
+     * @param startTime   开始时间
+     * @param endTime     结束时间
+     * @param leaveReason 请假事由
+     */
+    void createMineLeaveRecord(String id, String leaveType, String startTime, String endTime, String leaveReason);
 }

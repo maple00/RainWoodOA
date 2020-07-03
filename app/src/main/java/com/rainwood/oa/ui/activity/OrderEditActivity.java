@@ -1,8 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
 import android.view.View;
@@ -24,6 +22,7 @@ import com.rainwood.oa.ui.adapter.ExaminationAdapter;
 import com.rainwood.oa.ui.adapter.FollowAdapter;
 import com.rainwood.oa.ui.adapter.OrderAttachAdapter;
 import com.rainwood.oa.ui.adapter.ProvisionAdapter;
+import com.rainwood.oa.ui.dialog.MessageDialog;
 import com.rainwood.oa.ui.widget.GroupTextText;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.ListUtils;
@@ -33,6 +32,7 @@ import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +115,7 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
     private FollowAdapter mFollowAdapter;
     private ExaminationAdapter mExaminationAdapter;
 
-    private List<Provision> mProvisions;
+    private List<Provision> mProvisionList;
     private List<FollowRecord> mFollowRecordList;
     private List<Examination> mExaminationList;
 
@@ -150,7 +150,7 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
         followRecordListView.setAdapter(mFollowAdapter);
         examinationView.setAdapter(mExaminationAdapter);
 
-        mProvisions = new ArrayList<>();
+        mProvisionList = new ArrayList<>();
         mFollowRecordList = new ArrayList<>();
         mExaminationList = new ArrayList<>();
 
@@ -209,8 +209,9 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
                 String used = data.getStringExtra("used");
                 provision.setMoney(money);
                 provision.setUsed(used);
-                mProvisions.add(provision);
-                mProvisionAdapter.setList(mProvisions);
+                mProvisionList.add(provision);
+                mProvisionAdapter.setList(mProvisionList);
+                noneProvision.setVisibility(ListUtils.getSize(mProvisionList) == 0 ? View.VISIBLE : View.GONE);
             }
             // 新增跟进记录
             if (requestCode == FOLLOW_OF_RECORDS && resultCode == FOLLOW_OF_RECORDS) {
@@ -233,27 +234,24 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
                 String staff = data.getStringExtra("staff");
                 String staffId = data.getStringExtra("staffId");
                 String position = data.getStringExtra("position");
+                String headPhoto = data.getStringExtra("headPhoto");
                 examination.setName(staff);
+                examination.setHeadPhoto(headPhoto);
+                examination.setPost(position);
                 mExaminationList.add(examination);
                 mExaminationAdapter.setList(mExaminationList);
             }
             // 上传附件
             if (requestCode == FILE_SELECT_CODE && resultCode == FILE_SELECT_CODE) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    //高于API19版本
-                    String[] split = data.getData().getPath().split("\\:");
-                    String p = "";
-                    if (split.length >= 2) {
-                        p = Environment.getExternalStorageDirectory() + "/" + split[1];
-                        LogUtils.d("sxs --", p);
-                        boolean mainthread = Looper.getMainLooper() == Looper.myLooper();
-                        LogUtils.d("sxs", "mainthread + ");
-                        // new ReadFileTask().execute(p);
-                    }
-                } else {
-                    //低于API19版本
-                    Uri uri = data.getData();
-                    LogUtils.d("sxs", "文件路径" + uri.getPath());
+                //高于API19版本
+                String[] split = data.getData().getPath().split("\\:");
+                String p = "";
+                if (split.length >= 2) {
+                    p = Environment.getExternalStorageDirectory() + "/" + split[1];
+                    LogUtils.d("sxs --", p);
+                    boolean mainthread = Looper.getMainLooper() == Looper.myLooper();
+                    LogUtils.d("sxs", "mainthread " + mainthread);
+                    // new ReadFileTask().execute(p);
                 }
             }
         }
@@ -328,13 +326,28 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
     @Override
     public void onClickProvisionWaste(int position) {
         // 费用计提删除
-        toast("删除费用计提");
+        new MessageDialog.Builder(this)
+                .setTitle("删除费用计提")
+                .setMessage("是否确定删除改计提记录？")
+                .setShowConfirm(false)
+                .setShowImageClose(false)
+                .setListener(new MessageDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        mProvisionList.remove(position);
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     @Override
     public void onClickExaminationClear(int position) {
         // 审批流程删除
-        toast("删除审批");
+        mExaminationList.remove(position);
     }
 
     @SuppressWarnings("all")
@@ -342,6 +355,7 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
     public void getAllExaminationData(Map examinationData) {
         // 得到所有的审批人
         List<Examination> examinationList = (List<Examination>) examinationData.get("examination");
+        mExaminationList.addAll(examinationList);
         noneApprover.setVisibility(ListUtils.getSize(examinationList) == 0 ? View.VISIBLE : View.GONE);
         LogUtils.d("sxs", "审批数据-----> " + examinationList);
         mExaminationAdapter.setList(examinationList);

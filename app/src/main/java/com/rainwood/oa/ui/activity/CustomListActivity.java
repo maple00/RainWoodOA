@@ -1,14 +1,17 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +46,8 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 
 import java.util.List;
 
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/18 11:31
@@ -55,6 +60,10 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.gti_status)
     private GroupTextIcon mStatus;
@@ -96,6 +105,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private TextView mAreaEt;
     private RecyclerView mScreenAllView;
     private List<CustomScreenAll> mCustomListConditionList;
+    private String mKeyWord;
 
     @Override
     protected int getLayoutResId() {
@@ -185,6 +195,41 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 }
             }
         });
+        // 搜索内容监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    searchView.setVisibility(View.GONE);
+                    mKeyWord = "";
+                } else {
+                    searchView.setVisibility(View.VISIBLE);
+                    mCustomListPresenter.requestALlCustomData(mKeyWord, "", "", "",
+                            "", "", "", "", "", pageCount = 1);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchTipsView.setText(mKeyWord);
+            }
+        }
     }
 
     @SingleClick
@@ -195,7 +240,11 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "staffManager");
+                intent.putExtra("title", "客户列表");
+                intent.putExtra("tips", "请输入公司名称");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }
@@ -309,7 +358,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             item.setHasSelected(true);
             mStatusPopWindow.dismiss();
             // TODO: 状态查询
-            mCustomListPresenter.requestALlCustomData("", "", "",
+            mCustomListPresenter.requestALlCustomData(mKeyWord, "", "",
                     ("全部".equals(item.getName()) ? "" : item.getName()),
                     "", "", "", "", "", pageCount = 1);
         });
@@ -467,7 +516,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 return;
             }
             //toast(mProvinceEt.getText() + "-" + mCityEt.getText() + "-" + mAreaEt.getText());
-            mCustomListPresenter.requestALlCustomData("", "", "", "",
+            mCustomListPresenter.requestALlCustomData(mKeyWord, "", "", "",
                     "", mProvinceEt.getText().toString().trim(), mCityEt.getText().toString().trim(),
                     mAreaEt.getHint().toString().trim(), "", pageCount = 1);
             areaPopWindow.dismiss();
@@ -511,7 +560,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             }
             screenAllPopWindow.dismiss();
             // TODO: 清空筛选
-            mCustomListPresenter.requestALlCustomData("", "", "", "",
+            mCustomListPresenter.requestALlCustomData(mKeyWord, "", "", "",
                     "", "", "", "", "", pageCount = 1);
         });
         mConfirmView.setOnClickListener(v -> {
@@ -541,7 +590,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             }
             screenAllPopWindow.dismiss();
             // TODO: 请求接口
-            mCustomListPresenter.requestALlCustomData("", headMan, introduceMan, "",
+            mCustomListPresenter.requestALlCustomData(mKeyWord, headMan, introduceMan, "",
                     origin, "", "", "", sorting, pageCount = 1);
         });
         // 设置数据

@@ -27,6 +27,7 @@ public final class ProvisionAdapter extends BaseAdapter {
     private List<Provision> mList = new ArrayList<>();
 
     public void setList(List<Provision> list) {
+        mList.clear();
         mList.addAll(list);
         notifyDataSetChanged();
     }
@@ -61,7 +62,10 @@ public final class ProvisionAdapter extends BaseAdapter {
         holder.money.setText("￥" + getItem(position).getMoney());
         holder.used.setText(getItem(position).getUsed());
         // 点击事件
-        holder.wasteClear.setOnClickListener(v -> mOnClickWaste.onClickProvisionWaste(position));
+        holder.wasteClear.setOnClickListener(v -> {
+            mOnClickWaste.onClickProvisionWaste(position);
+            notifyDataSetChanged();
+        });
         return convertView;
     }
 

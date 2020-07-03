@@ -1,12 +1,17 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +46,8 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/22 9:04
@@ -54,6 +61,10 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.divider)
     private View divider;
@@ -85,6 +96,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private TextView mTextConfirm;
     private CommonGridAdapter mGridAdapter;
     private List<SelectedItem> mSelectedList;
+    private String mKeyWord;
 
 
     @Override
@@ -157,7 +169,42 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 roleConditionPopDialog();
             }
         });
-        //
+        // UI样式变化监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    searchView.setVisibility(View.GONE);
+                    hideSoftKeyboard();
+                } else {
+                    searchView.setVisibility(View.VISIBLE);
+                    mAdministrativePresenter.requestPostListData(s.toString(), "", "");
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            // 职位搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchView.setVisibility(TextUtils.isEmpty(mKeyWord) ? View.GONE : View.VISIBLE);
+                searchTipsView.setText(mKeyWord);
+            }
+        }
     }
 
     @SingleClick
@@ -168,7 +215,12 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 finish();
                 break;
             case R.id.iv_search:
-                PageJumpUtil.page2SearchView(this, SearchActivity.class, "职位管理", "postManager", "请输入职位");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "postManager");
+                intent.putExtra("title", "职位管理");
+                intent.putExtra("tips", "请输入职位");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                // PageJumpUtil.page2SearchView(this, SearchActivity.class, "职位管理", "postManager", "请输入职位");
                 break;
         }
     }
@@ -245,7 +297,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             tempPos = -1;
             mStatusPopWindow.dismiss();
             // TODO: 清空筛选
-            mAdministrativePresenter.requestPostListData("", "", "");
+            mAdministrativePresenter.requestPostListData(mKeyWord, "", "");
         });
         mTextConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,7 +320,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 }
                 mStatusPopWindow.dismiss();
                 // TODO：带部门条件查询
-                mAdministrativePresenter.requestPostListData("", mDepartId, "");
+                mAdministrativePresenter.requestPostListData(mKeyWord, mDepartId, "");
                 mDepartId = "";
             }
         });
@@ -353,7 +405,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             item.setHasSelected(true);
             mStatusPopWindow.dismiss();
             // TODO: 通过角色查询职位
-            mAdministrativePresenter.requestPostListData("", "", item.getId());
+            mAdministrativePresenter.requestPostListData(mKeyWord, "", item.getId());
         });
     }
 

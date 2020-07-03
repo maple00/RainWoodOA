@@ -50,7 +50,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     @ViewInject(R.id.tv_date)
-    private TextView date;
+    private TextView mTextDate;
     @ViewInject(R.id.lc_staff_chart)
     private LineChart staffCurveView;
     @ViewInject(R.id.mlv_staff_list)
@@ -104,6 +104,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             staffCurveView.setNoDataText("当前暂无收支数据");
             return;
         }
+        mTextDate.setText(xValues.get(0) + "--" + xValues.get(ListUtils.getSize(xValues) - 1));
         List<ILineDataSet> lineDataSetList = new ArrayList<>();
         float yMinValues = initSalaryChartValues(xValues);
         LogUtils.d("sxs", "--- Y轴的最小值 ---- " + yMinValues);

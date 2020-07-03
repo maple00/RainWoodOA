@@ -1,9 +1,13 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +42,7 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -51,6 +56,10 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.gti_depart_staff)
     private GroupTextIcon departStaff;
@@ -73,6 +82,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     private int pageCount = 1;
     private String mStaffId;
     private String mTarget;
+    private String mKeyWord;
 
     @Override
     protected int getLayoutResId() {
@@ -143,18 +153,50 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, "", "", ++pageCount);
             }
         });
+        // 搜索条件监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mKeyWord = "";
+                    searchView.setVisibility(View.GONE);
+                    mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", "", pageCount = 1);
+                } else {
+                    searchView.setVisibility(View.VISIBLE);
+                    mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", s.toString(), pageCount = 1);
+                }
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            // 选择员工
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, mTarget, "", pageCount = 1);
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, mTarget, "", pageCount = 1);
+            }
+            // 搜索条件
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchTipsView.setText(mKeyWord);
+            }
         }
     }
 
@@ -166,16 +208,21 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "staffManager");
+                intent.putExtra("title", "跟进记录");
+                intent.putExtra("tips", "请输入跟进内容");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }
 
     @Override
     public void getKnowledgeFollowRecords(List<KnowledgeFollowRecord> recordList) {
+        pageRefresh.finishLoadmore();
+        mRecordsAdapter.setLoaded(pageCount == 1);
         if (ListUtils.getSize(recordList) == 0) {
             toast("当前记录为空");
-            return;
         }
         mRecordsAdapter.setRecordList(recordList);
     }

@@ -1,10 +1,14 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,6 +46,7 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -55,6 +60,10 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.cl_order_list_parent)
     private CoordinatorLayout orderListParent;
@@ -87,6 +96,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private String mOrderState;
     private String mOrderSorting;
     private String mStaffId;
+    private String mKeyWord;
 
 
     @Override
@@ -171,7 +181,31 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mOrderPresenter.requestOrderList("", mOrderState, mStaffId, mOrderSorting, ++pageCount);
+                mOrderPresenter.requestOrderList(mKeyWord, mOrderState, mStaffId, mOrderSorting, ++pageCount);
+            }
+        });
+        // 搜索关键字监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    searchView.setVisibility(View.GONE);
+                    mKeyWord = "";
+                    mOrderPresenter.requestOrderList("", "", "", "", pageCount = 1);
+                } else {
+                    searchView.setVisibility(View.VISIBLE);
+                    mOrderPresenter.requestOrderList(mKeyWord, "", "", "", pageCount = 1);
+                }
             }
         });
     }
@@ -179,13 +213,21 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            // 选择员工
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mOrderPresenter.requestOrderList("", "", mStaffId, "", pageCount);
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                mOrderPresenter.requestOrderList("", "", mStaffId, "", pageCount);
+            }
+            // 订单名称搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchTipsView.setText(mKeyWord);
+            }
         }
     }
 
@@ -197,7 +239,11 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "staffManager");
+                intent.putExtra("title", "订单列表");
+                intent.putExtra("tips", "请输入订单名称");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }
@@ -210,6 +256,9 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     public void getOrderList(List<Order> orderList) {
         LogUtils.d("sxs", "共-- " + ListUtils.getSize(orderList) + "-- 条数据");
+        if (ListUtils.getSize(orderList) == 0) {
+            toast("当前暂无订单数据");
+        }
         mOrderListAdapter.setLoaded(pageCount == 1);
         if (pageCount != 1) {
             pagerRefresh.finishLoadmore();
@@ -267,7 +316,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             // TODO: 查询订单状态列表
             mOrderState = item.getName();
             mStatusPopWindow.dismiss();
-            mOrderPresenter.requestOrderList("", mOrderState, "", "", pageCount = 1);
+            mOrderPresenter.requestOrderList(mKeyWord, mOrderState, "", "", pageCount = 1);
         });
     }
 
@@ -307,7 +356,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             mStatusPopWindow.dismiss();
             // TODO: 排序查询订单列表
             mOrderSorting = selectedItem.getName();
-            mOrderPresenter.requestOrderList("", "", "", mOrderSorting, pageCount = 1);
+            mOrderPresenter.requestOrderList(mKeyWord, "", "", mOrderSorting, pageCount = 1);
         });
         mDefaultSortAdapter.setItemList(mSortList);
     }

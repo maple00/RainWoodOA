@@ -27,6 +27,7 @@ public final class FollowAdapter extends BaseAdapter {
     private List<FollowRecord> mList = new ArrayList<>();
 
     public void setList(List<FollowRecord> list) {
+        mList.clear();
         mList.addAll(list);
         notifyDataSetChanged();
     }

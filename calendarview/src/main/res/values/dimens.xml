@@ -15,8 +15,6 @@
     <dimen name="N_checkedCircleRadius">49dp</dimen>
     <dimen name="N_checkedHollowCircleStroke">1dp</dimen>
     <dimen name="N_pointSize">5dp</dimen>
-    <dimen name="N_holidayCircleRadius">3dp</dimen>
-    <dimen name="N_holidayCircleSize">11dp</dimen>
 
 
 </resources>

@@ -112,7 +112,6 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
             if (selectedStatusFlag) {
                 // initial pop
                 initPopDialog();
-                showConditionFilter();
             }
         });
     }
@@ -150,7 +149,6 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
                 break;
         }
     }
-
 
     @Override
     public void getDepartListData(List<Depart> departList) {
@@ -210,14 +208,6 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
                     item.getName().equals("全部") ? "" : item.getName());
             mDepartTypePopWindow.dismiss();
         });
-    }
-
-    /**
-     * 筛选条件
-     */
-    private void showConditionFilter() {
-
-
     }
 
     @Override
