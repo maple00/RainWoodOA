@@ -16,6 +16,7 @@ import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.dialog.SelectorListDialog;
 import com.rainwood.oa.ui.dialog.TimerDialog;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -143,7 +144,8 @@ public final class AskLeaveActivity extends BaseActivity implements IMineCallbac
                 String endTime = mTextEndTime.getText().toString().trim();
                 String leaveReason = mEditLeaveReason.getText().toString().trim();
                 // TODO: 提交请假申请
-                mMinePresenter.createMineLeaveRecord("", leaveType, startTime, endTime, leaveReason);
+                String leaveId = RandomUtil.getItemID(20);
+                mMinePresenter.createMineLeaveRecord(leaveId, leaveType, startTime, endTime, leaveReason);
                 break;
         }
     }

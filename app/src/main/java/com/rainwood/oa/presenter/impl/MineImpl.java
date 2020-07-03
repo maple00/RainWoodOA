@@ -290,7 +290,6 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         try {
             String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
             if (!"success".equals(warn)) {
-                ToastUtils.show(warn);
                 mMineCallbacks.onError(warn);
                 return;
             }
