@@ -108,10 +108,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/custom_input_please"
-                    android:inputType="text"
+                    android:inputType="phone"
                     android:singleLine="true"
                     android:textSize="16sp"
-                    app:regexType="name" />
+                    app:regexType="mobile" />
 
             </LinearLayout>
 
@@ -168,10 +168,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/custom_input_please"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:singleLine="true"
                     android:textSize="16sp"
-                    app:regexType="name" />
+                    app:regexType="count" />
 
             </LinearLayout>
 

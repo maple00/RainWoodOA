@@ -50,7 +50,7 @@ public final class BottomCustomDialog {
         private final TextView mTitle;
         private final TextView mTips;
 
-        private List<SelectedItem> mData;
+        private List<CustomStaff> mData;
 
         public Builder(Context context) {
             super(context);
@@ -174,10 +174,10 @@ public final class BottomCustomDialog {
                 dismiss();
             }
 
-            for (SelectedItem selectedItem : mData) {
-                selectedItem.setHasSelected(false);
+            for (CustomStaff selectedItem : mData) {
+                selectedItem.setSelected(false);
             }
-            mData.get(position).setHasSelected(true);
+            mData.get(position).setSelected(true);
             tempPos = position;
             mAdapter.notifyDataSetChanged();
         }

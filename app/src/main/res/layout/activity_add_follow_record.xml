@@ -24,6 +24,7 @@
             android:orientation="vertical">
 
             <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_labels"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

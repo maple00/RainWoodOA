@@ -49,9 +49,6 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
 
     private ILoginAboutPresenter mLoginAboutPresenter;
 
-    // 验证码随机数
-    private int[] mCheckNum;
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_login;
@@ -72,8 +69,9 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
      * 初始化验证码
      */
     private void initVerification() {
-        mCheckNum = CheckUtil.getCheckNum();
-        mVerificationView.setCheckNum(mCheckNum);
+        // 验证码随机数
+        int[] checkNum = CheckUtil.getCheckNum();
+        mVerificationView.setCheckNum(checkNum);
         mVerificationView.invaliChenkNum();
     }
 

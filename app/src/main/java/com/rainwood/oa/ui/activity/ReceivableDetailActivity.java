@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.ReceivableRecord;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.widget.GroupTextText;
 import com.rainwood.oa.utils.PresenterManager;
@@ -16,7 +17,6 @@ import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * @Author: sxs
@@ -41,6 +41,7 @@ public final class ReceivableDetailActivity extends BaseActivity implements IRec
     private ImageView payVoucher;
 
     private IRecordManagerPresenter mRecordManagerPresenter;
+    private ReceivableRecord mReceivableRecord;
 
     @Override
     protected int getLayoutResId() {
@@ -68,17 +69,21 @@ public final class ReceivableDetailActivity extends BaseActivity implements IRec
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
-    public void onClick(View view){
-        switch (view.getId()){
+    @OnClick({R.id.iv_page_back, R.id.iv_pay_voucher})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_pay_voucher:
+                ImageActivity.start(this, mReceivableRecord.getIco());
                 break;
         }
     }
 
     @Override
     public void getCustomReceivableRecordDetail(ReceivableRecord receivableRecord) {
+        mReceivableRecord = receivableRecord;
         // 回款信息详情
         getMoney.setText(receivableRecord.getMoney());
         note.setValue(receivableRecord.getText());

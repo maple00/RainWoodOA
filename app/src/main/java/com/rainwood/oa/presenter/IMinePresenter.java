@@ -72,14 +72,10 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     void requestMineLeaveCondition();
 
     /**
-     * 提交请假申请
-     */
-
-
-    /**
      * 请求我的加班列表
      */
     void requestMineOverTimeRecords();
+
 
     /**
      * 请求我的外出记录列表
@@ -120,4 +116,22 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
      * @param leaveReason 请假事由
      */
     void createMineLeaveRecord(String id, String leaveType, String startTime, String endTime, String leaveReason);
+
+    /**
+     * 加班申请
+     * @param overtimeId 随机id
+     * @param startTimeStr 开始时间
+     * @param endTimeStr 结束时间
+     * @param reasonStr 加班事由
+     */
+    void createMineOvertimeApply(String overtimeId, String startTimeStr, String endTimeStr, String reasonStr);
+
+    /**
+     * 外出申请
+     * @param recordId
+     * @param startTimeStr
+     * @param endTimeStr
+     * @param reasonStr
+     */
+    void createMineLeaveOutApply(String recordId, String startTimeStr, String endTimeStr, String reasonStr);
 }

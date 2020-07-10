@@ -161,40 +161,40 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
         // 办公文件 -- condition
         else if (result.url().contains("cla=fileWork&fun=search")) {
             try {
-                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("type"));
-                JSONArray formatArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> formatArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("format"));
-                JSONArray secretArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> secretArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("secret"));
-                JSONArray sortArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> sortArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("orderBy"));
                 List<SelectedItem> typeList = new ArrayList<>();
                 List<SelectedItem> formatList = new ArrayList<>();
                 List<SelectedItem> secretList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();
-                for (int i = 0; i < typeArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(typeArray.getString(i));
+                    item.setName(typeArray.get(i));
                     typeList.add(item);
                 }
-                for (int i = 0; i < formatArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(formatArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(formatArray.getString(i));
+                    item.setName(formatArray.get(i));
                     formatList.add(item);
                 }
-                for (int i = 0; i < secretArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(secretArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(secretArray.getString(i));
+                    item.setName(secretArray.get(i));
                     secretList.add(item);
                 }
-                for (int i = 0; i < sortArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(sortArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(sortArray.getString(i));
+                    item.setName(sortArray.get(i));
                     sortList.add(item);
                 }
                 mAttachmentCallback.getOfficeCondition(typeList, formatList, secretList, sortList);
@@ -215,31 +215,31 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
         // 知识管理 -- 附件管理condition
         else if (result.url().contains("cla=file&fun=search")) {
             try {
-                JSONArray targetArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> targetArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("target"));
-                JSONArray secretArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> secretArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("secret"));
-                JSONArray sortArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> sortArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("orderBy"));
                 List<SelectedItem> targetList = new ArrayList<>();
                 List<SelectedItem> secretList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();
-                for (int i = 0; i < targetArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(targetArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(targetArray.getString(i));
+                    item.setName(targetArray.get(i));
                     targetList.add(item);
                 }
-                for (int i = 0; i < secretArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(secretArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(secretArray.getString(i));
+                    item.setName(secretArray.get(i));
                     secretList.add(item);
                 }
-                for (int i = 0; i < sortArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(sortArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(sortArray.getString(i));
+                    item.setName(sortArray.get(i));
                     sortList.add(item);
                 }
                 mAttachmentCallback.getAttachCondition(targetList, secretList, sortList);

@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,18 @@ import java.util.List;
  */
 public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.ViewHolder> {
 
-    private List<Article> mHelperList;
+    private List<Article> mHelperList = new ArrayList<>();
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setHelperList(List<Article> helperList) {
-        mHelperList = helperList;
+        if (loaded){
+            mHelperList.clear();
+        }
+        mHelperList.addAll(helperList);
         notifyDataSetChanged();
     }
 

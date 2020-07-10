@@ -143,4 +143,18 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      */
     void requestCustomInvoice(String customId);
 
+    /**
+     * 请求跟进记录的标签
+     */
+    void requestFollowLabel();
+
+    /**
+     * 新增跟进记录
+     * @param recordId
+     * @param target
+     * @param targetId
+     * @param content
+     * @param time
+     */
+    void createFollowRecord(String recordId, String target, String targetId, String content, String time);
 }

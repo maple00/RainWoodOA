@@ -1,6 +1,7 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.AttendanceData;
+import com.rainwood.oa.model.domain.CalendarBody;
 import com.rainwood.oa.model.domain.Month;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -10,9 +11,9 @@ import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.StringUtil;
 import com.rainwood.oa.view.ICalendarCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -102,23 +103,17 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
         // 当前月份的工作日
         if (result.url().contains("cla=workDay&fun=home")) {
             try {
-                JSONArray jsonArray = JsonParser.parseJSONArrayString(
-                        JsonParser.parseJSONObjectString(result.body()).getString("day"));
                 // json数据处理
-                List<String> dayList = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    dayList.add((Integer.parseInt(jsonArray.getString(i)) < 10
-                            ? "0" + jsonArray.getString(i)
-                            : jsonArray.getString(i)));
-                }
+                CalendarBody calendarBody = JsonParser.parseJSONObject(CalendarBody.class,
+                        JsonParser.parseJSONObjectString(result.body()));
                 String dayNote = JsonParser.parseJSONObjectString(result.body()).getString("text");
-                mCalendarCallbacks.getWorkDayData(dayList, dayNote);
+                mCalendarCallbacks.getWorkDayData(calendarBody, dayNote);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         // 考勤
-        else if (result.url().contains("cla=workSign&fun=home")){
+        else if (result.url().contains("cla=workSign&fun=home")) {
             AttendanceData attendanceData = JsonParser.parseJSONObject(AttendanceData.class, result.body());
             mCalendarCallbacks.getAttendanceData(attendanceData);
         }

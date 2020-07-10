@@ -42,7 +42,6 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.List;
@@ -67,8 +66,8 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @ViewInject(R.id.tv_search_tips)
     private TextView searchTipsView;
     // content
-  //  @ViewInject(R.id.tv_search)
-   // private TextView searchView;
+    //  @ViewInject(R.id.tv_search)
+    // private TextView searchView;
     @ViewInject(R.id.tv_query_all)
     private TextView mTextQueryAll;
     @ViewInject(R.id.line_all)
@@ -247,16 +246,12 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
 
         // 管理费用报销查看详情
         mReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
-                PageJumpUtil.receivable2Detail(ReimbursementActivity.this, CostDetailActivity.class, reimbursement.getStaffName()));
+                PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this, CostDetailActivity.class, reimbursement.getStaffName()));
         // 我的费用报销查看详情
-        mMineReimbursementAdapter.setOnClickReimburse(new MineReimbursementAdapter.OnClickReimburse() {
-            @Override
-            public void onClickItem(MineReimbursement reimbursement, int position) {
-                toast("查看详情");
-            }
-        });
+        mMineReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
+                PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this, CostDetailActivity.class, reimbursement.getId()));
 
-        // 加载更过
+        // 加载更多
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
@@ -289,6 +284,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s)) {
                     searchTopView.setVisibility(View.GONE);
+                    hideSoftKeyboard();
                     mKeyWord = "";
                     mFinancialPresenter.requestReimburseData("", "", "", "",
                             "", "", "", pageCount = 1);

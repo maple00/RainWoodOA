@@ -55,6 +55,8 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  */
 public final class InvoiceRecordActivity extends BaseActivity implements IRecordCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
@@ -315,7 +317,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 finish();
                 break;
             case R.id.iv_menu:
-                toast("menu");
+                showQuickFunction(this, parentPager);
                 break;
             case R.id.btn_apply_open:
                 //toast("申请开通");

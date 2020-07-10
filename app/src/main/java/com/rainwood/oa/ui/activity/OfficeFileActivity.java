@@ -1,11 +1,13 @@
 package com.rainwood.oa.ui.activity;
 
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +36,8 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 
 import java.util.List;
+
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: sxs
@@ -83,6 +87,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     private String mFormat;
     private String mSecret;
     private String mSorting;
+    private String mKeyWord;
 
     @Override
     protected int getLayoutResId() {
@@ -171,9 +176,20 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mAttachmentPresenter.requestOfficeFileData("", mClassify, mFormat, mSecret, mSorting, ++pageCount);
+                mAttachmentPresenter.requestOfficeFileData(mKeyWord, mClassify, mFormat, mSecret, mSorting, ++pageCount);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                mAttachmentPresenter.requestOfficeFileData(mKeyWord, mClassify, mFormat, mSecret, mSorting, pageCount=1);
+            }
+        }
     }
 
     @SingleClick
@@ -184,7 +200,11 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "officeFile");
+                intent.putExtra("title", "办公文件");
+                intent.putExtra("tips", "请输入文件名称");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }

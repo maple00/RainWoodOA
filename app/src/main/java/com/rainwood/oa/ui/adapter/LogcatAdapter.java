@@ -15,6 +15,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +25,18 @@ import java.util.List;
  */
 public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
-    private List<Logcat> mLogcatList;
+    private List<Logcat> mLogcatList = new ArrayList<>();
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setLogcatList(List<Logcat> logcatList) {
-        mLogcatList = logcatList;
+        if (loaded) {
+            mLogcatList.clear();
+        }
+        mLogcatList.addAll(logcatList);
         notifyDataSetChanged();
     }
 

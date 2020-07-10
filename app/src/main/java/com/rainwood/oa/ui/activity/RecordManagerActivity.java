@@ -62,6 +62,8 @@ import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
  */
 public final class RecordManagerActivity extends BaseActivity implements IRecordCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
@@ -82,6 +84,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     private GroupTextIcon periodTime;
     @ViewInject(R.id.divider)
     private View divider;
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout mLoading;
 
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
@@ -205,14 +209,13 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         if (title.contains("加班")) {
             // 客户管理--加班详情
             mOvertimeAdapter.setItemOvertime(overtimeRecord -> {
-                toast("点击了---" + overtimeRecord.getStaffName());
                 startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
             });
             // 行政人事 -- 加班详情
             mAdminOvertimeAdapter.setItemOvertime(overtimeRecord -> {
                 //startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情"));
                 PageJumpUtil.overTimeList2Detail(RecordManagerActivity.this,
-                        RecordDetailActivity.class, "加班详情", overtimeRecord.getId());
+                        RecordDetailActivity.class, "加班详情", overtimeRecord.getId(), "overtime");
             });
             topStatus.setOnItemClick(text -> {
                 if (ListUtils.getSize(mOverTimeStateList) == 0) {
@@ -267,7 +270,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             // 行政人事外出记录
             mAdminLeaveOutAdapter.setItemGoOut(leaveOutRecord ->
                     PageJumpUtil.askOutList2Detail(RecordManagerActivity.this,
-                            RecordDetailActivity.class, "外出详情", leaveOutRecord.getId()));
+                            RecordDetailActivity.class, "外出详情", leaveOutRecord.getId(), "leaveOut"));
             topStatus.setOnItemClick(text -> {
                 if (ListUtils.getSize(mLeaveOutList) == 0) {
                     toast("无状态可选择");
@@ -431,33 +434,37 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 finish();
                 break;
             case R.id.iv_menu:
-                toast("menu");
+                showQuickFunction(this, parentPager);
                 break;
         }
     }
 
     @Override
     public void getOvertimeRecords(List<OvertimeRecord> overtimeRecords) {
+        mLoading.setVisibility(View.GONE);
         // 客户管理---加班记录
         mOvertimeAdapter.setOvertimeRecordList(overtimeRecords);
     }
 
     @Override
     public void getGoOutRecords(List<LeaveOutRecord> leaveOutList) {
+        mLoading.setVisibility(View.GONE);
         // 客户管理--- 外出记录
         mOutAdapter.setLeaveOutRecordList(leaveOutList);
     }
 
     @Override
     public void getCustomReceivableRecords(List<ReceivableRecord> receivableRecordList) {
+        mLoading.setVisibility(View.GONE);
         //  客户管理---回款记录
         mReceivableRecordAdapter.setRecordList(receivableRecordList);
     }
 
     @Override
     public void getAdminOverTimeRecords(List<AdminOverTime> adminOverTimeList) {
-        pagerRefresh.finishLoadmore();
+        mLoading.setVisibility(View.GONE);
         // 行政人事-- 加班记录
+        pagerRefresh.finishLoadmore();
         mAdminOvertimeAdapter.setLoaded(pageCount == 0);
         if (pageCount != 0) {
             toast("为您加载了" + ListUtils.getSize(adminOverTimeList) + "条数据");
@@ -467,12 +474,14 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     public void getAdminOverTimeState(List<SelectedItem> overTimeStateList) {
+        mLoading.setVisibility(View.GONE);
         // 行政人事 -- 加班记录condition
         mOverTimeStateList = overTimeStateList;
     }
 
     @Override
     public void getLeaveRecords(List<LeaveRecord> leaveRecordList) {
+        mLoading.setVisibility(View.GONE);
         //  行政人事---请假记录
         pagerRefresh.finishLoadmore();
         // 行政人事-- 加班记录
@@ -485,6 +494,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     public void getLeaveConditionData(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList) {
+        mLoading.setVisibility(View.GONE);
         // 行政人事 -- 请假记录condition
         mLeaveStateList = stateList;
         mLeaveTypeList = leaveTypeList;
@@ -492,6 +502,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     public void getAdminLeaveOutRecords(List<AdminLeaveOut> adminLeaveOutList) {
+        mLoading.setVisibility(View.GONE);
         // 行政人事---外出记录
         pagerRefresh.finishLoadmore();
         mAdminLeaveOutAdapter.setLoaded(pageCount == 0);
@@ -503,11 +514,13 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     public void getLeaveOutCondition(List<SelectedItem> leaveOutList) {
+        mLoading.setVisibility(View.GONE);
         mLeaveOutList = leaveOutList;
     }
 
     @Override
     public void getReissueRecords(List<CardRecord> cardRecordList) {
+        mLoading.setVisibility(View.GONE);
         //  行政人事---补卡记录
         pagerRefresh.finishLoadmore();
         mCardRecordAdapter.setLoaded(pageCount == 0);
@@ -519,6 +532,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
 
     @Override
     public void getReissueCondition(List<SelectedItem> reissueStateList) {
+        mLoading.setVisibility(View.GONE);
         //  行政人事---补卡记录condition
         mReissueStateList = reissueStateList;
     }

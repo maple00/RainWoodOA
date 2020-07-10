@@ -1,5 +1,6 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * @Date: 2020/5/21 17:11
  * @Desc: 部门
  */
-public final class Depart {
+public final class Depart implements Serializable {
 
     /**
      * 部门名称

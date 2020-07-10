@@ -20,7 +20,6 @@ import com.rainwood.oa.model.domain.CustomDetail;
 import com.rainwood.oa.model.domain.CustomStaff;
 import com.rainwood.oa.model.domain.CustomValues;
 import com.rainwood.oa.model.domain.IconAndFont;
-import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AssociatesAdapter;

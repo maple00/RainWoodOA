@@ -117,7 +117,6 @@ public final class AskLeaveActivity extends BaseActivity implements IMineCallbac
                 break;
             case R.id.tv_start_time_text:
                 setTextTime(mTextStartTime);
-
                 break;
             case R.id.tv_end_time_text:
                 setTextTime(mTextEndTime);

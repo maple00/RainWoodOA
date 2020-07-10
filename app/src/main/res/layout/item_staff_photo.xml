@@ -5,7 +5,7 @@
     android:layout_width="110dp"
     android:layout_height="110dp"
     android:scaleType="fitXY"
-    android:src="@mipmap/ic_logo_mdpi"
+    android:src="@mipmap/ic_logo"
     tools:ignore="ContentDescription">
 
 </ImageView>

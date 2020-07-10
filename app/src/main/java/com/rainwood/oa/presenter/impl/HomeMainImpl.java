@@ -79,17 +79,9 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
         if (result.url().contains("cla=home&fun=wages")) {
             try {
                 // 收入
-                JSONArray incomeJsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("income"));
-                List<String> incomeList = new ArrayList<>();
-                for (int i = 0; i < incomeJsonArray.length(); i++) {
-                    incomeList.add(incomeJsonArray.getString(i));
-                }
+                List<String> incomeList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("income"));
                 //年份
-                JSONArray monthJsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("list"));
-                List<String> monthList = new ArrayList<>();
-                for (int i = 0; i < monthJsonArray.length(); i++) {
-                    monthList.add(monthJsonArray.getString(i));
-                }
+                List<String> monthList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("list"));
                 //
                 HomeSalary homeSalary = JsonParser.parseJSONObject(HomeSalary.class, result.body());
                 List<FontAndFont> salaryList = new ArrayList<>();

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RecordsDetail;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICommonPresenter;
 import com.rainwood.oa.ui.adapter.AuditRecordAdapter;
 import com.rainwood.oa.ui.adapter.RecordsResultsAdapter;
@@ -24,7 +25,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.Map;
 
@@ -101,6 +101,9 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
     @ViewInject(R.id.mlv_record_result)
     private MeasureListView resultRecordListView;
 
+    @ViewInject(R.id.ll_bottom_button)
+    private LinearLayout bottomButton;
+
     private ICommonPresenter mCommonPresenter;
     // 审核记录
     private AuditRecordAdapter mAuditRecordAdapter;
@@ -150,7 +153,19 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
 
     @Override
     protected void initData() {
-
+        String pageFlag = getIntent().getStringExtra("pageFlag");
+        if (pageFlag != null) {
+            switch (pageFlag) {
+                case "mineOvertime":
+                case "mineLeaveOut":
+                    bottomButton.setVisibility(View.GONE);
+                    break;
+                case "ovetime":
+                case "leaveOut":
+                    bottomButton.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_parent_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray45"
@@ -17,8 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
             <Space
                 android:layout_width="match_parent"
@@ -121,8 +122,8 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="25dp"
                     android:layout_marginEnd="20dp"
-                    app:title="开票地址"
                     app:endParent="false"
+                    app:title="开票地址"
                     app:title_color="@color/labelColor"
                     app:value_color="@color/fontColor"
                     app:values="湖南省长沙市岳麓区中南大学研究所南楼中南大学研究所南楼" />
@@ -134,8 +135,8 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="30dp"
                     android:layout_marginEnd="20dp"
-                    app:title="邮寄地址"
                     app:endParent="false"
+                    app:title="邮寄地址"
                     app:title_color="@color/labelColor"
                     app:value_color="@color/fontColor"
                     app:values="湖南省长沙市岳麓区中南大学研究所南楼中南大学研究所南楼" />

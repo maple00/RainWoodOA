@@ -24,7 +24,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/iv_page_back"
-        android:text="我是标题"
+        android:text="开票记录"
         android:textColor="@color/fontColor"
         android:textSize="20sp"
         android:textStyle="bold" />

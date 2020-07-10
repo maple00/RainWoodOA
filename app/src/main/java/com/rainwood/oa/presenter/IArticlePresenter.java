@@ -12,8 +12,10 @@ public interface IArticlePresenter extends IBasePresenter<IArticleCallbacks> {
 
     /**
      * 沟通技巧
+     * @param searchText
+     * @param pageCount
      */
-    void requestCommunicationData();
+    void requestCommunicationData(String searchText, int pageCount);
 
     /**
      * 管理制度
@@ -27,8 +29,10 @@ public interface IArticlePresenter extends IBasePresenter<IArticleCallbacks> {
 
     /**
      * 帮助中心
+     * @param searchText
+     * @param pageCount
      */
-    void requestHelperData();
+    void requestHelperData(String searchText, int pageCount);
 
     /**
      * 查看文章详情

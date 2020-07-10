@@ -8,11 +8,13 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.tools.wheel.view.CountdownView;
+import com.sxs.verification.CheckUtil;
+import com.sxs.verification.VerificationView;
 
 /**
  * @Author: a797s
@@ -37,7 +39,8 @@ public final class ForgetPasswordActivity extends BaseActivity {
     private EditText smsVerification;
     @ViewInject(R.id.cv_password_forget_countdown)
     private CountdownView mCountdownView;
-
+    @ViewInject(R.id.verification_view)
+    private VerificationView mVerificationView;
 
     @Override
     protected int getLayoutResId() {
@@ -48,6 +51,20 @@ public final class ForgetPasswordActivity extends BaseActivity {
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setPaddingSmart(this, loginTitle);
+    }
+
+    @Override
+    protected void initData() {
+        initVerification();
+    }
+
+    /**
+     * 初始化验证码
+     */
+    private void initVerification() {
+        int[] mCheckNum = CheckUtil.getCheckNum();
+        mVerificationView.setCheckNum(mCheckNum);
+        mVerificationView.invaliChenkNum();
     }
 
     @Override
@@ -65,11 +82,11 @@ public final class ForgetPasswordActivity extends BaseActivity {
 
 
     @SingleClick
-    @OnClick({R.id.iv_verification_click, R.id.cv_password_forget_countdown, R.id.btn_login, R.id.tv_login_account})
+    @OnClick({R.id.verification_view, R.id.cv_password_forget_countdown, R.id.btn_login, R.id.tv_login_account})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_verification_click:
-                toast("更换图片验证码");
+            case R.id.verification_view:
+                initVerification();
                 break;
             case R.id.cv_password_forget_countdown:
                 // toast("发送短信验证码");
@@ -89,7 +106,7 @@ public final class ForgetPasswordActivity extends BaseActivity {
                 break;
             case R.id.tv_login_account:
                 // toast("账号密码登录");
-                startActivity(getNewIntent(this, LoginActivity.class, "账号密码登录","账号密码登录"));
+                startActivity(getNewIntent(this, LoginActivity.class, "账号密码登录", "账号密码登录"));
                 break;
         }
     }

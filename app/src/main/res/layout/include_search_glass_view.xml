@@ -33,7 +33,6 @@
         android:id="@+id/iv_search"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_toStartOf="@+id/tv_page_right_title"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"

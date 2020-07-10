@@ -172,4 +172,16 @@ public interface ICustomCallbacks extends IBaseCallback {
      * @param warn
      */
     default void getMoveCustomResult(boolean success, String warn){}
+
+    /**
+     * 跟进记录标签
+     * @param selectedList
+     */
+    default void getFollowLabels(List<SelectedItem> selectedList){}
+
+    /**
+     * 新增跟进记录结果
+     * @param warn
+     */
+    default void getFollowLabelResult(String warn){}
 }

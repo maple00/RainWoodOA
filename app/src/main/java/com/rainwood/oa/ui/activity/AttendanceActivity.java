@@ -13,11 +13,8 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.necer.calendar.BaseCalendar;
 import com.necer.calendar.Miui9Calendar;
 import com.necer.enumeration.CheckModel;
-import com.necer.enumeration.DateChangeBehavior;
-import com.necer.listener.OnCalendarChangedListener;
 import com.necer.painter.InnerPainter;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
@@ -34,8 +31,6 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-
-import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.HashMap;

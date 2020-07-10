@@ -42,6 +42,7 @@ import com.rainwood.tools.wheel.view.RegexEditText;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: sxs
@@ -89,6 +90,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private String mSecret;
     private String mTargetType;
     private String mDefaultSorting;
+    private String mKeyWord;
 
     @Override
     protected int getLayoutResId() {
@@ -190,7 +192,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, mSecret, mTargetType, mDefaultSorting, ++pageCount);
+                mAttachmentPresenter.requestKnowledgeAttach(mKeyWord, mStaffId, mSecret, mTargetType, mDefaultSorting, ++pageCount);
             }
         });
     }
@@ -198,13 +200,20 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, "", "", "", pageCount = 1);
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, "", "", "", pageCount = 1);
+            }
+            // 搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE){
+                mKeyWord = data.getStringExtra("keyWord");
+                mAttachmentPresenter.requestKnowledgeAttach(mKeyWord, mStaffId, "", "", "", pageCount = 1);
+            }
         }
     }
 
@@ -216,7 +225,11 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "officeFile");
+                intent.putExtra("title", "附件管理");
+                intent.putExtra("tips", "请输入附件名称");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }

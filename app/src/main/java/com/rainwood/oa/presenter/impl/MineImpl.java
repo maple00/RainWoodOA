@@ -249,9 +249,10 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
 
     /**
      * 请假申请
-     * @param leaveType 请假类型
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     *
+     * @param leaveType   请假类型
+     * @param startTime   开始时间
+     * @param endTime     结束时间
      * @param leaveReason 请假事由
      */
     @Override
@@ -263,6 +264,43 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         params.add("endTime", endTime);
         params.add("text", leaveReason);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workHolidayEdit", params, this);
+    }
+
+    /**
+     * 加班申请
+     *
+     * @param overtimeId   随机id
+     * @param startTimeStr 开始时间
+     * @param endTimeStr   结束时间
+     * @param reasonStr    加班事由
+     */
+    @Override
+    public void createMineOvertimeApply(String overtimeId, String startTimeStr, String endTimeStr, String reasonStr) {
+        RequestParams params = new RequestParams();
+        params.add("id", overtimeId);
+        params.add("timeStart", startTimeStr);
+        params.add("timeEnd", endTimeStr);
+        params.add("text", reasonStr);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAddEdit", params, this);
+    }
+
+    /**
+     * 外出申请
+     *
+     * @param recordId
+     * @param startTimeStr
+     * @param endTimeStr
+     * @param reasonStr
+     */
+    @Override
+    public void createMineLeaveOutApply(String recordId, String startTimeStr, String endTimeStr, String reasonStr) {
+        RequestParams params = new RequestParams();
+        params.add("id", recordId);
+        params.add("timeStart", startTimeStr);
+        params.add("timeEnd", endTimeStr);
+        params.add("text", reasonStr);
+        ToastUtils.show("缺少外出申请接口");
+        //OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAddEdit", params, this);
     }
 
     @Override
@@ -408,6 +446,10 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        // 加班申请
+        else if (result.url().contains("cla=my&fun=workAddEdit")) {
+
         }
         // 外出记录
         else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=workOut")) {

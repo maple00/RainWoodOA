@@ -11,14 +11,23 @@
         android:id="@+id/divider"
         style="@style/HorizontalLineStyle" />
 
+
     <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
         android:id="@+id/trl_pager_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_role_list"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <include layout="@layout/fragment_loading"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_role_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
     </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

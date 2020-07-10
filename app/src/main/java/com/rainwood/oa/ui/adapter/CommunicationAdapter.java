@@ -17,6 +17,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,10 +27,18 @@ import java.util.List;
  */
 public final class CommunicationAdapter extends RecyclerView.Adapter<CommunicationAdapter.ViewHolder> {
 
-    private List<Article> mList;
+    private List<Article> mList = new ArrayList<>();
+    private boolean loaded;
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public void setList(List<Article> list) {
-        mList = list;
+        if (loaded){
+            mList.clear();
+        }
+        mList.addAll(list);
         notifyDataSetChanged();
     }
 

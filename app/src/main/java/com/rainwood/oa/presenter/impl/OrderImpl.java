@@ -24,6 +24,7 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IOrderCallbacks;
@@ -499,20 +500,20 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         // 订单 --condition
         else if (result.url().contains("cla=order&fun=search")) {
             try {
-                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("workFlow"));
-                JSONArray payerArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> payerArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("orderBy"));
                 List<SelectedItem> stateList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();
-                for (int i = 0; i < typeArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(typeArray.getString(i));
+                    item.setName(typeArray.get(i));
                     stateList.add(item);
                 }
-                for (int i = 0; i < payerArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(payerArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(payerArray.getString(i));
+                    item.setName(payerArray.get(i));
                     sortList.add(item);
                 }
                 mOrderEditCallbacks.getOrderCondition(stateList, sortList);

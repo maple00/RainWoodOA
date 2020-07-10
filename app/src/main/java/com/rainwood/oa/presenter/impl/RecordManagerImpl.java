@@ -19,6 +19,7 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
@@ -443,12 +444,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 行政人事 --- 加班状态
         else if (result.url().contains("cla=workAdd&fun=workFlow")) {
             try {
-                JSONArray stateJsonArray = JsonParser.parseJSONArrayString
-                        (JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
+                List<String> workFlowList = JsonParser.parseJSONList(
+                        JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
                 List<SelectedItem> overTimeStateList = new ArrayList<>();
-                for (int i = 0; i < stateJsonArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(workFlowList); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(stateJsonArray.getString(i));
+                    item.setName(workFlowList.get(i));
                     overTimeStateList.add(item);
                 }
                 mRecordCallbacks.getAdminOverTimeState(overTimeStateList);
@@ -493,12 +494,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 行政人事 --- 外出记录condition
         else if (result.url().contains("cla=workOut&fun=search")) {
             try {
-                JSONArray goOutJsonArray = JsonParser.parseJSONArrayString(
+                List<String> workFlowList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
                 List<SelectedItem> goOutConditionList = new ArrayList<>();
-                for (int i = 0; i < goOutJsonArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(workFlowList); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(goOutJsonArray.getString(i));
+                    item.setName(workFlowList.get(i));
                     goOutConditionList.add(item);
                 }
                 mRecordCallbacks.getLeaveOutCondition(goOutConditionList);
@@ -519,12 +520,11 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 行政人事 --- 补卡记录condition
         else if (result.url().contains("cla=workSignAdd&fun=search")) {
             try {
-                JSONArray goOutJsonArray = JsonParser.parseJSONArrayString(
-                        JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
+                List<String> workFlow = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
                 List<SelectedItem> reissueStateList = new ArrayList<>();
-                for (int i = 0; i < goOutJsonArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(workFlow); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(goOutJsonArray.getString(i));
+                    item.setName(workFlow.get(i));
                     reissueStateList.add(item);
                 }
                 mRecordCallbacks.getReissueCondition(reissueStateList);
@@ -546,25 +546,24 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         else if (result.url().contains("cla=kehuInvoice&fun=search")) {
             try {
                 // 销售方
-                JSONArray saleArray = JsonParser.parseJSONArrayString(
-                        JsonParser.parseJSONObjectString(
-                                JsonParser.parseJSONObjectString(result.body()).getString("search"))
-                                .getString("company"));
+                List<String> saleArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search"))
+                        .getString("company"));
                 // 发票类型
-                JSONArray invoiceTypeArray = JsonParser.parseJSONArrayString(
+                List<String> invoiceTypeArray = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(
                                 JsonParser.parseJSONObjectString(result.body()).getString("search"))
                                 .getString("type"));
                 List<SelectedItem> saleList = new ArrayList<>();
                 List<SelectedItem> typeList = new ArrayList<>();
-                for (int i = 0; i < saleArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(saleArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(saleArray.getString(i));
+                    item.setName(saleArray.get(i));
                     saleList.add(item);
                 }
-                for (int i = 0; i < invoiceTypeArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(invoiceTypeArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(invoiceTypeArray.getString(i));
+                    item.setName(invoiceTypeArray.get(i));
                     typeList.add(item);
                 }
                 mRecordCallbacks.getInvoiceCondition(saleList, typeList);
@@ -585,12 +584,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 知识管理 -- 跟进记录 （记录类型）
         else if (result.url().contains("cla=follow&fun=search")) {
             try {
-                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));
                 List<SelectedItem> typeList = new ArrayList<>();
-                for (int i = 0; i < typeArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(typeArray.getString(i));
+                    item.setName(typeArray.get(i));
                     typeList.add(item);
                 }
                 mRecordCallbacks.getRecordsTypes(typeList);

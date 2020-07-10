@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.activity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,6 +59,8 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     private RecyclerView departList;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout mLoading;
 
     private DepartManagerAdapter mDepartManagerAdapter;
 
@@ -152,6 +155,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
 
     @Override
     public void getDepartListData(List<Depart> departList) {
+        mLoading.setVisibility(View.GONE);
         mDepartManagerAdapter.setDepartList(departList);
     }
 

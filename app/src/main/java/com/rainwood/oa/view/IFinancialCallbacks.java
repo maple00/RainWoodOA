@@ -5,6 +5,7 @@ import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
+import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.StaffCurve;
@@ -91,4 +92,10 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * @param staffNumList
      */
     default void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList){};
+
+    /**
+     * 费用报销详情
+     * @param reimbursement
+     */
+    default void getReimburseDetail(MineReimbursement reimbursement){}
 }

@@ -85,4 +85,10 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
      * 请求员工数量
      */
     void requestStaffNum();
+
+    /**
+     * 请i去费用报销凭证
+     * @param reimburseId
+     */
+    void requestReimburseDetail(String reimburseId);
 }

@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/20 9:51
  * @Desc: 订单统计
  */
-public final class OrderStatics {
+public final class OrderStatics implements Serializable {
 
     /**
      * 统计

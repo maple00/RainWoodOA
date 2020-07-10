@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.FontAndFont;
-import com.rainwood.oa.model.domain.TempMineAccount;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 

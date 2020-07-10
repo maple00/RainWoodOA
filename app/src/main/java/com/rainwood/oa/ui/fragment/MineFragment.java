@@ -263,8 +263,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         setUpState(State.SUCCESS);
         mMineAccountAdapter.setList(accountList);
         Glide.with(this).load(mineData.getIco())
-                .error(R.mipmap.ic_logo_mdpi)
-                .placeholder(R.mipmap.ic_logo_mdpi)
+                .error(R.mipmap.ic_logo)
+                .placeholder(R.mipmap.ic_logo)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);
         telNumber = mineData.getTel();

@@ -26,11 +26,14 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
 
     /**
      * 沟通技巧
+     * @param searchText
+     * @param pageCount
      */
     @Override
-    public void requestCommunicationData() {
+    public void requestCommunicationData(String searchText, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=article&fun=clientTalk", params, this);
+        params.add("title", searchText);
+        OkHttp.post(Constants.BASE_URL + "cla=article&fun=clientTalk&page=" + pageCount, params, this);
     }
 
     /**
@@ -52,11 +55,14 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
 
     /**
      * 帮助中心
+     * @param searchText
+     * @param pageCount
      */
     @Override
-    public void requestHelperData() {
+    public void requestHelperData(String searchText, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=article&fun=adHelp", params, this);
+        params.add("title", searchText);
+        OkHttp.post(Constants.BASE_URL + "cla=article&fun=adHelp&page=" + pageCount, params, this);
     }
 
     /**

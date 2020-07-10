@@ -18,7 +18,6 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.BalanceCurveListData;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.StaffCurveList;
 import com.rainwood.oa.network.aop.SingleClick;

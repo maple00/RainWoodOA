@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.CustomFollowRecordAdapter;
 import com.rainwood.oa.utils.Constants;
@@ -23,11 +23,11 @@ import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IRecordCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -38,6 +38,8 @@ import java.util.List;
  */
 public final class CustomFollowRecordActivity extends BaseActivity implements IRecordCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
@@ -98,6 +100,11 @@ public final class CustomFollowRecordActivity extends BaseActivity implements IR
 
     @Override
     protected void loadData() {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // 跟进记录有问题- 没有传客户id的时候查询出来的数据跟传了客户id的时候一致
         if (Constants.CUSTOM_ID != null) {
             mRecordPresenter.requestCustomFollowRecords(Constants.CUSTOM_ID);
@@ -125,15 +132,16 @@ public final class CustomFollowRecordActivity extends BaseActivity implements IR
 
     @SuppressLint("SetTextI18n")
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_page_right_title, R.id.fab_create_follow, R.id.cb_checked, R.id.btn_delete})
+    @OnClick({R.id.iv_page_back, R.id.tv_page_right_title, R.id.fab_create_follow, R.id.cb_checked, R.id.btn_delete,
+            R.id.iv_menu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            // 悬浮窗
             case R.id.fab_create_follow:
-                // LogUtils.d("sxs", "点击了--- 悬浮窗");
-                toast("新增跟进记录");
+                startActivity(getNewIntent(this, AddFollowRecordActivity.class, "新增跟进记录", ""));
                 break;
             //管理
             case R.id.tv_page_right_title:
@@ -146,14 +154,19 @@ public final class CustomFollowRecordActivity extends BaseActivity implements IR
                     mCheckBox.setChecked(false);
                     isSelectedAll(mCheckBox.isChecked());
                 }
+                floatFollow.setVisibility(managerControlFlag ? View.GONE : View.VISIBLE);
                 break;
             // 全选
             case R.id.cb_checked:
                 boolean checked = mCheckBox.isChecked();
                 isSelectedAll(checked);
                 break;
+            // 删除多条记录
             case R.id.btn_delete:
                 toast("删除");
+                break;
+            case R.id.iv_menu:
+                showQuickFunction(this, parentPager);
                 break;
         }
     }

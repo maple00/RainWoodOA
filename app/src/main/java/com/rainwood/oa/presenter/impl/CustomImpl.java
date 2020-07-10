@@ -411,6 +411,26 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoice", params, this);
     }
 
+    /**
+     * 请求跟进记录的标签
+     */
+    @Override
+    public void requestFollowLabel() {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Constants.BASE_URL + "cla=follow&fun=followQuick", params, this);
+    }
+
+    @Override
+    public void createFollowRecord(String recordId, String target, String targetId, String content, String time) {
+        RequestParams params = new RequestParams();
+        params.add("id", recordId);
+        params.add("target", target);
+        params.add("targetId", targetId);
+        params.add("text", content);
+        params.add("startDay", time);
+        OkHttp.post(Constants.BASE_URL + "cla=follow&fun=add", params, this);
+    }
+
     @Override
     public void registerViewCallback(ICustomCallbacks callback) {
         this.mCustomCallback = callback;
@@ -448,21 +468,21 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         //   跟进状态
         if (result.url().contains("cla=client&fun=clientWorkFlow")) {
             try {
-                JSONArray jsonArray = JsonParser.parseJSONArrayString(
+                List<String> followList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("para"));
                 List<SelectedItem> stateList = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(followList); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(jsonArray.getString(i));
+                    item.setName(followList.get(i));
                     stateList.add(item);
                 }
                 SelectedItem item = new SelectedItem();
                 item.setName("全部");
                 stateList.set(0, item);
+                mCustomCallback.getFollowData(followList);
                 mCustomCallback.getStateCondition(stateList);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -470,12 +490,8 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         } else if (result.url().contains("cla=client&fun=clientSource")) {
             // 客户来源
             try {
-                JSONArray jsonArray = JsonParser.parseJSONArrayString(
+                List<String> originList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("para"));
-                List<String> originList = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    originList.add(jsonArray.getString(i));
-                }
                 mCustomCallback.getCustomOrigin(originList);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -546,12 +562,12 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         // 客户列表condition -- 省
         else if (result.url().contains("cla=client&fun=province")) {
             try {
-                JSONArray provinceArray = JsonParser.parseJSONArrayString(
+                List<String> provinceArray = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("province"));
                 List<CustomArea> provinceList = new ArrayList<>();
-                for (int i = 0; i < provinceArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(provinceArray); i++) {
                     CustomArea area = new CustomArea();
-                    area.setName(provinceArray.getString(i));
+                    area.setName(provinceArray.get(i));
                     provinceList.add(area);
                 }
 
@@ -563,12 +579,11 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         // 客户列表 condition -- 市
         else if (result.url().contains("cla=client&fun=city")) {
             try {
-                JSONArray provinceArray = JsonParser.parseJSONArrayString(
-                        JsonParser.parseJSONObjectString(result.body()).getString("city"));
+                List<String> cityArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("city"));
                 List<CustomArea> cityList = new ArrayList<>();
-                for (int i = 0; i < provinceArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(cityArray); i++) {
                     CustomArea area = new CustomArea();
-                    area.setName(provinceArray.getString(i));
+                    area.setName(cityArray.get(i));
                     cityList.add(area);
                 }
 
@@ -595,7 +610,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             mCustomCallback.getCustomDetailValues(dataDetailMap);
         }
         // 客户下的联系人列表
-        else if (result.url().contains("cla=client&fun=kehuStaff")) {
+        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=kehuStaff")) {
             try {
                 List<Contact> contactList = JsonParser.parseJSONArray(Contact.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("kehuStaff"));
@@ -608,7 +623,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         else if (result.url().contains("cla=client&fun=kehuStaffEdit")) {
             JSONObject jsonObject = JsonParser.parseJSONObjectString(result.body());
             try {
-                mCustomCallback.createContactData(jsonObject.get("warn").equals("success"));
+                mCustomCallback.createContactData(jsonObject.getString("warn").equals("success"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -656,6 +671,30 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
                 CustomInvoice customInvoice = JsonParser.parseJSONObject(CustomInvoice.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
                 mCustomCallback.getCustomInvoice(customInvoice);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 跟进记录的标签
+        else if (result.url().contains("cla=follow&fun=followQuick")) {
+            try {
+                List<String> paraArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("para"));
+                List<SelectedItem> selectedList = new ArrayList<>();
+                for (int i = 0; i < ListUtils.getSize(paraArray); i++) {
+                    SelectedItem selected = new SelectedItem();
+                    selected.setName(paraArray.get(i));
+                    selectedList.add(selected);
+                }
+                mCustomCallback.getFollowLabels(selectedList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // 新增跟进记录
+        else if (result.url().equals(Constants.BASE_URL + "cla=follow&fun=add")) {
+            try {
+                String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                mCustomCallback.getFollowLabelResult(warn);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

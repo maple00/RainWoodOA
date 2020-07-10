@@ -70,6 +70,10 @@ public class TextFlowLayout extends ViewGroup {
         LogUtils.d(this, "mItemVerticalSpace == > " + mItemVerticalSpace);
     }
 
+    /**
+     * 对外暴露添加数据方法
+     * @param textList
+     */
     public void setTextList(List<String> textList) {
         removeAllViews();
         this.mTextList.clear();

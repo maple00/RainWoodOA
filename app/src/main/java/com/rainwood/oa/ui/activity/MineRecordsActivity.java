@@ -24,6 +24,7 @@ import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
@@ -166,7 +167,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
         mRecordsAdapter.setItemReissue(new MineRecordsAdapter.OnClickItemReissue() {
             @Override
             public void onClickItem(MineRecords reissue, int position) {
-                toast("查看详情");
+                PageJumpUtil.askLeaveList2Detail(MineRecordsActivity.this, RecordDetailActivity.class, "请假详情",
+                        reissue.getId());
             }
 
             @Override
@@ -179,11 +181,21 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                 toast("删除");
             }
         });
-        // 加班记录
+        // 加班、外出记录
         mOverTimeAdapter.setOnClickOverTime(new MineOverTimeAdapter.OnClickOverTime() {
             @Override
             public void onClickItem(MineRecordTime record, int position) {
-                toast("查看详情");
+                switch (moduleMenu) {
+                    case "myworkAdd":
+                        PageJumpUtil.overTimeList2Detail(MineRecordsActivity.this,
+                                RecordDetailActivity.class, "加班详情", record.getId(), "mineOvertime");
+                        break;
+                    case "myworkOut":
+                        PageJumpUtil.askOutList2Detail(MineRecordsActivity.this, RecordDetailActivity.class, "外出详情",
+                                record.getId(), "mineLeaveOut");
+                        break;
+                }
+
             }
 
             @Override
@@ -268,14 +280,16 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
             case R.id.tv_page_right_title:
                 switch (moduleMenu) {
                     case "mywork":
-                        toast("请假申请");
+                        //toast("请假申请");
                         startActivity(getNewIntent(this, AskLeaveActivity.class, "请假申请", "askLeave"));
                         break;
                     case "myworkAdd":
-                        toast("加班申请");
+                        // toast("加班申请");
+                        startActivity(getNewIntent(this, MineOverTimeApplyActivity.class, "加班申请", "askOvertime"));
                         break;
                     case "myworkOut":
-                        toast("外出申请");
+                        // toast("外出申请");
+                        startActivity(getNewIntent(this, MineOverTimeApplyActivity.class, "外出申请", "askLeaveOut"));
                         break;
                 }
                 break;

@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/29 13:32
  * @Desc: 客户跟进记录
  */
-public final class CustomFollowRecord {
+public final class CustomFollowRecord implements Serializable {
 
     /**
      * 跟进记录id

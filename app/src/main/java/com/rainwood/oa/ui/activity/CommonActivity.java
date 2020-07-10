@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.activity;
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.Contact;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.adapter.AttachAdapter;
@@ -32,7 +34,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -44,6 +45,8 @@ import java.util.List;
  **/
 public final class CommonActivity extends BaseActivity implements ICustomCallbacks, IAttachmentCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -130,6 +133,16 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
     }
 
     @Override
+    protected void initPresenter() {
+        // 联系人
+        mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
+        mCustomPresenter.registerViewCallback(this);
+        // 客户附件
+        mAttachmentPresenter = PresenterManager.getOurInstance().getAttachmentPresenter();
+        mAttachmentPresenter.registerViewCallback(this);
+    }
+
+    @Override
     protected void loadData() {
         // 请求数据
         switch (title) {
@@ -140,16 +153,6 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
                 mAttachmentPresenter.requestCustomAttachData(mCustomId);
                 break;
         }
-    }
-
-    @Override
-    protected void initPresenter() {
-        // 联系人
-        mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
-        mCustomPresenter.registerViewCallback(this);
-        // 客户附件
-        mAttachmentPresenter = PresenterManager.getOurInstance().getAttachmentPresenter();
-        mAttachmentPresenter.registerViewCallback(this);
     }
 
     @SuppressLint("SetTextI18n")
@@ -174,7 +177,7 @@ public final class CommonActivity extends BaseActivity implements ICustomCallbac
                 }
                 break;
             case R.id.iv_menu:
-                toast("菜单快捷方式");
+                showQuickFunction(this, parentPager);
                 break;
             case R.id.tv_page_right_title:
                 // 管理

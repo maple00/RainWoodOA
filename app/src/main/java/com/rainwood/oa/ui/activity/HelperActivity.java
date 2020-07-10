@@ -1,5 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -7,20 +10,22 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.HelperAdapter;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IArticleCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -42,9 +47,11 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     @ViewInject(R.id.rv_helper_content)
     private RecyclerView helperView;
 
-    //
     private HelperAdapter mHelperAdapter;
     private IArticlePresenter mArticlePresenter;
+
+    private int pageCount = 1;
+    private String mText;
 
     @Override
     protected int getLayoutResId() {
@@ -77,7 +84,7 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     @Override
     protected void loadData() {
         // 请求数据
-        mArticlePresenter.requestHelperData();
+        mArticlePresenter.requestHelperData("", pageCount);
     }
 
     @Override
@@ -86,21 +93,57 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
             // 查看详情
             PageJumpUtil.skillList2Detail(HelperActivity.this, ArticleDetailActivity.class, article.getId(), "帮助中心");
         });
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mArticlePresenter.requestHelperData(mText, ++pageCount);
+            }
+        });
+        searchTip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mArticlePresenter.requestHelperData("", pageCount = 1);
+                }
+            }
+        });
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.tv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-
+            case R.id.tv_search:
+                if (TextUtils.isEmpty(searchTip.getText())) {
+                    toast("请输入文章标题");
+                    return;
+                }
+                mText = searchTip.getText().toString().trim();
+                mArticlePresenter.requestHelperData(mText, pageCount = 1);
+                break;
         }
     }
 
     @Override
     public void getHelperData(List<Article> helperList) {
+        pageRefresh.finishLoadmore();
+        mHelperAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            toast("加载了" + ListUtils.getSize(helperList) + "条数据");
+        }
         mHelperAdapter.setHelperList(helperList);
     }
 

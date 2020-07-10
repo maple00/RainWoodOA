@@ -1,5 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -7,21 +10,23 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.CommunicationAdapter;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IArticleCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -48,6 +53,8 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     private CommunicationAdapter mCommunicationAdapter;
 
     private IArticlePresenter mArticlePresenter;
+    private int pageCount = 1;
+    private String mSearchContent = "";
 
     @Override
     protected int getLayoutResId() {
@@ -59,6 +66,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
         searchTV.setText(getString(R.string.text_common_search));
+        searchContent.setHint("请输入文章标题");
         //设置布局管理器
         communicationList.setLayoutManager(new GridLayoutManager(this, 1));
         communicationList.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
@@ -75,7 +83,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     @Override
     protected void loadData() {
         // 请求数据
-        mArticlePresenter.requestCommunicationData();
+        mArticlePresenter.requestCommunicationData("", pageCount);
     }
 
     @Override
@@ -90,6 +98,32 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
             // 跳转到详情页面
             PageJumpUtil.skillList2Detail(ExchangeSkillActivity.this, ArticleDetailActivity.class, skills.getId(), "沟通技巧");
         });
+
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mArticlePresenter.requestCommunicationData(mSearchContent, ++pageCount);
+            }
+        });
+
+        searchContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mArticlePresenter.requestCommunicationData("", pageCount = 1);
+                }
+            }
+        });
     }
 
     @SingleClick
@@ -100,13 +134,23 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
                 finish();
                 break;
             case R.id.tv_search:
-                toast("搜索");
+                if (TextUtils.isEmpty(searchContent.getText())) {
+                    toast("请输入搜索内容");
+                    return;
+                }
+                mSearchContent = this.searchContent.getText().toString().trim();
+                mArticlePresenter.requestCommunicationData(mSearchContent, pageCount = 1);
                 break;
         }
     }
 
     @Override
     public void getCommunicationData(List<Article> skillsList) {
+        pagerRefresh.finishLoadmore();
+        mCommunicationAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            toast("加载了" + ListUtils.getSize(skillsList) + "条数据");
+        }
         mCommunicationAdapter.setList(skillsList);
     }
 

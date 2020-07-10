@@ -80,6 +80,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private TwinklingRefreshLayout pagerRefresh;
     @ViewInject(R.id.divider)
     private View divider;
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout mLoading;
 
     private IStaffPresenter mStaffPresenter;
 
@@ -194,7 +196,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     for (StaffDepart staffDepart : mDepartList) {
                         if (staffDepart.isSelected()) {
                             for (StaffPost staffPost : staffDepart.getArray()) {
-                                if (staffPost.isSelected()){
+                                if (staffPost.isSelected()) {
                                     postId = staffPost.getId();
                                 }
                             }
@@ -203,7 +205,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     }
                     if (!TextUtils.isEmpty(postId)) {
                         mStaffPresenter.requestAllStaff(postId, "", "", "", "", "");
-                    }else {
+                    } else {
                         mStaffPresenter.requestAllStaff(tempPostId, "", "", "", "", "");
                     }
                 }
@@ -294,6 +296,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void getAllDepart(List<StaffDepart> departList) {
+        mLoading.setVisibility(View.GONE);
         mDepartList = departList;
         mLeftAdapter.setDepartList(mDepartList);
         // 查询部门下的员工-- 查询选中的职位员工

@@ -1,6 +1,9 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +27,13 @@ import com.rainwood.oa.ui.adapter.ModuleSecondAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.ILogcatCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -80,6 +85,14 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     private TextView mTextClearScreen;
     private TextView mTextConfirm;
 
+    private int pageCount = 1;
+    private String mStaffId;
+    private String mStartTime;
+    private String mEndTime;
+    private String mTypeTwo;
+    private String mTypeOne;
+    private String mSearchText;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_logcat;
@@ -89,7 +102,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
-        searchTips.setText("输入详细说明");
+        searchTips.setHint("输入操作记录");
         // 设置布局管理器
         logcatContent.setLayoutManager(new GridLayoutManager(this, 1));
         logcatContent.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
@@ -113,7 +126,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     @Override
     protected void loadData() {
         // 请求日志列表
-        mLogcatPresenter.requestLogcatData();
+        mLogcatPresenter.requestLogcatData("", "", "", "", "", "", pageCount);
         // 请求日志类型
         mLogcatPresenter.requestLogcatType();
     }
@@ -142,17 +155,23 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                     .setListener(new StartEndDateDialog.OnListener() {
                         @Override
                         public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                            if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                toast("请选择使日期");
+                                return;
+                            }
                             dialog.dismiss();
-                            toast("选中的时间段：" + startTime + "至" + endTime);
+                            mStartTime = startTime;
+                            mEndTime = endTime;
+                            mLogcatPresenter.requestLogcatData("", "", "", "", mStartTime, mEndTime, pageCount = 1);
                             selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
                             dialog.dismiss();
                             selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.labelColor));
+                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                         }
                     })
                     .show();
@@ -162,6 +181,32 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
         // 查看详情
         mLogcatAdapter.setClickLogcat((logcat, position) ->
                 PageJumpUtil.logcatList2Detail(LogcatActivity.this, LogcatDetailActivity.class, "日志详情", logcat));
+        // 刷新加载
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mLogcatPresenter.requestLogcatData(mSearchText, mTypeOne, mTypeTwo, mStaffId, mStartTime, mEndTime, ++pageCount);
+            }
+        });
+        searchTips.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mLogcatPresenter.requestLogcatData("", "", "",
+                            "", "", "", pageCount = 1);
+                }
+            }
+        });
     }
 
     @Override
@@ -169,25 +214,41 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
             String staff = data.getStringExtra("staff");
-            String staffId = data.getStringExtra("staffId");
+            mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
-
-            toast("员工：" + staff + "\n员工编号：" + staffId + "\n 职位：" + position);
+            mLogcatPresenter.requestLogcatData("", "", "", mStaffId, "", "", pageCount = 1);
+            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
         }
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.tv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.tv_search:
+                if (TextUtils.isEmpty(searchTips.getText())) {
+                    toast("请输入操作记录");
+                    return;
+                }
+                mSearchText = searchTips.getText().toString().trim();
+                mLogcatPresenter.requestLogcatData(mSearchText, "", "", "", "", "", pageCount = 1);
                 break;
         }
     }
 
     @Override
     public void getSystemLogcat(List<Logcat> logcatList) {
+        pagerRefresh.finishLoadmore();
+        mLogcatAdapter.setLoaded(pageCount == 1);
+        if (pageCount != 1) {
+            toast("加载了" + ListUtils.getSize(logcatList) + "条数据");
+        }
+        if (ListUtils.getSize(logcatList) == 0) {
+            toast("当前加载数据为空");
+        }
         mLogcatAdapter.setLogcatList(logcatList);
     }
 
@@ -231,19 +292,37 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                     mTextConfirm = view.findViewById(R.id.tv_confirm);
                 })
                 .create();
-        mTextClearScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempPos = -1;
-                toast("清空筛选");
+        mTextClearScreen.setOnClickListener(v -> {
+            for (ManagerMain managerMain : mMenuList) {
+                managerMain.setHasSelected(false);
+                for (IconAndFont iconAndFont : managerMain.getArray()) {
+                    iconAndFont.setSelected(false);
+                }
             }
+            tempPos = -1;
+            mStatusPopWindow.dismiss();
         });
-        mTextConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempPos = -1;
-                toast("确定");
+        mTextConfirm.setOnClickListener(v -> {
+            mTypeOne = "";
+            mTypeTwo = "";
+            for (ManagerMain managerMain : mMenuList) {
+                if (managerMain.isHasSelected()) {
+                    mTypeOne = managerMain.getName();
+                    for (IconAndFont iconAndFont : managerMain.getArray()) {
+                        if (iconAndFont.isSelected()) {
+                            mTypeTwo = iconAndFont.getName();
+                        }
+                    }
+                }
             }
+            if (TextUtils.isEmpty(mTypeOne) || TextUtils.isEmpty(mTypeTwo)) {
+                toast("请选择日志类型");
+                return;
+            }
+            //TODO: 列表和数据
+            mLogcatPresenter.requestLogcatData("", mTypeOne, mTypeTwo, "", "", "", pageCount = 1);
+            tempPos = -1;
+            mStatusPopWindow.dismiss();
         });
     }
 

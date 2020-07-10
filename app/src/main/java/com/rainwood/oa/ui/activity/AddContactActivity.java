@@ -72,13 +72,12 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
         setRequiredValue(post, "职位");
         setRequiredValue(name, "姓名");
         setRequiredValue(telNumber, "手机号");
-
-        mContact = (Contact) getIntent().getSerializableExtra("contact");
-        mCustomId = getIntent().getStringExtra("customId");
     }
 
     @Override
     protected void initData() {
+        mContact = (Contact) getIntent().getSerializableExtra("contact");
+        mCustomId = getIntent().getStringExtra("customId");
         if (mContact != null) {
             postContent.setText(mContact.getPosition());
             nameContent.setText(mContact.getName());
@@ -97,6 +96,7 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
         mCustomPresenter = PresenterManager.getOurInstance().getCustomPresenter();
         mCustomPresenter.registerViewCallback(this);
     }
+
 
     @OnClick(R.id.btn_confirm)
     public void onClick(View view) {
@@ -139,12 +139,12 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
     @Override
     public void createContactData(boolean success) {
         toast(success ? "提交成功" : "提交失败");
-        finish();
+        postDelayed(this::finish, 500);
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override

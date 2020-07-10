@@ -29,7 +29,6 @@ import java.util.Map;
 
 public class JsonParser {
 
-
     /**
      * JSONObject字符对象装JSONObject
      *
@@ -82,6 +81,9 @@ public class JsonParser {
      */
     public static Map<String, String> parseJSONObject(String jsonStr) {
         if (jsonStr == null || jsonStr.length() == 0 || jsonStr.equals("null")) {
+            return null;
+        }
+        if (jsonStr.startsWith("{}")) {
             return null;
         }
         return parseJSONObject(parseJSONObjectString(jsonStr));
@@ -254,17 +256,8 @@ public class JsonParser {
         if (jsonStr == null || jsonStr.length() == 0 || jsonStr.equals("null")) {
             return null;
         }
-        if (jsonStr.contains("\"[")) {
-            jsonStr = jsonStr.replace("\"[", "[");
-        }
-        if (jsonStr.contains("]\"")) {
-            jsonStr = jsonStr.replace("]\"", "]");
-        }
-        if (jsonStr.contains("\"{")) {
-            jsonStr = jsonStr.replace("\"{", "}");
-        }
-        if (jsonStr.contains("}\"")) {
-            jsonStr = jsonStr.replace("}\"", "}");
+        if (!jsonStr.startsWith("[{") && !jsonStr.endsWith("}]")) {
+            return null;
         }
         JSONArray jsonArray = null;
         try {
@@ -314,7 +307,11 @@ public class JsonParser {
         if (jsonStr.equals("[]")) {
             return new ArrayList<>();
         }
-        return parseJSONArray(parseJSONArrayString(jsonStr));
+        JSONArray array = parseJSONArrayString(jsonStr);
+        if (array == null) {
+            return null;
+        }
+        return parseJSONArray(array);
     }
 
     /**
@@ -336,11 +333,19 @@ public class JsonParser {
                 list = (List<T>) field.getType().newInstance();
             }
             if (jsonStr != null && jsonStr.length() != 0 && !jsonStr.equals("[]") && !jsonStr.equals("null")) {
-                JSONArray jsonArray = parseJSONArrayString(jsonStr);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                    T t = parseJSONObject(fieldParamsCls, jsonObject);
-                    list.add(t);
+                //正常的JSON Array
+                if (jsonStr.startsWith("[{")) {
+                    JSONArray jsonArray = parseJSONArrayString(jsonStr);
+                    int size = jsonArray == null ? 0 : jsonArray.length();
+                    for (int i = 0; i < size; i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        T t = parseJSONObject(fieldParamsCls, jsonObject);
+                        list.add(t);
+                    }
+                }
+                //List字符串类型
+                if (jsonStr.startsWith("[") && !jsonStr.startsWith("[{")) {
+                    list = (List<T>) parseJSONList(jsonStr);
                 }
             }
         } catch (InstantiationException e) {
@@ -392,7 +397,14 @@ public class JsonParser {
         if (jsonStr.equals("[]")) {
             return new ArrayList<>();
         }
-        return parseJSONArray(cls, parseJSONArrayString(jsonStr));
+        if (!jsonStr.startsWith("[") && !jsonStr.endsWith("]")) {
+            return new ArrayList<>();
+        }
+        JSONArray array = parseJSONArrayString(jsonStr);
+        if (array == null) {
+            return new ArrayList<>();
+        }
+        return parseJSONArray(cls, array);
     }
 
     /**
@@ -410,7 +422,7 @@ public class JsonParser {
             String value = map.get(key);
             value = value == null ? "" : value;
             sb.append("\"" + key + "\":");
-            if (value.contains("[") && value.contains("]")) {
+            if (value.startsWith("[") && value.endsWith("]")) {
                 sb.append(value);
             } else {
                 sb.append("\"" + value + "\"");
@@ -418,8 +430,7 @@ public class JsonParser {
             sb.append(",");
         }
         if (sb.toString().contains(",")) {
-            int lastIndex = sb.lastIndexOf(",");
-            sb.replace(lastIndex, lastIndex + 1, "");
+            sb.deleteCharAt(sb.lastIndexOf(","));
         }
         sb.append("}");
         return sb.toString();
@@ -444,8 +455,7 @@ public class JsonParser {
             sb.append(",");
         }
         if (sb.toString().contains(",")) {
-            int lastIndex = sb.lastIndexOf(",");
-            sb.replace(lastIndex, lastIndex + 1, "");
+            sb.deleteCharAt(sb.lastIndexOf(","));
         }
         sb.append("]");
         return sb.toString();
@@ -476,9 +486,10 @@ public class JsonParser {
             String value;
             //一般数据类型、字符类型
             if (fieldType.isPrimitive() || fieldType == String.class) {
-                sb.append("\"" + name + "\":");
                 try {
+                    sb.append("\"" + name + "\":");
                     value = String.valueOf(field.get(obj));
+                    System.out.println("->1 " + name+" = "+ value);
                     sb.append("\"" + value + "\"");
                     sb.append(",");
                 } catch (IllegalAccessException e) {
@@ -497,7 +508,11 @@ public class JsonParser {
                     sb.append("[");
                     int size = list == null ? 0 : list.size();
                     for (int i = 0; i < size; i++) {
-                        value = parseObject(list.get(i));
+                        if (list.get(i).getClass()== String.class){
+                            value = "\""+list.get(i)+"\"";
+                        }else{
+                            value = parseObject(list.get(i));
+                        }
                         sb.append(value);
                         if (i != size - 1) {
                             sb.append(",");
@@ -549,6 +564,28 @@ public class JsonParser {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    /**
+     * List类型JSON转化
+     *
+     * @param json List类型JSON字符串
+     * @return
+     */
+    public static List<String> parseJSONList(String json) {
+        if (json != null && !json.equals("null") && json.startsWith("[") && !json.startsWith("[{")) {
+            List<String> list = new ArrayList<>();
+            String result = json.replace("[", "").replace("]", "");
+            String listStr[] = result.split(",");
+            for (int i = 0; i < listStr.length; i++) {
+                String item = listStr[i].replace("\"", "");
+                if (item != null && item.length() != 0) {
+                    list.add(item);
+                }
+            }
+            return list;
+        }
+        return new ArrayList<>();
     }
 
 }

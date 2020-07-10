@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -61,6 +62,8 @@ public final class RoleManagerActivity extends BaseActivity implements
     private RecyclerView mRoleList;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout mLoadingView;
 
     private IAdministrativePresenter mRoleManagerPresenter;
     private RoleManagerAdapter mRoleManagerAdapter;
@@ -75,7 +78,7 @@ public final class RoleManagerActivity extends BaseActivity implements
     private CommonPopupWindow mStatusPopWindow;
     private TextView mTextClearScreen;
     private TextView mTextConfirm;
-    private int page = 0;
+    private int pageCount = 1;
     // 一级分类
     private String mConditionTypeFirst;
     // 二级分类
@@ -117,8 +120,8 @@ public final class RoleManagerActivity extends BaseActivity implements
     @Override
     protected void loadData() {
         // 请求数据 -- 角色列表 -- 筛选条件
-        page = 0;
-        mRoleManagerPresenter.requestAllRole("", "", "", page);
+        pageCount = 1;
+        mRoleManagerPresenter.requestAllRole("", "", "", pageCount);
         mRoleManagerPresenter.requestRoleScreenCondition();
     }
 
@@ -143,7 +146,7 @@ public final class RoleManagerActivity extends BaseActivity implements
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 // TODO: 加载更多
-                mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, ++page);
+                mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, ++pageCount);
             }
         });
     }
@@ -216,7 +219,8 @@ public final class RoleManagerActivity extends BaseActivity implements
     public void getAllData2List(List<RolePermission> rolePermissions) {
         pagerRefresh.finishLoadmore();
         // 得到数据
-        if (page == 0) {
+        if (pageCount == 1) {
+            mLoadingView.setVisibility(View.GONE);
             // 初始化或者条件查询第一页
             mRoleManagerAdapter.setPermissionList(rolePermissions);
             mRoleManagerAdapter.setLoaded(false);
@@ -270,10 +274,10 @@ public final class RoleManagerActivity extends BaseActivity implements
                 }
             }
             // TODO: 清空分类接口
-            page = 0;
+            pageCount = 1;
             mConditionTypeFirst = "";
             mConditionTypeSecond = "";
-            mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, page);
+            mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, pageCount);
             showPopScreen();
             tempPos = -1;
         });
@@ -289,9 +293,9 @@ public final class RoleManagerActivity extends BaseActivity implements
                     }
                 }
             }
-            page = 0;
+            pageCount = 1;
             mRoleManagerPresenter.requestAllRole("", TextUtils.isEmpty(mConditionTypeFirst) ? "" : mConditionTypeFirst,
-                    TextUtils.isEmpty(mConditionTypeSecond) ? "" : mConditionTypeSecond, page);
+                    TextUtils.isEmpty(mConditionTypeSecond) ? "" : mConditionTypeSecond, pageCount);
             tempPos = -1;
             mStatusPopWindow.dismiss();
         });

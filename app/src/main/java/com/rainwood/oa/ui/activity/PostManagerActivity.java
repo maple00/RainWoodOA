@@ -76,6 +76,8 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private RecyclerView postListView;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout mLoading;
 
     // 选择flag
     private boolean selectedDepartFlag = false;
@@ -232,6 +234,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
      */
     @Override
     public void getPostListData(List<Post> postList) {
+        mLoading.setVisibility(View.GONE);
         mPostManagerAdapter.setPostList(postList);
     }
 

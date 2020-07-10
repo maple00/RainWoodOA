@@ -112,7 +112,8 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
         mMineRecordsAdapter.setItemReissue(new MineRecordsAdapter.OnClickItemReissue() {
             @Override
             public void onClickItem(MineRecords reissue, int position) {
-                toast("查看详情");
+                PageJumpUtil.ReissueCardList2Detail(MineReissueCardActivity.this, RecordDetailActivity.class,
+                        "补卡详情", reissue.getId());
             }
 
             @Override

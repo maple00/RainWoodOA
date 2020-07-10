@@ -192,6 +192,8 @@ public final class SearchActivity extends BaseActivity implements
                     case "balanceRecord":
                         // 费用报销
                     case "reimbursement":
+                        // 办公文件
+                    case "officeFile":
                         Intent intent = new Intent();
                         intent.putExtra("keyWord", searchContent);
                         setResult(PAGE_SEARCH_CODE, intent);

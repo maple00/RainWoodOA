@@ -81,19 +81,26 @@
         <!--
         screenOrientation：设置屏幕的显示方向 https://blog.csdn.net/m940034240/article/details/76619130
         -->
-        <!-- 启动页面-->
+        <!-- 闪屏界面-->
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".ui.activity.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="unspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 登录界面 SplashActivity-->
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/attendance_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
 
         <!-- 忘记密码 ForgetPasswordActivity-->
         <activity
@@ -578,6 +585,13 @@
         <!-- 请假申请  AskLeaveActivity-->
         <activity
             android:name=".ui.activity.AskLeaveActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 加班申请 MineOverTimeApplyActivity-->
+        <activity
+            android:name=".ui.activity.MineOverTimeApplyActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
