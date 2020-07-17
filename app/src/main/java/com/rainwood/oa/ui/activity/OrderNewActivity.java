@@ -17,19 +17,20 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.PrimaryKey;
 import com.rainwood.oa.model.domain.TempData;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.PrimaryKeyAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.HashMap;
 import java.util.List;
@@ -154,19 +155,22 @@ public final class OrderNewActivity extends BaseActivity implements IOrderCallba
                 if (TextUtils.isEmpty(note.getText())) {
                     toast("请输入备注");
                 }
+                showDialog();
                 String customNameStr = customName.getText().toString().trim();
                 String orderNameStr = orderName.getText().toString().trim();
                 String moneyStr = money.getText().toString().trim();
                 String noteStr = note.getText().toString().trim();
                 // 新建订单
                 String customId = mPrimaryKey.getKhid();
-                mOrderPresenter.CreateNewOrder(customId, orderNameStr, moneyStr, noteStr);
+                String orderId = RandomUtil.getNumberId(20);
+                mOrderPresenter.CreateNewOrder(customId, orderId, orderNameStr, moneyStr, noteStr);
                 mTempData = new TempData();
                 Map<String, String> tempMap = new HashMap<>();
                 tempMap.put("customName", customName.getText().toString().trim());
                 tempMap.put("orderName", orderName.getText().toString().trim());
                 tempMap.put("money", money.getText().toString().trim());
                 tempMap.put("note", note.getText().toString().trim());
+                tempMap.put("orderNo", orderId);
                 mTempData.setTempMap(tempMap);
                 break;
         }
@@ -218,6 +222,9 @@ public final class OrderNewActivity extends BaseActivity implements IOrderCallba
         if (!success) {
             toast("创建失败");
             return;
+        }
+        if (isShowDialog()) {
+            hideDialog();
         }
         toast("创建成功");
         PageJumpUtil.orderNew2OrderEditPage(this, OrderEditActivity.class, mTempData);

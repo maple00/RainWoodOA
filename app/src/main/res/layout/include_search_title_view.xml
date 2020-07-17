@@ -6,7 +6,7 @@
     android:layout_height="?attr/actionBarSize"
     android:background="@color/white"
     android:gravity="center_vertical"
-    tools:ignore="ContentDescription">
+    tools:ignore="ContentDescription,RelativeOverlap">
 
     <ImageView
         android:id="@+id/iv_page_back"
@@ -17,14 +17,13 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_page_back" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/iv_page_back"
-        android:text="开票记录"
         android:textColor="@color/fontColor"
         android:textSize="20sp"
         android:textStyle="bold" />

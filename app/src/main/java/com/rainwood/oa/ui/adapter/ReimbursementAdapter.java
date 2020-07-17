@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -28,19 +29,28 @@ import java.util.List;
  */
 public final class ReimbursementAdapter extends RecyclerView.Adapter<ReimbursementAdapter.ViewHolder> {
 
-    private List<Reimbursement> mList = new ArrayList<>();
+    private List<Reimbursement> mList ;
     private Context mContext;
-    private boolean loaded;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setList(List<Reimbursement> list) {
-        if (loaded){
-            mList.clear();
+        mList = list;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<Reimbursement> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mList.addAll(list);
+
+        if (mList == null || mList.size() == 0) {
+            setList(data);
+        } else {
+            mList.addAll(data);
+            notifyItemRangeInserted(mList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

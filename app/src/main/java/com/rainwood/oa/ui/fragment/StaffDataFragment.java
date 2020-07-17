@@ -10,6 +10,8 @@ import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.StaffDetail;
 import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.model.domain.StaffPhoto;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.activity.ExperienceDetailActivity;
 import com.rainwood.oa.ui.adapter.StaffExperienceAdapter;
@@ -19,13 +21,14 @@ import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.GroupTextText;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.MeasureListView;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IStaffCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +38,8 @@ import java.util.Objects;
  * @Date: 2020/5/22 17:04
  * @Desc: 员工资料
  */
-public final class StaffDataFragment extends BaseFragment implements IStaffCallbacks, StaffExperienceAdapter.OnItemClickExperience {
+public final class StaffDataFragment extends BaseFragment implements IStaffCallbacks,
+        StaffExperienceAdapter.OnItemClickExperience, StatusAction {
 
     // actionBar
     @ViewInject(R.id.tv_page_title)
@@ -86,6 +90,9 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     private MeasureListView workExperience;
     @ViewInject(R.id.tv_none_job_experience)
     private TextView noneJobExperience;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     // 展开隐藏flag、默认隐藏
     private boolean isShow = false;
     private StaffPhotoAdapter mStaffPhotoAdapter;
@@ -97,6 +104,7 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
 
     public StaffDataFragment(String staffId) {
         mStaffId = staffId;
+        Constants.staffId = staffId;
     }
 
     @Override
@@ -125,6 +133,7 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     @Override
     protected void loadData() {
         // 从这里请求数据
+        showLoading();
         mStaffPresenter.requestStaffData(mStaffId);
     }
 
@@ -133,7 +142,8 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
         mExperienceAdapter.setClickExperience(this);
         hideClick.setOnItemClick(text -> {
             hideClick.setText(isShow ? "展开" : "收起");
-            hideClick.setRightIcon(isShow ? R.drawable.ic_down_arrow_blue : R.drawable.ic_up_arrow_blue, getContext().getColor(R.color.blue05));
+            hideClick.setRightIcon(isShow ? R.drawable.ic_down_arrow_blue : R.drawable.ic_up_arrow_blue,
+                    getContext().getColor(R.color.blue05));
             isShow = !isShow;
             showHide.setVisibility(isShow ? View.VISIBLE : View.GONE);
         });
@@ -152,6 +162,11 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     @SuppressLint("SetTextI18n")
     @Override
     public void getStaffDetailData(StaffDetail staffDetail) {
+        if (staffDetail == null) {
+            showEmpty();
+            return;
+        }
+        showComplete();
         staffName.setText(staffDetail.getName());
         departPost.setText(staffDetail.getJob());
         noteData.setText(staffDetail.getSex() + " · " + staffDetail.getEntryTime()
@@ -181,8 +196,9 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
+        showError(v -> mStaffPresenter.requestStaffData(mStaffId));
     }
 
     @Override
@@ -200,5 +216,10 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
         // 查看工作经历详情
         //startActivity(getNewIntent(getContext(), ExperienceDetailActivity.class, "工作经历"));
         PageJumpUtil.staffJobExperience2Detail(getContext(), ExperienceDetailActivity.class, staffExperience.getId());
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

@@ -51,12 +51,12 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     /**
      * 获取员工的所有的会计账户
      */
-    void requestAllAccountData(String type);
+    void requestAllAccountData(String type, int pageCount);
 
     /**
      * 获取员工的所有的计算账户的信息
      */
-    void requestAllSettlementData(String type);
+    void requestAllSettlementData(String type, int pageCount);
 
     /**
      * 获取员工账户的详情

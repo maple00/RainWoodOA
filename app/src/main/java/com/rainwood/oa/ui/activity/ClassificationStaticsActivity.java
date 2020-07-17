@@ -22,6 +22,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.ClassificationStatics;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
@@ -34,6 +35,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,10 @@ import java.util.List;
  * @Desc: 分类统计
  */
 public final class ClassificationStaticsActivity extends BaseActivity
-        implements OnChartValueSelectedListener, IFinancialCallbacks {
+        implements OnChartValueSelectedListener, IFinancialCallbacks, StatusAction {
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -77,16 +82,20 @@ public final class ClassificationStaticsActivity extends BaseActivity
         StatusBarUtils.setPaddingSmart(this, pageTop);
         pageTitle.setText(title);
 
-        setValues(incomeStaticsView);
-        setValues(outcomeStaticsView);
+        setValues(incomeStaticsView, "收入统计");
+        setValues(outcomeStaticsView, "支出统计");
     }
 
-    private void setValues(PieChart staticsView) {
+    /**
+     * 饼图初始化
+     * @param staticsView
+     */
+    private void setValues(PieChart staticsView, String tips) {
         staticsView.setUsePercentValues(true);
         staticsView.getDescription().setEnabled(false);
         staticsView.setExtraOffsets(5, 10, 5, 5);
         staticsView.setDragDecelerationFrictionCoef(0.95f);
-        staticsView.setCenterText(new SpannableString(""));
+        staticsView.setCenterText(new SpannableString(tips));
         staticsView.setDrawHoleEnabled(true);
         staticsView.setDrawEntryLabels(false);
         staticsView.setHoleColor(Color.WHITE);
@@ -104,15 +113,16 @@ public final class ClassificationStaticsActivity extends BaseActivity
         staticsView.setOnChartValueSelectedListener(this);
         staticsView.animateY(1400, Easing.EaseInOutQuad);
         // chart.spin(2000, 0, 360);
-        Legend l = staticsView.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(7f);
-        l.setWordWrapEnabled(true);
-        l.setYOffset(0f);
+        Legend legend = staticsView.getLegend();
+        legend.setEnabled(true);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+        legend.setXEntrySpace(7f);
+        legend.setYEntrySpace(7f);
+        legend.setWordWrapEnabled(true);
+        legend.setYOffset(0f);
         // entry label styling
         staticsView.setEntryLabelColor(Color.WHITE);
         staticsView.setEntryLabelTextSize(12f);
@@ -187,6 +197,10 @@ public final class ClassificationStaticsActivity extends BaseActivity
                 "<font color='" + getColor(R.color.labelColor) + "' size=='15dp'>" + outcomeMoney + "</font>"));
     }
 
+    /**
+     * 收入统计
+     * @param moneyList
+     */
     private void setIncomeData(List<ClassificationStatics> moneyList) {
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(moneyList); i++) {
@@ -222,6 +236,10 @@ public final class ClassificationStaticsActivity extends BaseActivity
         incomeStaticsView.invalidate();
     }
 
+    /**
+     * 支出统计
+     * @param moneyList
+     */
     private void setOutcomeData(List<ClassificationStatics> moneyList) {
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(moneyList); i++) {
@@ -263,7 +281,8 @@ public final class ClassificationStaticsActivity extends BaseActivity
             return;
         LogUtils.d("sxs",
                 "Value: " + e.getY() + ", xIndex: " + e.getX()
-                        + ", DataSet index: " + h.getDataSetIndex());
+                        + ", DataSet index: " + h.toString());
+
     }
 
     @Override
@@ -279,5 +298,10 @@ public final class ClassificationStaticsActivity extends BaseActivity
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

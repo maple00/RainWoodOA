@@ -24,11 +24,10 @@ import java.util.List;
  */
 public final class FollowAdapter extends BaseAdapter {
 
-    private List<FollowRecord> mList = new ArrayList<>();
+    private List<FollowRecord> mList;
 
     public void setList(List<FollowRecord> list) {
-        mList.clear();
-        mList.addAll(list);
+        mList = list;
         notifyDataSetChanged();
     }
 

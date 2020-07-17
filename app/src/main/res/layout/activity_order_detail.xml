@@ -10,513 +10,519 @@
 
     <include layout="@layout/include_title_bar" />
 
-    <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
-        android:text="开发中"
-        android:textColor="@color/fontColor"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <!-- 订单信息-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/order_data"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_data"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginEnd="18dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="25dp" />
-
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureGridView
-                    android:id="@+id/mgv_order_data_cost"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="18dp"
-                    android:verticalSpacing="20dp" />
-
-                <ImageView
-                    android:id="@+id/iv_arrow"
+                <TextView
+                    android:id="@+id/tv_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="20dp"
-                    android:src="@drawable/ic_down_arrow" />
+                    android:layout_marginBottom="10dp"
+                    android:text="开发中"
+                    android:textColor="@color/fontColor"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-            </LinearLayout>
-
-            <!-- 订单附件-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
+                <!-- 订单信息-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/order_data"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_data"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/order_attachment"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/tv_order_attach_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_attach"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="20dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
-
-            </LinearLayout>
-
-            <!-- 费用计提-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
+                        android:layout_marginStart="18dp"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginEnd="18dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="25dp" />
 
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.rainwood.oa.ui.widget.MeasureGridView
+                        android:id="@+id/mgv_order_data_cost"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/order_cost"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/tv_order_cost_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_cost"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="20dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
-
-            </LinearLayout>
-
-            <!-- 跟进记录-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/text_follow_record"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/tv_order_follow_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_follow"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp">
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
+                        android:verticalSpacing="20dp" />
 
                     <ImageView
-                        android:id="@+id/iv_follow_record"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_plus" />
-
-                    <TextView
-                        android:id="@+id/tv_follow_record"
+                        android:id="@+id/iv_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/text_plus"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="14sp" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="10dp"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_down_arrow" />
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <!-- 任务分配-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
+                <!-- 订单附件-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/order_attachment"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_attach_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_attach"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/text_task_allocation"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/tv_order_task_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="20dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
 
                 </LinearLayout>
 
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_task"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="20dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
-
-            </LinearLayout>
-
-            <!-- 回款记录-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
+                <!-- 费用计提-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/order_cost"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_cost_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_cost"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/text_receivable_record"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/tv_order_receivable_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="20dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
 
                 </LinearLayout>
 
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_receivable"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginBottom="20dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
-
-            </LinearLayout>
-
-            <!-- 已付费用-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/shape_white_8dp"
-                android:orientation="vertical">
-
+                <!-- 跟进记录-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/text_follow_record"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_follow_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="3dp"
-                        android:layout_height="10dp"
-                        android:background="@color/colorPrimary" />
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
 
-                    <TextView
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_follow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="7dp"
-                        android:text="@string/text_prepaid"
-                        android:textColor="@color/fontColor"
-                        android:textSize="14sp" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp">
 
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        <ImageView
+                            android:id="@+id/iv_follow_record"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_plus" />
 
-                    <TextView
-                        android:id="@+id/tv_order_prepaid_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/text_query_all"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
+                        <TextView
+                            android:id="@+id/tv_follow_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/text_plus"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <View
-                    style="@style/HorizontalLineStyle"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp" />
-
-                <com.rainwood.oa.ui.widget.MeasureListView
-                    android:id="@+id/mlv_order_prepaid"
+                <!-- 任务分配-->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginBottom="20dp"
-                    android:divider="@color/transparent"
-                    android:dividerHeight="20dp" />
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/text_task_allocation"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_task_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
+
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_task"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="20dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+
+                </LinearLayout>
+
+                <!-- 回款记录-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/text_receivable_record"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_receivable_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
+
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_receivable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginBottom="20dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+
+                </LinearLayout>
+
+                <!-- 已付费用-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/shape_white_8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="10dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="@string/text_prepaid"
+                            android:textColor="@color/fontColor"
+                            android:textSize="14sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_order_prepaid_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/text_query_all"
+                            android:textColor="@color/colorMiddle"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/HorizontalLineStyle"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp" />
+
+                    <com.rainwood.oa.ui.widget.MeasureListView
+                        android:id="@+id/mlv_order_prepaid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginBottom="20dp"
+                        android:divider="@color/transparent"
+                        android:dividerHeight="20dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
-
+        </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </LinearLayout>

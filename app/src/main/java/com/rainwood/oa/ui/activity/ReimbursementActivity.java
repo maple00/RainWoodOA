@@ -20,6 +20,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
@@ -43,6 +44,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -54,7 +56,8 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Date: 2020/6/4 11:55
  * @Desc: 费用报销
  */
-public final class ReimbursementActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks {
+public final class ReimbursementActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks,
+        StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -95,6 +98,8 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_reimbursement)
     private RecyclerView reimbursementView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IFinancialPresenter mFinancialPresenter;
     private IMinePresenter mMinePresenter;
@@ -180,6 +185,17 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
         }
     }
 
+
+    /**
+     * 财务管理 -- 费用报销
+     */
+    private void netReimbursementData(String allocated, String staffId, String type, String payer,
+                                      String startTime, String endTime, String keyWord) {
+        showLoading();
+        mFinancialPresenter.requestReimburseData(allocated, staffId, type,
+                payer, startTime, endTime, keyWord, pageCount = 1);
+    }
+
     @Override
     protected void initEvent() {
         departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(ReimbursementActivity.this,
@@ -226,8 +242,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                                     // 管理--费用报销
                                     mStartTime = startTime;
                                     mEndTime = endTime;
-                                    mFinancialPresenter.requestReimburseData("", "", "",
-                                            "", mStartTime, mEndTime, mKeyWord, pageCount = 1);
+                                    netReimbursementData("", "", "", "", mStartTime, mEndTime, mKeyWord);
                                     break;
                             }
                         }
@@ -286,12 +301,10 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                     searchTopView.setVisibility(View.GONE);
                     hideSoftKeyboard();
                     mKeyWord = "";
-                    mFinancialPresenter.requestReimburseData("", "", "", "",
-                            "", "", "", pageCount = 1);
+                    netReimbursementData("", "", "", "", "", "", "");
                 } else {
                     searchTopView.setVisibility(View.VISIBLE);
-                    mFinancialPresenter.requestReimburseData("", "", "", "",
-                            "", "", s.toString(), pageCount = 1);
+                    netReimbursementData("", "", "", "", "", "", s.toString());
                 }
             }
         });
@@ -314,15 +327,13 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("", mStaffId, "",
-                                "", "", "", "", pageCount = 1);
+                        netReimbursementData("", mStaffId, "", "", "", "", "");
                         break;
                 }
             }
             if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
                 mKeyWord = data.getStringExtra("keyWord");
-                mFinancialPresenter.requestReimburseData("", "", "", "",
-                        "", "", mKeyWord, pageCount = 1);
+                netReimbursementData("", "", "", "", "", "", mKeyWord);
                 searchTipsView.setText(mKeyWord);
             }
         }
@@ -351,6 +362,9 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                 }*/
                 break;
             case R.id.tv_query_all:
+                if (lineAll.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(true, false, false);
                 setTextBold(mTextQueryAll, mTextUnAllocated, mTextAllocated);
                 hasAllocated = "";
@@ -361,12 +375,14 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("", "", "",
-                                "", "", "", mKeyWord, pageCount = 1);
+                        netReimbursementData("", "", "", "", "", "", mKeyWord);
                         break;
                 }
                 break;
             case R.id.tv_allocated:
+                if (lineAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(false, true, false);
                 setTextBold(mTextAllocated, mTextQueryAll, mTextUnAllocated);
                 hasAllocated = "是";
@@ -377,12 +393,14 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("是", "", "",
-                                "", "", "", mKeyWord, pageCount = 1);
+                        netReimbursementData("是", "", "", "", "", "", mKeyWord);
                         break;
                 }
                 break;
             case R.id.tv_un_allocated:
+                if (lineUnAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(false, false, true);
                 setTextBold(mTextUnAllocated, mTextQueryAll, mTextAllocated);
                 hasAllocated = "否";
@@ -393,8 +411,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("否", "", "",
-                                "", "", "", mKeyWord, pageCount = 1);
+                        netReimbursementData("否", "", "", "", "", "", mKeyWord);
                         break;
                 }
                 break;
@@ -433,15 +450,20 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @Override
     public void getReimburseData(List<Reimbursement> reimbursementList) {
         // 管理---费用报销
-        if (ListUtils.getSize(reimbursementList) == 0) {
-            toast("当前暂无费用报销数据");
-        }
         pageRefresh.finishLoadmore();
-        mReimbursementAdapter.setLoaded(pageCount == 1);
+        showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
         if (pageCount != 1) {
             toast("为您加载了" + ListUtils.getSize(reimbursementList) + "条数据");
+            mReimbursementAdapter.addData(reimbursementList);
+        } else {
+            if (ListUtils.getSize(reimbursementList) == 0) {
+                showEmpty();
+            }
+            mReimbursementAdapter.setList(reimbursementList);
         }
-        mReimbursementAdapter.setList(reimbursementList);
     }
 
     @Override
@@ -511,8 +533,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                     break;
                 case "reimbursement":
                     // 管理--费用报销
-                    mFinancialPresenter.requestReimburseData("", "", mType, mPayer,
-                            "", "", mKeyWord, pageCount = 1);
+                    netReimbursementData("", "", mType, mPayer, "", "", mKeyWord);
                     break;
             }
             mStatusPopWindow.dismiss();
@@ -532,5 +553,10 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

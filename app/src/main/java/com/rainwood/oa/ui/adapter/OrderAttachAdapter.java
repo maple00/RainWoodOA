@@ -24,10 +24,11 @@ import java.util.List;
  */
 public final class OrderAttachAdapter extends BaseAdapter {
 
-    List<Attachment> mList;
+    private List<Attachment> mList;
 
     public void setList(List<Attachment> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override

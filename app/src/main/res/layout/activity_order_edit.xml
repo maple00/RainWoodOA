@@ -624,6 +624,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="25dp"
+                    android:layout_marginBottom="20dp"
                     app:title="剩余净值"
                     app:values="￥50000" />
 

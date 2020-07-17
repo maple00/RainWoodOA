@@ -1,20 +1,23 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.StaffAccount;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.widget.GroupTextText;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IStaffCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * @Author: a797s
@@ -37,8 +40,11 @@ public final class PaymentDetailActivity extends BaseActivity implements IStaffC
     private GroupTextText desc;
     @ViewInject(R.id.gtt_time)
     private GroupTextText time;
+    @ViewInject(R.id.iv_doubt)
+    private ImageView mImageDoubt;
 
     private IStaffPresenter mStaffPresenter;
+    private String mIco;
 
     @Override
     protected int getLayoutResId() {
@@ -67,11 +73,18 @@ public final class PaymentDetailActivity extends BaseActivity implements IStaffC
     }
 
     @SingleClick
-    @OnClick(R.id.iv_page_back)
+    @OnClick({R.id.iv_page_back, R.id.iv_doubt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_doubt:
+                if (mIco.endsWith(".jpg") || mIco.endsWith(".png")) {
+                    FileManagerUtil.queryBigPicture(this, mIco);
+                } else {
+                    toast("图片错误");
+                }
                 break;
         }
     }
@@ -84,6 +97,11 @@ public final class PaymentDetailActivity extends BaseActivity implements IStaffC
                 ? "+" + account.getMoney() : "-" + account.getMoney());
         desc.setValue(account.getText());
         time.setValue(account.getTime());
+        mIco = account.getIco();
+        Glide.with(this).load(account.getIco())
+                .error(R.drawable.ic_hint_empty)
+                .placeholder(R.drawable.ic_hint_empty)
+                .into(mImageDoubt);
     }
 
     @Override

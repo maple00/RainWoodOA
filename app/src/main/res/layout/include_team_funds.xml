@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:elevation="0px">
+        app:elevation="0px"
+        app:layout_behavior=".ui.widget.AppBarLayoutBehavior">
 
         <com.rainwood.oa.ui.widget.XCollapsingToolbarLayout
             android:id="@+id/xtl_team_funds"
@@ -71,8 +72,7 @@
                     android:paddingBottom="10dp"
                     android:text="全部"
                     android:textColor="@color/fontColor"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
                 <View
                     android:id="@+id/line_all"
@@ -163,32 +163,23 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-            android:id="@+id/trl_pager_refresh"
+        <com.rainwood.tools.wheel.widget.HintLayout
+            android:id="@+id/hl_status_hint"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_team_cost"
+            <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+                android:id="@+id/trl_pager_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_tips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:gravity="bottom|center_horizontal"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="没有更多了~"
-                android:textColor="@color/labelColor2"
-                android:textSize="12sp"
-                android:visibility="invisible" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_team_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
-
+            </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+        </com.rainwood.tools.wheel.widget.HintLayout>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

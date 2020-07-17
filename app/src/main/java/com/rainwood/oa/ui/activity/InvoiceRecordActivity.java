@@ -21,6 +21,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -42,6 +43,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -53,7 +55,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Time: 2020/5/30 17:41
  * @Desc: 客户开票记录
  */
-public final class InvoiceRecordActivity extends BaseActivity implements IRecordCallbacks {
+public final class InvoiceRecordActivity extends BaseActivity implements IRecordCallbacks, StatusAction {
 
     @ViewInject(R.id.ll_parent_pager)
     private LinearLayout parentPager;
@@ -106,6 +108,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private Button applyOpen;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pageRefresh;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
 
     private IRecordManagerPresenter mRecordManagerPresenter;
@@ -182,12 +186,21 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
         // 加载数据
         if (Constants.CUSTOM_ID != null) {
             // 从客户详情中点击
-            mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID);
+            showLoading();
+            mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID, pageCount = 1);
         } else {
-            mRecordManagerPresenter.requestInvoiceRecords("", "", "", "", "", "", pageCount = 1);
+            netRequestData("", "", "", "", "", "");
             // 请求condition
             mRecordManagerPresenter.requestInvoiceCondition();
         }
+    }
+
+    /**
+     * 管理财务管理 ---  开票记录
+     */
+    private void netRequestData(String type, String staffId, String seller, String allocated, String startTime, String endTime) {
+        showLoading();
+        mRecordManagerPresenter.requestInvoiceRecords(type, staffId, seller, allocated, startTime, endTime, pageCount = 1);
     }
 
     @Override
@@ -235,8 +248,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                             if (Constants.CUSTOM_ID == null) {
                                 mStartTime = startTime;
                                 mEndTime = endTime;
-                                mRecordManagerPresenter.requestInvoiceRecords("", "",
-                                        "", "", mStartTime, mEndTime, pageCount = 1);
+                                netRequestData("", "", "", "", mStartTime, mEndTime);
                             }
                         }
 
@@ -258,6 +270,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 if (Constants.CUSTOM_ID == null) {
                     mRecordManagerPresenter.requestInvoiceRecords(selectedAllocated, mStaffId,
                             mSeller, mAllocated, mStartTime, mEndTime, (++pageCount));
+                }else {
+                    mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID, ++pageCount);
                 }
             }
         });
@@ -296,7 +310,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
 
                 toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("", mStaffId, "", "", "", "", pageCount = 1);
+                    netRequestData("", mStaffId, "", "", "", "");
                 }
             }
             // 搜索结果
@@ -329,7 +343,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 setStatusLine(true, false, false);
                 setTextViewBold(true, false, false);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("", "", "", "", "", "", pageCount = 1);
+                    netRequestData("", "", "", "", "", "");
                 }
                 break;
             case R.id.tv_allocated:
@@ -338,7 +352,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 setStatusLine(false, true, false);
                 setTextViewBold(false, true, false);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("是", "", "", "", "", "", pageCount = 1);
+                    netRequestData("是", "", "", "", "", "");
                 }
                 break;
             case R.id.tv_un_allocated:
@@ -347,7 +361,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 setStatusLine(false, false, true);
                 setTextViewBold(false, false, true);
                 if (Constants.CUSTOM_ID == null) {
-                    mRecordManagerPresenter.requestInvoiceRecords("否", "", "", "", "", "", pageCount = 1);
+                    netRequestData("否", "", "", "", "", "");
                 }
                 break;
             case R.id.iv_search:
@@ -397,7 +411,17 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
      */
     @Override
     public void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList) {
-        mInvoiceRecordAdapter.setRecordList(invoiceRecordList);
+        showComplete();
+        pageRefresh.finishLoadmore();
+        if (pageCount != 1){
+            toast("为您加载了" + ListUtils.getSize(invoiceRecordList) + "条数据");
+            mInvoiceRecordAdapter.addData(invoiceRecordList);
+        }else {
+            if (ListUtils.getSize(invoiceRecordList) ==0){
+                showEmpty();
+            }
+            mInvoiceRecordAdapter.setRecordList(invoiceRecordList);
+        }
     }
 
     /**
@@ -408,11 +432,16 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     public void getFinancialInvoiceRecords(List<FinancialInvoiceRecord> financialInvoiceRecords) {
         pageRefresh.finishLoadmore();
-        mFinancialInvoiceRecordAdapter.setLoaded(pageCount == 1);
+        showComplete();
         if (pageCount != 1) {
             toast("为您加载了" + ListUtils.getSize(financialInvoiceRecords) + "条数据");
+            mFinancialInvoiceRecordAdapter.addData(financialInvoiceRecords);
+        } else {
+            if (ListUtils.getSize(financialInvoiceRecords) == 0) {
+                showEmpty();
+            }
+            mFinancialInvoiceRecordAdapter.setRecordList(financialInvoiceRecords);
         }
-        mFinancialInvoiceRecordAdapter.setRecordList(financialInvoiceRecords);
     }
 
     /**
@@ -474,15 +503,15 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 mSeller = item.getName();
             }
             if (Constants.CUSTOM_ID == null) {
-                mRecordManagerPresenter.requestInvoiceRecords("", "", mSeller, mAllocated, "", "", pageCount = 1);
+                netRequestData("", "", mSeller, mAllocated, "", "");
             }
             mStatusPopWindow.dismiss();
         });
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override
@@ -493,5 +522,10 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

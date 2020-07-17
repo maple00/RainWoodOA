@@ -14,12 +14,14 @@ import android.service.autofill.OnClickAction;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -32,12 +34,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.MessageEvent;
 import com.rainwood.oa.ui.activity.HomeActivity;
+import com.rainwood.oa.ui.dialog.WaitDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.action.HandlerAction;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,6 +54,7 @@ import java.lang.reflect.Method;
  * @Date: 2020/4/27 16:16
  * @Desc: activity基类
  */
+@SuppressLint("NewApi")
 public abstract class BaseActivity extends AppCompatActivity implements OnClickAction, HandlerAction {
 
     // public String TAG = this.getClass().getSimpleName();
@@ -58,25 +63,59 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     protected String moduleMenu;
     public CommonPopupWindow mCommonPopupWindow;
 
-    private State currentState = State.NONE;
-    private View mLoadingView;
-    private View mSuccessView;
-    private View mErrorView;
-    private View mEmptyView;
-
     public enum State {
         NONE, LOADING, SUCCESS, ERROR, EMPTY
     }
 
-    private FrameLayout mBaseContainer;
+    /**
+     * 加载对话框
+     */
+    private BaseDialog mDialog;
+    /**
+     * 对话框数量
+     */
+    private int mDialogTotal;
+
+    /**
+     * 当前加载对话框是否在显示中
+     */
+    public boolean isShowDialog() {
+        return mDialog != null && mDialog.isShowing();
+    }
+
+    /**
+     * 显示加载对话框
+     */
+    public void showDialog() {
+        if (mDialog == null) {
+            mDialog = new WaitDialog.Builder(this)
+                    .setCancelable(false)
+                    .create();
+        }
+        if (!mDialog.isShowing()) {
+            mDialog.show();
+        }
+        mDialogTotal++;
+    }
+
+    /**
+     * 隐藏加载对话框
+     */
+    public void hideDialog() {
+        if (mDialogTotal == 1) {
+            if (mDialog != null && mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+        }
+        if (mDialogTotal > 0) {
+            mDialogTotal--;
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
-//        setContentView(R.layout.activity_base_layout);
-//        mBaseContainer = findViewById(R.id.base_container);
-//        loadStateView();
         ViewBind.inject(this);
         title = getIntent().getStringExtra("title") == null ? "" : getIntent().getStringExtra("title");
         moduleMenu = getIntent().getStringExtra("menu") == null ? "" : getIntent().getStringExtra("menu");
@@ -86,27 +125,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         initPresenter();
         loadData();
         initEvent();
-    }
-
-    /***
-     * 各种成功的状态View
-     */
-    private void loadStateView() {
-        // 成功的View
-        loadSuccessView();
-
-        // LoadingView
-
-        // 错误页面
-
-
-        // 空白页面
-
-    }
-
-    protected void loadSuccessView() {
-        int resId = getLayoutResId();
-        setContentView(resId);
     }
 
     /**
@@ -120,8 +138,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      * 设置默认的状态栏背景颜色
      */
     protected void setStatusBar() {
-        // StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.white));
         StatusBarUtils.darkMode(this);
+        StatusBarUtils.immersive(this);
     }
 
     /**
@@ -153,6 +171,10 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     protected void onDestroy() {
         super.onDestroy();
         this.release();
+        if (isShowDialog()) {
+            mDialog.dismiss();
+        }
+        mDialog = null;
     }
 
     /**
@@ -211,14 +233,17 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      * 显示吐司
      */
     public void toast(CharSequence text) {
+        ToastUtils.setGravity(Gravity.CENTER, 0, 0);
         ToastUtils.show(text);
     }
 
     public void toast(@StringRes int id) {
+        ToastUtils.setGravity(Gravity.CENTER, 0, 0);
         ToastUtils.show(id);
     }
 
     public void toast(Object object) {
+        ToastUtils.setGravity(Gravity.CENTER, 0, 0);
         ToastUtils.show(object);
     }
 
@@ -290,6 +315,50 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
             }
         }
     }
+
+    /**
+     * 使editText点击外部时候失去焦点
+     *
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideInput(v, ev)) {//点击editText控件外部
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    hideSoftKeyboard();
+                    if (editText != null) {
+                        editText.clearFocus();
+                    }
+                }
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        // 必不可少，否则所有的组件都不会有TouchEvent了
+        return getWindow().superDispatchTouchEvent(ev) || onTouchEvent(ev);
+    }
+
+    EditText editText = null;
+
+    public boolean isShouldHideInput(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            editText = (EditText) v;
+            int[] leftTop = {0, 0};
+            //获取输入框当前的location位置
+            v.getLocationInWindow(leftTop);
+            int left = leftTop[0];
+            int top = leftTop[1];
+            int bottom = top + v.getHeight();
+            int right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
 
     /**
      * 设置必填信息
@@ -429,5 +498,23 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
                 onBackHomePager(event, Constants.MINE_FRAGMENT_RESULT_SIZE);
                 break;
         }
+    }
+
+    /**
+     * 设置上下平移的动画
+     *
+     * @param view
+     */
+    protected void setUpDownAnimation(View view) {
+        TranslateAnimation translateAnimation;
+        if (view.getVisibility() == View.VISIBLE) {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+                    Animation.RELATIVE_TO_PARENT, 0.5f, Animation.RELATIVE_TO_PARENT, 0.0f);
+        } else {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+                    Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.5f);
+        }
+        translateAnimation.setDuration(300);
+        view.setAnimation(translateAnimation);
     }
 }

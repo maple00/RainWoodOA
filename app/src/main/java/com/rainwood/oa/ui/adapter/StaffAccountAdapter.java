@@ -35,6 +35,23 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     * @param data
+     */
+    public void addData(List<StaffAccount> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+        if (mAccountList == null || mAccountList.size() == 0) {
+            setAccountList(data);
+        } else {
+            mAccountList.addAll(data);
+            notifyItemRangeInserted(mAccountList.size() - data.size(), data.size());
+            notifyDataSetChanged();
+        }
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

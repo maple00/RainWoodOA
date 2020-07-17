@@ -66,8 +66,8 @@ public final class StaffPhotoAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         Glide.with(convertView).load(getItem(position).getOrigin())
-                .error(R.drawable.bg_monkey_king)
-                .placeholder(R.drawable.bg_monkey_king)
+                .error(R.drawable.ic_none_contact)
+                .placeholder(R.drawable.ic_none_contact)
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(8)))
                 .into(holder.photo);
         // 查看大图

@@ -15,6 +15,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.OfficeFile;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -34,6 +35,7 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Time: 2020/6/7 14:20
  * @Desc: 办公文件activity
  */
-public final class OfficeFileActivity extends BaseActivity implements IAttachmentCallbacks {
+public final class OfficeFileActivity extends BaseActivity implements IAttachmentCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -67,6 +69,9 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_office_file)
     private RecyclerView officeFileView;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IAttachmentPresenter mAttachmentPresenter;
     private OfficeFileAdapter mOfficeFileAdapter;
@@ -118,10 +123,19 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
 
     @Override
     protected void loadData() {
+        showLoading();
         // list
-        mAttachmentPresenter.requestOfficeFileData("", "", "", "", "", pageCount);
+        netRequestData("", "", "", "", "");
         // condition
         mAttachmentPresenter.requestOfficeCondition();
+    }
+
+    /**
+     * 数据请求
+     */
+    private void netRequestData(String searchText, String classify, String format, String secret, String sorting) {
+        showLoading();
+        mAttachmentPresenter.requestOfficeFileData(searchText, classify, format, secret, sorting, pageCount = 1);
     }
 
     @Override
@@ -187,7 +201,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
         if (data != null) {
             if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
                 mKeyWord = data.getStringExtra("keyWord");
-                mAttachmentPresenter.requestOfficeFileData(mKeyWord, mClassify, mFormat, mSecret, mSorting, pageCount=1);
+                netRequestData(mKeyWord, mClassify, mFormat, mSecret, mSorting);
             }
         }
     }
@@ -211,16 +225,18 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
 
     @Override
     public void getOfficeFileData(List<OfficeFile> fileList) {
-        if (ListUtils.getSize(fileList) == 0) {
-            toast("当前数据为空");
-            return;
-        }
-        mOfficeFileAdapter.setLoaded(pageCount == 1);
+        showComplete();
         if (pageCount != 1) {
             pageRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(fileList) + "条数据");
+            mOfficeFileAdapter.addData(fileList);
+        }else {
+            if (ListUtils.getSize(fileList) == 0){
+                showEmpty();
+                return;
+            }
+            mOfficeFileAdapter.setFileList(fileList);
         }
-        mOfficeFileAdapter.setFileList(fileList);
     }
 
     @Override
@@ -285,7 +301,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             } else if (CHECKED_SECRET_FLAG) {
                 mSecret = selectedItem.getName();
             }
-            mAttachmentPresenter.requestOfficeFileData("", mClassify, mFormat, mSecret, "", pageCount = 1);
+            netRequestData("", mClassify, mFormat, mSecret, "");
             mStatusPopWindow.dismiss();
         });
     }
@@ -329,7 +345,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             selectedItem.setHasSelected(true);
             // TODO： 查询排序条件
             mSorting = selectedItem.getName();
-            mAttachmentPresenter.requestOfficeFileData("", "", "", "", mSorting, pageCount = 1);
+            netRequestData("", "", "", "", mSorting);
 
             mStatusPopWindow.dismiss();
         });
@@ -348,5 +364,10 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

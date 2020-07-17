@@ -15,7 +15,6 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,18 +24,27 @@ import java.util.List;
  */
 public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
-    private List<Logcat> mLogcatList = new ArrayList<>();
-    private boolean loaded;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
+    private List<Logcat> mLogcatList;
 
     public void setLogcatList(List<Logcat> logcatList) {
-        if (loaded) {
-            mLogcatList.clear();
+        mLogcatList = logcatList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<Logcat> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mLogcatList.addAll(logcatList);
+
+        if (mLogcatList == null || mLogcatList.size() == 0) {
+            setLogcatList(data);
+        } else {
+            mLogcatList.addAll(data);
+            notifyItemRangeInserted(mLogcatList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

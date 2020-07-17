@@ -46,8 +46,9 @@ public interface IAdministrativePresenter extends IBasePresenter<IAdministrative
      * 职位列表
      * @param positionName
      * @param departId
+     * @param page
      */
-    void requestPostListData(String positionName, String departId, String roleId);
+    void requestPostListData(String positionName, String departId, String roleId, int page);
 
     /**
      * 请求职位管理中的角色condition

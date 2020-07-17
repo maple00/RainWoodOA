@@ -51,6 +51,7 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
     @Override
     public void requestCurrentWorkDay(String checkedMonth) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("moon", checkedMonth);
         OkHttp.post(Constants.BASE_URL + "cla=workDay&fun=home", params, this);
     }
@@ -63,6 +64,7 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
     @Override
     public void requestCurrentDayAttendance(String staffId, String currentMonth) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
         params.add("month", currentMonth);
         OkHttp.post(Constants.BASE_URL + "cla=workSign&fun=home", params, this);

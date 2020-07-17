@@ -1,6 +1,7 @@
 package com.rainwood.oa.presenter;
 
 import com.rainwood.oa.base.IBasePresenter;
+import com.rainwood.oa.network.aop.CheckNet;
 import com.rainwood.oa.view.ILoginAboutCallbacks;
 
 /**
@@ -17,4 +18,9 @@ public interface ILoginAboutPresenter extends IBasePresenter<ILoginAboutCallback
      * @param password 密码
      */
     void Login(String userName, String password);
+
+    /**
+     * 忘记密码发送验证码
+     */
+    void sendVerifyCode(String userName);
 }

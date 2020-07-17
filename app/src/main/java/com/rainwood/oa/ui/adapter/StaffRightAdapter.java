@@ -18,8 +18,12 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Staff;
+import com.rainwood.oa.ui.activity.ImageActivity;
 import com.rainwood.oa.ui.widget.GroupIconText;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.tkrefreshlayout.utils.LogUtil;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.utils.FontSwitchUtil;
@@ -73,6 +77,8 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
         //holder.departPost.setText(mStaffList.get(position).getDepart() + "-" + mStaffList.get(position).getPost());
         holder.departPost.setText(mStaffList.get(position).getDepartment());
         holder.telNum.setValue(mStaffList.get(position).getTel());
+        // 查看大图
+        holder.headPhoto.setOnClickListener(v -> FileManagerUtil.queryBigPicture(mContext, mStaffList.get(position).getIco()));
         // 点击事件
         holder.itemStaff.setOnClickListener(v -> mClickStaffRight.onClickStaff(mStaffList.get(position), position));
     }

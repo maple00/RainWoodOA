@@ -37,6 +37,23 @@ public final class PostManagerAdapter extends RecyclerView.Adapter<PostManagerAd
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<Post> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+        if (mPostList == null || mPostList.size() == 0) {
+            setPostList(data);
+        } else {
+            mPostList.addAll(data);
+            notifyItemRangeInserted(mPostList.size() - data.size(), data.size());
+            notifyDataSetChanged();
+        }
+    }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -88,9 +105,10 @@ public final class PostManagerAdapter extends RecyclerView.Adapter<PostManagerAd
         }
     }
 
-    public interface OnClickPostItem{
+    public interface OnClickPostItem {
         /**
          * 查看详情
+         *
          * @param post
          */
         void onClickPost(Post post);

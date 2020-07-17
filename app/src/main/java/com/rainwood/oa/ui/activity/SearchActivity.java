@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.RolePermission;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.ISearchPresenter;
@@ -33,6 +35,8 @@ import com.rainwood.oa.view.ISearchCallback;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +49,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Desc: 搜索activity
  */
 public final class SearchActivity extends BaseActivity implements
-        ISearchCallback, IAdministrativeCallbacks {
+        ISearchCallback, IAdministrativeCallbacks, StatusAction {
 
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
@@ -53,6 +57,8 @@ public final class SearchActivity extends BaseActivity implements
     private TextView searchText;
     @ViewInject(R.id.rv_search_list)
     private RecyclerView searchListView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private ISearchPresenter mSearchPresenter;
     private IAdministrativePresenter mAdministrativePresenter;
@@ -153,7 +159,7 @@ public final class SearchActivity extends BaseActivity implements
                 public void afterTextChanged(Editable s) {
                     if (!TextUtils.isEmpty(s)) {
                         tempPostKey = s.toString();
-                        mAdministrativePresenter.requestPostListData(s.toString(), "", "");
+                        mAdministrativePresenter.requestPostListData(s.toString(), "", "", 1);
                     } else {
                         mSearchPostAdapter.setList(null);
                     }
@@ -174,6 +180,7 @@ public final class SearchActivity extends BaseActivity implements
                     toast(mTips);
                     return;
                 }
+                showLoading();
                 String searchContent = searchText.getText().toString().trim();
                 switch (mPageFlag) {
                     // 角色管理
@@ -212,9 +219,12 @@ public final class SearchActivity extends BaseActivity implements
     @Override
     public void getRoleManagerList(List<RolePermission> rolePermissionList) {
         if (ListUtils.getSize(rolePermissionList) == 0) {
-            toast("无当前角色");
+            // ToastUtils.setGravity(Gravity.CENTER, 0, 0);
+            // toast("无当前角色");
+            showEmpty();
             return;
         }
+        showComplete();
         mRoleManagerAdapter.setPermissionList(rolePermissionList);
     }
 
@@ -226,9 +236,11 @@ public final class SearchActivity extends BaseActivity implements
     @Override
     public void getDepartListData(List<Depart> departList) {
         if (ListUtils.getSize(departList) == 0) {
-            toast("未查询到该部门");
+           // toast("未查询到该部门");
+            showEmpty();
             return;
         }
+        showComplete();
         mDepartManagerAdapter.setDepartList(departList);
     }
 
@@ -239,6 +251,10 @@ public final class SearchActivity extends BaseActivity implements
      */
     @Override
     public void getPostListData(List<Post> postList) {
+        if (ListUtils.getSize(postList) == 0){
+            showEmpty();
+            return;
+        }
         searchListView.setItemViewCacheSize(6);
         List<String> postSearchList = new ArrayList<>();
         for (Post post : postList) {
@@ -268,8 +284,13 @@ public final class SearchActivity extends BaseActivity implements
         if (mSearchPresenter != null) {
             mSearchPresenter.unregisterViewCallback(this);
         }
-        if (mAdministrativePresenter != null) {
-            mAdministrativePresenter.unregisterViewCallback(this);
-        }
+//        if (mAdministrativePresenter != null) {
+//            mAdministrativePresenter.unregisterViewCallback(this);
+//        }
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

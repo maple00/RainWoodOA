@@ -38,6 +38,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     @Override
     public void requestLogcatData(String searchText, String typeOne, String typeTwo, String staffId, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("text", searchText);
         params.add("powerOne", typeOne);
         params.add("powerTwo", typeTwo);
@@ -53,6 +54,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     @Override
     public void requestLogcatType() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=manage&fun=menu", params, this);
     }
 

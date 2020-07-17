@@ -8,19 +8,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.StaffSettlement;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.activity.PaymentDetailActivity;
 import com.rainwood.oa.ui.adapter.StaffSettlementAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +34,7 @@ import java.util.Objects;
  * @Date: 2020/5/22 17:04
  * @Desc: 结算账户
  */
-public final class StaffSettleFragment extends BaseFragment implements IStaffCallbacks {
+public final class StaffSettleFragment extends BaseFragment implements IStaffCallbacks, StatusAction {
 
     // content
     @ViewInject(R.id.trl_pager_refresh)
@@ -44,10 +48,15 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     private View checkedIncome;
     @ViewInject(R.id.line_speeding)
     private View checkedSpeeding;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IStaffPresenter mStaffPresenter;
     private StaffSettlementAdapter mSettlementAdapter;
     private String mStaffId;
+    private int pageCount = 1;
+    private boolean clickType = false;
+    private String requestType = "settleAccountAll";
 
     public StaffSettleFragment(String staffId) {
         mStaffId = staffId;
@@ -76,7 +85,17 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     @Override
     protected void loadData() {
         // 请求数据
-        mStaffPresenter.requestAllSettlementData("settleAccountAll");
+        netDataLoading("settleAccountAll", pageCount);
+    }
+
+    /**
+     * 请求网路数据
+     *
+     * @param type
+     */
+    private void netDataLoading(String type, int page) {
+        showDialog();
+        mStaffPresenter.requestAllSettlementData(type, page);
     }
 
     @Override
@@ -90,6 +109,13 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
         mSettlementAdapter.setItemAccount(account -> {
             // 查看详情
             PageJumpUtil.staffAccount2Detail(getContext(), PaymentDetailActivity.class, account.getId());
+        });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                netDataLoading(requestType, (++pageCount));
+            }
         });
     }
 
@@ -131,29 +157,31 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
             case R.id.line_all:
                 checkedType(true, false, false);
                 // 查询全部
-                mStaffPresenter.requestAllSettlementData("settleAccountAll");
+                clickType = true;
+                requestType = "settleAccountAll";
+                netDataLoading("settleAccountAll", pageCount = 1);
                 break;
             case R.id.tv_income:
             case R.id.line_income:
                 checkedType(false, true, false);
                 // 查询收入
-                mStaffPresenter.requestAllSettlementData("settleAccountIn");
+                clickType = true;
+                requestType = "settleAccountIn";
+                netDataLoading("settleAccountIn", pageCount = 1);
                 break;
             case R.id.tv_speeding:
             case R.id.line_speeding:
                 checkedType(false, false, true);
                 // 查询支出
-                mStaffPresenter.requestAllSettlementData("settleAccountOut");
+                clickType = true;
+                requestType = "settleAccountOut";
+                netDataLoading("settleAccountOut", pageCount = 1);
                 break;
         }
     }
 
     /**
      * 设置选中状态
-     *
-     * @param b
-     * @param b2
-     * @param b3
      */
     private void checkedType(boolean b, boolean b2, boolean b3) {
         // 选中状态flag-- 默认选中全部
@@ -164,7 +192,19 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
 
     @Override
     public void getSettlementData(List<StaffSettlement> settlementList) {
-        mSettlementAdapter.setSettlementList(settlementList);
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        pageRefresh.finishLoadmore();
+        if (clickType) {
+            if (ListUtils.getSize(settlementList) == 0) {
+                showEmpty();
+            }
+            mSettlementAdapter.setSettlementList(settlementList);
+            clickType = false;
+        } else {
+            mSettlementAdapter.addData(settlementList);
+        }
     }
 
     @Override
@@ -180,5 +220,10 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

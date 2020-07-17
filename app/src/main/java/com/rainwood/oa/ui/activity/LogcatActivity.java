@@ -19,6 +19,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.ManagerMain;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ILogcatPresenter;
 import com.rainwood.oa.ui.adapter.LogcatAdapter;
@@ -39,6 +40,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -49,7 +51,7 @@ import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
  * @Date: 2020/5/28 9:25
  * @Desc: 系统日志
  */
-public final class LogcatActivity extends BaseActivity implements ILogcatCallbacks {
+public final class LogcatActivity extends BaseActivity implements ILogcatCallbacks, StatusAction {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -69,6 +71,9 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     private RecyclerView logcatContent;
     @ViewInject(R.id.divider)
     private View divider;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private ILogcatPresenter mLogcatPresenter;
     private LogcatAdapter mLogcatAdapter;
@@ -126,9 +131,18 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     @Override
     protected void loadData() {
         // 请求日志列表
-        mLogcatPresenter.requestLogcatData("", "", "", "", "", "", pageCount);
+        netRequestData("", "", "", "", "", "");
         // 请求日志类型
         mLogcatPresenter.requestLogcatType();
+    }
+
+    /**
+     * 请求网络数据
+     */
+    private void netRequestData(String searchText, String typeOne, String typeTwo, String staffId,
+                                String startTime, String endTime) {
+        showLoading();
+        mLogcatPresenter.requestLogcatData(searchText, typeOne, typeTwo, staffId, startTime, endTime, pageCount = 1);
     }
 
     @Override
@@ -162,7 +176,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                             dialog.dismiss();
                             mStartTime = startTime;
                             mEndTime = endTime;
-                            mLogcatPresenter.requestLogcatData("", "", "", "", mStartTime, mEndTime, pageCount = 1);
+                            netRequestData("", "", "", "", mStartTime, mEndTime);
                             selectedTimeFlag = false;
                             periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                         }
@@ -202,8 +216,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
             @Override
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s)) {
-                    mLogcatPresenter.requestLogcatData("", "", "",
-                            "", "", "", pageCount = 1);
+                    netRequestData("", "", "", "", "", "");
                 }
             }
         });
@@ -216,7 +229,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
             String staff = data.getStringExtra("staff");
             mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
-            mLogcatPresenter.requestLogcatData("", "", "", mStaffId, "", "", pageCount = 1);
+            netRequestData("", "", "", mStaffId, "", "");
             toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
         }
     }
@@ -234,22 +247,24 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                     return;
                 }
                 mSearchText = searchTips.getText().toString().trim();
-                mLogcatPresenter.requestLogcatData(mSearchText, "", "", "", "", "", pageCount = 1);
+                netRequestData(mSearchText, "", "", "", "", "");
                 break;
         }
     }
 
     @Override
     public void getSystemLogcat(List<Logcat> logcatList) {
+        showComplete();
         pagerRefresh.finishLoadmore();
-        mLogcatAdapter.setLoaded(pageCount == 1);
         if (pageCount != 1) {
             toast("加载了" + ListUtils.getSize(logcatList) + "条数据");
+            mLogcatAdapter.addData(logcatList);
+        } else {
+            if (ListUtils.getSize(logcatList) == 0) {
+                showEmpty();
+            }
+            mLogcatAdapter.setLogcatList(logcatList);
         }
-        if (ListUtils.getSize(logcatList) == 0) {
-            toast("当前加载数据为空");
-        }
-        mLogcatAdapter.setLogcatList(logcatList);
     }
 
     @Override
@@ -320,7 +335,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                 return;
             }
             //TODO: 列表和数据
-            mLogcatPresenter.requestLogcatData("", mTypeOne, mTypeTwo, "", "", "", pageCount = 1);
+            netRequestData("", mTypeOne, mTypeTwo, "", "", "");
             tempPos = -1;
             mStatusPopWindow.dismiss();
         });
@@ -380,5 +395,10 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

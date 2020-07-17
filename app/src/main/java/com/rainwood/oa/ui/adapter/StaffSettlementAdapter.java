@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffSettlement;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -34,6 +33,23 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
     public void setSettlementList(List<StaffSettlement> settlementList) {
         mSettlementList = settlementList;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<StaffSettlement> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mSettlementList == null || mSettlementList.size() == 0) {
+            setSettlementList(data);
+        } else {
+            mSettlementList.addAll(data);
+            notifyItemRangeInserted(mSettlementList.size() - data.size(), data.size());
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull

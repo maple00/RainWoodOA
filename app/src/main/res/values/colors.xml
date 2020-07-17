@@ -31,6 +31,8 @@
     <color name="assistColor10">#F9F9F9</color>
     <color name="assistColor15">#F8F8F8</color>
 
+    <color name="tipsColor1">#888888</color>
+
     <!-- common color-->
     <!-- 黑色-->
     <color name="black00">#000000</color>

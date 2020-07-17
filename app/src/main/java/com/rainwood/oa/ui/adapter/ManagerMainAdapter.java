@@ -34,14 +34,12 @@ public final class ManagerMainAdapter extends RecyclerView.Adapter<ManagerMainAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LogUtils.d(this, "onCreateViewHolder.....");
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_manager_main, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LogUtils.d(this, "onBindViewHolder....." + position);
         holder.title.setText(mData.get(position).getName());
         holder.image.setImageResource(mData.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         holder.managerTop.setOnClickListener(v -> {

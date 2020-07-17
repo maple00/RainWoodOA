@@ -1,8 +1,10 @@
 package com.rainwood.oa.ui.fragment;
 
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -18,11 +20,17 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IHomePresenter;
+import com.rainwood.oa.ui.activity.LoginActivity;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.MyMarkerView;
@@ -32,8 +40,8 @@ import com.rainwood.oa.view.IHomeCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +54,8 @@ import cn.rawinwood.bgabanner.transformer.TransitionEffect;
  * @Date: 2020/4/27 17:45
  * @Desc: 首页
  */
-public final class HomeFragment extends BaseFragment implements BGABanner.Adapter<ImageView, String>, IHomeCallbacks {
+public final class HomeFragment extends BaseFragment implements BGABanner.Adapter<ImageView, String>,
+        IHomeCallbacks, StatusAction {
 
     @ViewInject(R.id.lc_salary_chart)
     private LineChart salaryChartView;
@@ -54,9 +63,17 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
     private MeasureGridView homeSalary;
     @ViewInject(R.id.banner_home_top)
     private BGABanner mStackBanner;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IHomePresenter mHomePresenter;
     private HomeSalaryAdapter mSalaryAdapter;
+    private BottomNavigationView mBottomNavigationView;
+
+    public void setBottomNavigationView(BottomNavigationView navigationView) {
+        mBottomNavigationView = navigationView;
+
+    }
 
     @Override
     protected int getRootViewResId() {
@@ -71,6 +88,7 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         mSalaryAdapter = new HomeSalaryAdapter();
         // 设置适配器
         homeSalary.setAdapter(mSalaryAdapter);
+        // 传递待办事项角标对象
     }
 
     @Override
@@ -81,17 +99,25 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
 
     @Override
     protected void loadData() {
-        if (!NetworkUtils.isAvailable(getContext())) {
-            StatusBarUtils.darkMode(getActivity(), true);
-            onError(getString(R.string.text_network_state));
-            return;
-        } else {
-            StatusBarUtils.darkMode(getActivity(), false);
-        }
         // 加载数据 -- 当月1号到currentDay
         int nowYear = DateTimeUtils.getNowYear();
         int nowMonth = DateTimeUtils.getNowMonth();
         int nowDay = DateTimeUtils.getNowDay();
+        if (!NetworkUtils.isAvailable(getContext())) {
+            StatusBarUtils.darkMode(getActivity(), true);
+            toast(getString(R.string.text_network_error));
+            showError(v -> {
+                if (!NetworkUtils.isAvailable(getContext())) {
+                    toast(getString(R.string.common_network));
+                    return;
+                }
+                mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                        nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+            });
+            return;
+        } else {
+            StatusBarUtils.darkMode(getActivity(), false);
+        }
         mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
                 nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
     }
@@ -120,7 +146,11 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
             StatusBarUtils.darkMode(getActivity(), false);
         }
         if (mHomePresenter != null) {
-            mHomePresenter.requestSalaryData("2020-01", "2020-05");
+            int nowYear = DateTimeUtils.getNowYear();
+            int nowMonth = DateTimeUtils.getNowMonth();
+            int nowDay = DateTimeUtils.getNowDay();
+            mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                    nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
         }
     }
 
@@ -186,6 +216,23 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         mStackBanner.setTransitionEffect(TransitionEffect.Accordion);
         loadBannerData(mStackBanner, 3);
         // mStackBanner.setAnimation();
+    }
+
+    @Override
+    public void getBlockLogNum(int num) {
+        // 设置角标
+        //获取整个的NavigationView
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) mBottomNavigationView.getChildAt(0);
+        //这里就是获取所添加的每一个Tab(或者叫menu)，
+        View tab = menuView.getChildAt(2);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) tab;
+        //加载我们的角标View，新创建的一个布局
+        View badge = LayoutInflater.from(getContext()).inflate(R.layout.badge_block_log, menuView, false);
+        TextView msgCount = badge.findViewById(R.id.tv_msg_count);
+        //添加到Tab上
+        itemView.addView(badge);
+        //msgCount.setVisibility(num == 0 ? View.GONE : View.VISIBLE);
+        msgCount.setText(num > 99 ? (num + "+") : String.valueOf(num));
     }
 
     /**
@@ -312,8 +359,13 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
     @Override
     public void onError(String tips) {
         toast(tips);
-        //错误状态
-        setUpState(State.ERROR);
+        // 错误则返回到登录页面
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                openActivity(LoginActivity.class);
+            }
+        }, 200);
     }
 
     @Override
@@ -332,4 +384,10 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
             mHomePresenter.unregisterViewCallback(this);
         }
     }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
+    }
+
 }

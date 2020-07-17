@@ -80,8 +80,8 @@
 
     </LinearLayout>
 
-    <com.rainwood.oa.ui.widget.MeasureGridView
-        android:id="@+id/mgv_order_nature"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_order_nature"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"

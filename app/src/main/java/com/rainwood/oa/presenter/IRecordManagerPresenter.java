@@ -14,8 +14,9 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      * 客户下的加班记录
      *
      * @param customId
+     * @param page
      */
-    void requestOvertimeRecord(String customId);
+    void requestOvertimeRecord(String customId, int page);
 
     /**
      * 请求记录状态
@@ -53,7 +54,7 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 请求外出记录
      */
-    void requestGoOutRecord(String customId);
+    void requestGoOutRecord(String customId, int page);
 
     /**
      * 行政人事--外出记录
@@ -95,7 +96,7 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 请求客户的回款记录
      */
-    void requestCustomReceivableRecords(String customId);
+    void requestCustomReceivableRecords(String customId, int page);
 
     /**
      * 请求客户的回款记录详情
@@ -105,7 +106,7 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
     /**
      * 请求客户下的开票记录
      */
-    void requestCustomInvoiceRecords(String customId);
+    void requestCustomInvoiceRecords(String customId, int page);
 
     /**
      * 财务管理 -- 开票记录

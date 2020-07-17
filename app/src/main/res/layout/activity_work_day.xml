@@ -211,7 +211,7 @@
             app:selected_text_color="@color/white"
             app:selected_theme_color="@color/colorPrimary"
             app:week_background="#fff"
-            app:week_start_with="mon"
+            app:week_start_with="sun"
             app:week_text_color="@color/labelColor"
             app:week_view="com.rainwood.oa.ui.calendar.custom.CustomWeekBar"
             app:week_view_scrollable="true"

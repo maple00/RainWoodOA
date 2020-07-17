@@ -19,6 +19,8 @@
     <declare-styleable name="FlowTextStyle">
         <attr name="horizontalSpace" format="dimension" />
         <attr name="verticalSpace" format="dimension" />
+        <attr name="textFlowSize" format="dimension" />
+        <attr name="textFlowColor" format="color"/>
     </declare-styleable>
 
     <!-- 轮播图-->

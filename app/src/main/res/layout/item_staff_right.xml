@@ -7,9 +7,8 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:paddingStart="10dp"
-    android:paddingTop="20dp"
+    android:paddingTop="10dp"
     android:paddingEnd="15dp"
-    android:paddingBottom="20dp"
     tools:ignore="ContentDescription,SmallSp">
 
     <ImageView
@@ -46,10 +45,10 @@
         android:layout_below="@+id/tv_staff"
         android:layout_marginStart="14dp"
         android:layout_marginTop="12dp"
-        android:textColor="@color/colorMiddle"
-        android:textSize="13sp"
         android:layout_toEndOf="@+id/iv_head_photo"
-        android:text="研发部-Android研发工程师" />
+        android:text="研发部-Android研发工程师"
+        android:textColor="@color/colorMiddle"
+        android:textSize="13sp" />
 
     <com.rainwood.oa.ui.widget.GroupIconText
         android:id="@+id/git_tel_num"
@@ -62,5 +61,11 @@
         app:icon="@drawable/ic_staff_phone_num"
         app:text="15847251880"
         app:textColor="@color/labelColor" />
+
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/git_tel_num"
+        android:layout_marginTop="10dp" />
 
 </RelativeLayout>

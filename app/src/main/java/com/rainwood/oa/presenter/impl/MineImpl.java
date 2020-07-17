@@ -57,6 +57,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
             mMineCallbacks.onLoading();
         }
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=home", params, this);
         List<IconAndFont> fontList = new ArrayList<>();
         for (String s : mineManager) {
@@ -73,6 +74,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineInfo() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=archive", params, this);
     }
 
@@ -82,6 +84,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestAddressBookData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=contacts", params, this);
     }
 
@@ -91,6 +94,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=home", params, this);
     }
 
@@ -102,6 +106,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestAccountingAccount(String type) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("direction", type);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=account", params, this);
     }
@@ -114,6 +119,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestSettlementAccount(String type) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("direction", type);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=settle", params, this);
     }
@@ -128,6 +134,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineReissueCards(String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("workFlow", state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
@@ -150,6 +157,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestAuditRecords(String recordId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", recordId);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workSignAddStory", params, this);
     }
@@ -166,6 +174,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestAskLeaveRecords(String state, String type, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("workFlow", state);
         params.add("type", type);
         params.add("startDay", startTime);
@@ -176,6 +185,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineLeaveCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=work&fun=search", params, this);
     }
 
@@ -185,6 +195,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineOverTimeRecords() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAdd", params, this);
     }
 
@@ -194,6 +205,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineLeaveOutRecords() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workOut", params, this);
     }
 
@@ -203,6 +215,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineReimburseData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=cost", params, this);
     }
 
@@ -212,6 +225,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestMineInvoiceRecords() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=kehuInvoice", params, this);
     }
 
@@ -221,6 +235,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestSmsVerifyCode() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=sms", params, this);
     }
 
@@ -230,6 +245,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestCheckedSms(String currentPwd, String newPwd, String confirmPwd, String verifyCode, String smsSecret) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("oldPas", currentPwd);
         params.add("newPas", newPwd);
         params.add("surePas", confirmPwd);
@@ -244,6 +260,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void requestLogout() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=loginOut", params, this);
     }
 
@@ -258,6 +275,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void createMineLeaveRecord(String id, String leaveType, String startTime, String endTime, String leaveReason) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", id);
         params.add("type", leaveType);
         params.add("startTime", startTime);
@@ -277,6 +295,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void createMineOvertimeApply(String overtimeId, String startTimeStr, String endTimeStr, String reasonStr) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", overtimeId);
         params.add("timeStart", startTimeStr);
         params.add("timeEnd", endTimeStr);
@@ -295,6 +314,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     @Override
     public void createMineLeaveOutApply(String recordId, String startTimeStr, String endTimeStr, String reasonStr) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", recordId);
         params.add("timeStart", startTimeStr);
         params.add("timeEnd", endTimeStr);

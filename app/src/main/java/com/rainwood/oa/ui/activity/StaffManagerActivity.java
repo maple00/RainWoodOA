@@ -21,6 +21,7 @@ import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.Staff;
 import com.rainwood.oa.model.domain.StaffDepart;
 import com.rainwood.oa.model.domain.StaffPost;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -31,6 +32,7 @@ import com.rainwood.oa.ui.adapter.StaffRightAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
@@ -42,7 +44,9 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
@@ -54,7 +58,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  */
 public final class StaffManagerActivity extends BaseActivity implements IStaffCallbacks,
         StaffLeftAdapter.OnClickstaffDepart, StaffPostAdapter.OnClickPost,
-        StaffRightAdapter.OnClickStaffRight {
+        StaffRightAdapter.OnClickStaffRight, StatusAction {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -80,8 +84,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private TwinklingRefreshLayout pagerRefresh;
     @ViewInject(R.id.divider)
     private View divider;
-    @ViewInject(R.id.ll_loading)
-    private LinearLayout mLoading;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IStaffPresenter mStaffPresenter;
 
@@ -103,6 +107,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private List<SelectedItem> mSocialList;
     private List<SelectedItem> mGateList;
     private CommonPopupWindow mStatusPopWindow;
+    private TextSelectedItemFlowLayout mTextFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -116,10 +121,10 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         // 设置布局管理器
         departPostView.setLayoutManager(new GridLayoutManager(this, 1));
         departPostView.addItemDecoration(new SpacesItemDecoration(0, 0,
-                0, FontSwitchUtil.dip2px(this, 30f)));
+                0, FontSwitchUtil.dip2px(this, 15f)));
         staffRightView.setLayoutManager(new GridLayoutManager(this, 1));
         staffRightView.addItemDecoration(new SpacesItemDecoration(0, 0,
-                0, FontSwitchUtil.dip2px(this, 8f)));
+                0, FontSwitchUtil.dip2px(this, 4f)));
         // 创建适配器
         mLeftAdapter = new StaffLeftAdapter();
         mRightAdapter = new StaffRightAdapter();
@@ -139,6 +144,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
     @Override
     protected void loadData() {
+        showDialog();
         // 请求所有的部门数据
         mStaffPresenter.requestAllDepartData();
         // 请求查询条件(默认排序、性别、全部筛选)
@@ -275,6 +281,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         }
         mDepartList.get(parentPos).getArray().get(position).setSelected(true);
         // 根据职位/部门id查询该所属员工
+        showDialog();
         mPostId = mDepartList.get(parentPos).getArray().get(position).getId();
         mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", "");
     }
@@ -296,7 +303,6 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void getAllDepart(List<StaffDepart> departList) {
-        mLoading.setVisibility(View.GONE);
         mDepartList = departList;
         mLeftAdapter.setDepartList(mDepartList);
         // 查询部门下的员工-- 查询选中的职位员工
@@ -318,10 +324,15 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void getAllStaff(List<Staff> staffList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         if (ListUtils.getSize(staffList) == 0) {
-            toast("抱歉，没有该员工");
+            toast("当前没有员工");
+            showEmpty();
             return;
         }
+        showComplete();
         mRightAdapter.setStaffList(staffList);
     }
 
@@ -340,6 +351,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mSexSelectedList = sexList;
         mSocialList = socialList;
         mGateList = gateList;
+        Collections.reverse(mSexSelectedList);
     }
 
     /**
@@ -353,8 +365,10 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(4);
+                    contentList.setVisibility(View.GONE);
                     mSexSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSexSelectedAdapter);
+                    mTextFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -372,16 +386,23 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 sexScreen.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
+
+        mTextFlowLayout.setTextList(mSexSelectedList);
+        mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            mStatusPopWindow.dismiss();
+            // TODO : 通过性别筛选
+            mStaffPresenter.requestAllStaff(mPostId, "", selectedItem.getName().equals("不限")
+                            ? "" : selectedItem.getName(),
+                    "", "", "");
+        });
+
         mSexSelectedAdapter.setTextList(mSexSelectedList);
         mSexSelectedAdapter.setOnClickListener((item, position) -> {
             for (SelectedItem selectedItem : mSexSelectedList) {
                 selectedItem.setHasSelected(false);
             }
             item.setHasSelected(true);
-            mStatusPopWindow.dismiss();
-            // TODO : 通过性别筛选
-            mStaffPresenter.requestAllStaff(mPostId, "", item.getName().equals("不限") ? "" : item.getName(),
-                    "", "", "");
+
         });
     }
 
@@ -398,6 +419,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     contentList.setNumColumns(1);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
+                    mTextFlowLayout = view.findViewById(R.id.tfl_text);
+                    mTextFlowLayout.setVisibility(View.GONE);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -513,8 +536,8 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override
@@ -525,5 +548,10 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

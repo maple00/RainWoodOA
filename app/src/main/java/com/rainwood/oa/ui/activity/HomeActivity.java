@@ -2,15 +2,11 @@ package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
@@ -109,9 +105,13 @@ public final class HomeActivity extends BaseActivity {
         if (lastOneFragment == targetFragment) {
             return;
         }
-        if (targetFragment instanceof BlockLogFragment){
-            mBlockLogFragment.setBottomNavigationView(mBottomNavigationView);
+        if (targetFragment instanceof BlockLogFragment) {
+           mBlockLogFragment.setBottomNavigationView(mBottomNavigationView);
         }
+        if (targetFragment instanceof HomeFragment) {
+            mHomeFragment.setBottomNavigationView(mBottomNavigationView);
+        }
+
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         // 隐藏上一个fragment
@@ -207,7 +207,7 @@ public final class HomeActivity extends BaseActivity {
                 return true;
             }
         }
-       /* if (DoubleClickHelper.isOnDoubleClick()) {
+        /*if (DoubleClickHelper.isOnDoubleClick()) {
             // 移动到上一个任务栈，避免侧滑引起的不良反应
             moveTaskToBack(false);
             postDelayed(() -> {
@@ -221,4 +221,5 @@ public final class HomeActivity extends BaseActivity {
         }*/
         return super.onKeyDown(keyCode, event);
     }
+
 }

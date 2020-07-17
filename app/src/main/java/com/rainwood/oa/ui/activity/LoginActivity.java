@@ -1,5 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -7,20 +9,21 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ILoginAboutCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.permission.OnPermission;
-import com.rainwood.tools.permission.Permission;
-import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 import com.sxs.verification.CheckUtil;
 import com.sxs.verification.VerificationView;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
@@ -48,6 +51,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     private VerificationView mVerificationView;
 
     private ILoginAboutPresenter mLoginAboutPresenter;
+    private int[] mCheckNum;
 
     @Override
     protected int getLayoutResId() {
@@ -70,8 +74,8 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
      */
     private void initVerification() {
         // 验证码随机数
-        int[] checkNum = CheckUtil.getCheckNum();
-        mVerificationView.setCheckNum(checkNum);
+        mCheckNum = CheckUtil.getCheckNum();
+        mVerificationView.setCheckNum(mCheckNum);
         mVerificationView.invaliChenkNum();
     }
 
@@ -99,9 +103,9 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                 break;
             case R.id.btn_login:
                 // 登录
-                account.setText("邵雪松");
-                password.setText("123456");
-               /* if (TextUtils.isEmpty(account.getText())) {
+               /* account.setText("邵雪松");
+                password.setText("123456");*/
+                if (TextUtils.isEmpty(account.getText())) {
                     toast("请输入用户名");
                     return;
                 }
@@ -114,34 +118,13 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                     return;
                 }
                 if (!CheckUtil.checkNum(verification.getText().toString().trim(), mCheckNum)) {
-                    toast("请核对验证码");
+                    toast("验证码错误");
                     return;
-                }*/
-                XXPermissions.with(this)
-                        // 可设置被拒绝后继续申请，直到用户授权或者永久拒绝
-                        .constantRequest()
-                        .permission(Permission.Group.STORAGE)    // 读写权限
-                        .request(new OnPermission() {
-                            @Override
-                            public void hasPermission(List<String> granted, boolean isAll) {
-                                if (isAll) {
-                                    startActivity(HomeActivity.class);
-                                    // mLoginAboutPresenter.Login(account.getText().toString().trim(),
-                                    //         password.getText().toString().trim());
-                                }
-                            }
+                }
+                showDialog();
 
-                            @Override
-                            public void noPermission(List<String> denied, boolean quick) {
-                                if (quick) {
-                                    toast("被永久拒绝授权，请手动授予权限");
-                                    //如果是被永久拒绝就跳转到应用权限系统设置页面
-                                    XXPermissions.gotoPermissionSettings(getActivity());
-                                } else {
-                                    toast("获取权限失败");
-                                }
-                            }
-                        });
+                mLoginAboutPresenter.Login(account.getText().toString().trim(),
+                        password.getText().toString().trim());
                 break;
             case R.id.tv_forget_password:
                 //toast("忘记密码");
@@ -151,14 +134,26 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     }
 
     @Override
-    public void Login() {
+    public void Login(String life) {
+        if (isShowDialog()){
+            hideDialog();
+        }
         // 登录之后的参数 -- 默认得id：pyj7y98y9juq
+        Constants.life = life;
+        // TODO: 登录成功之后免登录
+        String insertSql = "REPLACE INTO loginTab(userName, pwd) VALUES ( '" + account.getText().toString()
+                + "','" + password.getText().toString() + "') ;";
+        SQLiteHelper.with(this).insert(insertSql);
+        String querySql = "select * from loginTab;";
+        List<Map<String, String>> query = SQLiteHelper.with(this).query(querySql);
+        LogUtils.d("sxs", "-- 登录 --" + query.toString());
         startActivity(HomeActivity.class);
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        hideDialog();
+        toast(tips);
     }
 
     @Override
@@ -169,5 +164,15 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     @Override
     public void onEmpty() {
 
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+            return true;//不执行父类点击事件
+        }
+        return super.onKeyDown(keyCode, event);//继续执行父类其他点击事件
     }
 }

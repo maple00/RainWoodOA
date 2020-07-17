@@ -22,6 +22,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.MineData;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.activity.AccountFundsActivity;
@@ -35,6 +36,8 @@ import com.rainwood.oa.ui.dialog.UpdateDialog;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.AppCacheDataManager;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tkrefreshlayout.views.RWNestedScrollView;
@@ -43,7 +46,6 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.SmartUtil;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.tools.wheel.widget.SettingBar;
 
 import java.util.List;
@@ -91,6 +93,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     private int mScrollY = 0;
     private String telNumber;
+    private String mheadPhotoPath;
 
     @Override
     protected int getRootViewResId() {
@@ -159,7 +162,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (lastScrollY < h) {
                     scrollY = Math.min(h, scrollY);
-                    mScrollY = scrollY > h ? h : scrollY;
+                    mScrollY = Math.min(scrollY, h);
                     mBarLayout.setAlpha(0.9f * mScrollY / h);
                     mineBar.setBackgroundColor(((255 * mScrollY / h) << 24) | color);
                 }
@@ -185,9 +188,13 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @SingleClick
     @OnClick({R.id.ll_network_error_tips, R.id.btn_logout, R.id.rl_mine_data, R.id.rl_account_account,
-            R.id.sb_mine_changed_pwd, R.id.sb_clear_cache, R.id.sb_update_version})
+            R.id.sb_mine_changed_pwd, R.id.sb_clear_cache, R.id.sb_update_version, R.id.iv_head_photo})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_head_photo:
+                // 头像放大
+                FileManagerUtil.queryBigPicture(getContext(), mheadPhotoPath);
+                break;
             case R.id.ll_network_error_tips:
                 onRetryClick();
                 break;
@@ -240,9 +247,10 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                             @Override
                             public void onConfirm(BaseDialog dialog) {
                                 // 返回到登录页面
-                                if (true) {
+                                /*if (true) {
                                     return;
-                                }
+                                }*/
+                                showDialog();
                                 mMinePresenter.requestLogout();
                             }
 
@@ -262,7 +270,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     public void getMenuData(MineData mineData, List<FontAndFont> accountList) {
         setUpState(State.SUCCESS);
         mMineAccountAdapter.setList(accountList);
-        Glide.with(this).load(mineData.getIco())
+        mheadPhotoPath = mineData.getIco();
+        Glide.with(this).load(mheadPhotoPath)
                 .error(R.mipmap.ic_logo)
                 .placeholder(R.mipmap.ic_logo)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -277,10 +286,16 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @Override
     public void getLogout(boolean success) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(success ? "登出成功" : "登出失败");
         // 销毁所有的栈--返回到登录页面
-        ActivityStackManager.getInstance().finishAllActivities();
-        openActivity(LoginActivity.class);
+        postDelayed(() -> {
+            ActivityStackManager.getInstance().finishAllActivities(LoginActivity.class);
+            Constants.life = null;
+            openActivity(LoginActivity.class);
+        }, 500);
     }
 
     @Override

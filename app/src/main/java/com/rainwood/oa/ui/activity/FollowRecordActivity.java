@@ -19,6 +19,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IRecordManagerPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -38,6 +39,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -49,7 +51,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Date: 2020/6/5 11:53
  * @Desc: 跟进记录
  */
-public final class FollowRecordActivity extends BaseActivity implements IRecordCallbacks {
+public final class FollowRecordActivity extends BaseActivity implements IRecordCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -72,6 +74,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @ViewInject(R.id.divider)
     private View divider;
 
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     private IRecordManagerPresenter mRecordManagerPresenter;
     private FollowRecordsAdapter mRecordsAdapter;
     private CommonGridAdapter mSelectedAdapter;
@@ -116,9 +120,17 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @Override
     protected void loadData() {
         // 请求跟进记录数据
-        mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", "", pageCount);
+        netRequestData("", "", "");
         // 请求跟进记录
         mRecordManagerPresenter.requestRecordType();
+    }
+
+    /**
+     * 请求网络数据
+     */
+    private void netRequestData(String staffId, String target, String searchText) {
+        showLoading();
+        mRecordManagerPresenter.requestKnowledgeFollowRecords(staffId, target, searchText, pageCount = 1);
     }
 
     @Override
@@ -170,10 +182,10 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 if (TextUtils.isEmpty(s)) {
                     mKeyWord = "";
                     searchView.setVisibility(View.GONE);
-                    mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", "", pageCount = 1);
+                    netRequestData("", "", "");
                 } else {
                     searchView.setVisibility(View.VISIBLE);
-                    mRecordManagerPresenter.requestKnowledgeFollowRecords("", "", s.toString(), pageCount = 1);
+                    netRequestData("", "", s.toString());
                 }
             }
         });
@@ -190,7 +202,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 String position = data.getStringExtra("position");
 
                 toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-                mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, mTarget, "", pageCount = 1);
+                netRequestData(mStaffId, mTarget, "");
             }
             // 搜索条件
             if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
@@ -219,12 +231,18 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
     @Override
     public void getKnowledgeFollowRecords(List<KnowledgeFollowRecord> recordList) {
-        pageRefresh.finishLoadmore();
-        mRecordsAdapter.setLoaded(pageCount == 1);
-        if (ListUtils.getSize(recordList) == 0) {
-            toast("当前记录为空");
+        showComplete();
+        if (pageCount != 1) {
+            pageRefresh.finishLoadmore();
+            toast("为您加载了" + ListUtils.getSize(recordList) + "条数据");
+            mRecordsAdapter.addData(recordList);
+        } else {
+            if (ListUtils.getSize(recordList) == 0) {
+                showEmpty();
+                return;
+            }
+            mRecordsAdapter.setRecordList(recordList);
         }
-        mRecordsAdapter.setRecordList(recordList);
     }
 
     @Override
@@ -270,7 +288,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
             item.setHasSelected(true);
             // TODO: 查询记录类型
             mTarget = item.getName();
-            mRecordManagerPresenter.requestKnowledgeFollowRecords("", mTarget, "", pageCount = 1);
+            netRequestData("", mTarget, "");
             mStatusPopWindow.dismiss();
         });
     }
@@ -288,5 +306,10 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

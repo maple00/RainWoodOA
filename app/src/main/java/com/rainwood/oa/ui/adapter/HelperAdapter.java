@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Article;
 import com.rainwood.oa.model.domain.Helper;
+import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -28,18 +29,27 @@ import java.util.List;
  */
 public final class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.ViewHolder> {
 
-    private List<Article> mHelperList = new ArrayList<>();
-    private boolean loaded;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
+    private List<Article> mHelperList ;
 
     public void setHelperList(List<Article> helperList) {
-        if (loaded){
-            mHelperList.clear();
+        mHelperList = helperList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<Article> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mHelperList.addAll(helperList);
+
+        if (mHelperList == null || mHelperList.size() == 0) {
+            setHelperList(data);
+        } else {
+            mHelperList.addAll(data);
+            notifyItemRangeInserted(mHelperList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

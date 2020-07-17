@@ -64,6 +64,15 @@ public final class Constants {
      */
     public static final String HTTP_MSG_RESPONSE_FAILED = "The request data failed and the response code is not 200,code = ";
 
+    /**
+     * 当前登录用户life
+     */
+    public static String life;
+
+    /**
+     * 员工管理  id
+     */
+    public static String staffId;
 
     /**
      * activity、fragment 之间相互跳转请求码

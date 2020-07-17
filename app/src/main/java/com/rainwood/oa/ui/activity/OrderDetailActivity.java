@@ -15,6 +15,7 @@ import com.rainwood.oa.model.domain.OrderFollow;
 import com.rainwood.oa.model.domain.OrderPayed;
 import com.rainwood.oa.model.domain.OrderReceivable;
 import com.rainwood.oa.model.domain.OrderTask;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.OrderCostAdapter;
@@ -33,6 +34,7 @@ import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,7 @@ import java.util.Map;
  * @Date: 2020/6/3 19:33
  * @Desc: 订单详情
  */
-public final class OrderDetailActivity extends BaseActivity implements IOrderCallbacks {
+public final class OrderDetailActivity extends BaseActivity implements IOrderCallbacks, StatusAction {
 
     @ViewInject(R.id.ll_page_parent)
     private LinearLayout pageParent;
@@ -81,6 +83,9 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
     // 已付费用
     @ViewInject(R.id.mlv_order_prepaid)
     private MeasureListView orderPrepaidView;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private OrderDataAdapter mDataAdapter;
     private OrderDataCostAdapter mDataCostAdapter;
@@ -128,6 +133,7 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
         orderTaskView.setAdapter(mTaskAdapter);
         orderReceivableView.setAdapter(mReceivableAdapter);
         orderPrepaidView.setAdapter(mPayedAdapter);
+        //
     }
 
     @Override
@@ -142,6 +148,7 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
         String orderId = getIntent().getStringExtra("orderId");
         String status = getIntent().getStringExtra("status");
         if (orderId != null) {
+            showLoading();
             mOrderPresenter.requestOrderDetailById(orderId);
             statusTV.setText(status);
         }
@@ -180,13 +187,14 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
                 showQuickFunction(this, pageParent);
                 break;
             case R.id.iv_arrow:
+                selectedArrowFlag = !selectedArrowFlag;
                 if (selectedArrowFlag) {
                     arrow.setImageDrawable(getDrawable(R.drawable.ic_up_arrow));
                 } else {
                     arrow.setImageDrawable(getDrawable(R.drawable.ic_down_arrow));
                 }
                 orderDataCostView.setVisibility(selectedArrowFlag ? View.VISIBLE : View.GONE);
-                selectedArrowFlag = !selectedArrowFlag;
+                setUpDownAnimation(orderDataCostView);
                 //toast("选择");
                 break;
             case R.id.tv_order_attach_all:
@@ -217,6 +225,7 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
     @SuppressWarnings("all")
     @Override
     public void getOrderDetail(Map orderDetailMap) {
+        showComplete();
         List<OrderDetailAttachment> attachmentList = (List<OrderDetailAttachment>) orderDetailMap.get("attachment");
         List<OrderCost> costList = (List<OrderCost>) orderDetailMap.get("cost");
         List<OrderFollow> followList = (List<OrderFollow>) orderDetailMap.get("follow");
@@ -239,8 +248,14 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
     }
 
     @Override
-    public void onError() {
+    public void onError(String tips) {
+        toast(tips);
+        showError(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
     }
 
     @Override
@@ -250,6 +265,11 @@ public final class OrderDetailActivity extends BaseActivity implements IOrderCal
 
     @Override
     public void onEmpty() {
+        showEmpty();
+    }
 
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

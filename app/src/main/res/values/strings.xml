@@ -14,7 +14,9 @@
     <string name="text_home_salary_line_curve">工资曲线</string>
     <string name="text_query_all">查看全部</string>
 
+    <string name="common_network">当前没有网络连接，请检查网络设置</string>
     <string name="text_network_state">请确认网络良好</string>
+    <string name="common_loading">加载中&#8230;</string>
     <!-- 日期组合控件-->
     <string name="common_year">年</string>
     <string name="common_month">月</string>
@@ -71,7 +73,7 @@
     <string name="text_login">登录</string>
     <string name="text_account">请输入用户名</string>
     <string name="text_password">请输入密码</string>
-    <string name="text_verification_hint">请输入图片验证码</string>
+    <string name="text_verification_hint">图形验证码</string>
     <string name="text_forget_password">忘记密码？</string>
     <string name="text_login_account">账号密码登录</string>
     <string name="text_next_step">下一步</string>
@@ -142,5 +144,6 @@
     <string name="text_income">收入</string>
     <string name="text_speeding">支出</string>
     <string name="text_audit_records">审核记录</string>
+    <string name="text_sms_verify">请输入短信验证码</string>
 
 </resources>

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.CommunicationAdapter;
@@ -27,6 +28,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ import java.util.List;
  * @Date: 2020/5/21 11:21
  * @Desc: 沟通技巧（业务技能）
  */
-public final class ExchangeSkillActivity extends BaseActivity implements IArticleCallbacks {
+public final class ExchangeSkillActivity extends BaseActivity implements IArticleCallbacks, StatusAction {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -49,6 +51,8 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     private TwinklingRefreshLayout pagerRefresh;
     @ViewInject(R.id.rv_communication_list)
     private RecyclerView communicationList;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private CommunicationAdapter mCommunicationAdapter;
 
@@ -81,15 +85,16 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     }
 
     @Override
-    protected void loadData() {
-        // 请求数据
-        mArticlePresenter.requestCommunicationData("", pageCount);
-    }
-
-    @Override
     protected void initPresenter() {
         mArticlePresenter = PresenterManager.getOurInstance().getArticlePresenter();
         mArticlePresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        // 请求数据
+        showLoading();
+        mArticlePresenter.requestCommunicationData("", pageCount);
     }
 
     @Override
@@ -99,13 +104,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
             PageJumpUtil.skillList2Detail(ExchangeSkillActivity.this, ArticleDetailActivity.class, skills.getId(), "沟通技巧");
         });
 
-        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
-            @Override
-            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mArticlePresenter.requestCommunicationData(mSearchContent, ++pageCount);
-            }
-        });
-
+        // 文本域监听
         searchContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -122,6 +121,13 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
                 if (TextUtils.isEmpty(s)) {
                     mArticlePresenter.requestCommunicationData("", pageCount = 1);
                 }
+            }
+        });
+        // 加载更多
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mArticlePresenter.requestCommunicationData(mSearchContent, ++pageCount);
             }
         });
     }
@@ -146,6 +152,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
 
     @Override
     public void getCommunicationData(List<Article> skillsList) {
+        showComplete();
         pagerRefresh.finishLoadmore();
         mCommunicationAdapter.setLoaded(pageCount == 1);
         if (pageCount != 1) {
@@ -167,5 +174,10 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

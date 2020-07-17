@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.ui.adapter.HelperAdapter;
@@ -26,6 +27,7 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ import java.util.List;
  * @Date: 2020/6/2 9:55
  * @Desc: 帮助中心
  */
-public final class HelperActivity extends BaseActivity implements IArticleCallbacks {
+public final class HelperActivity extends BaseActivity implements IArticleCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -46,6 +48,9 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_helper_content)
     private RecyclerView helperView;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private HelperAdapter mHelperAdapter;
     private IArticlePresenter mArticlePresenter;
@@ -84,7 +89,15 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     @Override
     protected void loadData() {
         // 请求数据
-        mArticlePresenter.requestHelperData("", pageCount);
+        netRequestData("");
+    }
+
+    /**
+     * 请求网络数
+     */
+    private void netRequestData(String SearchText) {
+        showLoading();
+        mArticlePresenter.requestHelperData(SearchText, pageCount = 1);
     }
 
     @Override
@@ -113,7 +126,7 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
             @Override
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s)) {
-                    mArticlePresenter.requestHelperData("", pageCount = 1);
+                    netRequestData("");
                 }
             }
         });
@@ -132,19 +145,25 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
                     return;
                 }
                 mText = searchTip.getText().toString().trim();
-                mArticlePresenter.requestHelperData(mText, pageCount = 1);
+                netRequestData(mText);
                 break;
         }
     }
 
     @Override
     public void getHelperData(List<Article> helperList) {
-        pageRefresh.finishLoadmore();
-        mHelperAdapter.setLoaded(pageCount == 1);
+        showComplete();
         if (pageCount != 1) {
+            pageRefresh.finishLoadmore();
             toast("加载了" + ListUtils.getSize(helperList) + "条数据");
+            mHelperAdapter.addData(helperList);
+        } else {
+            if (ListUtils.getSize(helperList) == 0) {
+                showEmpty();
+                return;
+            }
+            mHelperAdapter.setHelperList(helperList);
         }
-        mHelperAdapter.setHelperList(helperList);
     }
 
     @Override
@@ -160,5 +179,10 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

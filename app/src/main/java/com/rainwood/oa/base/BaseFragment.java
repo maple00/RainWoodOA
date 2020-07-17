@@ -14,8 +14,10 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.ui.dialog.WaitDialog;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.action.HandlerAction;
 
 /**
@@ -45,6 +47,51 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
      */
     protected void onRetryClick() {
 
+    }
+
+    /**
+     * 加载对话框
+     */
+    private BaseDialog mDialog;
+    /**
+     * 对话框数量
+     */
+    private int mDialogTotal;
+
+    /**
+     * 当前加载对话框是否在显示中
+     */
+    public boolean isShowDialog() {
+        return mDialog != null && mDialog.isShowing();
+    }
+
+    /**
+     * 显示加载对话框
+     */
+    public void showDialog() {
+        if (mDialog == null) {
+            mDialog = new WaitDialog.Builder(getContext())
+                    .setCancelable(false)
+                    .create();
+        }
+        if (!mDialog.isShowing()) {
+            mDialog.show();
+        }
+        mDialogTotal++;
+    }
+
+    /**
+     * 隐藏加载对话框
+     */
+    public void hideDialog() {
+        if (mDialogTotal == 1) {
+            if (mDialog != null && mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+        }
+        if (mDialogTotal > 0) {
+            mDialogTotal--;
+        }
     }
 
     @Nullable
@@ -134,6 +181,9 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mDialog != null) {
+            hideDialog();
+        }
         release();
     }
 

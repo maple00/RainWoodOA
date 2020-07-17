@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingTop="20dp">
+    android:paddingTop="15dp">
 
     <TextView
         android:id="@+id/tv_money"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_event"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="2020.03.17 15:56"
         android:textColor="@color/labelColor"
         android:textSize="12sp" />
@@ -52,6 +52,6 @@
     <View
         style="@style/HorizontalLineStyle"
         android:layout_below="@+id/tv_time"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="15dp" />
 
 </RelativeLayout>

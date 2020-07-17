@@ -21,6 +21,7 @@ import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.Post;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -30,6 +31,7 @@ import com.rainwood.oa.ui.adapter.PostManagerAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
@@ -37,13 +39,15 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IAdministrativeCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
@@ -54,7 +58,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Desc: 职位管理activity
  */
 public final class PostManagerActivity extends BaseActivity implements IAdministrativeCallbacks,
-        PostManagerAdapter.OnClickPostItem {
+        PostManagerAdapter.OnClickPostItem, StatusAction {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
@@ -76,9 +80,8 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private RecyclerView postListView;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
-    @ViewInject(R.id.ll_loading)
-    private LinearLayout mLoading;
-
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     // 选择flag
     private boolean selectedDepartFlag = false;
     private boolean selectedRoleFlag = false;
@@ -100,6 +103,10 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     private List<SelectedItem> mSelectedList;
     private String mKeyWord;
 
+    private int pageCount = 1;
+    private String mPositionName;
+    private String mRoleId;
+    private TextSelectedItemFlowLayout mTextFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -112,15 +119,14 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
         pageTitle.setText(title);
         // 设置布局管理器
         postListView.setLayoutManager(new GridLayoutManager(this, 1));
-        postListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
-                FontSwitchUtil.dip2px(this, 10f)));
+        postListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         // 创建适配器
         mPostManagerAdapter = new PostManagerAdapter();
         // 设置适配器
         postListView.setAdapter(mPostManagerAdapter);
         // 设置刷新属性
         pagerRefresh.setEnableRefresh(false);
-        pagerRefresh.setEnableLoadmore(false);
+        pagerRefresh.setEnableLoadmore(true);
         // initial popWindow
         initPopDepartDialog();
     }
@@ -135,15 +141,27 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     @Override
     protected void loadData() {
         // 职位列表
-        mAdministrativePresenter.requestPostListData("", "", "");
+        netDataLoading("", "", "");
         // 所属部门数据
         mAdministrativePresenter.requestAllDepartData("", "");
         // 角色查询
         mAdministrativePresenter.requestPostRoleCondition();
     }
 
+    /**
+     * 请求数据
+     *
+     * @param keyWord
+     */
+    private void netDataLoading(String keyWord, String departId, String roleId) {
+        showDialog();
+        mAdministrativePresenter.requestPostListData(keyWord, departId, roleId, (pageCount = 1));
+    }
+
+
     @Override
     public void onClickPost(Post post) {
+        // 查看详情
         PageJumpUtil.postList2Detail(this, PostDetailActivity.class, post.getId());
     }
 
@@ -188,10 +206,19 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 if (TextUtils.isEmpty(s)) {
                     searchView.setVisibility(View.GONE);
                     hideSoftKeyboard();
+                    netDataLoading("", "", "");
                 } else {
                     searchView.setVisibility(View.VISIBLE);
-                    mAdministrativePresenter.requestPostListData(s.toString(), "", "");
+                    mPositionName = s.toString();
+                    netDataLoading(mPositionName, "", "");
                 }
+            }
+        });
+        // 加载更多
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mAdministrativePresenter.requestPostListData(mPositionName, mDepartId, mRoleId, (++pageCount));
             }
         });
     }
@@ -202,6 +229,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
         if (data != null) {
             // 职位搜索
             if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mAdministrativePresenter.registerViewCallback(this);
                 mKeyWord = data.getStringExtra("keyWord");
                 searchView.setVisibility(TextUtils.isEmpty(mKeyWord) ? View.GONE : View.VISIBLE);
                 searchTipsView.setText(mKeyWord);
@@ -234,8 +262,24 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
      */
     @Override
     public void getPostListData(List<Post> postList) {
-        mLoading.setVisibility(View.GONE);
-        mPostManagerAdapter.setPostList(postList);
+        pagerRefresh.finishLoadmore();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
+        if (pageCount != 1) {
+            if (ListUtils.getSize(postList) == 0) {
+                toast("我是有底线滴哟");
+                return;
+            }
+            mPostManagerAdapter.addData(postList);
+        } else {
+            if (ListUtils.getSize(postList) == 0) {
+                showEmpty();
+                return;
+            }
+            mPostManagerAdapter.setPostList(postList);
+        }
     }
 
     /**
@@ -257,6 +301,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
     @Override
     public void getPostRoleData(List<SelectedItem> selectedList) {
         mSelectedList = selectedList;
+        Collections.reverse(mSelectedList);
     }
 
     private static int tempPos = -1;
@@ -274,9 +319,9 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                     mSecondModule = view.findViewById(R.id.rv_second_module);
                     // 设置布局管理器
                     mModule.setLayoutManager(new GridLayoutManager(PostManagerActivity.this, 1));
-                    mModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 10));
+                    mModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 3));
                     mSecondModule.setLayoutManager(new GridLayoutManager(PostManagerActivity.this, 1));
-                    mSecondModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 10));
+                    mSecondModule.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 3));
                     // 创建适配器
                     mDepartScreenAdapter = new DepartScreenAdapter();
                     mDepartGroupScreenAdapter = new DepartGroupScreenAdapter();
@@ -300,32 +345,29 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             tempPos = -1;
             mStatusPopWindow.dismiss();
             // TODO: 清空筛选
-            mAdministrativePresenter.requestPostListData(mKeyWord, "", "");
+            netDataLoading(mKeyWord, "", "");
         });
-        mTextConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (Depart depart : departConditionList) {
-                    if (depart.isHasSelected()) {
-                        for (ProjectGroup group : depart.getArray()) {
-                            if (group.isSelected()) {
-                                mDepartName = group.getName();
-                                mDepartId = group.getId();
-                                break;
-                            }
+        mTextConfirm.setOnClickListener(v -> {
+            for (Depart depart : departConditionList) {
+                if (depart.isHasSelected()) {
+                    for (ProjectGroup group : depart.getArray()) {
+                        if (group.isSelected()) {
+                            mDepartName = group.getName();
+                            mDepartId = group.getId();
+                            break;
                         }
-                        break;
                     }
+                    break;
                 }
-                if (TextUtils.isEmpty(mDepartId)) {
-                    toast("请选择部门");
-                    return;
-                }
-                mStatusPopWindow.dismiss();
-                // TODO：带部门条件查询
-                mAdministrativePresenter.requestPostListData(mKeyWord, mDepartId, "");
-                mDepartId = "";
             }
+            if (TextUtils.isEmpty(mDepartId)) {
+                toast("请选择部门");
+                return;
+            }
+            mStatusPopWindow.dismiss();
+            // TODO：带部门条件查询
+            netDataLoading(mKeyWord, mDepartId, "");
+            //mDepartId = "";
         });
     }
 
@@ -361,6 +403,7 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             tempPos = position;
             mDepartGroupScreenAdapter.setList(departConditionList.get(position).getArray());
         }));
+
         mDepartGroupScreenAdapter.setSecondRoleCondition((secondCondition, position) -> {
             for (ProjectGroup group : departConditionList.get(tempPos == -1 ? 0 : tempPos).getArray()) {
                 group.setSelected(false);
@@ -379,9 +422,12 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
+                    contentList.setVisibility(View.GONE);
                     contentList.setNumColumns(4);
                     mGridAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mGridAdapter);
+                    mTextFlowLayout = view.findViewById(R.id.tfl_text);
+
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -399,6 +445,12 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
                 roleGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
+        mTextFlowLayout.setTextList(mSelectedList);
+        mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            mRoleId = TextUtils.isEmpty(selectedItem.getId()) ? "" : selectedItem.getId();
+            mStatusPopWindow.dismiss();
+            netDataLoading(mKeyWord, "", mRoleId);
+        });
 
         mGridAdapter.setTextList(mSelectedList);
         mGridAdapter.setOnClickListener((item, position) -> {
@@ -408,23 +460,35 @@ public final class PostManagerActivity extends BaseActivity implements IAdminist
             item.setHasSelected(true);
             mStatusPopWindow.dismiss();
             // TODO: 通过角色查询职位
-            mAdministrativePresenter.requestPostListData(mKeyWord, "", item.getId());
+            mRoleId = TextUtils.isEmpty(item.getId()) ? "" : item.getId();
+            netDataLoading(mKeyWord, "", mRoleId);
         });
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override
     public void onLoading() {
-
+        showLoading();
     }
 
     @Override
     public void onEmpty() {
-
+        showEmpty();
     }
 
+    @Override
+    protected void release() {
+        if (mAdministrativePresenter != null) {
+            mAdministrativePresenter.unregisterViewCallback(this);
+        }
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
+    }
 }

@@ -56,6 +56,7 @@ import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.oa.ui.activity.WorkDayActivity;
 import com.rainwood.oa.ui.widget.svgcode.SvgSoftwareLayerSetter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ImageViewUtil;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -101,6 +102,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+       // ImageViewUtil.matchAll(parent.getContext(), holder.moduleImg);
         if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(mList.get(position).getLocalMipmap())
                     .placeholder(R.mipmap.ic_logo)

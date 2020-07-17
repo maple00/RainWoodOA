@@ -28,19 +28,28 @@ import java.util.List;
  */
 public final class AdminOvertimeAdapter extends RecyclerView.Adapter<AdminOvertimeAdapter.ViewHolder> {
 
-    private List<AdminOverTime> mOvertimeRecordList = new ArrayList<>();
+    private List<AdminOverTime> mOvertimeRecordList;
     private Context mContext;
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setOvertimeRecordList(List<AdminOverTime> overtimeRecordList) {
-        if (loaded) {
-            mOvertimeRecordList.clear();
+        mOvertimeRecordList = overtimeRecordList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<AdminOverTime> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mOvertimeRecordList.addAll(overtimeRecordList);
+
+        if (mOvertimeRecordList == null || mOvertimeRecordList.size() == 0) {
+            setOvertimeRecordList(data);
+        } else {
+            mOvertimeRecordList.addAll(data);
+            notifyItemRangeInserted(mOvertimeRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

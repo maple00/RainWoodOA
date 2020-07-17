@@ -39,6 +39,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     public void requestCustomAttachData(String customId) {
         // 查询客户附件
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=fileLi", params, this);
     }
@@ -55,6 +56,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     @Override
     public void requestOfficeFileData(String searchText, String classify, String format, String secret, String sorting, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("name", searchText);
         params.add("type", classify);
         params.add("format", format);
@@ -69,6 +71,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     @Override
     public void requestOfficeCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=fileWork&fun=search", params, this);
     }
 
@@ -85,6 +88,8 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     @Override
     public void requestKnowledgeAttach(String attachName, String staffId, String secret, String target, String sorting, int page) {
         RequestParams params = new RequestParams();
+        //params.add();
+        params.add("life", Constants.life);
         params.add("name", attachName);
         params.add("stid", staffId);
         params.add("secret", secret);
@@ -99,6 +104,7 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
     @Override
     public void requestAttachCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=file&fun=search", params, this);
     }
 

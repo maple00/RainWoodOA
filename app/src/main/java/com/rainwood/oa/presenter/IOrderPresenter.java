@@ -28,7 +28,7 @@ public interface IOrderPresenter extends IBasePresenter<IOrderCallbacks> {
     /**
      * 新建订单
      */
-    void CreateNewOrder(String customId, String orderNameStr, String moneyStr, String noteStr);
+    void CreateNewOrder(String customId, String orderId, String orderNameStr, String moneyStr, String noteStr);
 
     /**
      * 通过客户关键字查询客户名称

@@ -22,7 +22,6 @@ import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +45,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestFollowStatus() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("deviceID", Constants.IMEI);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=clientWorkFlow", params, this);
     }
@@ -56,6 +56,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCustomOrigin() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("deviceID", Constants.IMEI);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=clientSource", params, this);
     }
@@ -91,6 +92,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
         String randomId = RandomUtil.getItemID(20);
         //LogUtils.d("sxs", "创建客户id-----" + randomId);
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", randomId);
         params.add("deviceID", Constants.IMEI);
         params.add("contactName", userName);
@@ -119,6 +121,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestWarmPrompt() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=shareWarn", params, this);
     }
 
@@ -137,6 +140,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     public void createIntroduceCustom(String companyName, String contact, String tel, String demand,
                                       String origin, String followState, String introduceObj) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("companyName", companyName);
         params.add("contactName", contact);
         params.add("contactTel", tel);
@@ -165,10 +169,11 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     public void requestALlCustomData(String companyName, String headMan, String references, String state,
                                      String origin, String province, String city, String area, String sorting, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("companyName", companyName);
         params.add("stid", headMan);
         params.add("shareId", references);
-        params.add("workFlow", state);
+        params.add("workFlow", "全部".equals(state) ? "" : state);
         params.add("source", origin);
         params.add("province", province);
         params.add("city", city);
@@ -183,6 +188,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCustomCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=search", params, this);
     }
 
@@ -192,6 +198,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestStateCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=clientWorkFlow", params, this);
     }
 
@@ -201,6 +208,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestProvinceCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=province", params, this);
     }
 
@@ -212,6 +220,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCityByProvince(String province) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("province", province);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=city", params, this);
     }
@@ -225,6 +234,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestAreaByProvinceCity(String province, String city) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("province", province);
         params.add("city", city);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=area", params, this);
@@ -303,6 +313,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCustomDetailById(String khid) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", khid);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=detail", params, this);
     }
@@ -315,6 +326,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestContactListByCustomId(String khid) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", khid);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=kehuStaff", params, this);
     }
@@ -336,6 +348,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     public void requestCreateContact(String customId, String contactId, String post, String name, String tel, String lineTel,
                                      String qqNum, String wxNum, String note) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         params.add("id", contactId);
         params.add("position", post);
@@ -354,6 +367,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCustomStaff() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=staffClientEdit", params, this);
     }
 
@@ -366,6 +380,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestPlusAssociates(String customId, String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         params.add("staffId", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=cooperate", params, this);
@@ -380,6 +395,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestDeleteAssociates(String customId, String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         params.add("stid", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=cooperateDel", params, this);
@@ -394,6 +410,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestRevCustom(String customId, String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         params.add("stid", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=move", params, this);
@@ -407,6 +424,7 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestCustomInvoice(String customId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoice", params, this);
     }
@@ -417,12 +435,14 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     @Override
     public void requestFollowLabel() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=follow&fun=followQuick", params, this);
     }
 
     @Override
     public void createFollowRecord(String recordId, String target, String targetId, String content, String time) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", recordId);
         params.add("target", target);
         params.add("targetId", targetId);

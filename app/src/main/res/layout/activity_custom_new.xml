@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:ignore="UselessLeaf,HardcodedText,ContentDescription">
 
-    <include layout="@layout/include_title_bar" />
+    <include layout="@layout/include_title_bar_none_menu" />
 
     <View style="@style/HorizontalLineStyle" />
 
@@ -597,7 +597,7 @@
             </LinearLayout>
 
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_confirm"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"

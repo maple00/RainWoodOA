@@ -2,6 +2,7 @@ package com.rainwood.oa.base;
 
 import android.app.Application;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.toast.style.ToastAliPayStyle;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.util.List;
@@ -80,6 +82,7 @@ public final class BaseApplication extends Application {
         });
         // 吐司工具类
         ToastUtils.init(this);
+        ToastUtils.initStyle(new ToastAliPayStyle(this));
 
         //初始化X5内核
         QbSdk.PreInitCallback callback = new QbSdk.PreInitCallback() {
@@ -128,6 +131,10 @@ public final class BaseApplication extends Application {
                     "VALUES('customIntroduce', '温馨提示：是否是第一次加载', 'notLoaded')";
             SQLiteHelper.with(this).insert(sql);
         }
+        // 创建登录表
+        //SQLiteHelper.with(this).dropTable("loginTab");
+        SQLiteHelper.with(this).createTable("loginTab", new String[]{"userName", "pwd", "life"});
+
     }
 
     private void initActivity() {
@@ -199,7 +206,20 @@ public final class BaseApplication extends Application {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        LogUtils.d(TAG, "onConfigurationChanged");
         super.onConfigurationChanged(newConfig);
+        if (newConfig.fontScale != 1) { //fontScale不为1，需要强制设置为1
+            getResources();
+        }
+    }
+
+    @Override
+    public Resources getResources() {
+        Resources resources = super.getResources();
+        if (resources.getConfiguration().fontScale != 1) { //fontScale不为1，需要强制设置为1
+            Configuration newConfig = new Configuration();
+            newConfig.setToDefaults();//设置成默认值，即fontScale为1
+            resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
+        }
+        return resources;
     }
 }

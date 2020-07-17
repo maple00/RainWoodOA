@@ -14,6 +14,13 @@ public final class SelectedItem implements Serializable {
     private String name;
     private boolean hasSelected;
 
+    public SelectedItem() {
+    }
+
+    public SelectedItem(String name) {
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

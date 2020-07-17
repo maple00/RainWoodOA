@@ -100,4 +100,13 @@ public final class FileManagerUtil {
             context.startActivity(intent);
         }
     }
+
+    /**
+     * 查看大图
+     * @param context
+     * @param filePath
+     */
+    public static void queryBigPicture(Context context, String filePath){
+        ImageActivity.start(context, filePath);
+    }
 }

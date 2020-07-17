@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.InvoiceRecord;
+import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -35,6 +36,24 @@ public final class InvoiceRecordAdapter extends RecyclerView.Adapter<InvoiceReco
         mRecordList = recordList;
         notifyDataSetChanged();
     }
+
+    /**
+     * 追加数据
+     */
+    public void addData(List<InvoiceRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mRecordList == null || mRecordList.size() == 0) {
+            setRecordList(data);
+        } else {
+            mRecordList.addAll(data);
+            notifyItemRangeInserted(mRecordList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override

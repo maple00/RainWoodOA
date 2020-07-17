@@ -20,7 +20,6 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IFinancialCallbacks;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -51,9 +50,10 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     public void requestReimburseData(String allocated, String staffId, String type, String payer, String startTime, String endTime,
                                      String searchText, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
-        params.add("type", type);
-        params.add("payer", payer);
+        params.add("type", "全部".equals(type) ? "" : type);
+        params.add("payer", "全部".equals(payer) ? "" : payer);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         params.add("text", searchText);
@@ -67,6 +67,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestReimburseCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=cost&fun=search", params, this);
     }
 
@@ -85,8 +86,9 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     public void requestBalanceRecords(String staffId, String origin, String classify, String startTime,
                                       String endTime, String searchText, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
-        params.add("target", origin);
+        params.add("target", "全部".equals(origin) ? "" : origin);
         params.add("direction", classify);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
@@ -101,6 +103,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestBalanceCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=search", params, this);
     }
 
@@ -113,6 +116,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestClassStatics(String startTime, String endTime) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitTotal", params, this);
@@ -127,6 +131,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestBalanceByMonth(String startMonth, String endMonth) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("startMoon", startMonth);
         params.add("endMoon", endMonth);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitMoon", params, this);
@@ -138,6 +143,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestBalanceByYear() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitYear", params, this);
     }
 
@@ -147,16 +153,19 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestStaffNum() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=staffNum", params, this);
     }
 
     /**
      * 费用报销详情
+     *
      * @param reimburseId
      */
     @Override
     public void requestReimburseDetail(String reimburseId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=cost&fun=detail", params, this);
     }
 
@@ -166,10 +175,14 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
      * @param direction 请求类型
      */
     @Override
-    public void requestTeamFundsData(String direction) {
+    public void requestTeamFundsData(String searchText, String direction, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("direction", direction);
-        OkHttp.post(Constants.BASE_URL + "cla=teamFund&fun=home", params, this);
+        params.add("text", searchText);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=teamFund&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -183,6 +196,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void requestPunishStaff(String staffId, String money, String reason, String password) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
         params.add("money", money);
         params.add("text", reason);
@@ -249,8 +263,10 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
             try {
                 List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("type"));
+                typeArray.add(0, "全部");
                 List<String> payerArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("payer"));
+                payerArray.add(0, "全部");
                 List<SelectedItem> typeSelectedList = new ArrayList<>();
                 List<SelectedItem> payerSelectedList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
@@ -269,7 +285,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
             }
         }
         // 费用报销详情
-        else if (result.url().contains("cla=cost&fun=detail")){
+        else if (result.url().contains("cla=cost&fun=detail")) {
             try {
                 MineReimbursement reimbursement = JsonParser.parseJSONObject(MineReimbursement.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
@@ -303,6 +319,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                 // 来源
                 List<String> targetList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));
+                targetList.add(0, "全部");
                 List<SelectedItem> originList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(targetList); i++) {
                     SelectedItem item = new SelectedItem();
@@ -368,11 +385,8 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         else if (result.url().contains("cla=profit&fun=profitYear")) {
             try {
                 // 按年收支曲线 X轴
-                JSONArray abscissaArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("abscissa"));
-                List<String> balanceYearMonth = new ArrayList<>();
-                for (int i = 0; i < abscissaArray.length(); i++) {
-                    balanceYearMonth.add(abscissaArray.getString(i));
-                }
+                List<String> balanceYearMonth = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
+                        result.body()).getString("abscissa"));
                 // 按年收支曲线 Y轴
                 // Y轴数据
                 List<BalanceByMonthOrYear> monthBalanceList = JsonParser.parseJSONArray(BalanceByMonthOrYear.class,

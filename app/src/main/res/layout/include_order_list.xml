@@ -5,21 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
     tools:ignore="ContentDescription">
 
-    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-        android:id="@+id/trl_pager_refresh"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_order"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/assistColor10"
-            android:descendantFocusability="blocksDescendants" />
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
-    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_order"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:descendantFocusability="blocksDescendants" />
+
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -103,7 +103,6 @@
             android:layout_marginStart="11dp"
             android:layout_weight="1"
             android:inputType="number"
-            app:regexType="count"
             android:hint="@string/text_verification_hint"
             android:textColor="@color/fontColor"
             android:textSize="18sp" />

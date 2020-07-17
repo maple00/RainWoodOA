@@ -1,6 +1,7 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.model.domain.Style;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -32,6 +33,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
     @Override
     public void requestCommunicationData(String searchText, int pageCount) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("title", searchText);
         OkHttp.post(Constants.BASE_URL + "cla=article&fun=clientTalk&page=" + pageCount, params, this);
     }
@@ -42,6 +44,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
     @Override
     public void requestManagerSystemData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=article&fun=adSystem", params, this);
     }
 
@@ -61,6 +64,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
     @Override
     public void requestHelperData(String searchText, int pageCount) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("title", searchText);
         OkHttp.post(Constants.BASE_URL + "cla=article&fun=adHelp&page=" + pageCount, params, this);
     }
@@ -73,6 +77,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
     @Override
     public void requestArticleDetailById(String id) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", id);
         OkHttp.post(Constants.BASE_URL + "cla=article&fun=detail", params, this);
     }
@@ -143,7 +148,8 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
         else if (result.url().contains("cla=article&fun=detail")) {
             try {
                 Article article = JsonParser.parseJSONObject(Article.class, JsonParser.parseJSONObjectString(result.body()).getString("article"));
-                mArticleCallbacks.getArticleDetail(article);
+                Style style = JsonParser.parseJSONObject(Style.class, JsonParser.parseJSONObjectString(result.body()).getString("style"));
+                mArticleCallbacks.getArticleDetail(article,style);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

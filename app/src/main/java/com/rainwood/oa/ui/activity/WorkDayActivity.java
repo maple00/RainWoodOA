@@ -1,6 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -95,8 +96,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         // 获取月份
         mCalendarPresenter.begWorkDayMonth();
         // 当前月分的工作日
-        mCalendarPresenter.requestCurrentWorkDay("" + DateTimeUtils.getNowYear()
-                + (DateTimeUtils.getNowMonth() < 10 ? "0" + DateTimeUtils.getNowMonth() : DateTimeUtils.getNowMonth()));
+        netDataLoading(DateTimeUtils.getNowYear(), DateTimeUtils.getNowMonth());
     }
 
     @Override
@@ -173,10 +173,21 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         mYear = calendar.getYear();
         // TODO: 请求当前显示月份的上班情况
         if (calendar.getMonth() != tempMonth) {
-            mCalendarPresenter.requestCurrentWorkDay("" + calendar.getYear() +
-                    (calendar.getMonth() < 10 ? "0" + calendar.getMonth() : calendar.getMonth()));
+            netDataLoading(calendar.getYear(), calendar.getMonth());
         }
         tempMonth = calendar.getMonth();
+    }
+
+    /**
+     * 请求网络数据
+     *
+     * @param year
+     * @param month
+     */
+    private void netDataLoading(int year, int month) {
+        showDialog();
+        mCalendarPresenter.requestCurrentWorkDay("" + year +
+                (month < 10 ? "0" + month : month));
     }
 
     @Override
@@ -186,7 +197,11 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
 
     @Override
     public void getWorkDayData(CalendarBody calendarBody, String dayNote) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         mTextDayNote.setText(dayNote);
+        mTextDayNote.setVisibility(TextUtils.isEmpty(dayNote) ? View.GONE : View.VISIBLE);
         String yearStr = calendarBody.getMoon().substring(0, 4);
         String monthStr = calendarBody.getMoon().substring(4);
 

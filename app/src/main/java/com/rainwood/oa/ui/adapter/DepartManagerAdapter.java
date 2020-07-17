@@ -17,6 +17,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,10 +27,11 @@ import java.util.List;
  */
 public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManagerAdapter.ViewHolder> {
 
-    private List<Depart> mDepartList;
+    private List<Depart> mDepartList = new ArrayList<>();
 
     public void setDepartList(List<Depart> departList) {
-        mDepartList = departList;
+        mDepartList.clear();
+        mDepartList.addAll(departList);
         notifyDataSetChanged();
     }
 

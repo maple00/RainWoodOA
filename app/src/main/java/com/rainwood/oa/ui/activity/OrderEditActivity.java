@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.activity;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -12,8 +13,16 @@ import androidx.annotation.Nullable;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.Attachment;
 import com.rainwood.oa.model.domain.Examination;
 import com.rainwood.oa.model.domain.FollowRecord;
+import com.rainwood.oa.model.domain.FontAndFont;
+import com.rainwood.oa.model.domain.OrderCost;
+import com.rainwood.oa.model.domain.OrderDetailAttachment;
+import com.rainwood.oa.model.domain.OrderFollow;
+import com.rainwood.oa.model.domain.OrderPayed;
+import com.rainwood.oa.model.domain.OrderReceivable;
+import com.rainwood.oa.model.domain.OrderTask;
 import com.rainwood.oa.model.domain.Provision;
 import com.rainwood.oa.model.domain.TempData;
 import com.rainwood.oa.network.aop.SingleClick;
@@ -47,7 +56,7 @@ import static com.rainwood.oa.utils.Constants.FOLLOW_OF_RECORDS;
 /**
  * @Author: a797s
  * @Date: 2020/5/19 9:10
- * @Desc: 订单编辑
+ * @Desc: 订单编辑(订单详情页面 、 只有草稿的情况)
  */
 public final class OrderEditActivity extends BaseActivity implements OrderAttachAdapter.OnClickWasteClear,
         ProvisionAdapter.OnClickWaste, ExaminationAdapter.OnClickClear,
@@ -108,16 +117,19 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
     @ViewInject(R.id.tv_none_approver)
     private TextView noneApprover;
 
-    private IOrderPresenter mOrderEditPresenter;
+    private IOrderPresenter mOrderPresenter;
 
     private OrderAttachAdapter mAttachAdapter;
     private ProvisionAdapter mProvisionAdapter;
     private FollowAdapter mFollowAdapter;
     private ExaminationAdapter mExaminationAdapter;
 
-    private List<Provision> mProvisionList;
+    private List<Provision> mProvisionList = new ArrayList<>();
     private List<FollowRecord> mFollowRecordList;
     private List<Examination> mExaminationList;
+    private String mOrderNoStr;
+    private List<Attachment> mAttachList = new ArrayList<>();
+    private List<FollowRecord> mFollowRecords = new ArrayList<>();
 
     @Override
     protected int getLayoutResId() {
@@ -179,19 +191,33 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
             orderName.setText(orderValues.getTempMap().get("orderName"));
             contractMoney.setText(orderValues.getTempMap().get("money"));
             note.setText(orderValues.getTempMap().get("note"));
+            // 订单属性
+            mOrderNoStr = orderValues.getTempMap().get("orderNo");
+            this.orderNo.setValue(mOrderNoStr);
+            createTime.setValue(orderValues.getTempMap().get("createTime"));
+            contractMoneyBottom.setValue(orderValues.getTempMap().get("money"));
+            provisionMoney.setValue(orderValues.getTempMap().get("cost"));
+            contractWorth.setValue(orderValues.getTempMap().get("netWorthOrder"));
+            contractReceivable.setValue(orderValues.getTempMap().get("moneyWait"));
+            remainValue.setValue(orderValues.getTempMap().get("netWorthWait"));
         }
     }
 
     @Override
     protected void initPresenter() {
-        mOrderEditPresenter = PresenterManager.getOurInstance().getOrderPresenter();
-        mOrderEditPresenter.registerViewCallback(this);
+        mOrderPresenter = PresenterManager.getOurInstance().getOrderPresenter();
+        mOrderPresenter.registerViewCallback(this);
     }
 
     @Override
     protected void loadData() {
         // 请求数据
-        mOrderEditPresenter.requestAllExaminationData();
+        mOrderPresenter.requestAllExaminationData();
+        // 请求订单详情
+        if (!TextUtils.isEmpty(mOrderNoStr)) {
+            showDialog();
+            mOrderPresenter.requestOrderDetailById(mOrderNoStr);
+        }
     }
 
     @Override
@@ -348,6 +374,7 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
     public void onClickExaminationClear(int position) {
         // 审批流程删除
         mExaminationList.remove(position);
+        mExaminationAdapter.notifyDataSetChanged();
     }
 
     @SuppressWarnings("all")
@@ -359,6 +386,57 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
         noneApprover.setVisibility(ListUtils.getSize(examinationList) == 0 ? View.VISIBLE : View.GONE);
         LogUtils.d("sxs", "审批数据-----> " + examinationList);
         mExaminationAdapter.setList(examinationList);
+    }
+
+    @SuppressWarnings("all")
+    @Override
+    public void getOrderDetail(Map orderDetailMap) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        // 订单附件
+        List<OrderDetailAttachment> attachmentList = (List<OrderDetailAttachment>) orderDetailMap.get("attachment");
+        // 费用计提
+        List<OrderCost> costList = (List<OrderCost>) orderDetailMap.get("cost");
+        // 跟进记录
+        List<OrderFollow> followList = (List<OrderFollow>) orderDetailMap.get("follow");
+        List<OrderTask> taskList = (List<OrderTask>) orderDetailMap.get("task");
+        List<OrderReceivable> receivableList = (List<OrderReceivable>) orderDetailMap.get("receivable");
+        List<OrderPayed> payedList = (List<OrderPayed>) orderDetailMap.get("payed");
+        List<FontAndFont> shoDataList = (List<FontAndFont>) orderDetailMap.get("showData");
+        List<FontAndFont> hideDataList = (List<FontAndFont>) orderDetailMap.get("hideData");
+
+        /*
+        设置数据
+         */
+        // 附件
+        for (OrderDetailAttachment detailAttachment : attachmentList) {
+            Attachment attachment = new Attachment();
+            attachment.setName(detailAttachment.getName());
+            attachment.setStaffName(detailAttachment.getStaffName());
+            attachment.setTime(detailAttachment.getTime());
+            mAttachList.add(attachment);
+        }
+        mAttachAdapter.setList(mAttachList);
+        noneAttach.setVisibility(ListUtils.getSize(mAttachList) == 0 ? View.VISIBLE : View.GONE);
+        // 跟进记录
+        for (OrderFollow orderFollow : followList) {
+            FollowRecord followRecord = new FollowRecord();
+            followRecord.setRecord(orderFollow.getText());
+            followRecord.setTime(orderFollow.getTime());
+            mFollowRecords.add(followRecord);
+        }
+        mFollowAdapter.setList(mFollowRecords);
+        noneFollow.setVisibility(ListUtils.getSize(mFollowRecords) == 0 ? View.VISIBLE : View.GONE);
+        // 费用计提
+        for (OrderCost orderCost : costList) {
+            Provision provision = new Provision();
+            provision.setUsed(orderCost.getText());
+            provision.setMoney(orderCost.getMoney());
+            mProvisionList.add(provision);
+        }
+        mProvisionAdapter.setList(mProvisionList);
+        noneProvision.setVisibility(ListUtils.getSize(mProvisionList) == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override

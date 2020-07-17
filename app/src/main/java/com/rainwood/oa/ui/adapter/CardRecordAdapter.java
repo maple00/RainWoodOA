@@ -11,12 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,19 +26,27 @@ import java.util.List;
  */
 public final class CardRecordAdapter extends RecyclerView.Adapter<CardRecordAdapter.ViewHolder> {
 
-    private List<CardRecord> mCardRecordList = new ArrayList<>();
-
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
+    private List<CardRecord> mCardRecordList;
 
     public void setLeaveOutRecordList(List<CardRecord> cardRecordList) {
-        if (loaded){
-            mCardRecordList.clear();
+        mCardRecordList = cardRecordList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<CardRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mCardRecordList.addAll(cardRecordList);
+
+        if (mCardRecordList == null || mCardRecordList.size() == 0) {
+            setLeaveOutRecordList(data);
+        } else {
+            mCardRecordList.addAll(data);
+            notifyItemRangeInserted(mCardRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

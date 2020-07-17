@@ -161,6 +161,11 @@ public class OkHttp {
                         || params.getOptionParams().get(RequestParams.REQUEST_CONTENT_TYPE).equals(RequestParams.REQUEST_CONTENT_STRING)) {
                     postOther(url, params, listener);
                 } else {
+                    // 检测网络状态
+                    if (BaseApplication.app.isDetermineNetwork() && !NetworkUtils.isAvailable(BaseApplication.app)) {
+                        sendNoNetworkMessage(url, params, listener);
+                        return;
+                    }
                     //创建okHttpClient对象
                     okhttp3.OkHttpClient okHttpClient = buildOkHttpClient(params);
                     MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
@@ -259,7 +264,8 @@ public class OkHttp {
             return;
         }
         OkHttpClient okHttpClient = buildOkHttpClient(params);
-        MediaType mediaType = params.getOptionParams().get(RequestParams.REQUEST_CONTENT_TYPE).equals(RequestParams.REQUEST_CONTENT_JSON) ? MediaType.parse("application/json; charset=utf-8") : MediaType.parse("application/octet-stream; charset=utf-8");
+        MediaType mediaType = params.getOptionParams().get(RequestParams.REQUEST_CONTENT_TYPE).equals(RequestParams.REQUEST_CONTENT_JSON)
+                ? MediaType.parse("application/json; charset=utf-8") : MediaType.parse("application/octet-stream; charset=utf-8");
         String stringParams;
         String jsonContent = params.getStringBody();
         if (Null.isNull(jsonContent)) {

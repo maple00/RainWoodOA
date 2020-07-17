@@ -27,4 +27,12 @@ public final class FontAndFont implements Serializable {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    @Override
+    public String toString() {
+        return "FontAndFont{" +
+                "title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                '}';
+    }
 }

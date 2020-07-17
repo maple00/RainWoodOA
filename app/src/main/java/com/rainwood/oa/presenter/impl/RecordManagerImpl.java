@@ -25,7 +25,6 @@ import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IRecordCallbacks;
 import com.rainwood.tools.toast.ToastUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,10 +46,11 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 客户-加班记录
      */
     @Override
-    public void requestOvertimeRecord(String customId) {
+    public void requestOvertimeRecord(String customId, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
-        OkHttp.post(Constants.BASE_URL + "cla=client&fun=workAdd", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=workAdd&page=" + page, params, this);
     }
 
     /**
@@ -59,6 +59,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestOverTimeStateData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=workFlow", params, this);
     }
 
@@ -68,8 +69,9 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestOvertimeRecord(String staffId, String state, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
-        params.add("workFlow", state);
+        params.add("workFlow", "全部".equals(state) ? "" : state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=home&page=" + pageCount, params, this);
@@ -88,12 +90,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestLeaveRecord(String staffId, String type, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
         params.add("type", type);
-        params.add("workFlow", state);
+        params.add("workFlow", "全部".equals(state) ? "" : state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
-        LogUtils.d("sxs", "--- type -- " + type + " --- state ---- " + state);
         OkHttp.post(Constants.BASE_URL + "cla=work&fun=home&page=" + page, params, this);
     }
 
@@ -103,6 +105,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestLeaveCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=work&fun=search", params, this);
     }
 
@@ -110,12 +113,14 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 外出记录
      *
      * @param customId 客户id
+     * @param page
      */
     @Override
-    public void requestGoOutRecord(String customId) {
+    public void requestGoOutRecord(String customId, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
-        OkHttp.post(Constants.BASE_URL + "cla=client&fun=out", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=out&page=" + page, params, this);
     }
 
     /**
@@ -130,8 +135,9 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestGoOutRecord(String staffId, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
-        params.add("workFlow", state);
+        params.add("workFlow", "全部".equals(state) ? "" : state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         LogUtils.d("sxs", "---------- 状态 -------- " + state);
@@ -144,6 +150,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestGoOutCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=search", params, this);
     }
 
@@ -159,8 +166,9 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestReissueRecord(String staffId, String state, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
-        params.add("workFlow", state);
+        params.add("workFlow", "全部".equals(state) ? "" : state);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=home&page=" + page, params, this);
@@ -172,6 +180,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestReissueCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=search", params, this);
     }
 
@@ -183,6 +192,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestCustomFollowRecords(String customId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=follow", params, this);
     }
@@ -191,12 +201,14 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 客户回款记录
      *
      * @param customId 客户id
+     * @param page
      */
     @Override
-    public void requestCustomReceivableRecords(String customId) {
+    public void requestCustomReceivableRecords(String customId, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
-        OkHttp.post(Constants.BASE_URL + "cla=client&fun=collection", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=collection&page=" + page, params, this);
     }
 
     /**
@@ -207,6 +219,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestCustomReceivableRecordDetail(String receivableId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id ", receivableId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=collectionDetail", params, this);
     }
@@ -215,12 +228,14 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
      * 请求客户下的开票记录
      *
      * @param customId 客户id
+     * @param page
      */
     @Override
-    public void requestCustomInvoiceRecords(String customId) {
+    public void requestCustomInvoiceRecords(String customId, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id ", customId);
-        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi&page=" + page, params, this);
     }
 
     /**
@@ -238,10 +253,11 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     public void requestInvoiceRecords(String type, String staffId, String company, String invoiceType,
                                       String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("open", type);
         params.add("stid", staffId);
-        params.add("company", company);
-        params.add("type", invoiceType);
+        params.add("company", "全部".equals(company) ? "" : company);
+        params.add("type", "全部".equals(invoiceType) ? "" : invoiceType);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=home&page=" + page, params, this);
@@ -253,6 +269,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestInvoiceCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=search", params, this);
     }
 
@@ -262,6 +279,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestCustomInvoiceParams() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoicePara", params, this);
     }
 
@@ -277,6 +295,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void CreateInvoiceRecord(String seller, String type, String money, String note, String customId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", RandomUtil.getItemID(20));
         params.add("company", seller);
         params.add("type", type);
@@ -292,6 +311,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestKnowledgeFollowRecords(String staffId, String target, String searchText, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("stid", staffId);
         params.add("target", target);
         params.add("text", searchText);
@@ -304,6 +324,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void requestRecordType() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=follow&fun=search", params, this);
     }
 
@@ -371,7 +392,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             }
         }
         // 客户管理----回款记录
-        else if (result.url().equals(Constants.BASE_URL + "cla=client&fun=collection")) {
+        else if (result.url().contains(Constants.BASE_URL + "cla=client&fun=collection&page=")) {
             try {
                 List<ReceivableRecord> receivableList = JsonParser.parseJSONArray(ReceivableRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("collection"));
@@ -403,17 +424,12 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 客户下开票记录中新建开票记录页面数据
         else if (result.url().contains("cla=client&fun=invoicePara")) {
             try {
-                JSONArray sellerArray = JsonParser.parseJSONArrayString(
+                List<String> sellerList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(
-                                JsonParser.parseJSONObjectString(
-                                        result.body()).getString("para")).getString("company"));
+                                result.body()).getString("para")).getString("company"));
                 String taxRate = JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(
                                 result.body()).getString("para")).getString("taxRate");
-                List<String> sellerList = new ArrayList<>();
-                for (int i = 0; i < sellerArray.length(); i++) {
-                    sellerList.add(sellerArray.getString(i));
-                }
                 Map<String, Object> invoiceNewPageParams = new HashMap<>();
                 invoiceNewPageParams.put("sellers", sellerList);
                 invoiceNewPageParams.put("rate", taxRate);
@@ -446,6 +462,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             try {
                 List<String> workFlowList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
+                workFlowList.add(0, "全部");
                 List<SelectedItem> overTimeStateList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(workFlowList); i++) {
                     SelectedItem item = new SelectedItem();
@@ -473,9 +490,11 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 List<SelectedItem> stateList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("workFlow"));
+                stateList.add(0, new SelectedItem("全部"));
                 List<SelectedItem> leaveTypeList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("type"));
+                leaveTypeList.add(0, new SelectedItem("全部"));
                 mRecordCallbacks.getLeaveConditionData(stateList, leaveTypeList);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -496,6 +515,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             try {
                 List<String> workFlowList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
+                workFlowList.add(0, "全部");
                 List<SelectedItem> goOutConditionList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(workFlowList); i++) {
                     SelectedItem item = new SelectedItem();
@@ -521,6 +541,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         else if (result.url().contains("cla=workSignAdd&fun=search")) {
             try {
                 List<String> workFlow = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("workFlow"));
+                workFlow.add(0, "全部");
                 List<SelectedItem> reissueStateList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(workFlow); i++) {
                     SelectedItem item = new SelectedItem();
@@ -549,11 +570,13 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                 List<String> saleArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search"))
                         .getString("company"));
+                saleArray.add(0, "全部");
                 // 发票类型
                 List<String> invoiceTypeArray = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(
                                 JsonParser.parseJSONObjectString(result.body()).getString("search"))
                                 .getString("type"));
+                invoiceTypeArray.add(0, "全部");
                 List<SelectedItem> saleList = new ArrayList<>();
                 List<SelectedItem> typeList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(saleArray); i++) {

@@ -40,7 +40,6 @@
         android:id="@+id/divider"
         style="@style/HorizontalLineStyle" />
 
-    <include layout="@layout/fragment_loading" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,17 +52,24 @@
 
         <View style="@style/VerticalLineStyle" />
 
-        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-            android:id="@+id/trl_pager_refresh"
+        <com.rainwood.tools.wheel.widget.HintLayout
+            android:id="@+id/hl_status_hint"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_staff_list"
+            <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+                android:id="@+id/trl_pager_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_staff_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+        </com.rainwood.tools.wheel.widget.HintLayout>
+
     </LinearLayout>
 
 </LinearLayout>

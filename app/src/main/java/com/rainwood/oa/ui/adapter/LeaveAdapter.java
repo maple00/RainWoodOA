@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.LeaveRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -28,17 +29,26 @@ public final class LeaveAdapter extends RecyclerView.Adapter<LeaveAdapter.ViewHo
 
     private List<LeaveRecord> mLeaveList = new ArrayList<>();
     private Context mContext;
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setLeaveList(List<LeaveRecord> leaveList) {
-        if (loaded) {
-            mLeaveList.clear();
+        mLeaveList = leaveList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<LeaveRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mLeaveList.addAll(leaveList);
+
+        if (mLeaveList == null || mLeaveList.size() == 0) {
+            setLeaveList(data);
+        } else {
+            mLeaveList.addAll(data);
+            notifyItemRangeInserted(mLeaveList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

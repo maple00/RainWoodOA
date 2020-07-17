@@ -24,11 +24,10 @@ import java.util.List;
  */
 public final class ProvisionAdapter extends BaseAdapter {
 
-    private List<Provision> mList = new ArrayList<>();
+    private List<Provision> mList;
 
     public void setList(List<Provision> list) {
-        mList.clear();
-        mList.addAll(list);
+        mList = list;
         notifyDataSetChanged();
     }
 

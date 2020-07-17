@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.ManagerMain;
@@ -20,6 +19,7 @@ import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.ui.adapter.ManagerMainAdapter;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IManagerCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.utils.FontSwitchUtil;
@@ -66,7 +66,7 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.top = FontSwitchUtil.dip2px(getContext(), 0f);
-                outRect.bottom = FontSwitchUtil.dip2px(getContext(), 15f);
+                outRect.bottom = FontSwitchUtil.dip2px(getContext(), 8f);
             }
         });
         // 创建适配器
@@ -96,10 +96,10 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
                 int measuredHeight = managerParent.getMeasuredHeight();
 
                 RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) managerMain.getLayoutParams();
-                //                LogUtils.d(HomePagerFragment.this,"layoutParams.height -=== > " + layoutParams.height);
+                //  LogUtils.d(HomePagerFragment.this,"layoutParams.height -=== > " + layoutParams.height);
                 layoutParams.height = measuredHeight;
                 managerMain.setLayoutParams(layoutParams);
-                if(measuredHeight != 0) {
+                if (measuredHeight != 0) {
                     managerParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             }
@@ -115,7 +115,7 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
     @Override
     public void getMainManagerData(List<ManagerMain> mainList) {
         // 从这里拿到数据
-         mMainAdapter.setData(mainList);
+        mMainAdapter.setData(mainList);
         // 数据加载到了
         setUpState(State.SUCCESS);
     }

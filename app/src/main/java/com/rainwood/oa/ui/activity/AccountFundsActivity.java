@@ -1,5 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,22 +17,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.TeamFunds;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.utils.Null;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.TeamFundsAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.oa.view.IMineCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -38,7 +46,8 @@ import java.util.List;
  * @Date: 2020/6/5 9:56
  * @Desc: 团队基金、会计账户（个人中心）、结算账户（个人中心）activity
  */
-public final class AccountFundsActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks {
+public final class AccountFundsActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks
+        , StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
@@ -47,6 +56,8 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     private ImageView pageBack;
     @ViewInject(R.id.tv_search)
     private TextView searchView;
+    @ViewInject(R.id.tv_search_tips)
+    private TextView searchTips;
     // content
     @ViewInject(R.id.xtl_team_funds)
     private XCollapsingToolbarLayout mToolbarLayout;
@@ -72,12 +83,19 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     private TwinklingRefreshLayout pagerRefresh;
     @ViewInject(R.id.rv_team_cost)
     private RecyclerView teamCostView;
-    @ViewInject(R.id.tv_tips)
-    private TextView bottomTips;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
+
 
     private IFinancialPresenter mFinancialPresenter;
     private IMinePresenter mMinePresenter;
     private TeamFundsAdapter mFundsAdapter;
+
+    private int pageCount = 1;
+    private String mStartTime;
+    private String mEndTime;
+    private String mSearchContent;
+    private String mType;
 
     @Override
     protected int getLayoutResId() {
@@ -139,10 +157,14 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
      * @param type
      */
     private void requestData(String type) {
+        showLoading();
         switch (moduleMenu) {
             case "teamFunds":
+            case "personTeamAccount":
+                // 个人中心---团队基金
                 // 管理--团队基金
-                mFinancialPresenter.requestTeamFundsData(type);
+                mType = type;
+                mFinancialPresenter.requestTeamFundsData("", mType, "", "", pageCount = 1);
                 break;
             case "accountAccount":
                 // 个人中心---会计账户
@@ -151,10 +173,6 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
             case "settlementAccount":
                 // 个人中心---结算账户
                 mMinePresenter.requestSettlementAccount(type);
-                break;
-            case "personTeamAccount":
-                // 个人中心---团队基金
-                mFinancialPresenter.requestTeamFundsData(type);
                 break;
         }
     }
@@ -170,7 +188,7 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
             }
         });
         // 滑动监听
-        teamCostView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        teamCostView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -185,9 +203,46 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                             LogUtils.d("sxs", "滑动到底部了.........");
                         }
                         // 判断是否滚动到底部
-                        bottomTips.setVisibility((lastVisibleItem == (totalItemCount - 1))
-                                ? View.VISIBLE : View.INVISIBLE);
                     }
+                }
+            }
+        });
+        // 搜索内容监听
+        searchTips.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)){
+                    mFinancialPresenter.requestTeamFundsData("", mType,
+                            mStartTime, mEndTime, pageCount = 1);
+                }
+            }
+        });
+        // 加载更多
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                switch (moduleMenu) {
+                    case "accountAccount":
+                        break;
+                    case "teamFunds":
+                    case "personTeamAccount":
+                        // 团队基金
+                        mFinancialPresenter.requestTeamFundsData(mSearchContent, mType,
+                                mStartTime, mEndTime, ++pageCount);
+                        break;
+                    case "settlementAccount":
+                        // 结算账户
+                        break;
                 }
             }
         });
@@ -196,7 +251,7 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
 
     @SingleClick
     @OnClick({R.id.iv_page_back, R.id.iv_screen_time, R.id.tv_screen_time, R.id.tv_query_all,
-            R.id.tv_allocated, R.id.tv_un_allocated})
+            R.id.tv_allocated, R.id.tv_un_allocated, R.id.tv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
@@ -210,11 +265,26 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
-                        .setCanceledOnTouchOutside(false)
+                        .setCanceledOnTouchOutside(true)
+                        .setAutoDismiss(true)
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
+                                switch (moduleMenu) {
+                                    case "accountAccount":
+                                        break;
+                                    case "teamFunds":
+                                    case "personTeamAccount":
+                                        // 团队基金
+                                        mStartTime = startTime;
+                                        mEndTime = endTime;
+                                        mFinancialPresenter.requestTeamFundsData("", "",
+                                                mStartTime, mEndTime, pageCount = 1);
+                                        break;
+                                    case "settlementAccount":
+                                        // 结算账户
+                                        break;
+                                }
                             }
 
                             @Override
@@ -226,21 +296,43 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                 break;
             case R.id.tv_query_all:
                 // toast("全部");
+                if (lineAll.getVisibility() == View.VISIBLE) {
+                    return;
+                }
+                //showDialog();
                 setTextBold(true, false, false);
                 setStatusLine(true, false, false);
                 requestData("");
                 break;
             case R.id.tv_allocated:
                 // toast("收入");
+                if (lineAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
+                //showDialog();
                 setTextBold(false, true, false);
                 setStatusLine(false, true, false);
                 requestData("收入");
                 break;
             case R.id.tv_un_allocated:
                 // toast("支出");
+                if (lineUnAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
+                // showDialog();
                 setTextBold(false, false, true);
                 setStatusLine(false, false, true);
                 requestData("支出");
+                break;
+            case R.id.tv_search:
+                if (Null.isNull(searchTips)) {
+                    toast(searchTips.getHint());
+                    return;
+                }
+                showDialog();
+                mSearchContent = searchTips.getText().toString().trim();
+                mFinancialPresenter.requestTeamFundsData(mSearchContent, mType,
+                        mStartTime, mEndTime, pageCount = 1);
                 break;
         }
     }
@@ -283,17 +375,34 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
         lineAll.setVisibility(selectedAll ? View.VISIBLE : View.INVISIBLE);
         lineAllocated.setVisibility(selectedAllocated ? View.VISIBLE : View.INVISIBLE);
         lineUnAllocated.setVisibility(selectedUnAllocated ? View.VISIBLE : View.INVISIBLE);
-
     }
 
     @Override
     public void getTeamFundsData(List<TeamFunds> fundsList, String money) {
-        mFundsAdapter.setList(fundsList);
+        pagerRefresh.finishLoadmore();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         balanceValue.setText(money);
+        if (pageCount != 1) {
+            toast("为您加载了" + ListUtils.getSize(fundsList) + "条数据");
+            mFundsAdapter.addData(fundsList);
+        } else {
+            if (ListUtils.getSize(fundsList) == 0) {
+                showEmpty();
+            }
+            mFundsAdapter.setList(fundsList);
+        }
     }
 
     @Override
     public void getAccountListData(List<TeamFunds> accountList, String money) {
+        pagerRefresh.finishLoadmore();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         mFundsAdapter.setList(accountList);
         balanceValue.setText(money);
     }
@@ -311,5 +420,10 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

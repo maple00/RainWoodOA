@@ -15,5 +15,10 @@ public interface IHomeCallbacks extends IBaseCallback {
     /**
      * 获取首页的工资曲线数据
      */
-    void getSalariesData(List<String> incomeList, List<String> monthList, List<FontAndFont> salaryList);
+    default void getSalariesData(List<String> incomeList, List<String> monthList, List<FontAndFont> salaryList){}
+
+    /**
+     * 待办事项条数
+     */
+    default void getBlockLogNum(int num){}
 }

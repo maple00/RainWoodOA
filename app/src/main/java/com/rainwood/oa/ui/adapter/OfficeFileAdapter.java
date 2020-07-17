@@ -16,7 +16,6 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,18 +25,24 @@ import java.util.List;
  */
 public final class OfficeFileAdapter extends RecyclerView.Adapter<OfficeFileAdapter.ViewHolder> {
 
-    private List<OfficeFile> mFileList = new ArrayList<>();
-    private boolean loaded= false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
+    private List<OfficeFile> mFileList;
 
     public void setFileList(List<OfficeFile> fileList) {
-        if (loaded){
-            mFileList.clear();
+        mFileList = fileList;
+        notifyDataSetChanged();
+    }
+
+    public void addData(List<OfficeFile> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mFileList.addAll(fileList);
+
+        if (mFileList == null || mFileList.size() == 0) {
+            setFileList(data);
+        } else {
+            mFileList.addAll(data);
+            notifyItemRangeInserted(mFileList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 
@@ -55,10 +60,10 @@ public final class OfficeFileAdapter extends RecyclerView.Adapter<OfficeFileAdap
         holder.fileName.setText(mFileList.get(position).getName() + "." + mFileList.get(position).getFormat());
         holder.secretIV.setVisibility("是".equals(mFileList.get(position).getSecret()) ? View.VISIBLE : View.GONE);
         holder.fileTime.setText(mFileList.get(position).getUpdateTime());
-        if (mFileList.get(position).getSrc().endsWith(".zip")){
+        if (mFileList.get(position).getSrc().endsWith(".zip")) {
             holder.previewIV.setVisibility(View.GONE);
             holder.previewTV.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.previewIV.setVisibility(View.VISIBLE);
             holder.previewTV.setVisibility(View.VISIBLE);
         }

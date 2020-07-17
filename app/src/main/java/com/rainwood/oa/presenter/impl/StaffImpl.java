@@ -42,6 +42,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=department", params, this);
     }
 
@@ -51,6 +52,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestQueryCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=search", params, this);
     }
 
@@ -63,6 +65,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     public void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
                                 String orderBy) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("departmentId", postId);
         params.add("name", name);
         params.add("sex", sex);
@@ -80,6 +83,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestStaffData(String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=detail", params, this);
     }
@@ -119,21 +123,27 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * 员工会计账户
      *
      * @param type
+     * @param pageCount
      */
     @Override
-    public void requestAllAccountData(String type) {
+    public void requestAllAccountData(String type, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
+        params.add("life", Constants.life);
+        params.add("id", Constants.staffId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=page" + pageCount, params, this);
     }
 
     /**
      * 员工结算账户
      *
      * @param type
+     * @param pageCount
      */
     @Override
-    public void requestAllSettlementData(String type) {
+    public void requestAllSettlementData(String type, int pageCount) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", Constants.staffId);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
     }
 
@@ -145,6 +155,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestStaffAccountDetailById(String accountId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", accountId);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=accountDetail", params, this);
     }

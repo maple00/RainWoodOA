@@ -15,6 +15,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.ui.adapter.AttachKnowledgeAdapter;
@@ -38,6 +39,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.view.RegexEditText;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -49,7 +51,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  * @Time: 2020/6/7 16:10
  * @Desc: 知识管理-- 附件管理
  */
-public final class AttachManagerActivity extends BaseActivity implements IAttachmentCallbacks {
+public final class AttachManagerActivity extends BaseActivity implements IAttachmentCallbacks, StatusAction {
 
     //actionBar
     @ViewInject(R.id.rl_search_click)
@@ -72,6 +74,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_attach_list)
     private RecyclerView attachView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IAttachmentPresenter mAttachmentPresenter;
     private AttachKnowledgeAdapter mAttachKnowledgeAdapter;
@@ -124,9 +128,17 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     protected void loadData() {
         // list
-        mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", "", pageCount);
+        netRequestData("", "", "", "", "");
         // request Condition
         mAttachmentPresenter.requestAttachCondition();
+    }
+
+    /**
+     * 请求网络数据
+     */
+    private void netRequestData(String attachName, String staffId, String secret, String target, String sorting) {
+        showLoading();
+        mAttachmentPresenter.requestKnowledgeAttach(attachName, staffId, secret, target, sorting, pageCount = 1);
     }
 
     @Override
@@ -207,12 +219,12 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 String position = data.getStringExtra("position");
 
                 toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-                mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, "", "", "", pageCount = 1);
+                netRequestData("", mStaffId, "", "", "");
             }
             // 搜索
-            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE){
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
                 mKeyWord = data.getStringExtra("keyWord");
-                mAttachmentPresenter.requestKnowledgeAttach(mKeyWord, mStaffId, "", "", "", pageCount = 1);
+                netRequestData(mKeyWord, mStaffId, "", "", "");
             }
         }
     }
@@ -236,16 +248,17 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
 
     @Override
     public void getKnowledgeAttach(List<KnowledgeAttach> attachList) {
-        if (ListUtils.getSize(attachList) == 0) {
-            toast("当前内容为空");
-            return;
-        }
-        mAttachKnowledgeAdapter.setLoaded(pageCount == 1);
+        showComplete();
         if (pageCount != 1) {
             pageRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(attachList) + "条数据");
+            mAttachKnowledgeAdapter.addData(attachList);
+        } else {
+            if (ListUtils.getSize(attachList) == 0) {
+                showEmpty();
+            }
+            mAttachKnowledgeAdapter.setAttachList(attachList);
         }
-        mAttachKnowledgeAdapter.setAttachList(attachList);
     }
 
     @Override
@@ -302,7 +315,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             } else if (CHECKED_TARGET_FLAG) {
                 mTargetType = item.getName();
             }
-            mAttachmentPresenter.requestKnowledgeAttach("", "", mSecret, mTargetType, "", pageCount = 1);
+            netRequestData("", "", mSecret, mTargetType, "");
             mStatusPopWindow.dismiss();
         });
     }
@@ -347,7 +360,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             mStatusPopWindow.dismiss();
             // TODO: 排序方式查询
             mDefaultSorting = selectedItem.getName();
-            mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", mDefaultSorting, pageCount = 1);
+            netRequestData("", "", "", "", mDefaultSorting);
         });
     }
 
@@ -365,5 +378,10 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

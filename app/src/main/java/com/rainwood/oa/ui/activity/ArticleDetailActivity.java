@@ -1,27 +1,31 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.text.Html;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.model.domain.Style;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.webview.WebLoader;
 import com.rainwood.oa.presenter.IArticlePresenter;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IArticleCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 /**
  * @Author: a797s
  * @Date: 2020/5/25 19:24
  * @Desc: 文章详情页面
  */
-public final class ArticleDetailActivity extends BaseActivity implements IArticleCallbacks {
+public final class ArticleDetailActivity extends BaseActivity implements IArticleCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
@@ -33,10 +37,12 @@ public final class ArticleDetailActivity extends BaseActivity implements IArticl
     private TextView systemTitle;
     @ViewInject(R.id.tv_screen)
     private TextView screen;
-    @ViewInject(R.id.tv_content)
-    private TextView content;
+    @ViewInject(R.id.wv_content)
+    private WebView mWebView;
     @ViewInject(R.id.tv_time)
     private TextView time;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IArticlePresenter mArticlePresenter;
 
@@ -62,6 +68,7 @@ public final class ArticleDetailActivity extends BaseActivity implements IArticl
     protected void loadData() {
         String articleId = getIntent().getStringExtra("articleId");
         if (articleId != null) {
+            showLoading();
             mArticlePresenter.requestArticleDetailById(articleId);
         }
     }
@@ -77,12 +84,19 @@ public final class ArticleDetailActivity extends BaseActivity implements IArticl
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void getArticleDetail(Article article) {
+    public void getArticleDetail(Article article, Style style) {
+        showComplete();
         // LogUtils.d("sxs", article.getWord());
         systemTitle.setText(article.getTitle());
         screen.setText(article.getClickRate() + " 浏览");
-        content.setText(Html.fromHtml(article.getArticle()));
         time.setText(article.getUpdateTime());
+        //content.setText(Html.fromHtml(article.getArticle()));
+        WebLoader.Builder builder = new WebLoader.Builder(mWebView);
+        builder.imageFit(true);
+        builder.javaScriptEnabled(true);
+        builder.supportZoom(true);
+        builder.data(article.getArticle());
+        builder.build();
     }
 
     @Override
@@ -98,5 +112,10 @@ public final class ArticleDetailActivity extends BaseActivity implements IArticl
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

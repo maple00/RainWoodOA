@@ -360,10 +360,8 @@ public class InnerPainter implements CalendarPainter {
     }
 
     //设置法定节假日和补班
-    private int statusCount = 0;
-
     public void setTagDayCopy(Map<String, List<String>> allDayList, int minShow) {
-
+        int statusCount = 0;
         for (String key : allDayList.keySet()) {
             // 进入之前先置空
             if (mDayList.get(key) != null) {
@@ -384,9 +382,12 @@ public class InnerPainter implements CalendarPainter {
              /*
               设定最多显示的状态
             */
-            statusCount++;
-            if (statusCount < minShow)
+            if (allDayList.get(key).size() > 0) {
+                statusCount++;
+            }
+            if (statusCount < minShow) {
                 mDayList.put(key, dayLocalList);
+            }
         }
         mCalendar.notifyCalendar();
     }

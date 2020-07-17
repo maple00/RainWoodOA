@@ -59,8 +59,6 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     private RecyclerView departList;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
-    @ViewInject(R.id.ll_loading)
-    private LinearLayout mLoading;
 
     private DepartManagerAdapter mDepartManagerAdapter;
 
@@ -128,6 +126,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     @Override
     protected void loadData() {
         // 请求数据---数据列表、筛选条件
+        showDialog();
         mAdministrativePresenter.requestAllDepartData("", "");
         mAdministrativePresenter.requestDepartScreenCondition();
     }
@@ -155,7 +154,9 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
 
     @Override
     public void getDepartListData(List<Depart> departList) {
-        mLoading.setVisibility(View.GONE);
+        if (isShowDialog()){
+            hideDialog();
+        }
         mDepartManagerAdapter.setDepartList(departList);
     }
 

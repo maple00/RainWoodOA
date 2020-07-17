@@ -9,19 +9,23 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.activity.PaymentDetailActivity;
 import com.rainwood.oa.ui.adapter.StaffAccountAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +35,7 @@ import java.util.Objects;
  * @Date: 2020/5/22 17:04
  * @Desc: 会计账户
  */
-public final class StaffAccountFragment extends BaseFragment implements IStaffCallbacks {
+public final class StaffAccountFragment extends BaseFragment implements IStaffCallbacks, StatusAction {
 
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pageRefresh;
@@ -44,10 +48,15 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     private View checkedIncome;
     @ViewInject(R.id.line_speeding)
     private View checkedSpeeding;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IStaffPresenter mStaffPresenter;
     private StaffAccountAdapter mAccountAdapter;
     private String mStaffId;
+    private int pageCount = 1;
+    private boolean isClickType = false;
+    private String queryType = "accountAll";
 
     public StaffAccountFragment(String staffId) {
         mStaffId = staffId;
@@ -82,7 +91,18 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     @Override
     protected void loadData() {
         // 请求数据-- 默认请求全部数据
-        mStaffPresenter.requestAllAccountData("accountAll");
+        netDataLoading("accountAll", (pageCount = 1));
+    }
+
+    /**
+     * 网络数据请求
+     *
+     * @param queryType
+     * @param page
+     */
+    private void netDataLoading(String queryType, int page) {
+        showDialog();
+        mStaffPresenter.requestAllAccountData(queryType, page);
     }
 
     @Override
@@ -90,6 +110,13 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
         mAccountAdapter.setItemAccount(account -> {
             // 查看会计账户详情
             PageJumpUtil.staffAccount2Detail(getContext(), PaymentDetailActivity.class, account.getId());
+        });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                netDataLoading(queryType, (++pageCount));
+            }
         });
     }
 
@@ -129,21 +156,27 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 break;
             case R.id.tv_query_all:
             case R.id.line_all:
+                isClickType = true;
                 checkedType(true, false, false);
                 // 查询全部
-                mStaffPresenter.requestAllAccountData("accountAll");
+                queryType = "accountAll";
+                netDataLoading("accountAll", (pageCount = 1));
                 break;
             case R.id.tv_income:
             case R.id.line_income:
+                isClickType = true;
                 checkedType(false, true, false);
                 // 查询收入
-                mStaffPresenter.requestAllAccountData("accountIn");
+                queryType = "accountIn";
+                netDataLoading("accountIn", (pageCount = 1));
                 break;
             case R.id.tv_speeding:
             case R.id.line_speeding:
+                isClickType = true;
                 checkedType(false, false, true);
                 // 查询支出
-                mStaffPresenter.requestAllAccountData("accountOut");
+                queryType = "accountOut";
+                netDataLoading("accountOut", (pageCount = 1));
                 break;
         }
     }
@@ -169,12 +202,28 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
 
     @Override
     public void getAccountData(List<StaffAccount> accountList) {
-        mAccountAdapter.setAccountList(accountList);
+        pageRefresh.finishLoadmore();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
+        if (isClickType) {
+            if (ListUtils.getSize(accountList) == 0) {
+                showEmpty();
+            }
+            mAccountAdapter.setAccountList(accountList);
+            isClickType = false;
+        } else {
+            mAccountAdapter.addData(accountList);
+        }
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
@@ -185,5 +234,10 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

@@ -21,6 +21,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceCurveListData;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.BalanceCurveAdapter;
@@ -35,6 +36,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ import java.util.Random;
  * @Date: 2020/6/28 16:04
  * @Desc: 收支曲线
  */
-public final class BalanceCurveActivity extends BaseActivity implements IFinancialCallbacks {
+public final class BalanceCurveActivity extends BaseActivity implements IFinancialCallbacks, StatusAction {
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -63,6 +65,8 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     private LineChart mSalaryChart;
     @ViewInject(R.id.mlv_salary_list)
     private MeasureListView salaryListView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IFinancialPresenter mFinancialPresenter;
     private BalanceCurveAdapter mBalanceCurveAdapter;
@@ -100,7 +104,15 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     @Override
     protected void loadData() {
         // 工资曲线，默认查询月
-        mFinancialPresenter.requestBalanceByMonth("", "");
+        netLoadingData("", "");
+    }
+
+    /**
+     * 查询收支曲线
+     */
+    private void netLoadingData(String startMonth, String endTime) {
+        showLoading();
+        mFinancialPresenter.requestBalanceByMonth(startMonth, endTime);
     }
 
     @SingleClick
@@ -113,6 +125,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             case R.id.tv_year:
                 setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg, R.color.white, R.color.colorPrimary);
                 //
+                showDialog();
                 SELECTED_MONTH = false;
                 SELECTED_YEAR = true;
                 mFinancialPresenter.requestBalanceByYear();
@@ -120,9 +133,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             case R.id.tv_month:
                 setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg, R.color.colorPrimary, R.color.white);
                 //
+                showDialog();
                 SELECTED_MONTH = true;
                 SELECTED_YEAR = false;
-                mFinancialPresenter.requestBalanceByMonth("", "");
+                netLoadingData("", "");
                 break;
             case R.id.tv_date:
                 // 默认选择月
@@ -138,7 +152,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
                                 dialog.dismiss();
                                 // toast("选中的时间段：" + startTime + "至" + endTime);
-                                mFinancialPresenter.requestBalanceByMonth(startTime, startTime);
+                                netLoadingData(startTime, endTime);
                             }
 
                             @Override
@@ -166,6 +180,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
      */
     @Override
     public void getBalanceMonthData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, monthBalanceList);
     }
@@ -173,6 +191,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     public void getBalanceYearData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> yearBalanceList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, yearBalanceList);
     }
@@ -351,5 +373,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

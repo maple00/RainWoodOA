@@ -17,17 +17,16 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
+            android:visibility="gone"
             android:button="@drawable/selector_checkbox" />
 
         <TextView
             android:id="@+id/tv_permission_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:text="固定资产"
             android:textColor="@color/fontColor"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"/>
 
     </LinearLayout>
 

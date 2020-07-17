@@ -40,6 +40,7 @@ public final class BlockLogPagerImpl implements IBlockLogPagerPresenter {
         }
         // request
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("workFlow", state);
         OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=home", params, new OnHttpListener() {
             @Override

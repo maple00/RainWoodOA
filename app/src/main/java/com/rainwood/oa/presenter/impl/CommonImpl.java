@@ -55,6 +55,7 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
     @Override
     public void requestOverTimeRecordsById(String overTimeId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("workAddId", overTimeId);
         OkHttp.post(Constants.BASE_URL + "cla=workAdd&fun=detail", params, this);
     }
@@ -66,6 +67,7 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
     @Override
     public void requestAskLeaveById(String askLeaveId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", askLeaveId);
         OkHttp.post(Constants.BASE_URL + "cla=work&fun=detail", params, this);
     }
@@ -77,6 +79,7 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
     @Override
     public void requestAskOutByStaffId(String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("workOutId", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=workOut&fun=detail", params, this);
     }
@@ -88,6 +91,7 @@ public final class CommonImpl implements ICommonPresenter, OnHttpListener {
     @Override
     public void requestReissueCardDetailById(String reissueId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", reissueId);
         OkHttp.post(Constants.BASE_URL + "cla=workSignAdd&fun=detail", params, this);
     }

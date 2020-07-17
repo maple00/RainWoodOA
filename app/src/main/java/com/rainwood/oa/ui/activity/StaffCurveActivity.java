@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -81,6 +82,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
 
     @Override
     protected void loadData() {
+        showDialog();
         mFinancialPresenter.requestStaffNum();
     }
 
@@ -97,8 +99,12 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList) {
+        if (isShowDialog()){
+            hideDialog();
+        }
         if (ListUtils.getSize(staffNumList) == 0) {
             staffCurveView.setNoDataText("当前暂无收支数据");
             return;

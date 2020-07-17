@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +40,7 @@ import static com.rainwood.oa.utils.Constants.CUSTOM_DEMAND_WRITE_SIZE;
 public final class CustomNewActivity extends BaseActivity implements ICustomCallbacks {
 
     // actionBar
-    @ViewInject(R.id.rl_pager_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -91,6 +92,8 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
     private EditText openingBank;
     @ViewInject(R.id.cet_brought_account)
     private EditText broughtAccount;
+    @ViewInject(R.id.btn_confirm)
+    private Button mButton;
 
     private ICustomPresenter mCustomPresenter;
 
@@ -107,6 +110,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
         pageTitle.setText(title);
+        mButton.setText(title.contains("编辑") ? "保存" : "确认新建");
         setRequiredValue(contactTV, "联系人");
         setRequiredValue(telNumber, "手机号");
         setRequiredValue(followStatus, "跟进状态");

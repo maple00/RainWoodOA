@@ -53,6 +53,45 @@ public final class Order implements Serializable {
      */
     private String endTime;
 
+    /**
+     * 费用计提
+     */
+    private double cost;
+
+    /**
+     * 合同净值
+     */
+    private double netWorthOrder;
+
+    /**
+     * 合同应收
+     */
+    private double moneyWait;
+
+    /**
+     * 剩余净值
+     */
+    private String netWorthWait;
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id='" + id + '\'' +
+                ", workFlow='" + workFlow + '\'' +
+                ", name='" + name + '\'' +
+                ", money='" + money + '\'' +
+                ", natureList=" + natureList +
+                ", staffName='" + staffName + '\'' +
+                ", timeLimit='" + timeLimit + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", cost=" + cost +
+                ", netWorthOrder=" + netWorthOrder +
+                ", moneyWait=" + moneyWait +
+                ", netWorthWait='" + netWorthWait + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }
@@ -83,6 +122,14 @@ public final class Order implements Serializable {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public List<FontAndFont> getNatureList() {
+        return natureList;
+    }
+
+    public void setNatureList(List<FontAndFont> natureList) {
+        this.natureList = natureList;
     }
 
     public String getStaffName() {
@@ -117,26 +164,35 @@ public final class Order implements Serializable {
         this.endTime = endTime;
     }
 
-    public List<FontAndFont> getNatureList() {
-        return natureList;
+    public double getCost() {
+        return cost;
     }
 
-    public void setNatureList(List<FontAndFont> natureList) {
-        this.natureList = natureList;
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id='" + id + '\'' +
-                ", workFlow='" + workFlow + '\'' +
-                ", name='" + name + '\'' +
-                ", money='" + money + '\'' +
-                ", natureList=" + natureList +
-                ", staffName='" + staffName + '\'' +
-                ", timeLimit='" + timeLimit + '\'' +
-                ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                '}';
+    public double getNetWorthOrder() {
+        return netWorthOrder;
+    }
+
+    public void setNetWorthOrder(double netWorthOrder) {
+        this.netWorthOrder = netWorthOrder;
+    }
+
+    public double getMoneyWait() {
+        return moneyWait;
+    }
+
+    public void setMoneyWait(double moneyWait) {
+        this.moneyWait = moneyWait;
+    }
+
+    public String getNetWorthWait() {
+        return netWorthWait;
+    }
+
+    public void setNetWorthWait(String netWorthWait) {
+        this.netWorthWait = netWorthWait;
     }
 }
