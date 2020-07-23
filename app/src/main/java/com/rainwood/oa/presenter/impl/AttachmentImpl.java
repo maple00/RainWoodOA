@@ -15,7 +15,6 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IAttachmentCallbacks;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -179,6 +178,10 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
                 List<String> sortArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("orderBy"));
+                typeArray.add(0, "全部");
+                formatArray.add(0, "全部");
+                secretArray.add(0, "全部");
+                sortArray.add(0, "默认排序");
                 List<SelectedItem> typeList = new ArrayList<>();
                 List<SelectedItem> formatList = new ArrayList<>();
                 List<SelectedItem> secretList = new ArrayList<>();
@@ -230,6 +233,9 @@ public final class AttachmentImpl implements IAttachmentPresenter, OnHttpListene
                 List<String> sortArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body())
                                 .getString("search")).getString("orderBy"));
+                targetArray.add(0, "全部");
+                secretArray.add(0, "全部");
+                sortArray.add(0, "默认排序");
                 List<SelectedItem> targetList = new ArrayList<>();
                 List<SelectedItem> secretList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();

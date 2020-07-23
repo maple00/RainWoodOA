@@ -42,7 +42,7 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchContent;
     @ViewInject(R.id.tv_search)
     private TextView searchTV;
@@ -118,9 +118,8 @@ public final class ExchangeSkillActivity extends BaseActivity implements IArticl
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    mArticlePresenter.requestCommunicationData("", pageCount = 1);
-                }
+                mSearchContent = s.toString();
+                mArticlePresenter.requestCommunicationData(mSearchContent, pageCount = 1);
             }
         });
         // 加载更多

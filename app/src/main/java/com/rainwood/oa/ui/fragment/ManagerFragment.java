@@ -15,11 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.ManagerMain;
+import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IManagerPresenter;
 import com.rainwood.oa.ui.adapter.ManagerMainAdapter;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IManagerCallbacks;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
+import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.utils.FontSwitchUtil;
@@ -110,6 +113,21 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
     protected void loadData() {
         // 从这里加载数据
         mManagerPresenter.getManagerData();
+    }
+
+    @SingleClick
+    @OnClick(R.id.ll_network_error_tips)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                if (!NetworkUtils.isAvailable(getContext())) {
+                    toast("当前网络不可用");
+                    onError(getString(R.string.text_network_state));
+                    return;
+                }
+                mManagerPresenter.getManagerData();
+                break;
+        }
     }
 
     @Override

@@ -23,7 +23,7 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     /**
      * 新增客户
      */
-    void createCustomData(String userName, String tel, String wxNum, String qqNum, String post,
+    void createCustomData(String randomId, String userName, String tel, String wxNum, String qqNum, String post,
                           String followStatus, String origin, String note, String preMoney, String industry,
                           String demand, String company, String taxNum, String emailAddress,
                           String invoiceAddress, String landLine, String bankName, String bankNo);
@@ -157,4 +157,10 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      * @param time
      */
     void createFollowRecord(String recordId, String target, String targetId, String content, String time);
+
+    /**
+     * 请求记录详情
+     * @param recordsId
+     */
+    void requestCustomRecordDetailById(String recordsId);
 }

@@ -7,9 +7,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.ui.adapter.ImagePagerAdapter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.wheel.widget.HintLayout;
 import com.rd.PageIndicatorView;
 
 import java.util.ArrayList;
@@ -19,12 +21,14 @@ import java.util.ArrayList;
  * @Date: 2020/5/25 11:47
  * @Desc: 查看大图
  */
-public final class ImageActivity extends BaseActivity {
+public final class ImageActivity extends BaseActivity implements StatusAction {
 
     @ViewInject(R.id.vp_image_pager)
     private ViewPager mViewPager;
     @ViewInject(R.id.pv_image_indicator)
     private PageIndicatorView mIndicatorView;
+    @ViewInject(R.id.hl_image_hint)
+    private HintLayout imageHint;
 
     @Override
     protected int getLayoutResId() {
@@ -38,6 +42,7 @@ public final class ImageActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        //toast("加载中，请稍后");
         ArrayList<String> images = getIntent().getStringArrayListExtra(Constants.PICTURE);
         int index = getIntent().getIntExtra(Constants.INDEX, 0);
         if (images != null && images.size() > 0) {
@@ -70,5 +75,10 @@ public final class ImageActivity extends BaseActivity {
         intent.putExtra(Constants.PICTURE, urls);
         intent.putExtra(Constants.INDEX, index);
         context.startActivity(intent);
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return imageHint;
     }
 }

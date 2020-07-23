@@ -24,14 +24,15 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
      * 查询员工
      *
      * @param postId  职位id
-     * @param name    姓名
+     * @param keyWord 搜索关键字
      * @param sex     性别
      * @param social  是否购买社保
      * @param gateKey 是否有大门钥匙
      * @param orderBy 排序方式
+     * @param page
      */
-    void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
-                         String orderBy);
+    void requestAllStaff(String postId, String keyWord, String sex, String social, String gateKey,
+                         String orderBy, int page);
 
     /**
      * 请求员工资料data
@@ -51,12 +52,12 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     /**
      * 获取员工的所有的会计账户
      */
-    void requestAllAccountData(String type, int pageCount);
+    void requestAllAccountData(String type, String keyWord, String startTime, String endTime, int pageCount);
 
     /**
      * 获取员工的所有的计算账户的信息
      */
-    void requestAllSettlementData(String type, int pageCount);
+    void requestAllSettlementData(String type, String keyWord, String startTime, String endTime, int pageCount);
 
     /**
      * 获取员工账户的详情

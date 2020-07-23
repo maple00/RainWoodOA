@@ -39,8 +39,8 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
         params.add("powerOne", "全部".equals(moduleFirst) ? "" : moduleFirst);
         params.add("powerTwo", "全部".equals(moduleSecond) ? "" : moduleSecond);
         params.add("life", Constants.life);
-        LogUtils.d("sxs", " ---- first --- " + moduleFirst + " --- second -- " + moduleSecond);
-        OkHttp.post(Constants.BASE_URL + "cla=role&fun=home&page=" + page, params, this);
+        String url = Constants.BASE_URL + "cla=role&fun=home&page=" + page;
+        OkHttp.post(url, params, this);
     }
 
     /**
@@ -162,6 +162,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mAdministrativeCallbacks.onError();
             return;

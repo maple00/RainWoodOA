@@ -96,12 +96,24 @@ public class TextSelectedItemFlowLayout extends ViewGroup {
             // 等价于
             TextView item = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.flow_text_view, this, false);
             item.setText(text.getName());
-            item.setTextSize(textSize);
-            item.setTextColor(textColor);
-            item.setIncludeFontPadding(false);
-            item.setFreezesText(true);
             item.setPadding(FontSwitchUtil.sp2px(mContext, 8f), FontSwitchUtil.sp2px(mContext, 8f),
                     FontSwitchUtil.sp2px(mContext, 8f), FontSwitchUtil.sp2px(mContext, 8f));
+            item.setTextSize(textSize);
+            item.setIncludeFontPadding(false);
+            item.setFreezesText(true);
+            if (text.isHasSelected()) {
+                item.setBackgroundResource(R.drawable.selector_selected);
+                item.setTextColor(mContext.getColor(R.color.colorPrimary));
+               /* holder.content.setBackground(getItem(position).isHasSelected()
+                        ? parent.getContext().getDrawable(R.drawable.selector_selected)
+                        : parent.getContext().getDrawable(R.drawable.selector_uncheck_selected));
+                holder.content.setTextColor(getItem(position).isHasSelected()
+                        ? parent.getContext().getColor(R.color.colorPrimary)
+                        : parent.getContext().getColor(R.color.colorMiddle));     */
+            } else {
+                item.setBackgroundResource(R.drawable.selector_uncheck_selected);
+                item.setTextColor(textColor);
+            }
             item.setOnClickListener(v -> {
                 if (mItemClickListener != null) {
                     mItemClickListener.onFlowItemClick(text);

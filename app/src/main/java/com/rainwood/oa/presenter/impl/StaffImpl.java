@@ -60,10 +60,11 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * 通过职位id查询该职位下的员工
      *
      * @param postId
+     * @param page
      */
     @Override
     public void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
-                                String orderBy) {
+                                String orderBy, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("departmentId", postId);
@@ -72,7 +73,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         params.add("socialSecurity", social);
         params.add("gateKey", gateKey);
         params.add("orderBy", orderBy);
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -123,28 +124,52 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * 员工会计账户
      *
      * @param type
+     * @param keyWord
      * @param pageCount
      */
     @Override
-    public void requestAllAccountData(String type, int pageCount) {
+    public void requestAllAccountData(String type, String keyWord, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("id", Constants.staffId);
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=page" + pageCount, params, this);
+        params.add("text", keyWord);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=" + pageCount, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mStaffCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                try {
+                    List<StaffAccount> accountList = JsonParser.parseJSONArray(StaffAccount.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("account"));
+                    mStaffCallbacks.getAccountData(accountList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
      * 员工结算账户
      *
      * @param type
+     * @param keyWord
      * @param pageCount
      */
     @Override
-    public void requestAllSettlementData(String type, int pageCount) {
+    public void requestAllSettlementData(String type, String keyWord, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("id", Constants.staffId);
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
+        params.add("text", keyWord);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=" + pageCount, params, this);
     }
 
     /**
@@ -178,6 +203,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mStaffCallbacks.onError();
             return;
@@ -220,6 +246,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                 List<SelectedItem> defaultSortList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("list"));
+                defaultSortList.add(0, new SelectedItem("默认排序"));
                 // 性别
                 List<SelectedItem> sexList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
@@ -294,13 +321,13 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         // 员工会计账户--全部、收入、支出
         else if (result.url().contains("cla=staff&fun=accountAll") || result.url().contains("cla=staff&fun=accountIn")
                 || result.url().contains("cla=staff&fun=accountOut")) {
-            try {
+          /*  try {
                 List<StaffAccount> accountList = JsonParser.parseJSONArray(StaffAccount.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("account"));
                 mStaffCallbacks.getAccountData(accountList);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
         // 员工结算账户-- 全部、收入、支出
         else if (result.url().contains("cla=staff&fun=settleAccountAll") || result.url().contains("cla=staff&fun=settleAccountIn")

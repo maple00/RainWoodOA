@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.text.Html;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -71,6 +72,8 @@ public final class ClassificationStaticsActivity extends BaseActivity
     private IFinancialPresenter mFinancialPresenter;
     private List<ClassificationStatics> mIncomeList;
     private List<ClassificationStatics> mClassificationOutcomeList;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -88,6 +91,7 @@ public final class ClassificationStaticsActivity extends BaseActivity
 
     /**
      * 饼图初始化
+     *
      * @param staticsView
      */
     private void setValues(PieChart staticsView, String tips) {
@@ -162,12 +166,26 @@ public final class ClassificationStaticsActivity extends BaseActivity
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
                         .setCanceledOnTouchOutside(false)
                         .setListener(new StartEndDateDialog.OnListener() {
+                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
                                 // TODO: 时间段查询
+                                dialog.dismiss();
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                date.setText(mStartTime + "-" + mEndTime);
                                 mFinancialPresenter.requestClassStatics(startTime, endTime);
                             }
 
@@ -184,21 +202,21 @@ public final class ClassificationStaticsActivity extends BaseActivity
     @Override
     public void getClassificationIncome(List<ClassificationStatics> incomeList, String money,
                                         List<ClassificationStatics> classificationOutcomeList, String outcomeMoney, String balance) {
-
         mIncomeList = incomeList;
         mClassificationOutcomeList = classificationOutcomeList;
         // setData
         setIncomeData(mIncomeList);
         setOutcomeData(mClassificationOutcomeList);
         this.balance.setText(balance);
-        inOutCome.setText(Html.fromHtml("<font color='" + getColor(R.color.colorPrimary) + "' size=='15dp'>收入\t</font>"
-                + "<font color='" + getColor(R.color.labelColor) + "' size=='15dp'>" + money + "</font>" +
-                "\t\t<font color='" + getColor(R.color.red20) + "' size=='15dp'>支出\t</font>" +
-                "<font color='" + getColor(R.color.labelColor) + "' size=='15dp'>" + outcomeMoney + "</font>"));
+        inOutCome.setText(Html.fromHtml("<font color='" + getColor(R.color.colorPrimary) + "' size=='15dp'>收入：\t</font>"
+                + "<font color='" + getColor(R.color.labelColor) + "' size=='15dp'>￥" + money + "</font>" +
+                "\t\t<font color='" + getColor(R.color.red20) + "' size=='15dp'>支出：\t</font>" +
+                "<font color='" + getColor(R.color.labelColor) + "' size=='15dp'>￥" + outcomeMoney + "</font>"));
     }
 
     /**
      * 收入统计
+     *
      * @param moneyList
      */
     private void setIncomeData(List<ClassificationStatics> moneyList) {
@@ -238,6 +256,7 @@ public final class ClassificationStaticsActivity extends BaseActivity
 
     /**
      * 支出统计
+     *
      * @param moneyList
      */
     private void setOutcomeData(List<ClassificationStatics> moneyList) {

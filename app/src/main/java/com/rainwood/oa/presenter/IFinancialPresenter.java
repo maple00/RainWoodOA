@@ -50,13 +50,14 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
      *
      * @param staffId    员工id
      * @param origin     来源
+     * @param direction  收支或者支出
      * @param classify   分类
      * @param startTime  开始时间
      * @param endTime    结束时间
      * @param searchText 搜索内容
      * @param page       页码
      */
-    void requestBalanceRecords(String staffId, String origin, String classify, String startTime,
+    void requestBalanceRecords(String staffId, String origin, String direction, String classify, String startTime,
                                String endTime, String searchText, int page);
 
     /**
@@ -78,17 +79,27 @@ public interface IFinancialPresenter extends IBasePresenter<IFinancialCallbacks>
 
     /**
      * 请求收支曲线 -- 按年
+     * @param startYear
+     * @param endYear
      */
-    void requestBalanceByYear();
+    void requestBalanceByYear(String startYear, String endYear);
 
     /**
      * 请求员工数量
+     * @param startMonth
+     * @param endMonth
      */
-    void requestStaffNum();
+    void requestStaffNum(String startMonth, String endMonth);
 
     /**
      * 请i去费用报销凭证
      * @param reimburseId
      */
     void requestReimburseDetail(String reimburseId);
+
+    /**
+     * 请求收支记录详情
+     * @param recordId
+     */
+    void requestBalanceDetail(String recordId);
 }

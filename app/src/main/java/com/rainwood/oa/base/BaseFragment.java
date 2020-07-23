@@ -14,6 +14,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.network.receiver.NetReceiver;
 import com.rainwood.oa.ui.dialog.WaitDialog;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.toast.ToastUtils;
@@ -84,7 +85,7 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
      * 隐藏加载对话框
      */
     public void hideDialog() {
-        if (mDialogTotal == 1) {
+        if (mDialogTotal >= 1) {
             if (mDialog != null && mDialog.isShowing()) {
                 mDialog.dismiss();
             }
@@ -106,7 +107,19 @@ public abstract class BaseFragment extends Fragment implements HandlerAction {
         initListener();
         initPresenter();
         loadData();
+        // 网络检测
+        NetReceiver.getInstance().setChangeListener(new NetReceiver.NetChangeListener() {
+            @Override
+            public void changeListener(String status) {
+                // 重新调用接口
+                retryRequest();
+            }
+        });
         return rootView;
+    }
+
+    protected void retryRequest() {
+        loadData();
     }
 
     /**

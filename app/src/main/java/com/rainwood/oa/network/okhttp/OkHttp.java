@@ -76,7 +76,7 @@ public class OkHttp {
     }
 
     /**
-     * 青内存
+     * 清内存
      */
     public static void destroy() {
         if (httpHandler != null) {

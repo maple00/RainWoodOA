@@ -150,4 +150,10 @@ public interface IRecordManagerPresenter extends IBasePresenter<IRecordCallbacks
      * 请求记录类型
      */
     void requestRecordType();
+
+    /**
+     * 请求开票记录详情
+     * @param invoiceId
+     */
+    void requestInvoiceDetail(String invoiceId);
 }

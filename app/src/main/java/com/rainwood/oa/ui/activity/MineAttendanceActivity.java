@@ -18,6 +18,7 @@ import com.rainwood.oa.model.domain.CalendarStatics;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.ui.adapter.CalendarStaticsAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICalendarCallback;
 import com.rainwood.tools.annotation.OnClick;
@@ -41,7 +42,7 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
     // page
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;
@@ -205,7 +206,9 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
             currentMonth.setText(year + "年" + month + "月");
             // 不是同一个月份则请求
             if (tempMonth != month || year != tempYear) {
-                mCalendarPresenter.requestCurrentDayAttendance("", year + "-" + (month < 10 ? "0" + month : month));
+                showDialog();
+                mCalendarPresenter.requestCurrentDayAttendance("", year + "-"
+                        + (month < 10 ? "0" + month : month));
             }
             // 展示选中天的考勤数据
             if (tempMonth == month && tempYear == year) {
@@ -288,6 +291,9 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
     @SuppressLint("SetTextI18n")
     @Override
     public void getAttendanceData(AttendanceData attendanceData) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         averageHour.setText("本年月平均工作(小时)：" + attendanceData.getYmh());
          /*
         当日考勤
@@ -302,7 +308,7 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
         List<String> kuangGongList = new ArrayList<>();
         List<String> buKaList = new ArrayList<>();
         for (AttendanceCalendarData currentDayDatum : mCurrentDayData) {
-            // 如果是当天
+            // 如果是当天  -- 判断有问题
             if (currentDayDatum.getDay().equals(String.valueOf(DateTimeUtils.getNowDay()))) {
                 for (CalendarStatics statics : mDayDescList) {
                     if (statics.getDescData().contains("打卡时间(上班)")) {
@@ -348,7 +354,9 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
         statusMap.put("旷", kuangGongList);
         statusMap.put("补", buKaList);
         // 设置日期的状态
+        LogUtils.d("sxs", "---- 状态 ---- " + statusMap);
         mInnerPainter.setTagDayCopy(statusMap, 4);
+
          /*
         本月（考勤、工资）
          */
@@ -407,11 +415,23 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
 
     @Override
     public void onLoading() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
     public void onEmpty() {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+    }
 
+    @Override
+    public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        toast(tips);
     }
 }

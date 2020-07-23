@@ -508,6 +508,8 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("workFlow"));
                 List<String> payerArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("orderBy"));
+                typeArray.add(0, "全部");
+                payerArray.add(0, "默认排序");
                 List<SelectedItem> stateList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(typeArray); i++) {

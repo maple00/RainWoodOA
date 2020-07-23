@@ -84,12 +84,11 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
      * @param bankNo
      */
     @Override
-    public void createCustomData(String userName, String tel, String wxNum, String qqNum, String post,
+    public void createCustomData(String randomId, String userName, String tel, String wxNum, String qqNum, String post,
                                  String followStatus, String origin, String note, String preMoney,
                                  String industry, String demand, String company, String taxNum,
                                  String emailAddress, String invoiceAddress,
                                  String landLine, String bankName, String bankNo) {
-        String randomId = RandomUtil.getItemID(20);
         //LogUtils.d("sxs", "创建客户id-----" + randomId);
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
@@ -452,6 +451,14 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
     }
 
     @Override
+    public void requestCustomRecordDetailById(String recordsId) {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", recordsId);
+        OkHttp.post(Constants.BASE_URL + "cla=client", params, this);
+    }
+
+    @Override
     public void registerViewCallback(ICustomCallbacks callback) {
         this.mCustomCallback = callback;
     }
@@ -493,15 +500,13 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             try {
                 List<String> followList = JsonParser.parseJSONList(
                         JsonParser.parseJSONObjectString(result.body()).getString("para"));
+                followList.add(0, "全部");
                 List<SelectedItem> stateList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(followList); i++) {
                     SelectedItem item = new SelectedItem();
                     item.setName(followList.get(i));
                     stateList.add(item);
                 }
-                SelectedItem item = new SelectedItem();
-                item.setName("全部");
-                stateList.set(0, item);
                 mCustomCallback.getFollowData(followList);
                 mCustomCallback.getStateCondition(stateList);
             } catch (Exception e) {

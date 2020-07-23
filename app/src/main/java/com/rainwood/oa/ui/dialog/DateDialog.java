@@ -224,7 +224,8 @@ public final class DateDialog {
                 case R.id.tv_ui_confirm:
                     autoDismiss();
                     if (mListener != null) {
-                        mListener.onSelected(getDialog(), mStartYear + mYearManager.getPickedPosition(), mMonthManager.getPickedPosition() + 1, mDayManager.getPickedPosition() + 1);
+                        mListener.onSelected(getDialog(), mStartYear + mYearManager.getPickedPosition(),
+                                mMonthManager.getPickedPosition() + 1, mDayManager.getPickedPosition() + 1);
                     }
                     break;
                 case R.id.tv_ui_cancel:

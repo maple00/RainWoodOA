@@ -24,6 +24,7 @@
             android:orientation="vertical">
 
             <com.rainwood.oa.ui.widget.GroupIconText
+                android:id="@+id/git_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_record_status_bg"
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="韩梅梅"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -58,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="报销类型"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -68,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="广告费"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -77,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="报销金额"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -87,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="￥2000"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -96,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="付款方"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -106,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="雨木财务"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -115,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="报销事由"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -125,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="地铁站落地广告到期需要续费"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -134,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="产生时间"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -144,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="2020.03.20"
                 android:textColor="@color/fontColor"
                 android:textSize="15sp" />
@@ -153,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="18dp"
                 android:text="报销凭证"
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
@@ -163,7 +164,7 @@
                 android:layout_width="77dp"
                 android:layout_height="77dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:scaleType="centerCrop" />
 
         </LinearLayout>

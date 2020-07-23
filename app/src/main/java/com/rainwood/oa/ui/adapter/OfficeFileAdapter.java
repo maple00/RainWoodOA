@@ -60,6 +60,7 @@ public final class OfficeFileAdapter extends RecyclerView.Adapter<OfficeFileAdap
         holder.fileName.setText(mFileList.get(position).getName() + "." + mFileList.get(position).getFormat());
         holder.secretIV.setVisibility("是".equals(mFileList.get(position).getSecret()) ? View.VISIBLE : View.GONE);
         holder.fileTime.setText(mFileList.get(position).getUpdateTime());
+
         if (mFileList.get(position).getSrc().endsWith(".zip")) {
             holder.previewIV.setVisibility(View.GONE);
             holder.previewTV.setVisibility(View.GONE);

@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.activity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,10 +27,12 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
  **/
 public final class AddContactActivity extends BaseActivity implements ICustomCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     // 必填项
     @ViewInject(R.id.tv_post)
@@ -79,6 +82,7 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
         mContact = (Contact) getIntent().getSerializableExtra("contact");
         mCustomId = getIntent().getStringExtra("customId");
         if (mContact != null) {
+            LogUtils.d("sxs", "编辑联系人....");
             postContent.setText(mContact.getPosition());
             nameContent.setText(mContact.getName());
             tel.setText(mContact.getTel());
@@ -98,11 +102,14 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
     }
 
 
-    @OnClick(R.id.btn_confirm)
+    @OnClick({R.id.btn_confirm, R.id.iv_page_back, R.id.iv_menu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_menu:
+                showQuickFunction(this, parentPager);
                 break;
             case R.id.btn_confirm:
                 if (TextUtils.isEmpty(postContent.getText())) {

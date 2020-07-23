@@ -2,6 +2,7 @@ package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.BalanceCurveAdapter;
+import com.rainwood.oa.ui.dialog.BottomYearDialog;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.ui.widget.MyMarkerView;
@@ -35,6 +37,7 @@ import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -73,6 +76,8 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     //flag
     private boolean SELECTED_MONTH = true;
     private boolean SELECTED_YEAR = false;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -103,8 +108,15 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     protected void loadData() {
-        // 工资曲线，默认查询月
-        netLoadingData("", "");
+        // 工资曲线，默认查询月---默认一年的数据
+        showDialog();
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        netLoadingData((nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        mStartTime = (nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
+        mEndTime = nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
     }
 
     /**
@@ -123,44 +135,80 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
                 finish();
                 break;
             case R.id.tv_year:
-                setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg, R.color.white, R.color.colorPrimary);
-                //
+                setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg,
+                        R.color.white, R.color.colorPrimary);
+                // 查询年的数据 -- 默认展示5年数据
                 showDialog();
                 SELECTED_MONTH = false;
                 SELECTED_YEAR = true;
-                mFinancialPresenter.requestBalanceByYear();
+                mFinancialPresenter.requestBalanceByYear(String.valueOf(DateTimeUtils.getNowYear() - 5),
+                        String.valueOf(DateTimeUtils.getNowYear()));
                 break;
             case R.id.tv_month:
-                setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg, R.color.colorPrimary, R.color.white);
+                setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg,
+                        R.color.colorPrimary, R.color.white);
                 //
+                int nowYear = DateTimeUtils.getNowYear();
+                int nowMonth = DateTimeUtils.getNowMonth();
+                int nowDay = DateTimeUtils.getNowDay();
                 showDialog();
                 SELECTED_MONTH = true;
                 SELECTED_YEAR = false;
-                netLoadingData("", "");
+                netLoadingData(mStartTime, mEndTime);
                 break;
             case R.id.tv_date:
                 // 默认选择月
-                new StartEndDateDialog.Builder(this, false)
-                        .setTitle(null)
-                        .setConfirm(getString(R.string.common_text_confirm))
-                        .setCancel(getString(R.string.common_text_clear_screen))
-                        .setAutoDismiss(true)
-                        .setCanceledOnTouchOutside(false)
-                        .setIgnoreDay()
-                        .setListener(new StartEndDateDialog.OnListener() {
-                            @Override
-                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
-                                // toast("选中的时间段：" + startTime + "至" + endTime);
-                                netLoadingData(startTime, endTime);
-                            }
+                if (SELECTED_MONTH) {
+                    new StartEndDateDialog.Builder(this, true)
+                            .setTitle(null)
+                            .setConfirm(getString(R.string.common_text_confirm))
+                            .setCancel(getString(R.string.common_text_clear_screen))
+                            .setAutoDismiss(false)
+                            .setStartTime(mStartTime)
+                            .setEndTime(mEndTime)
+                            .setCanceledOnTouchOutside(false)
+                            .setIgnoreDay()
+                            .setListener(new StartEndDateDialog.OnListener() {
+                                @Override
+                                public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                    if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                        toast("请选择时间");
+                                        return;
+                                    }
+                                    if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_MONTH)) {
+                                        toast("开始时间不能大于结束时间");
+                                        return;
+                                    }
+                                    dialog.dismiss();
+                                    // toast("选中的时间段：" + startTime + "至" + endTime);
+                                    mStartTime = startTime;
+                                    mEndTime = endTime;
+                                    netLoadingData(mStartTime, mEndTime);
+                                }
 
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+                if (SELECTED_YEAR) {
+                    new BottomYearDialog.Builder(this, true)
+                            .setYear(DateTimeUtils.getNowYear())
+                            .setShowImageClose(false)
+                            .setAutoDismiss(false)
+                            .setListener((dialog, startTime, endTime) -> {
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_YEAR)) {
+                                    toast("开始年份不能大于结束年份");
+                                    return;
+                                }
                                 dialog.dismiss();
-                            }
-                        })
-                        .show();
+                                // TODO: 查询年
+                                showDialog();
+                                mFinancialPresenter.requestBalanceByYear(startTime, endTime);
+                            }).show();
+                }
                 break;
         }
     }
@@ -322,7 +370,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         xAxis.setSpaceMax(0f);
         xAxis.setSpaceMin(0f);
         // count显示数量
-        xAxis.setLabelCount(ListUtils.getSize(monthList), true);
+        xAxis.setLabelCount(5, true);
         // 设置X轴显示值
         xAxis.setValueFormatter(new IndexAxisValueFormatter(monthList));
         // 偏移量---

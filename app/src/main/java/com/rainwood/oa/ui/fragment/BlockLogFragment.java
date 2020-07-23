@@ -17,6 +17,7 @@ import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.BlockLog;
 import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.ui.activity.BlockLogDetailActivity;
 import com.rainwood.oa.ui.adapter.BlockLogPagerAdapter;
@@ -85,6 +86,10 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     @Override
     protected void loadData() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            onError(getString(R.string.common_network));
+            return;
+        }
         mBlockLogPresenter.requestStateData();
         mBlockLogPresenter.requestBlockLogList();
     }
@@ -104,6 +109,9 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     @OnClick({R.id.ll_network_error_tips})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                mBlockLogPresenter.requestBlockLogList();
+                break;
           /*  case R.id.btn_dialog_pay:
                 // 支付密码输入对话框
                 new PayPasswordDialog.Builder(view.getContext())

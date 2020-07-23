@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.MessageEvent;
+import com.rainwood.oa.network.receiver.NetReceiver;
 import com.rainwood.oa.ui.activity.HomeActivity;
 import com.rainwood.oa.ui.dialog.WaitDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
@@ -63,6 +66,11 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
     protected String moduleMenu;
     public CommonPopupWindow mCommonPopupWindow;
 
+    /**
+     * 网络广播对象
+     */
+    private NetReceiver mNetReceiver;
+
     public enum State {
         NONE, LOADING, SUCCESS, ERROR, EMPTY
     }
@@ -87,6 +95,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      * 显示加载对话框
      */
     public void showDialog() {
+        // mPolling = new PollingUtil(getHandler());
+        // TimerMethod
         if (mDialog == null) {
             mDialog = new WaitDialog.Builder(this)
                     .setCancelable(false)
@@ -94,6 +104,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         }
         if (!mDialog.isShowing()) {
             mDialog.show();
+            // loading显示时长监听
+            // mPolling.startPolling(netTask, MSG_TIME_OUT);
         }
         mDialogTotal++;
     }
@@ -102,7 +114,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
      * 隐藏加载对话框
      */
     public void hideDialog() {
-        if (mDialogTotal == 1) {
+        if (mDialogTotal >= 1) {
             if (mDialog != null && mDialog.isShowing()) {
                 mDialog.dismiss();
             }
@@ -125,6 +137,21 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         initPresenter();
         loadData();
         initEvent();
+        // 初始化 网络变化检测(注册广播)
+        mNetReceiver = NetReceiver.getInstance();
+        IntentFilter netFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetReceiver, netFilter);
+        // 网络检测
+        NetReceiver.getInstance().setChangeListener(new NetReceiver.NetChangeListener() {
+            @Override
+            public void changeListener(String status) {
+                retryRequest();
+            }
+        });
+    }
+
+    protected void retryRequest() {
+        loadData();
     }
 
     /**
@@ -175,6 +202,9 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
             mDialog.dismiss();
         }
         mDialog = null;
+        if (mNetReceiver != null) {
+            unregisterReceiver(mNetReceiver);
+        }
     }
 
     /**
@@ -517,4 +547,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         translateAnimation.setDuration(300);
         view.setAnimation(translateAnimation);
     }
+
+
 }

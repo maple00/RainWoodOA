@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,14 +15,12 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.Post;
-import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.RolePermission;
 import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.presenter.ISearchPresenter;
 import com.rainwood.oa.ui.adapter.DepartManagerAdapter;
-import com.rainwood.oa.ui.adapter.ProjectGroupsAdapter;
 import com.rainwood.oa.ui.adapter.RoleManagerAdapter;
 import com.rainwood.oa.ui.adapter.SearchPostAdapter;
 import com.rainwood.oa.utils.ListUtils;
@@ -35,7 +32,6 @@ import com.rainwood.oa.view.ISearchCallback;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
@@ -53,7 +49,7 @@ public final class SearchActivity extends BaseActivity implements
 
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchText;
     @ViewInject(R.id.rv_search_list)
     private RecyclerView searchListView;
@@ -116,7 +112,48 @@ public final class SearchActivity extends BaseActivity implements
 
     @Override
     protected void loadData() {
+        //
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchContent = searchText.getText().toString().trim();
+                switch (mPageFlag) {
+                    // 角色管理
+                    case "roleManager":
+                        mSearchPresenter.requestSearchRoleList(searchContent, "", "");
+                        break;
+                    // 部门管理
+                    case "departManager":
+                        mAdministrativePresenter.requestAllDepartData(searchContent, "");
+                        break;
+                    // 职位管理
+                    case "postManager":
+                        // 员工管理、跟进记录
+                    case "staffManager":
+                        // 收支记录
+                    case "balanceRecord":
+                        // 费用报销
+                    case "reimbursement":
+                        // 办公文件、附件管理
+                    case "officeFile":
+                        Intent intent = new Intent();
+                        intent.putExtra("keyWord", searchContent);
+                        setResult(PAGE_SEARCH_CODE, intent);
+                        finish();
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -129,19 +166,9 @@ public final class SearchActivity extends BaseActivity implements
             startActivity(intent);
         });
         //查看部门详情
-        mDepartManagerAdapter.setOnClickGroup(new ProjectGroupsAdapter.OnClickGroup() {
-            @Override
-            public void onClickItem(int parentPos, ProjectGroup group) {
-                PageJumpUtil.departList2Detail(SearchActivity.this, DepartDetailActivity.class, group.getId());
-            }
-        });
+        mDepartManagerAdapter.setOnClickGroup((parentPos, group) -> PageJumpUtil.departList2Detail(SearchActivity.this, DepartDetailActivity.class, group.getId()));
         // 选中职位
-        mSearchPostAdapter.setOnClickSearchPost(new SearchPostAdapter.OnClickSearchPost() {
-            @Override
-            public void onClickItem(String clickText, int position) {
-                searchText.setText(clickText);
-            }
-        });
+        mSearchPostAdapter.setOnClickSearchPost((clickText, position) -> searchText.setText(clickText));
         // 职位搜索监听
         if ("postManager".equals(mPageFlag)) {
             searchText.addTextChangedListener(new TextWatcher() {
@@ -180,33 +207,7 @@ public final class SearchActivity extends BaseActivity implements
                     toast(mTips);
                     return;
                 }
-                showLoading();
-                String searchContent = searchText.getText().toString().trim();
-                switch (mPageFlag) {
-                    // 角色管理
-                    case "roleManager":
-                        mSearchPresenter.requestSearchRoleList(searchContent, "", "");
-                        break;
-                    // 部门管理
-                    case "departManager":
-                        mAdministrativePresenter.requestAllDepartData(searchContent, "");
-                        break;
-                    // 职位管理
-                    case "postManager":
-                        // 员工管理
-                    case "staffManager":
-                        // 收支记录
-                    case "balanceRecord":
-                        // 费用报销
-                    case "reimbursement":
-                        // 办公文件
-                    case "officeFile":
-                        Intent intent = new Intent();
-                        intent.putExtra("keyWord", searchContent);
-                        setResult(PAGE_SEARCH_CODE, intent);
-                        finish();
-                        break;
-                }
+
                 break;
         }
     }
@@ -236,7 +237,7 @@ public final class SearchActivity extends BaseActivity implements
     @Override
     public void getDepartListData(List<Depart> departList) {
         if (ListUtils.getSize(departList) == 0) {
-           // toast("未查询到该部门");
+            // toast("未查询到该部门");
             showEmpty();
             return;
         }
@@ -251,7 +252,7 @@ public final class SearchActivity extends BaseActivity implements
      */
     @Override
     public void getPostListData(List<Post> postList) {
-        if (ListUtils.getSize(postList) == 0){
+        if (ListUtils.getSize(postList) == 0) {
             showEmpty();
             return;
         }

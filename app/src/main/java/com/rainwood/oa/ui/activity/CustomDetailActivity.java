@@ -54,7 +54,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     // content
     @ViewInject(R.id.ll_order_detail_parent)

@@ -120,6 +120,7 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
                 // 可设置被拒绝后继续申请，直到用户授权或者永久拒绝
                 .constantRequest()
                 .permission(Permission.Group.STORAGE)    // 读写权限
+                .permission(Permission.READ_PHONE_STATE)
                 .request(new OnPermission() {
                     @Override
                     public void hasPermission(List<String> granted, boolean isAll) {
@@ -129,18 +130,21 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
                             List<Map<String, String>> queryList = SQLiteHelper.with(SplashActivity.this)
                                     .query(queryLoginTab);
                             LogUtils.d("sxs", " -- 闪屏页 --- " + queryList.toString());
+                            // 没有登录
                             if (ListUtils.getSize(queryList) == 0) {
                                 openActivity(LoginActivity.class);
                                 return;
                             }
+                            // 没有网络
                             boolean available = NetworkUtils.isAvailable(SplashActivity.this);
                             if (!available) {
-                                startActivity(HomeActivity.class);
+                                startActivity(LoginActivity.class);
                                 return;
                             }
-                            String userName = queryList.get(0).get("userName");
-                            String pwd = queryList.get(0).get("pwd");
-                            String life = queryList.get(0).get("life");
+                            //
+                            String userName = queryList.get(ListUtils.getSize(queryList) - 1).get("userName");
+                            String pwd = queryList.get(ListUtils.getSize(queryList) - 1).get("pwd");
+                            String life = queryList.get(ListUtils.getSize(queryList) - 1).get("life");
                             mLoginAboutPresenter.Login(userName, pwd);
                         }
                     }
@@ -152,6 +156,7 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
                             //如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.gotoPermissionSettings(getActivity());
                         } else {
+                            openActivity(LoginActivity.class);
                             toast("获取权限失败");
                         }
                     }

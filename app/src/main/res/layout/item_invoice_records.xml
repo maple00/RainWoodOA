@@ -60,10 +60,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="韩梅梅"
+            android:textColor="@color/fontColor"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tv_invoice_obj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginTop="12sp"
             android:text="雨木"
             android:textColor="@color/fontColor"
             android:textSize="16sp" />
@@ -73,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:text="￥970.87"
             android:textStyle="bold" />
 

@@ -8,6 +8,8 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.oa.network.caught.CaughtException;
+import com.rainwood.oa.network.caught.OnCaughtExceptionListener;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.Constants;
@@ -19,6 +21,7 @@ import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.toast.style.ToastAliPayStyle;
 import com.tencent.smtt.sdk.QbSdk;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -96,11 +99,6 @@ public final class BaseApplication extends Application {
             public void onViewInitFinished(boolean b) {
                 //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
                 LogUtils.d("sxs", "TBS is loading: " + b);
-                // 如果加载失败，多次回调
-                /*if (!b && initialSize < 3) {
-                    initialSize++;
-                    QbSdk.initX5Environment(app.getApplicationContext(), null);
-                }*/
                 //QbSdk.initX5Environment(app.getApplicationContext(), null);
             }
         };
@@ -115,6 +113,22 @@ public final class BaseApplication extends Application {
     private void initUtil() {
         // 获取IMEI
         Constants.IMEI = DeviceIdUtil.getDeviceId(this);
+        // 异常抓捕
+        CaughtException.Builder caughtBuilder = new CaughtException.Builder(this);
+        caughtBuilder.fileName("rainWoodCaught.txt");
+        caughtBuilder.folderName("Exception");
+        caughtBuilder.listener(new OnCaughtExceptionListener() {
+            @Override
+            public void onCaughtExceptionSucceed(File file) {
+                // TODO: 上传caught文件
+            }
+
+            @Override
+            public void onCaughtExceptionFailure(String error) {
+
+            }
+        });
+        caughtBuilder.build();
     }
 
     /**

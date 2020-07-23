@@ -131,7 +131,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     @Override
     protected void loadData() {
         if (!NetworkUtils.isAvailable(getContext())) {
-            onError(getString(R.string.text_network_state));
+            onError(getString(R.string.common_network));
             return;
         }
         // 从这里请求数据
@@ -212,11 +212,28 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                 break;
             case R.id.sb_clear_cache:
                 //toast("清除缓存");
-                AppCacheDataManager.clearAllCache(getContext());
-                postDelayed(() -> {
-                    // 重新获取应用缓存大小
-                    clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(getContext()));
-                }, 500);
+                new MessageDialog.Builder(getContext())
+                        .setShowConfirm(false)
+                        .setShowImageClose(false)
+                        .setMessage("确认清除数据缓存？")
+                        .setConfirm(getString(R.string.common_confirm))
+                        .setCancel(getString(R.string.common_cancel))
+                        .setCanceledOnTouchOutside(true)
+                        .setListener(new MessageDialog.OnListener() {
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+                                AppCacheDataManager.clearAllCache(getContext());
+                                postDelayed(() -> {
+                                    // 重新获取应用缓存大小
+                                    clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(getContext()));
+                                }, 500);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             case R.id.sb_update_version:
                 // toast("版本更新");
@@ -247,6 +264,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                             @Override
                             public void onConfirm(BaseDialog dialog) {
                                 // 返回到登录页面
+                                dialog.dismiss();
                                 /*if (true) {
                                     return;
                                 }*/

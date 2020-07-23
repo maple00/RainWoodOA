@@ -5,6 +5,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.StaffDetail;
@@ -19,15 +22,16 @@ import com.rainwood.oa.ui.adapter.StaffPhotoAdapter;
 import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.GroupTextText;
-import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
@@ -85,7 +89,7 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     @ViewInject(R.id.gti_show_hide)
     private GroupTextIcon hideClick;
     @ViewInject(R.id.mgv_assist_photo)
-    private MeasureGridView assistPhoto;
+    private RecyclerView assistPhoto;
     @ViewInject(R.id.mlv_work_experience)
     private MeasureListView workExperience;
     @ViewInject(R.id.tv_none_job_experience)
@@ -116,6 +120,10 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     protected void initView(View rootView) {
         setUpState(State.SUCCESS);
         pageTitle.setText("员工详情");
+        assistPhoto.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        assistPhoto.addItemDecoration(new SpacesItemDecoration(FontSwitchUtil.dip2px(getContext(), 10f),
+                0, 0,
+                FontSwitchUtil.dip2px(getContext(), 10f)));
         // 创建适配器
         mStaffPhotoAdapter = new StaffPhotoAdapter();
         mExperienceAdapter = new StaffExperienceAdapter();

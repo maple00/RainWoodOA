@@ -56,7 +56,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTips;
     // content
     @ViewInject(R.id.gti_logcat_type)
@@ -141,7 +141,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
      */
     private void netRequestData(String searchText, String typeOne, String typeTwo, String staffId,
                                 String startTime, String endTime) {
-        showLoading();
+        showDialog();
         mLogcatPresenter.requestLogcatData(searchText, typeOne, typeTwo, staffId, startTime, endTime, pageCount = 1);
     }
 
@@ -202,6 +202,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                 mLogcatPresenter.requestLogcatData(mSearchText, mTypeOne, mTypeTwo, mStaffId, mStartTime, mEndTime, ++pageCount);
             }
         });
+        // 搜索框UI监听
         searchTips.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -215,9 +216,8 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    netRequestData("", "", "", "", "", "");
-                }
+                mSearchText = s.toString();
+                mLogcatPresenter.requestLogcatData(mSearchText, mTypeOne, mTypeTwo, mStaffId, mStartTime, mEndTime, pageCount = 1);
             }
         });
     }
@@ -229,8 +229,8 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
             String staff = data.getStringExtra("staff");
             mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
-            netRequestData("", "", "", mStaffId, "", "");
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+            netRequestData(mSearchText, mTypeOne, mTypeTwo, mStaffId, mStartTime, mEndTime);
+            //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
         }
     }
 
@@ -246,8 +246,6 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                     toast("请输入操作记录");
                     return;
                 }
-                mSearchText = searchTips.getText().toString().trim();
-                netRequestData(mSearchText, "", "", "", "", "");
                 break;
         }
     }
@@ -255,6 +253,9 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
     @Override
     public void getSystemLogcat(List<Logcat> logcatList) {
         showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
         pagerRefresh.finishLoadmore();
         if (pageCount != 1) {
             toast("加载了" + ListUtils.getSize(logcatList) + "条数据");
@@ -273,7 +274,6 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
         for (ManagerMain managerMain : mMenuList) {
             managerMain.setHasSelected(false);
         }
-        mMenuList.get(0).setHasSelected(true);
     }
 
     private int tempPos = -1;
@@ -346,7 +346,7 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
      */
     private void showData() {
         // 设置数据 -- 默认选中第一项
-        mMenuList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
+        //mMenuList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
         mModuleFirstAdapter.setList(mMenuList);
         mModuleSecondAdapter.setList(mMenuList.get(tempPos == -1 ? 0 : tempPos).getArray());
         mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);

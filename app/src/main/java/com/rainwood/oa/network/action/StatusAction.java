@@ -4,23 +4,27 @@ import android.app.Application;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.utils.ActivityStackManager;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 /**
- * author : Android 轮子哥
- * github : https://github.com/getActivity/AndroidProject
- * time   : 2019/12/08
- * desc   : 界面状态提示
- */
+ * create by a797s in 2020/7/20 11:45
+ *
+ * @Description : 状态界面
+ * @Usage : 展示状态界面
+ **/
 public interface StatusAction {
 
     /**
@@ -39,9 +43,11 @@ public interface StatusAction {
         HintLayout layout = getHintLayout();
         layout.show();
         layout.setAnim(id);
-        layout.setHint("");
+        layout.setHint("加载中，请稍后");
         layout.setOnClickListener(null);
     }
+
+
 
     /**
      * 显示加载完成
@@ -57,7 +63,7 @@ public interface StatusAction {
      * 显示空提示
      */
     default void showEmpty() {
-        showLayout(com.rainwood.tools.R.drawable.ic_hint_empty, com.rainwood.tools.R.string.hint_layout_no_data, null);
+        showLayout(R.drawable.ic_hint_empty, com.rainwood.tools.R.string.hint_layout_no_data, null);
     }
 
     /**
@@ -76,7 +82,7 @@ public interface StatusAction {
                 }
             }
         }
-        showLayout(com.rainwood.tools.R.drawable.ic_hint_error, com.rainwood.tools.R.string.hint_layout_error_request, listener);
+        showLayout(R.drawable.ic_hint_error, com.rainwood.tools.R.string.hint_layout_error_request, listener);
     }
 
     /**
@@ -93,4 +99,5 @@ public interface StatusAction {
         layout.setHint(hint);
         layout.setOnClickListener(listener);
     }
+
 }

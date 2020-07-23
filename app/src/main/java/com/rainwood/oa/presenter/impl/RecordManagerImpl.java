@@ -5,6 +5,7 @@ import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
+import com.rainwood.oa.model.domain.InvoiceDetailData;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
@@ -328,6 +329,35 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         OkHttp.post(Constants.BASE_URL + "cla=follow&fun=search", params, this);
     }
 
+    /**
+     * 开票记录详情
+     * @param invoiceId
+     */
+    @Override
+    public void requestInvoiceDetail(String invoiceId) {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", invoiceId);
+        OkHttp.post(Constants.BASE_URL + "cla=kehuInvoice&fun=detail", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mRecordCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", " ----- result ---- " + result.body());
+                try {
+                    InvoiceDetailData invoiceDetail = JsonParser.parseJSONObject(InvoiceDetailData.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("invoice"));
+                    mRecordCallbacks.getInvoiceDetail(invoiceDetail);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public void registerViewCallback(IRecordCallbacks callback) {
         mRecordCallbacks = callback;
@@ -346,6 +376,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mRecordCallbacks.onError();
             return;
@@ -609,6 +640,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             try {
                 List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));
+                typeArray.add(0, "全部");
                 List<SelectedItem> typeList = new ArrayList<>();
                 for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
                     SelectedItem item = new SelectedItem();

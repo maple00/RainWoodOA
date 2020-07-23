@@ -9,11 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.TeamFunds;
@@ -26,7 +25,6 @@ import com.rainwood.oa.ui.adapter.TeamFundsAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.XCollapsingToolbarLayout;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IFinancialCallbacks;
@@ -36,6 +34,7 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -56,9 +55,11 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     private ImageView pageBack;
     @ViewInject(R.id.tv_search)
     private TextView searchView;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTips;
     // content
+    @ViewInject(R.id.app_layout_bar)
+    private AppBarLayout mAppBarLayout;
     @ViewInject(R.id.xtl_team_funds)
     private XCollapsingToolbarLayout mToolbarLayout;
     @ViewInject(R.id.ll_balance)
@@ -86,7 +87,6 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     @ViewInject(R.id.hl_status_hint)
     private HintLayout mHintLayout;
 
-
     private IFinancialPresenter mFinancialPresenter;
     private IMinePresenter mMinePresenter;
     private TeamFundsAdapter mFundsAdapter;
@@ -96,6 +96,7 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
     private String mEndTime;
     private String mSearchContent;
     private String mType;
+    private String mSearchText;
 
     @Override
     protected int getLayoutResId() {
@@ -157,14 +158,14 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
      * @param type
      */
     private void requestData(String type) {
-        showLoading();
+        showDialog();
         switch (moduleMenu) {
             case "teamFunds":
             case "personTeamAccount":
                 // 个人中心---团队基金
                 // 管理--团队基金
                 mType = type;
-                mFinancialPresenter.requestTeamFundsData("", mType, "", "", pageCount = 1);
+                mFinancialPresenter.requestTeamFundsData(mSearchText, mType, mStartTime, mEndTime, pageCount = 1);
                 break;
             case "accountAccount":
                 // 个人中心---会计账户
@@ -179,32 +180,36 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
 
     @Override
     protected void initEvent() {
-        // 滑动属性设置
-        mToolbarLayout.setOnScrimsListener((layout, shown) -> {
-            if (shown) {
-                setScrollViewBG(true, R.drawable.ic_page_return, R.color.white, R.color.fontColor);
-            } else {
-                setScrollViewBG(false, R.drawable.ic_page_return_white, R.color.colorPrimary, R.color.white);
-            }
-        });
         // 滑动监听
         teamCostView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollY = 0;
+
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                // 当不滚动时
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    //获取最后一个完全显示的ItemPosition
-                    if (manager != null) {
-                        int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
-                        int totalItemCount = manager.getItemCount();
-                        if ((lastVisibleItem == (totalItemCount - 1))) {
-                            LogUtils.d("sxs", "滑动到底部了.........");
-                        }
-                        // 判断是否滚动到底部
+                    //未滚动
+                    if (!recyclerView.canScrollVertically(-1) && scrollY < -10) {
+                        //do somthing
+                        mAppBarLayout.setExpanded(true, true);//通知AppBarLayout伸展
+                        scrollY = 0;
                     }
                 }
+                //判断慢速滚动：当滚动到顶部时靠手指拖动后的惯性让RecyclerView处于Fling状态时的速度大于5时，让AppBarLayout展开
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    //正在滚动中，惯性滚动
+                    if (!recyclerView.canScrollVertically(-1) && scrollY < -5) {
+                        //do somthing
+                        mAppBarLayout.setExpanded(true, true);
+                        scrollY = 0;
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                scrollY = dy;
             }
         });
         // 搜索内容监听
@@ -221,9 +226,19 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)){
-                    mFinancialPresenter.requestTeamFundsData("", mType,
-                            mStartTime, mEndTime, pageCount = 1);
+                mSearchText = s.toString();
+                switch (moduleMenu) {
+                    case "accountAccount":
+                        break;
+                    case "teamFunds":
+                    case "personTeamAccount":
+                        // 团队基金
+                        mFinancialPresenter.requestTeamFundsData(mSearchText, mType,
+                                mStartTime, mEndTime, pageCount = 1);
+                        break;
+                    case "settlementAccount":
+                        // 结算账户
+                        break;
                 }
             }
         });
@@ -237,7 +252,7 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                     case "teamFunds":
                     case "personTeamAccount":
                         // 团队基金
-                        mFinancialPresenter.requestTeamFundsData(mSearchContent, mType,
+                        mFinancialPresenter.requestTeamFundsData(mSearchText, mType,
                                 mStartTime, mEndTime, ++pageCount);
                         break;
                     case "settlementAccount":
@@ -265,11 +280,23 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
                         .setCanceledOnTouchOutside(true)
-                        .setAutoDismiss(true)
+                        .setAutoDismiss(false)
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+                                dialog.dismiss();
+                                showDialog();
                                 switch (moduleMenu) {
                                     case "accountAccount":
                                         break;
@@ -278,7 +305,7 @@ public final class AccountFundsActivity extends BaseActivity implements IFinanci
                                         // 团队基金
                                         mStartTime = startTime;
                                         mEndTime = endTime;
-                                        mFinancialPresenter.requestTeamFundsData("", "",
+                                        mFinancialPresenter.requestTeamFundsData(mSearchText, mType,
                                                 mStartTime, mEndTime, pageCount = 1);
                                         break;
                                     case "settlementAccount":

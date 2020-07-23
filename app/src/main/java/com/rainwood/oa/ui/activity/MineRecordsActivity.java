@@ -14,6 +14,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineRecordTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -23,6 +24,7 @@ import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
@@ -35,7 +37,9 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +47,7 @@ import java.util.List;
  * @Date: 2020/6/12 15:27
  * @Desc: 我的记录Activity(请假记录 、 加班记录 、 外出记录)
  */
-public final class MineRecordsActivity extends BaseActivity implements IMineCallbacks {
+public final class MineRecordsActivity extends BaseActivity implements IMineCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
@@ -53,6 +57,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
     @ViewInject(R.id.tv_page_right_title)
     private TextView pageRightTitle;
     // content
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     @ViewInject(R.id.gti_status)
     private GroupTextIcon stateView;
     @ViewInject(R.id.gti_leave_type)
@@ -80,6 +86,7 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
     private String mEndTime;
     private String mStateText = "";
     private String mLeaveType = "";
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -130,10 +137,12 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
 
     @Override
     protected void loadData() {
+        showDialog();
+        // 查询条件
+        mMinePresenter.requestMineLeaveCondition();
         switch (moduleMenu) {
             case "mywork":
                 mMinePresenter.requestAskLeaveRecords("", "", "", "", pageCount);
-                mMinePresenter.requestMineLeaveCondition();
                 break;
             case "myworkAdd":
                 mMinePresenter.requestMineOverTimeRecords();
@@ -210,7 +219,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                         toast("编辑");
                         break;
                     case "提交成果":
-                        toast("提交成果");
+                        startActivity(getNewIntent(MineRecordsActivity.this, CommitMineAchievementAty.class,
+                                "提交加班成果", "审核记录"));
                         break;
                 }
 
@@ -222,6 +232,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                 .setConfirm(getString(R.string.common_text_confirm))
                 .setCancel(getString(R.string.common_text_clear_screen))
                 .setAutoDismiss(false)
+                .setStartTime(mStartTime)
+                .setEndTime(mEndTime)
                 .setCanceledOnTouchOutside(false)
                 .setListener(new StartEndDateDialog.OnListener() {
                     @Override
@@ -247,6 +259,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                     @Override
                     public void onCancel(BaseDialog dialog) {
                         dialog.dismiss();
+                        mStartTime = null;
+                        mEndTime = null;
                         periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                     }
                 })
@@ -303,12 +317,25 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
      */
     @Override
     public void getMineAskLeaveRecords(List<MineRecords> askLeaveList) {
-        pageRefresh.finishLoadmore();
-        mRecordsAdapter.setLoaded(pageCount == 1);
-        if (pageCount != 1) {
-            toast("加载了" + ListUtils.getSize(askLeaveList) + "条数据");
+        if (isShowDialog()) {
+            hideDialog();
         }
-        mRecordsAdapter.setReissueList(askLeaveList);
+        showComplete();
+        pageRefresh.finishLoadmore();
+        if (pageCount != 1) {
+            if (ListUtils.getSize(askLeaveList) == 0) {
+                pageCount--;
+                return;
+            }
+            toast("加载了" + ListUtils.getSize(askLeaveList) + "条数据");
+            mRecordsAdapter.addData(askLeaveList);
+        } else {
+            if (ListUtils.getSize(askLeaveList) == 0) {
+                showEmpty();
+                return;
+            }
+            mRecordsAdapter.setReissueList(askLeaveList);
+        }
     }
 
     /**
@@ -319,6 +346,8 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
      */
     @Override
     public void getMineLeaveRecords(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList) {
+        Collections.reverse(stateList);
+        Collections.reverse(leaveTypeList);
         mStateList = stateList;
         mLeaveTypeList = leaveTypeList;
     }
@@ -330,9 +359,18 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
      */
     @Override
     public void getMineOverTimeRecords(List<MineRecordTime> overTimeList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         mOverTimeAdapter.setList(overTimeList);
     }
 
+    /**
+     * 条件状态
+     *
+     * @param stateList
+     * @param targetGTI
+     */
     private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
@@ -341,8 +379,10 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(4);
+                    contentList.setVisibility(View.GONE);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -362,21 +402,22 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             if (SELECTED_STATE_FLAG) {
-                mStateText = item.getName();
+                mStateText = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             }
             if (SELECTED_TYPE_FLAG) {
-                mLeaveType = item.getName();
+                mLeaveType = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             }
             switch (moduleMenu) {
                 case "mywork":
-                    mMinePresenter.requestAskLeaveRecords(mStateText, mLeaveType, "", "", pageCount = 1);
+                    showDialog();
+                    mMinePresenter.requestAskLeaveRecords(mStateText, mLeaveType, mStartTime, mEndTime, pageCount = 1);
                     break;
                 case "myworkAdd":
                     mMinePresenter.requestMineOverTimeRecords();
@@ -403,5 +444,10 @@ public final class MineRecordsActivity extends BaseActivity implements IMineCall
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

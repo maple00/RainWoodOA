@@ -34,6 +34,14 @@ public final class DateTimeUtils {
             }
         },
         /**
+         * 格式："YYYY"
+         */
+        ONLY_YEAR {
+            public String getValue() {
+                return "yyyy";
+            }
+        },
+        /**
          * 格式："yyyy-MM"
          */
         ONLY_MONTH {
@@ -355,9 +363,9 @@ public final class DateTimeUtils {
      * @param str2：要比较的时间
      * @return
      */
-    public static boolean isDateOneBigger(String str1, String str2) {
+    public static boolean isDateOneBigger(String str1, String str2, DateTimeUtils.DatePattern pattern) {
         boolean isBigger = false;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern.getValue());
         Date dt1 = null;
         Date dt2 = null;
         try {

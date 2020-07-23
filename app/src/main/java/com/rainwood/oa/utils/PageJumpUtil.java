@@ -183,7 +183,8 @@ public final class PageJumpUtil {
      * @param clazz
      * @param reimburseId
      */
-    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz, String reimburseId) {
+    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz,
+                                            String reimburseId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "费用详情");
         sIntent.putExtra("reimburseId", reimburseId);
@@ -378,6 +379,37 @@ public final class PageJumpUtil {
         sIntent.putExtra("title", title);
         sIntent.putExtra("menu", menu);
         sIntent.putExtra("demand", demand);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到开票记录详情页面
+     * @param context
+     * @param clazz
+     * @param title
+     * @param invoiceId
+     */
+    public static void page2InvoiceDetail(Context context, Class<? extends BaseActivity> clazz, String title,
+                                          String invoiceId, String hasOpenInvoice) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("invoiceId", invoiceId);
+        sIntent.putExtra("hasOpen", hasOpenInvoice);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到收支记录详情
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void page2BalanceDetail(Context context, Class<? extends BaseActivity> clazz, String title,
+                                          String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
         context.startActivity(sIntent);
     }
 }

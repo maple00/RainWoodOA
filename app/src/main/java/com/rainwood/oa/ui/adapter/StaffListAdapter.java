@@ -35,6 +35,7 @@ public final class StaffListAdapter extends BaseAdapter {
 
     public void setStaffStructureList(List<StaffStructure> staffStructureList) {
         mStaffStructureList = staffStructureList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -63,7 +64,7 @@ public final class StaffListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(R.drawable.bg_monkey_king)
+        Glide.with(convertView).load(mStaffStructureList.get(position).getIco())
                 .placeholder(parent.getContext().getDrawable(R.drawable.ic_default_head))
                 .error(parent.getContext().getDrawable(R.drawable.ic_default_head))
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

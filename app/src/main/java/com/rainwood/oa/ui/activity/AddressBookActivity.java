@@ -21,6 +21,7 @@ import com.rainwood.oa.model.domain.Depart;
 import com.rainwood.oa.model.domain.DepartStructure;
 import com.rainwood.oa.model.domain.ProjectGroup;
 import com.rainwood.oa.model.domain.StaffStructure;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.DepartGroupScreenAdapter;
 import com.rainwood.oa.ui.adapter.DepartScreenAdapter;
@@ -38,7 +39,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTips;
     @ViewInject(R.id.gti_screen)
     private GroupTextIcon pageRight;
@@ -118,6 +118,7 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
 
     @Override
     protected void loadData() {
+        showDialog();
         // 请求通讯录数据
         mMinePresenter.requestAddressBookData();
         // 请求部门职位列表
@@ -175,6 +176,9 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
 
     @Override
     public void getMineAddressBookData(List<ContactsBean> contactsList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         /*
         员工列表
          */
@@ -257,7 +261,6 @@ public final class AddressBookActivity extends BaseActivity implements IMineCall
      */
     private void showPopDepartScreen() {
         // 设置数据 -- 默认选中第一项
-        departConditionList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
         mDepartScreenAdapter.setList(departConditionList);
         mDepartGroupScreenAdapter.setList(departConditionList.get(tempPos == -1 ? 0 : tempPos).getArray());
         mStatusPopWindow.showAsDropDown(pageTop, Gravity.BOTTOM, 0, 0);

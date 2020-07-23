@@ -19,8 +19,9 @@ public interface IArticlePresenter extends IBasePresenter<IArticleCallbacks> {
 
     /**
      * 管理制度
+     * @param title
      */
-    void requestManagerSystemData();
+    void requestManagerSystemData(String title);
 
     /**
      * 开发文档

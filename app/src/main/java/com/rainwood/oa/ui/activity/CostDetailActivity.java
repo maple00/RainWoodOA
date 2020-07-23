@@ -13,6 +13,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
+import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
@@ -46,6 +47,8 @@ public final class CostDetailActivity extends BaseActivity implements IFinancial
     private TextView mTextTime;
     @ViewInject(R.id.iv_voucher)
     private ImageView mImageVoucher;
+    @ViewInject(R.id.git_state)
+    private GroupIconText mState;
 
 
     private IFinancialPresenter mFinancialPresenter;
@@ -58,7 +61,7 @@ public final class CostDetailActivity extends BaseActivity implements IFinancial
 
     @Override
     protected void initView() {
-        StatusBarUtils.immersive(this);
+        StatusBarUtils.darkMode(this, false);
         StatusBarUtils.setMargin(this, pageTop);
         pageTitle.setText(title);
     }

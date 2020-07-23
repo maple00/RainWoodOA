@@ -38,6 +38,19 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_search_glass" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/common_cancel"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/ll_search_view"
         android:layout_width="match_parent"
@@ -47,6 +60,7 @@
         android:layout_marginTop="7dp"
         android:layout_marginEnd="7dp"
         android:layout_marginBottom="7dp"
+        android:layout_toStartOf="@+id/tv_cancel"
         android:layout_toEndOf="@+id/iv_page_back"
         android:background="@drawable/shape_search_view"
         android:gravity="center_vertical"
@@ -60,7 +74,7 @@
             android:src="@drawable/ic_search" />
 
         <com.rainwood.tools.wheel.view.ClearEditText
-            android:id="@+id/tv_search_tips"
+            android:id="@+id/et_search_tips"
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

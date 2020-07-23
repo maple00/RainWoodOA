@@ -1,17 +1,17 @@
 package com.rainwood.oa.ui.activity;
 
-import android.content.Intent;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +39,7 @@ import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
 import com.rainwood.oa.view.IStaffCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -48,8 +49,6 @@ import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.Collections;
 import java.util.List;
-
-import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -66,9 +65,13 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     @ViewInject(R.id.ll_search_view)
-    private LinearLayout searchView;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchTipsView;
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
     @ViewInject(R.id.gti_default_sort)
     private GroupTextIcon defaultSort;
@@ -109,6 +112,13 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     private CommonPopupWindow mStatusPopWindow;
     private TextSelectedItemFlowLayout mTextFlowLayout;
 
+    private int pageCount = 1;
+    private String keyWord;
+    private String mSex;
+    private String mSortMethod;
+    private String mSocialStr;
+    private String mGateKeyStr;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_staff_manager;
@@ -132,7 +142,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         departPostView.setAdapter(mLeftAdapter);
         staffRightView.setAdapter(mRightAdapter);
         // 设置刷新属性
-        pagerRefresh.setEnableLoadmore(false);
+        pagerRefresh.setEnableLoadmore(true);
         pagerRefresh.setEnableRefresh(false);
     }
 
@@ -149,6 +159,15 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         mStaffPresenter.requestAllDepartData();
         // 请求查询条件(默认排序、性别、全部筛选)
         mStaffPresenter.requestQueryCondition();
+    }
+
+    /**
+     * 员工列表
+     *
+     * @param keyWord
+     */
+    private void netRequestStaffList(String keyWord, String postId, String social, String gateKey) {
+        mStaffPresenter.requestAllStaff(postId, keyWord, mSex, social, gateKey, mSortMethod, pageCount = 1);
     }
 
     @Override
@@ -194,60 +213,43 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    searchView.setVisibility(View.GONE);
-                    departPostView.setVisibility(View.VISIBLE);
-                    String postId = "";
-                    String tempPostId = "";
-                    for (StaffDepart staffDepart : mDepartList) {
-                        if (staffDepart.isSelected()) {
-                            for (StaffPost staffPost : staffDepart.getArray()) {
-                                if (staffPost.isSelected()) {
-                                    postId = staffPost.getId();
-                                }
-                            }
-                            tempPostId = staffDepart.getArray().get(0).getId();
-                        }
-                    }
-                    if (!TextUtils.isEmpty(postId)) {
-                        mStaffPresenter.requestAllStaff(postId, "", "", "", "", "");
-                    } else {
-                        mStaffPresenter.requestAllStaff(tempPostId, "", "", "", "", "");
-                    }
-                }
+                keyWord = s.toString();
+                netRequestStaffList(keyWord, mPostId, mSocialStr, mGateKeyStr);
+            }
+        });
+        // 加载更多
+        pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mStaffPresenter.requestAllStaff(mPostId, keyWord, mSex, mSocialStr, mGateKeyStr, mSortMethod, ++pageCount);
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            // 员工搜索
-            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
-                String keyWord = data.getStringExtra("keyWord");
-                mStaffPresenter.requestAllStaff("", keyWord, "", "", "", "");
-                searchView.setVisibility(View.VISIBLE);
-                searchTipsView.setText(keyWord);
-                departPostView.setVisibility(View.GONE);
-            }
-        }
-    }
-
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "staffManager");
-                intent.putExtra("title", "员工管理");
-                intent.putExtra("tips", "请输入员工姓名");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
-                // PageJumpUtil.page2SearchView(this, SearchActivity.class, "员工管理", "staffManager", "请输入员工姓名");
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入员工姓名");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
@@ -281,9 +283,9 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         }
         mDepartList.get(parentPos).getArray().get(position).setSelected(true);
         // 根据职位/部门id查询该所属员工
-        showDialog();
+        // showDialog();
         mPostId = mDepartList.get(parentPos).getArray().get(position).getId();
-        mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", "");
+        netRequestStaffList(keyWord, mPostId, mSocialStr, mGateKeyStr);
     }
 
     /**
@@ -303,6 +305,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      */
     @Override
     public void getAllDepart(List<StaffDepart> departList) {
+        // 默认第一项展开
         mDepartList = departList;
         mLeftAdapter.setDepartList(mDepartList);
         // 查询部门下的员工-- 查询选中的职位员工
@@ -310,7 +313,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
             for (int i = 0; i < depart.getArray().size(); i++) {
                 if (depart.getArray().get(i).isSelected()) {
                     mPostId = depart.getArray().get(i).getId();
-                    mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", "");
+                    netRequestStaffList(keyWord, mPostId, mSocialStr, mGateKeyStr);
                     break;
                 }
             }
@@ -327,13 +330,21 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         if (isShowDialog()) {
             hideDialog();
         }
-        if (ListUtils.getSize(staffList) == 0) {
-            toast("当前没有员工");
-            showEmpty();
-            return;
-        }
         showComplete();
-        mRightAdapter.setStaffList(staffList);
+        pagerRefresh.finishLoadmore();
+        if (pageCount != 1) {
+            if (ListUtils.getSize(staffList) == 0) {
+                pageCount--;
+            }
+            mRightAdapter.addData(staffList);
+        } else {
+            if (ListUtils.getSize(staffList) == 0) {
+                toast("当前没有员工");
+                showEmpty();
+                return;
+            }
+            mRightAdapter.setStaffList(staffList);
+        }
     }
 
     /**
@@ -370,7 +381,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     contentList.setAdapter(mSexSelectedAdapter);
                     mTextFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
-                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
+                    TransactionUtil.setAlphaAllView(mMaskLayer, 0.85f);
                 })
                 .create();
         mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
@@ -389,20 +400,16 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
         mTextFlowLayout.setTextList(mSexSelectedList);
         mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
-            mStatusPopWindow.dismiss();
-            // TODO : 通过性别筛选
-            mStaffPresenter.requestAllStaff(mPostId, "", selectedItem.getName().equals("不限")
-                            ? "" : selectedItem.getName(),
-                    "", "", "");
-        });
-
-        mSexSelectedAdapter.setTextList(mSexSelectedList);
-        mSexSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : mSexSelectedList) {
-                selectedItem.setHasSelected(false);
+            for (SelectedItem item : mSexSelectedList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
-
+            selectedItem.setHasSelected(true);
+            // TODO : 通过性别筛选
+            showDialog();
+            mSex = selectedItem.getName().equals("不限") ? "" : selectedItem.getName();
+            mStatusPopWindow.dismiss();
+            mStaffPresenter.requestAllStaff(mPostId, keyWord, mSex,
+                    mSocialStr, mGateKeyStr, mSortMethod, pageCount = 1);
         });
     }
 
@@ -417,6 +424,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(1);
+                    contentList.setVisibility(View.VISIBLE);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
                     mTextFlowLayout = view.findViewById(R.id.tfl_text);
@@ -446,7 +454,10 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
             selectedItem.setHasSelected(true);
             mStatusPopWindow.dismiss();
             //TODO: 通过排序查询
-            mStaffPresenter.requestAllStaff(mPostId, "", "", "", "", selectedItem.getName());
+            mSortMethod = "默认排序".equals(selectedItem.getName()) ? "" : selectedItem.getName();
+            showDialog();
+            mStaffPresenter.requestAllStaff(mPostId, keyWord, mSex, mSocialStr, mGateKeyStr, mSortMethod
+                    , pageCount = 1);
         });
         mDefaultSortAdapter.setItemList(mDefaultSortSelectedList);
     }
@@ -475,7 +486,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     TextView clearScreen = view.findViewById(R.id.tv_clear_screen);
                     TextView confirm = view.findViewById(R.id.tv_confirm);
                     clearScreen.setOnClickListener(v -> {
-                        toast("清空筛选");
+                        // toast("清空筛选");
                         for (SelectedItem item : mSocialList) {
                             item.setHasSelected(false);
                         }
@@ -486,21 +497,19 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
                     });
                     confirm.setOnClickListener(v -> {
                         mStatusPopWindow.dismiss();
-                        String socialStr = "";
-                        String gateKeyStr = "";
                         for (SelectedItem item : mSocialList) {
                             if (item.isHasSelected()) {
-                                socialStr = item.getName();
+                                mSocialStr = "不限".equals(item.getName()) ? "" : item.getName();
                             }
                         }
                         for (SelectedItem item : mGateList) {
                             if (item.isHasSelected()) {
-                                gateKeyStr = item.getName();
+                                mGateKeyStr = "不限".equals(item.getName()) ? "" : item.getName();
                             }
                         }
                         // TODO : 查询全部筛选
-                        mStaffPresenter.requestAllStaff(mPostId, "", "", "不限".equals(socialStr) ? "" : socialStr,
-                                "不限".equals(gateKeyStr) ? "" : gateKeyStr, "");
+                        showDialog();
+                        netRequestStaffList(keyWord, mPostId, mSocialStr, mGateKeyStr);
                     });
                 })
                 .create();
@@ -537,17 +546,31 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
 
     @Override
     public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(tips);
     }
 
     @Override
-    public void onLoading() {
+    public void onError() {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+    }
 
+    @Override
+    public void onLoading() {
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
     public void onEmpty() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override

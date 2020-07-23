@@ -1,64 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_item_settlement"
+    android:id="@+id/rl_item_settlement"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingTop="@dimen/dp_10"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
     tools:ignore="ContentDescription">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_money"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:layout_alignParentStart="true"
+        android:text="+200.00"
+        android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tv_event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="2020年02月工资拨付02月工资拨..."
-            android:textColor="@color/fontColor"
-            android:textSize="15sp" />
+    <TextView
+        android:id="@+id/tv_balance_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="+200.00"
+        android:textColor="@color/fontColor"
+        android:textSize="16sp" />
 
-        <ImageView
-            android:id="@+id/iv_voucher"
-            android:layout_width="12dp"
-            android:layout_height="13dp"
-            android:layout_marginStart="6dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_voucher" />
+    <ImageView
+        android:id="@+id/iv_voucher"
+        android:layout_width="12dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/tv_money"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_voucher" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/tv_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:text="+200.00"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
+    <TextView
+        android:id="@+id/tv_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_money"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="2020年02月工资拨付02月工资拨..."
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_event"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:text="2020.03.17 15:56"
         android:textColor="@color/labelColor"
         android:textSize="12sp" />
 
-    <View style="@style/HorizontalLineStyle" />
+    <View style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/tv_time"/>
 
-</LinearLayout>
+</RelativeLayout>

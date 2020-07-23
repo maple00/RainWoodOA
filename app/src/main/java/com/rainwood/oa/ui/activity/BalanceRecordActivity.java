@@ -1,10 +1,16 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +37,7 @@ import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
@@ -41,6 +47,7 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -48,7 +55,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
-import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -57,12 +63,20 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
  */
 public final class BalanceRecordActivity extends BaseActivity implements IFinancialCallbacks, StatusAction {
 
-
+    //ActionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
-
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
+    // content
     @ViewInject(R.id.gti_balance_origin)
     private GroupTextIcon mOriginView;
     @ViewInject(R.id.gti_balance_type)
@@ -105,6 +119,8 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     private String mEndTime;
 
     private TextSelectedItemFlowLayout mTextFlowLayout;
+    private String mSearchText;
+    private String mDirection;
 
     @Override
     protected int getLayoutResId() {
@@ -131,11 +147,10 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     /**
      * 请求数据
      */
-    private void netRequestData(String staffId, String origin, String classify,
-                                String startTime, String endTime, String searchText) {
+    private void netRequestData() {
         showLoading();
-        mFinancialPresenter.requestBalanceRecords(staffId, origin, classify, startTime,
-                endTime, searchText, pageCount = 1);
+        mFinancialPresenter.requestBalanceRecords(mStaffId, mOrigin, mDirection, mSelectedType, mStartTime,
+                mEndTime, mSearchText, pageCount = 1);
     }
 
 
@@ -148,7 +163,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     @Override
     protected void loadData() {
         // list
-        netRequestData("", "", "", "", "", "");
+        netRequestData();
         // condition
         mFinancialPresenter.requestBalanceCondition();
     }
@@ -183,17 +198,27 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 .setTitle(null)
                 .setConfirm(getString(R.string.common_text_confirm))
                 .setCancel(getString(R.string.common_text_clear_screen))
+                .setStartTime(mStartTime)
+                .setEndTime(mEndTime)
                 .setAutoDismiss(false)
-                .setIgnoreDay()
+                //.setIgnoreDay()
                 .setCanceledOnTouchOutside(false)
                 .setListener(new StartEndDateDialog.OnListener() {
                     @Override
                     public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)){
+                            toast("请选择时间");
+                            return;
+                        }
+                        if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)){
+                            toast("开始时间不能大于结束时间");
+                            return;
+                        }
                         dialog.dismiss();
                         // TODO: 查询时间段
                         mStartTime = startTime;
                         mEndTime = endTime;
-                        netRequestData("", "", "", mStartTime, mEndTime, "");
+                        netRequestData();
                     }
 
                     @Override
@@ -203,18 +228,35 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 })
                 .show());
 
-        mBalanceRecordAdapter.setOnClickItemListener(new BalanceRecordAdapter.OnClickItemListener() {
+        mBalanceRecordAdapter.setOnClickItemListener((balanceRecord, position) ->
+                PageJumpUtil.page2BalanceDetail(BalanceRecordActivity.this,
+                        BalanceRecordDetailAty.class, "收支记录详情", balanceRecord.getId()));
+        // 搜索内容监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClickItem(BalanceRecord balanceRecord, int position) {
-                toast("查看详情");
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mSearchText = s.toString();
+                //
+                mFinancialPresenter.requestBalanceRecords(mStaffId, mOrigin, mDirection, mSelectedType, mStartTime,
+                        mEndTime, mSearchText, pageCount = 1);
             }
         });
-
+        // 加载更多
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mFinancialPresenter.requestBalanceRecords(mStaffId, mOrigin, mSelectedType, mStartTime,
-                        mEndTime, "", ++pageCount);
+                mFinancialPresenter.requestBalanceRecords(mStaffId, mOrigin, mDirection, mSelectedType, mStartTime,
+                        mEndTime, mSearchText, ++pageCount);
             }
         });
     }
@@ -229,31 +271,36 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 mStaffId = data.getStringExtra("staffId");
                 String position = data.getStringExtra("position");
 
-                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-                netRequestData(mStaffId, "", "", "", "", "");
-            }
-            // 记录搜索
-            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
-                String keyWord = data.getStringExtra("keyWord");
-                LogUtils.d("sxs", "---- keyWord -- " + keyWord);
-                netRequestData("", "", "", "", "", keyWord);
+                //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                netRequestData();
             }
         }
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "balanceRecord");
-                intent.putExtra("title", "收支记录");
-                intent.putExtra("tips", "请输入备注信息");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入备注信息");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
@@ -279,7 +326,6 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
         mBalanceTypeList = balanceTypeList;
         Collections.reverse(mOriginList);
     }
-
 
     /**
      * 来源
@@ -316,11 +362,14 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
         mTextFlowLayout.setTextList(stateList);
         mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
             mStatusPopWindow.dismiss();
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
+            }
+            selectedItem.setHasSelected(true);
             // TODO: 查询来源
             mOrigin = selectedItem.getName();
-            netRequestData("", mOrigin, "", "", "", "");
+            netRequestData();
         });
-
 
         mSelectedAdapter.setTextList(stateList);
         mSelectedAdapter.setOnClickListener((item, position) -> {
@@ -361,6 +410,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                     mTextConfirm = view.findViewById(R.id.tv_confirm);
                 })
                 .create();
+        mMaskLayer.setOnClickListener(v -> mStatusPopWindow.dismiss());
         mTextClearScreen.setOnClickListener(v -> {
             for (ManagerMain main : mBalanceTypeList) {
                 main.setHasSelected(false);
@@ -371,26 +421,28 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
             tempPos = -1;
             mStatusPopWindow.dismiss();
             // TODO: 清空筛选
-            netRequestData("", "", "", "", "", "");
+            netRequestData();
         });
         mTextConfirm.setOnClickListener(v -> {
             mSelectedType = "";
             for (ManagerMain main : mBalanceTypeList) {
                 if (main.isHasSelected()) {
-                    for (IconAndFont iconAndFont : main.getArray()) {
-                        if (iconAndFont.isSelected()) {
-                            mSelectedType = iconAndFont.getName();
+                    mDirection = main.getName();
+                    if (ListUtils.getSize(main.getArray()) != 0)
+                        for (IconAndFont iconAndFont : main.getArray()) {
+                            if (iconAndFont.isSelected()) {
+                                mSelectedType = iconAndFont.getName();
+                            }
                         }
-                    }
                 }
             }
-            if (TextUtils.isEmpty(mSelectedType)) {
+            if (TextUtils.isEmpty(mDirection)) {
                 toast("请选择分类");
                 return;
             }
             mStatusPopWindow.dismiss();
             // TODO: 查询分类列表
-            netRequestData("", "", mSelectedType, "", "", "");
+            netRequestData();
         });
     }
 
@@ -399,7 +451,6 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
      */
     private void showData() {
         // 设置数据 -- 默认选中第一项
-        mBalanceTypeList.get(tempPos == -1 ? 0 : tempPos).setHasSelected(true);
         mModuleFirstAdapter.setList(mBalanceTypeList);
         mModuleSecondAdapter.setList(mBalanceTypeList.get(tempPos == -1 ? 0 : tempPos).getArray());
         mStatusPopWindow.showAsDropDown(divider, Gravity.BOTTOM, 0, 0);
@@ -424,6 +475,7 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 manager.setHasSelected(false);
             }
             condition.setHasSelected(true);
+            mDirection = condition.getName();
             tempPos = position;
             mModuleSecondAdapter.setList(mBalanceTypeList.get(position).getArray());
         }));

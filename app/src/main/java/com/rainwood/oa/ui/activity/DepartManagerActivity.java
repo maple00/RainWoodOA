@@ -3,7 +3,6 @@ package com.rainwood.oa.ui.activity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +22,7 @@ import com.rainwood.oa.ui.adapter.ProjectGroupsAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
@@ -35,6 +35,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchContent;
     @ViewInject(R.id.gti_screen)
     private GroupTextIcon screenTitle;
@@ -70,6 +71,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     private View mMaskLayer;
     private CommonGridAdapter mGridAdapter;
     private List<SelectedItem> mDepartTypeList;
+    private TextSelectedItemFlowLayout mTextFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -138,13 +140,13 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_search_tips, R.id.ll_search_view})
+    @OnClick({R.id.iv_page_back, R.id.et_search_tips, R.id.ll_search_view})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-            case R.id.tv_search_tips:
+            case R.id.et_search_tips:
             case R.id.ll_search_view:
                 PageJumpUtil.page2SearchView(this, SearchActivity.class, "部门管理",
                         "departManager", "输入部门名称");
@@ -154,7 +156,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
 
     @Override
     public void getDepartListData(List<Depart> departList) {
-        if (isShowDialog()){
+        if (isShowDialog()) {
             hideDialog();
         }
         mDepartManagerAdapter.setDepartList(departList);
@@ -167,6 +169,7 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
      */
     @Override
     public void getDepartTypeData(List<SelectedItem> departTypeList) {
+        Collections.reverse(departTypeList);
         mDepartTypeList = departTypeList;
     }
 
@@ -183,6 +186,8 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
                     contentList.setNumColumns(4);
                     mGridAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mGridAdapter);
+                    contentList.setVisibility(View.GONE);
+                    mTextFlowLayout = view.findViewById(R.id.tfl_text);
 
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
@@ -202,15 +207,16 @@ public final class DepartManagerActivity extends BaseActivity implements IAdmini
                 screenTitle.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mGridAdapter.setTextList(mDepartTypeList);
-        mGridAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : mDepartTypeList) {
-                selectedItem.setHasSelected(false);
+
+        mTextFlowLayout.setTextList(mDepartTypeList);
+        mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : mDepartTypeList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             // TODO: 查询分类接口
             mAdministrativePresenter.requestAllDepartData("",
-                    item.getName().equals("全部") ? "" : item.getName());
+                    selectedItem.getName().equals("全部") ? "" : selectedItem.getName());
             mDepartTypePopWindow.dismiss();
         });
     }

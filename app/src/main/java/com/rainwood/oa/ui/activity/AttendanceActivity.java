@@ -53,7 +53,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     // page
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;
@@ -228,12 +228,11 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
             currentMonth.setText(year + "年" + month + "月");
             // 不是同一个月份则请求
             if (tempMonth != month || year != tempYear) {
-                if (NetworkUtils.isAvailable(AttendanceActivity.this)){
+                if (NetworkUtils.isAvailable(AttendanceActivity.this)) {
                     showDialog();
-                    showLoading();
                     mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
                             year + "-" + (month < 10 ? "0" + month : month));
-                }else {
+                } else {
                     toast("当前网络不可用");
                     showError(new View.OnClickListener() {
                         @Override
@@ -336,7 +335,10 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                 String staff = data.getStringExtra("staff");
                 String position = data.getStringExtra("position");
                 mStaffId = data.getStringExtra("staffId");
-                toast("员工：" + staff + "\n职位：" + position + "\n员工id：" + mStaffId);
+                showDialog();
+                //toast("员工：" + staff + "\n职位：" + position + "\n员工id：" + mStaffId);
+                mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
+                        DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_MONTH));
             }
         }
     }
@@ -367,7 +369,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     @Override
     public void getAttendanceData(AttendanceData attendanceData) {
-        if (isShowDialog()){
+        if (isShowDialog()) {
             hideDialog();
         }
         showComplete();
@@ -503,17 +505,24 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     @Override
     public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(tips);
     }
 
     @Override
     public void onLoading() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
     public void onEmpty() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override

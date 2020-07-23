@@ -1,8 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
-import android.os.Environment;
-import android.os.Looper;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -34,15 +33,22 @@ import com.rainwood.oa.ui.adapter.ProvisionAdapter;
 import com.rainwood.oa.ui.dialog.MessageDialog;
 import com.rainwood.oa.ui.widget.GroupTextText;
 import com.rainwood.oa.ui.widget.MeasureListView;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.permission.OnPermission;
+import com.rainwood.tools.permission.Permission;
+import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -268,16 +274,20 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
                 mExaminationAdapter.setList(mExaminationList);
             }
             // 上传附件
-            if (requestCode == FILE_SELECT_CODE && resultCode == FILE_SELECT_CODE) {
-                //高于API19版本
-                String[] split = data.getData().getPath().split("\\:");
-                String p = "";
-                if (split.length >= 2) {
-                    p = Environment.getExternalStorageDirectory() + "/" + split[1];
-                    LogUtils.d("sxs --", p);
-                    boolean mainthread = Looper.getMainLooper() == Looper.myLooper();
-                    LogUtils.d("sxs", "mainthread " + mainthread);
-                    // new ReadFileTask().execute(p);
+            if (requestCode == FILE_SELECT_CODE) {
+                Uri uri = data.getData(); // 获取用户选择文件的URI
+                String filePath = FileManagerUtil.handleFilePath(this, uri);
+                LogUtils.d("sxs", "----------- 文件路径 --------- " + filePath);
+                File file = new File(filePath);
+
+                if (file.exists() && file.isFile()) {
+                    LogUtils.d("sxs", " ------- 文件大小 length---" + file.length());
+                    try {
+                        FileInputStream inputStream = new FileInputStream(file);
+                        LogUtils.d("sxs", " ----- 文件大小 --- " + inputStream.getChannel().size());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -307,16 +317,45 @@ public final class OrderEditActivity extends BaseActivity implements OrderAttach
             case R.id.tv_upload_attach:
             case R.id.tv_add_attach:
             case R.id.iv_add_attach:
+                // 文件读取权限
+                XXPermissions.with(this)
+                        .permission(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE)
+                        .request(new OnPermission() {
+                            @Override
+                            public void hasPermission(List<String> granted, boolean isAll) {
+                                if (isAll) {
+                                    // 打开系统文件选择器
+                                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                    intent.setType("*/*");
+                                    startActivityForResult(intent, FILE_SELECT_CODE);
+                                } else {
+                                    toast("需要同意权限");
+                                }
+                            }
+
+                            @Override
+                            public void noPermission(List<String> denied, boolean quick) {
+                                if (quick) {
+                                    toast("被永久拒绝授权，请手动授予权限");
+                                    //如果是被永久拒绝就跳转到应用权限系统设置页面
+                                    XXPermissions.gotoPermissionSettings(getActivity());
+                                } else {
+                                    toast("获取权限失败");
+                                }
+                            }
+                        });
+
                 // 上传附件
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");//设置类型
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                try {
-                    startActivityForResult(Intent.createChooser(intent, "选择文件"),
-                            FILE_SELECT_CODE);
-                } catch (android.content.ActivityNotFoundException ex) {
-                    LogUtils.d("sxs", "没有找到想要的文件");
-                }
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("*/*");//设置类型
+//                intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                try {
+//                    startActivityForResult(Intent.createChooser(intent, "选择文件"),
+//                            FILE_SELECT_CODE);
+//                } catch (android.content.ActivityNotFoundException ex) {
+//                    LogUtils.d("sxs", "没有找到想要的文件");
+//                }
                 break;
             case R.id.iv_add_provision:
             case R.id.tv_add_provision:

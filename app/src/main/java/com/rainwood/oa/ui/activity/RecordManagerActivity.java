@@ -1,6 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -71,7 +74,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     @ViewInject(R.id.iv_menu)
     private ImageView topRightMenu;
@@ -146,7 +149,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         topRightMenu.setVisibility(Constants.CUSTOM_ID == null ? View.GONE : View.VISIBLE);
         // 设置布局管理器
         recordListView.setLayoutManager(new GridLayoutManager(this, 1));
-        recordListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
+        recordListView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
         // 设置适配器属性
         if (title.equals("加班记录")) {
             if (Constants.CUSTOM_ID != null) {
@@ -188,22 +192,22 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 showLoading();
                 mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID, (pageCount = 1));
             } else {
-                netRequestOvertimeRecords("", "", "", "");
+                netRequestOvertimeRecords();
                 mRecordManagerPresenter.requestOverTimeStateData();
             }
         } else if (title.contains("请假")) {
-            netRequestLeaveRecords("", "", "", "", "");
+            netRequestLeaveRecords();
             mRecordManagerPresenter.requestLeaveCondition();
         } else if (title.contains("外出")) {
             if (Constants.CUSTOM_ID != null) {
                 showLoading();
                 mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID, pageCount = 1);
             } else {
-                netRequestLeaveOutRecords("", "", "", "");
+                netRequestLeaveOutRecords();
                 mRecordManagerPresenter.requestGoOutCondition();
             }
         } else if (title.contains("补卡")) {
-            netRequestReissueRecords("", "", "", "");
+            netRequestReissueRecords();
             mRecordManagerPresenter.requestReissueCondition();
         } else if (title.contains("回款")) {
             showLoading();
@@ -214,33 +218,33 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
     /**
      * 请求加班记录
      */
-    private void netRequestOvertimeRecords(String staffId, String state, String startTime, String endTime) {
+    private void netRequestOvertimeRecords() {
         showLoading();
-        mRecordManagerPresenter.requestOvertimeRecord(staffId, state, startTime, endTime, pageCount = 1);
+        mRecordManagerPresenter.requestOvertimeRecord(mStaffId, mState, mStartTime, mEndTime, pageCount = 1);
     }
 
     /**
      * 请假记录
      */
-    private void netRequestLeaveRecords(String staffId, String type, String state, String startTime, String endTime) {
+    private void netRequestLeaveRecords() {
         showLoading();
-        mRecordManagerPresenter.requestLeaveRecord(staffId, type, state, startTime, endTime, pageCount = 1);
+        mRecordManagerPresenter.requestLeaveRecord(mStaffId, mLeaveType, mState, mStartTime, mEndTime, pageCount = 1);
     }
 
     /**
      * 外出记录
      */
-    private void netRequestLeaveOutRecords(String startTime, String endTime, String staffId, String state) {
+    private void netRequestLeaveOutRecords() {
         showLoading();
-        mRecordManagerPresenter.requestGoOutRecord(staffId, state, startTime, endTime, pageCount = 1);
+        mRecordManagerPresenter.requestGoOutRecord(mStaffId, mState, mStartTime, mEndTime, pageCount = 1);
     }
 
     /**
      * 补卡记录
      */
-    private void netRequestReissueRecords(String staffId, String state, String startTime, String endTime) {
+    private void netRequestReissueRecords() {
         showLoading();
-        mRecordManagerPresenter.requestReissueRecord(staffId, state, startTime, endTime, pageCount = 1);
+        mRecordManagerPresenter.requestReissueRecord(mStaffId, mState, mStartTime, mEndTime, pageCount = 1);
     }
 
     @Override
@@ -249,13 +253,16 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         mRecordManagerPresenter.registerViewCallback(this);
     }
 
+    /**
+     * 非客户列表中的加班记录
+     */
     @Override
     protected void initEvent() {
         if (title.contains("加班")) {
             if (Constants.CUSTOM_ID != null) {
                 // 客户管理--加班详情
                 mOvertimeAdapter.setItemOvertime(overtimeRecord -> startActivity(getNewIntent(
-                        RecordManagerActivity.this, RecordDetailActivity.class, "加班详情", "加班详情")));
+                        RecordManagerActivity.this, CustomRecordDetailActivity.class, "加班详情", "加班详情")));
             } else {
                 // 行政人事 -- 加班详情
                 mAdminOvertimeAdapter.setItemOvertime(overtimeRecord -> {
@@ -296,7 +303,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             });
             topLeaveType.setOnItemClick(text -> {
                 if (ListUtils.getSize(mLeaveTypeList) == 0) {
-                    toast("无状态可选择");
+                    toast("无类型可选择");
                     return;
                 }
                 SELECTED_LEAVE_TYPE_FLAG = !SELECTED_LEAVE_TYPE_FLAG;
@@ -312,7 +319,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                 mOutAdapter.setItemGoOut(leaveOutRecord -> {
                     // 外出详情
                     // startActivity(getNewIntent(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情", "外出详情"));
-                    PageJumpUtil.askLeaveList2Detail(RecordManagerActivity.this, RecordDetailActivity.class, "外出详情",
+                    PageJumpUtil.askLeaveList2Detail(RecordManagerActivity.this, CustomRecordDetailActivity.class, "外出详情",
                             leaveOutRecord.getStid());
                 });
             } else {
@@ -360,15 +367,27 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         periodTime.setOnItemClick(text -> {
             selectedTimeFlag = !selectedTimeFlag;
             new StartEndDateDialog.Builder(RecordManagerActivity.this, false)
-                    .setTitle(null)
+                    .setTitle("请选择时间")
+                    .setAnimStyle(R.style.ScaleAnimStyle)
+                    .setCanceledOnTouchOutside(false)
+                    .setAutoDismiss(false)
                     .setConfirm(getString(R.string.common_text_confirm))
                     .setCancel(getString(R.string.common_text_clear_screen))
-                    .setAutoDismiss(false)
-                    //.setIgnoreDay()
-                    .setCanceledOnTouchOutside(false)
+                    .setStartTime(TextUtils.isEmpty(mStartTime) ? DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY)
+                            : mStartTime)
+                    .setEndTime(TextUtils.isEmpty(mEndTime) ? DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY)
+                            : mEndTime)
                     .setListener(new StartEndDateDialog.OnListener() {
                         @Override
                         public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                            if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                toast("请选择时间");
+                                return;
+                            }
+                            if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                toast("开始时间不能大于结束时间");
+                                return;
+                            }
                             dialog.dismiss();
                             //toast("选中的时间段：" + startTime + "至" + endTime);
                             selectedTimeFlag = false;
@@ -379,18 +398,18 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                                 if (Constants.CUSTOM_ID != null) {
                                     mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID, pageCount = 1);
                                 } else {
-                                    netRequestOvertimeRecords("", "", startTime, endTime);
+                                    netRequestOvertimeRecords();
                                 }
                             } else if (title.contains("请假")) {
-                                netRequestLeaveRecords("", "", "", mStartTime, mEndTime);
+                                netRequestLeaveRecords();
                             } else if (title.contains("外出")) {
                                 if (Constants.CUSTOM_ID != null) {
                                     mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID, pageCount = 1);
                                 } else {
-                                    netRequestLeaveOutRecords(startTime, endTime, "", "");
+                                    netRequestLeaveOutRecords();
                                 }
                             } else if (title.contains("补卡")) {
-                                netRequestReissueRecords("", "", startTime, endTime);
+                                netRequestReissueRecords();
                             } else if (title.contains("回款")) {
                                 mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID, pageCount = 1);
                             }
@@ -400,6 +419,8 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
                         public void onCancel(BaseDialog dialog) {
                             dialog.dismiss();
                             selectedTimeFlag = false;
+                            mStartTime = "";
+                            mEndTime = "";
                             periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
                         }
                     })
@@ -453,24 +474,24 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+            // toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
             // TODO: 通过员工查询
             if (title.contains("加班")) {
                 if (Constants.CUSTOM_ID != null) {
                     mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID, (++pageCount));
                 } else {
-                    netRequestOvertimeRecords(mStaffId, "", "", "");
+                    netRequestOvertimeRecords();
                 }
             } else if (title.contains("请假")) {
-                netRequestLeaveRecords(mStaffId, "", "", "", "");
+                netRequestLeaveRecords();
             } else if (title.contains("外出")) {
                 if (Constants.CUSTOM_ID != null) {
                     mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID, pageCount = 1);
                 } else {
-                    netRequestLeaveOutRecords("", "", mStaffId, "");
+                    netRequestLeaveOutRecords();
                 }
             } else if (title.contains("补卡")) {
-                netRequestReissueRecords(mStaffId, "", "", "");
+                netRequestReissueRecords();
             } else if (title.contains("回款")) {
                 mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID, pageCount = 1);
             }
@@ -533,6 +554,10 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         pagerRefresh.finishLoadmore();
         showComplete();
         if (pageCount != 1) {
+            if (ListUtils.getSize(adminOverTimeList) == 0) {
+                pageCount--;
+                return;
+            }
             toast("为您加载了" + ListUtils.getSize(adminOverTimeList) + "条数据");
             mAdminOvertimeAdapter.addData(adminOverTimeList);
         } else {
@@ -557,6 +582,10 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         showComplete();
         // 行政人事-- 加班记录
         if (pageCount != 1) {
+            if (ListUtils.getSize(leaveRecordList) == 0) {
+                pageCount--;
+                return;
+            }
             toast("为您加载了" + ListUtils.getSize(leaveRecordList) + "条数据");
             mLeaveAdapter.addData(leaveRecordList);
         } else {
@@ -582,6 +611,10 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         pagerRefresh.finishLoadmore();
         showComplete();
         if (pageCount != 1) {
+            if (ListUtils.getSize(adminLeaveOutList) == 0) {
+                pageCount--;
+                return;
+            }
             toast("为您加载了" + ListUtils.getSize(adminLeaveOutList) + "条数据");
             mAdminLeaveOutAdapter.addData(adminLeaveOutList);
         } else {
@@ -604,6 +637,10 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         pagerRefresh.finishLoadmore();
         showComplete();
         if (pageCount != 1) {
+            if (ListUtils.getSize(cardRecordList) == 0) {
+                pageCount--;
+                return;
+            }
             toast("为您加载了" + ListUtils.getSize(cardRecordList) + "条数据");
             mCardRecordAdapter.addData(cardRecordList);
         } else {
@@ -659,43 +696,46 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
         });
         mTextFlowLayout.setTextList(stateList);
         mTextFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
-            mStatusPopWindow.dismiss();
-            // 请假类型
-            if (SELECTED_LEAVE_TYPE_FLAG) {
-                mLeaveType = selectedItem.getName();
-            } else {
-                mLeaveType = "";
-                mState = selectedItem.getName();
+            // 点击的是状态类型
+            if (SELECTED_STATE_FLAG) {
+                mState = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             }
+            // 点击的是请假类型
+            if (SELECTED_LEAVE_TYPE_FLAG) {
+                mLeaveType = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
+            }
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
+            }
+            selectedItem.setHasSelected(true);
             // TODO : 请求记录状态列表
+            mStatusPopWindow.dismiss();
             if (title.contains("加班")) {
                 if (Constants.CUSTOM_ID != null) {
                     mRecordManagerPresenter.requestOvertimeRecord(Constants.CUSTOM_ID, (++pageCount));
                 } else {
-                    netRequestOvertimeRecords("", selectedItem.getName(), "", "");
+                    netRequestOvertimeRecords();
                 }
             } else if (title.contains("请假")) {
-                netRequestLeaveRecords("", mLeaveType, mState, "", "");
+                netRequestLeaveRecords();
             } else if (title.contains("外出")) {
                 if (Constants.CUSTOM_ID != null) {
                     mRecordManagerPresenter.requestGoOutRecord(Constants.CUSTOM_ID, pageCount = 1);
                 } else {
-                    netRequestLeaveOutRecords("", "", "", mState);
+                    netRequestLeaveOutRecords();
                 }
             } else if (title.contains("补卡")) {
-                netRequestReissueRecords("", mState, "", "");
+                netRequestReissueRecords();
             } else if (title.contains("回款")) {
                 mRecordManagerPresenter.requestCustomReceivableRecords(Constants.CUSTOM_ID, pageCount = 1);
             }
         });
-
         mSelectedAdapter.setTextList(stateList);
         mSelectedAdapter.setOnClickListener((item, position) -> {
             for (SelectedItem selectedItem : stateList) {
                 selectedItem.setHasSelected(false);
             }
             item.setHasSelected(true);
-
         });
     }
 

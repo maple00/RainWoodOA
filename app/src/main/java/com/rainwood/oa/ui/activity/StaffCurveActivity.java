@@ -2,6 +2,7 @@ package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.rainwood.oa.model.domain.StaffCurveList;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.StaffCurveAdapter;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.MeasureListView;
 import com.rainwood.oa.ui.widget.MyMarkerView;
 import com.rainwood.oa.utils.ListUtils;
@@ -33,6 +35,8 @@ import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +62,8 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
 
     private IFinancialPresenter mFinancialPresenter;
     private StaffCurveAdapter mStaffCurveAdapter;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -80,10 +86,17 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         mFinancialPresenter.registerViewCallback(this);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
         showDialog();
-        mFinancialPresenter.requestStaffNum();
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        mTextDate.setText(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01" + "-" +
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        mFinancialPresenter.requestStaffNum(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
     }
 
     @SingleClick
@@ -94,7 +107,42 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
                 finish();
                 break;
             case R.id.tv_date:
-                toast("时间");
+                new StartEndDateDialog.Builder(this, true)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
+                        .setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
+                        .setListener(new StartEndDateDialog.OnListener() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_MONTH)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+                                dialog.dismiss();
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                mTextDate.setText(mStartTime + "-" + mEndTime);
+                                showDialog();
+                                mFinancialPresenter.requestStaffNum(startTime, endTime);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
         }
     }
@@ -102,7 +150,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @SuppressLint("SetTextI18n")
     @Override
     public void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList) {
-        if (isShowDialog()){
+        if (isShowDialog()) {
             hideDialog();
         }
         if (ListUtils.getSize(staffNumList) == 0) {
@@ -209,7 +257,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         xAxis.setSpaceMax(0f);
         xAxis.setSpaceMin(0f);
         // count显示数量
-        xAxis.setLabelCount(ListUtils.getSize(monthList), true);
+        xAxis.setLabelCount(5, true);
         // 设置X轴显示值
         xAxis.setValueFormatter(new IndexAxisValueFormatter(monthList));
         // 偏移量---

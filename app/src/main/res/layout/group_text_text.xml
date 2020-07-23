@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:orientation="horizontal"
     tools:ignore="ContentDescription,UseCompoundDrawables">
 
@@ -27,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginStart="8dp"
+        android:lineSpacingExtra="9dp"
         android:gravity="center_vertical"
         android:textColor="@color/fontColor"
         android:textColorHint="@color/labelColor"

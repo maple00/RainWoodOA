@@ -52,7 +52,7 @@ public final class RoleManagerActivity extends BaseActivity implements
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchContent;
     @ViewInject(R.id.gti_screen)
     private GroupTextIcon screenTitle;
@@ -164,14 +164,14 @@ public final class RoleManagerActivity extends BaseActivity implements
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_search_tips, R.id.ll_search_view})
+    @OnClick({R.id.iv_page_back, R.id.et_search_tips, R.id.ll_search_view})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
             case R.id.ll_search_view:
-            case R.id.tv_search_tips:
+            case R.id.et_search_tips:
                 PageJumpUtil.page2SearchView(this, SearchActivity.class, "角色管理",
                         "roleManager", "请输入角色名称");
                 break;

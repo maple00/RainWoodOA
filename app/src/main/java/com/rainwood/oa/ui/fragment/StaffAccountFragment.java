@@ -1,6 +1,10 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +28,7 @@ import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -41,6 +46,8 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_account_list)
     private RecyclerView accountContentList;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTip;
 
     @ViewInject(R.id.line_all)
     private View checkedAll;
@@ -57,6 +64,9 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     private int pageCount = 1;
     private boolean isClickType = false;
     private String queryType = "accountAll";
+    private String mKeyWord;
+    private String mStartTime;
+    private String mEndTime;
 
     public StaffAccountFragment(String staffId) {
         mStaffId = staffId;
@@ -91,18 +101,15 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     @Override
     protected void loadData() {
         // 请求数据-- 默认请求全部数据
-        netDataLoading("accountAll", (pageCount = 1));
+        netDataLoading(null);
     }
 
     /**
      * 网络数据请求
-     *
-     * @param queryType
-     * @param page
      */
-    private void netDataLoading(String queryType, int page) {
+    private void netDataLoading(String startTime) {
         showDialog();
-        mStaffPresenter.requestAllAccountData(queryType, page);
+        mStaffPresenter.requestAllAccountData(queryType, mKeyWord, startTime, mEndTime, pageCount = 1);
     }
 
     @Override
@@ -115,7 +122,26 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                netDataLoading(queryType, (++pageCount));
+                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, TextUtils.isEmpty(mEndTime) ?"":mStartTime, mEndTime, ++pageCount);
+            }
+        });
+        // 搜索监听
+        searchTip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, TextUtils.isEmpty(mEndTime) ? "" : mStartTime,
+                        mEndTime, pageCount = 1);
             }
         });
     }
@@ -129,7 +155,7 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 Objects.requireNonNull(getActivity()).finish();
                 break;
             case R.id.tv_search:
-                toast("搜索");
+                toast("搜索\n 接口没字段");
                 break;
             case R.id.iv_screen_time:
             case R.id.tv_screen_time:
@@ -139,12 +165,27 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
                         .setCanceledOnTouchOutside(false)
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+
                                 dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                showDialog();
+                                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, mStartTime, mEndTime, pageCount = 1);
                             }
 
                             @Override
@@ -160,7 +201,7 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 checkedType(true, false, false);
                 // 查询全部
                 queryType = "accountAll";
-                netDataLoading("accountAll", (pageCount = 1));
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_income:
             case R.id.line_income:
@@ -168,7 +209,7 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 checkedType(false, true, false);
                 // 查询收入
                 queryType = "accountIn";
-                netDataLoading("accountIn", (pageCount = 1));
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_speeding:
             case R.id.line_speeding:
@@ -176,7 +217,7 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 checkedType(false, false, true);
                 // 查询支出
                 queryType = "accountOut";
-                netDataLoading("accountOut", (pageCount = 1));
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
         }
     }
@@ -207,14 +248,16 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
             hideDialog();
         }
         showComplete();
-        if (isClickType) {
+        if (pageCount != 1) {
+            if (ListUtils.getSize(accountList) == 0) {
+                toast("");
+            }
+            mAccountAdapter.addData(accountList);
+        } else {
             if (ListUtils.getSize(accountList) == 0) {
                 showEmpty();
             }
             mAccountAdapter.setAccountList(accountList);
-            isClickType = false;
-        } else {
-            mAccountAdapter.addData(accountList);
         }
     }
 

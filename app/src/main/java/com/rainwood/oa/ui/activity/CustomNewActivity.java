@@ -20,7 +20,9 @@ import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.dialog.SelectorListDialog;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
@@ -99,6 +101,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
 
     private List<String> mFollows;
     private List<String> mOriginList;
+    private String mRandomId;
 
     @Override
     protected int getLayoutResId() {
@@ -275,7 +278,9 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
                 String specialPlaneStr = specialPlane.getText().toString().trim();
                 String openingBankStr = openingBank.getText().toString().trim();
                 String broughtAccountStr = broughtAccount.getText().toString().trim();
-                mCustomPresenter.createCustomData(contact, tel, wxNum, qqNum, postStr, followStr, customStr,
+                mRandomId = RandomUtil.getItemID(20);
+                showDialog();
+                mCustomPresenter.createCustomData(mRandomId, contact, tel, wxNum, qqNum, postStr, followStr, customStr,
                         customNote, budgetStr, industryStr, demandStr, companyNameStr, taxNumStr,
                         mailingAddressStr, billingAddressStr, specialPlaneStr, openingBankStr,
                         broughtAccountStr);
@@ -306,10 +311,18 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
         mOriginList = originList;
     }
 
+    /**
+     * 创建成功之后跳转到客户详情页面
+     * @param isSuccess
+     * @param warn
+     */
     @Override
     public void createCustomData(boolean isSuccess, String warn) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         if (isSuccess) {
-            startActivity(getNewIntent(this, CustomDetailActivity.class, "客户详情", "客户详情"));
+            PageJumpUtil.listJump2CustomDetail(this, CustomDetailActivity.class, mRandomId);
         } else {
             toast(warn);
         }

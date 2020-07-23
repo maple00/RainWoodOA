@@ -1,13 +1,17 @@
 package com.rainwood.oa.ui.activity;
 
-import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +28,7 @@ import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PresenterManager;
@@ -37,9 +42,8 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
-
-import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: sxs
@@ -53,6 +57,14 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     //content
     @ViewInject(R.id.gti_type)
     private GroupTextIcon fileType;
@@ -93,6 +105,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     private String mSecret;
     private String mSorting;
     private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -186,6 +199,24 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                         file.getName(), file.getFormat());
             }
         });
+        // 搜索框UI监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                netRequestData(mKeyWord, mClassify, mFormat, mSecret, mSorting);
+            }
+        });
         // 加载更多
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -195,30 +226,30 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
-                mKeyWord = data.getStringExtra("keyWord");
-                netRequestData(mKeyWord, mClassify, mFormat, mSecret, mSorting);
-            }
-        }
-    }
-
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "officeFile");
-                intent.putExtra("title", "办公文件");
-                intent.putExtra("tips", "请输入文件名称");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入文件名称");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
@@ -230,8 +261,8 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             pageRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(fileList) + "条数据");
             mOfficeFileAdapter.addData(fileList);
-        }else {
-            if (ListUtils.getSize(fileList) == 0){
+        } else {
+            if (ListUtils.getSize(fileList) == 0) {
                 showEmpty();
                 return;
             }
@@ -242,6 +273,9 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
     @Override
     public void getOfficeCondition(List<SelectedItem> typeList, List<SelectedItem> formatList,
                                    List<SelectedItem> secretList, List<SelectedItem> sortList) {
+        Collections.reverse(typeList);
+        Collections.reverse(formatList);
+        Collections.reverse(secretList);
         mTypeList = typeList;
         mFormatList = formatList;
         mSecretList = secretList;
@@ -261,6 +295,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -284,8 +319,9 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((selectedItem, position) -> {
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
             for (SelectedItem item : stateList) {
                 item.setHasSelected(false);
             }
@@ -301,7 +337,8 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             } else if (CHECKED_SECRET_FLAG) {
                 mSecret = selectedItem.getName();
             }
-            netRequestData("", mClassify, mFormat, mSecret, "");
+            netRequestData("", "全部".equals(mClassify) ? "" : mClassify, "全部".equals(mFormat) ? "" : mFormat,
+                    "全部".equals(mSecret) ? "" : mSecret, "");
             mStatusPopWindow.dismiss();
         });
     }
@@ -317,8 +354,11 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(1);
+                    contentList.setVisibility(View.VISIBLE);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
+                    TextSelectedItemFlowLayout itemFlowLayout = view.findViewById(R.id.tfl_text);
+                    itemFlowLayout.setVisibility(View.GONE);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -345,7 +385,7 @@ public final class OfficeFileActivity extends BaseActivity implements IAttachmen
             selectedItem.setHasSelected(true);
             // TODO： 查询排序条件
             mSorting = selectedItem.getName();
-            netRequestData("", "", "", "", mSorting);
+            netRequestData("", "", "", "", "默认排序".equals(mSorting) ? "" : mSorting);
 
             mStatusPopWindow.dismiss();
         });

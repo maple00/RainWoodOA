@@ -145,5 +145,18 @@
     <string name="text_speeding">支出</string>
     <string name="text_audit_records">审核记录</string>
     <string name="text_sms_verify">请输入短信验证码</string>
+    <string name="text_invoice_name">开票人</string>
+    <string name="text_sellers">销售方</string>
+    <string name="text_purchaser">购买方</string>
+    <string name="text_invoice_type">发票类型</string>
+    <string name="text_Levied_in_total">价税合计</string>
+    <string name="text_invoice_amount">开票金额</string>
+    <string name="text_invoice_tax">纳税金额</string>
+    <string name="text_invoice_ico">发票扫描件</string>
+    <string name="text_principal">负责人</string>
+    <string name="text_origin">来源</string>
+    <string name="text_balance_type">收支类型</string>
+    <string name="text_balance_money">收支金额</string>
+    <string name="text_pay_voucher">付款凭证</string>
 
 </resources>

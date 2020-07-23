@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.utils.Constants;
@@ -62,6 +63,9 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setPaddingSmart(this, loginTitle);
+        if (!NetworkUtils.isAvailable(this)) {
+            toast("当前网络不佳，请确认网络");
+        }
     }
 
     @Override
@@ -135,7 +139,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
 
     @Override
     public void Login(String life) {
-        if (isShowDialog()){
+        if (isShowDialog()) {
             hideDialog();
         }
         // 登录之后的参数 -- 默认得id：pyj7y98y9juq
@@ -143,7 +147,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
         // TODO: 登录成功之后免登录
         String insertSql = "REPLACE INTO loginTab(userName, pwd) VALUES ( '" + account.getText().toString()
                 + "','" + password.getText().toString() + "') ;";
-        SQLiteHelper.with(this).insert(insertSql);
+        SQLiteHelper.with(this).update(insertSql);
         String querySql = "select * from loginTab;";
         List<Map<String, String>> query = SQLiteHelper.with(this).query(querySql);
         LogUtils.d("sxs", "-- 登录 --" + query.toString());

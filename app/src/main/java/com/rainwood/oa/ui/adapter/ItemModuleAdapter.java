@@ -56,7 +56,7 @@ import com.rainwood.oa.ui.activity.StaffManagerActivity;
 import com.rainwood.oa.ui.activity.WorkDayActivity;
 import com.rainwood.oa.ui.widget.svgcode.SvgSoftwareLayerSetter;
 import com.rainwood.oa.utils.Constants;
-import com.rainwood.oa.utils.ImageViewUtil;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -102,7 +102,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-       // ImageViewUtil.matchAll(parent.getContext(), holder.moduleImg);
+        // ImageViewUtil.matchAll(parent.getContext(), holder.moduleImg);
         if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(mList.get(position).getLocalMipmap())
                     .placeholder(R.mipmap.ic_logo)
@@ -173,7 +173,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     if ("mykehuInvoice".equals(getItem(position).getMenu())) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), MineInvoiceRecordActivity.class, "我的开票记录", "mykehuInvoice"));
                     } else {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), InvoiceRecordActivity.class, "开票记录", "客户开票记录"));
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), InvoiceRecordActivity.class, "开票记录", "finalInvoice"));
                     }
                     break;
                 // 订单模块
@@ -234,7 +234,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     }
                     break;
                 case "补卡单":
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, "补卡记录", "补卡记录"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), RecordManagerActivity.class, getItem(position).getName(), "补卡记录"));
                     break;
                 case "补卡记录":
                     if ("myworkSignAdd".equals(getItem(position).getMenu())) {
@@ -255,14 +255,14 @@ public final class ItemModuleAdapter extends BaseAdapter {
                     if ("mycost".equals(getItem(position).getMenu())) {
                         convertView.getContext().startActivity(getNewIntent(parent.getContext(), ReimbursementActivity.class, "我的费用报销", "mycost"));
                     } else {
-                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), ReimbursementActivity.class, "费用报销", "reimbursement"));
+                        convertView.getContext().startActivity(getNewIntent(parent.getContext(), ReimbursementActivity.class, getItem(position).getName(), "reimbursement"));
                     }
                     break;
                 case "团队基金":
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AccountFundsActivity.class, "团队基金", "teamFunds"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), AccountFundsActivity.class, getItem(position).getName(), "teamFunds"));
                     break;
                 case "收支平衡": // 收支记录列表
-                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceRecordActivity.class, "收支记录", "balanceRecord"));
+                    convertView.getContext().startActivity(getNewIntent(parent.getContext(), BalanceRecordActivity.class, getItem(position).getName(), "balanceRecord"));
                     break;
                 case "分类统计":
                     convertView.getContext().startActivity(getNewIntent(parent.getContext(), ClassificationStaticsActivity.class, "分类统计", "classificationStatics"));

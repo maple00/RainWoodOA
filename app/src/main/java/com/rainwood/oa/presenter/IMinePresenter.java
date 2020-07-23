@@ -83,9 +83,17 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     void requestMineLeaveOutRecords();
 
     /**
-     * 请求我的费用报销
+     * 我的费用报销
+     * @param text 备注
+     * @param type 类型
+     * @param payer 付款方
+     * @param payState 支付状态
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param page 页码
      */
-    void requestMineReimburseData();
+    void requestMineReimburseData(String text, String type, String payer, String payState,
+                                  String startTime, String endTime, int page);
 
     /**
      * 请求我的开票记录

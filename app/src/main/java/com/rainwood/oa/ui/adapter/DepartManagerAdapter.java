@@ -45,7 +45,7 @@ public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManag
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.depart.setText(mDepartList.get(position).getName());
-        holder.selectedImg.setImageResource(mDepartList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
+        holder.selectedImg.setImageResource(!mDepartList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         // 设置隐藏
         holder.managerTop.setOnClickListener(v -> {
             mDepartList.get(position).setHasSelected(!mDepartList.get(position).isHasSelected());

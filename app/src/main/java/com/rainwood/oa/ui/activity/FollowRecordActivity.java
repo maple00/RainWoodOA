@@ -2,11 +2,13 @@ package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.rainwood.oa.ui.adapter.FollowRecordsAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
@@ -41,10 +44,10 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
-import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
@@ -59,9 +62,13 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     @ViewInject(R.id.ll_search_view)
-    private LinearLayout searchView;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchTipsView;
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
     @ViewInject(R.id.gti_depart_staff)
     private GroupTextIcon departStaff;
@@ -87,6 +94,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     private String mStaffId;
     private String mTarget;
     private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -120,7 +128,7 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     @Override
     protected void loadData() {
         // 请求跟进记录数据
-        netRequestData("", "", "");
+        netRequestData("", "");
         // 请求跟进记录
         mRecordManagerPresenter.requestRecordType();
     }
@@ -128,9 +136,9 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     /**
      * 请求网络数据
      */
-    private void netRequestData(String staffId, String target, String searchText) {
+    private void netRequestData(String staffId, String target) {
         showLoading();
-        mRecordManagerPresenter.requestKnowledgeFollowRecords(staffId, target, searchText, pageCount = 1);
+        mRecordManagerPresenter.requestKnowledgeFollowRecords(staffId, target, mKeyWord, pageCount = 1);
     }
 
     @Override
@@ -179,14 +187,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    mKeyWord = "";
-                    searchView.setVisibility(View.GONE);
-                    netRequestData("", "", "");
-                } else {
-                    searchView.setVisibility(View.VISIBLE);
-                    netRequestData("", "", s.toString());
-                }
+                mKeyWord = s.toString();
+                mRecordManagerPresenter.requestKnowledgeFollowRecords(mStaffId, mTarget, mKeyWord, pageCount = 1);
             }
         });
     }
@@ -201,30 +203,37 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 mStaffId = data.getStringExtra("staffId");
                 String position = data.getStringExtra("position");
 
-                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-                netRequestData(mStaffId, mTarget, "");
+                // toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                netRequestData(mStaffId, mTarget);
             }
-            // 搜索条件
-            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
-                mKeyWord = data.getStringExtra("keyWord");
-                searchTipsView.setText(mKeyWord);
-            }
+
         }
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "staffManager");
-                intent.putExtra("title", "跟进记录");
-                intent.putExtra("tips", "请输入跟进内容");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入跟进内容");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
@@ -247,11 +256,12 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
 
     @Override
     public void getRecordsTypes(List<SelectedItem> typeList) {
+        Collections.reverse(typeList);
         mTypeList = typeList;
     }
 
     /**
-     * 状态选择
+     * 记录类型
      */
     private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
@@ -261,8 +271,10 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(4);
+                    contentList.setVisibility(View.GONE);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -280,16 +292,17 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+        // 流式布局
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
-            // TODO: 查询记录类型
-            mTarget = item.getName();
-            netRequestData("", mTarget, "");
+            selectedItem.setHasSelected(true);
             mStatusPopWindow.dismiss();
+            // TODO: 查询记录类型
+            mTarget = selectedItem.getName();
+            netRequestData("", "全部".equals(mTarget) ? "" : mTarget);
         });
     }
 

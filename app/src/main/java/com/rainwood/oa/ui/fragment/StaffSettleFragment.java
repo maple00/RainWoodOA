@@ -1,6 +1,10 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +27,8 @@ import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -41,6 +47,8 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_account_list)
     private RecyclerView accountContentList;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTip;
 
     @ViewInject(R.id.line_all)
     private View checkedAll;
@@ -57,6 +65,9 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     private int pageCount = 1;
     private boolean clickType = false;
     private String requestType = "settleAccountAll";
+    private String mKeyWord;
+    private String mStartTime;
+    private String mEndTime;
 
     public StaffSettleFragment(String staffId) {
         mStaffId = staffId;
@@ -72,7 +83,8 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
         setUpState(State.SUCCESS);
         // 设置布局管理器
         accountContentList.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        accountContentList.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
+        accountContentList.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(getContext(), 10f)));
         // 创建适配器
         mSettlementAdapter = new StaffSettlementAdapter();
         // 设置适配器
@@ -85,17 +97,15 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
     @Override
     protected void loadData() {
         // 请求数据
-        netDataLoading("settleAccountAll", pageCount);
+        netDataLoading(null);
     }
 
     /**
      * 请求网路数据
-     *
-     * @param type
      */
-    private void netDataLoading(String type, int page) {
+    private void netDataLoading(String startTime) {
         showDialog();
-        mStaffPresenter.requestAllSettlementData(type, page);
+        mStaffPresenter.requestAllSettlementData(requestType, mKeyWord, startTime, mEndTime, pageCount = 1);
     }
 
     @Override
@@ -114,7 +124,29 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                netDataLoading(requestType, (++pageCount));
+
+                mStaffPresenter.requestAllSettlementData(requestType, mKeyWord, TextUtils.isEmpty(mEndTime) ? "" : mStartTime,
+                        mEndTime, ++pageCount);
+                // netDataLoading(requestType, (++pageCount));
+            }
+        });
+        // 搜索内容监听
+        searchTip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                mStaffPresenter.requestAllSettlementData(requestType, mKeyWord, TextUtils.isEmpty(mEndTime) ? "" : mStartTime,
+                        mEndTime, pageCount = 1);
             }
         });
     }
@@ -128,7 +160,7 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
                 Objects.requireNonNull(getActivity()).finish();
                 break;
             case R.id.tv_search:
-                toast("搜索");
+                toast("搜索\n接口没字段");
                 break;
             case R.id.iv_screen_time:
             case R.id.tv_screen_time:
@@ -138,12 +170,28 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
                         .setCanceledOnTouchOutside(false)
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+
                                 dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                //
+                                showDialog();
+                                mStaffPresenter.requestAllSettlementData(requestType, mKeyWord, mStartTime, mEndTime, pageCount = 1);
                             }
 
                             @Override
@@ -159,7 +207,7 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
                 // 查询全部
                 clickType = true;
                 requestType = "settleAccountAll";
-                netDataLoading("settleAccountAll", pageCount = 1);
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_income:
             case R.id.line_income:
@@ -167,7 +215,7 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
                 // 查询收入
                 clickType = true;
                 requestType = "settleAccountIn";
-                netDataLoading("settleAccountIn", pageCount = 1);
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_speeding:
             case R.id.line_speeding:
@@ -175,7 +223,7 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
                 // 查询支出
                 clickType = true;
                 requestType = "settleAccountOut";
-                netDataLoading("settleAccountOut", pageCount = 1);
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
         }
     }
@@ -192,18 +240,21 @@ public final class StaffSettleFragment extends BaseFragment implements IStaffCal
 
     @Override
     public void getSettlementData(List<StaffSettlement> settlementList) {
+        pageRefresh.finishLoadmore();
+        showComplete();
         if (isShowDialog()) {
             hideDialog();
         }
-        pageRefresh.finishLoadmore();
-        if (clickType) {
+        if (pageCount != 1) {
+            if (ListUtils.getSize(settlementList) == 0) {
+                toast("");
+            }
+            mSettlementAdapter.addData(settlementList);
+        } else {
             if (ListUtils.getSize(settlementList) == 0) {
                 showEmpty();
             }
             mSettlementAdapter.setSettlementList(settlementList);
-            clickType = false;
-        } else {
-            mSettlementAdapter.addData(settlementList);
         }
     }
 

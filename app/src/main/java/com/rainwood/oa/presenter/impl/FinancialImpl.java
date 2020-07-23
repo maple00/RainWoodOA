@@ -1,8 +1,10 @@
 package com.rainwood.oa.presenter.impl;
 
 import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
+import com.rainwood.oa.model.domain.BalanceDetailData;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
+import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.Reimbursement;
@@ -76,6 +78,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
      *
      * @param staffId    员工id
      * @param origin     来源
+     * @param direction  收入/支出
      * @param classify   分类
      * @param startTime  开始时间
      * @param endTime    结束时间
@@ -83,18 +86,36 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
      * @param page       页码
      */
     @Override
-    public void requestBalanceRecords(String staffId, String origin, String classify, String startTime,
+    public void requestBalanceRecords(String staffId, String origin, String direction, String classify, String startTime,
                                       String endTime, String searchText, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("stid", staffId);
         params.add("target", "全部".equals(origin) ? "" : origin);
-        params.add("direction", classify);
+        params.add("direction", "全部".equals(direction) ? "" : direction);
+        params.add("type", "全部".equals(classify) ? "" : classify);
         params.add("startDay", startTime);
         params.add("endDay", endTime);
         params.add("text", searchText);
-        LogUtils.d("sxs", "-- start ------ " + startTime + "-------endTime -----" + endTime);
-        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=home&page=" + page, params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=home&page=" + page, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mFinancialCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+                try {
+                    List<BalanceRecord> balanceRecordList = JsonParser.parseJSONArray(BalanceRecord.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("profit"));
+                    mFinancialCallbacks.getBalanceRecords(balanceRecordList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -105,6 +126,33 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=search", params, this);
+    }
+
+    @Override
+    public void requestBalanceDetail(String recordId) {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", recordId);
+        OkHttp.post(Constants.BASE_URL + "cla=profit&fun=detail", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mFinancialCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+
+                try {
+                    BalanceDetailData balanceDetailData = JsonParser.parseJSONObject(BalanceDetailData.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("profit"));
+                    mFinancialCallbacks.getBalanceDetailData(balanceDetailData);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -139,21 +187,30 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
 
     /**
      * 收支曲线 -- 按年
+     * @param startYear
+     * @param endYear
      */
     @Override
-    public void requestBalanceByYear() {
+    public void requestBalanceByYear(String startYear, String endYear) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        params.add("startYear", startYear);
+        params.add("endYear", endYear);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=profitYear", params, this);
     }
 
     /**
      * 员工数曲线图 ---
+     *
+     * @param startMonth
+     * @param endMonth
      */
     @Override
-    public void requestStaffNum() {
+    public void requestStaffNum(String startMonth, String endMonth) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        params.add("startMoon", startMonth);
+        params.add("endMoon", endMonth);
         OkHttp.post(Constants.BASE_URL + "cla=profit&fun=staffNum", params, this);
     }
 
@@ -168,6 +225,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=cost&fun=detail", params, this);
     }
+
 
     /**
      * 团队基金
@@ -223,6 +281,8 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
+
         if (!(result.code() == 200)) {
             mFinancialCallbacks.onError();
             return;
@@ -253,6 +313,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
             try {
                 List<Reimbursement> reimbursementList = JsonParser.parseJSONArray(Reimbursement.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
+                // TODO: null Exception
                 mFinancialCallbacks.getReimburseData(reimbursementList);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -303,16 +364,6 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                 e.printStackTrace();
             }
         }
-        // 收支记录列表
-        else if (result.url().contains("cla=profit&fun=home")) {
-            try {
-                List<BalanceRecord> balanceRecordList = JsonParser.parseJSONArray(BalanceRecord.class,
-                        JsonParser.parseJSONObjectString(result.body()).getString("profit"));
-                mFinancialCallbacks.getBalanceRecords(balanceRecordList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
         // 收支记录列表-- condition
         else if (result.url().contains("cla=profit&fun=search")) {
             try {
@@ -327,17 +378,25 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                     originList.add(item);
                 }
                 // 分类
-                List<ManagerMain> balanceTypeList = JsonParser.parseJSONArray(ManagerMain.class, JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(result.body())
-                        .getString("search")).getString("direction"));
-                for (ManagerMain main : balanceTypeList) {
-                    main.setHasSelected(false);
+                List<ManagerMain> balanceTypeList = JsonParser.parseJSONArray(ManagerMain.class,
+                        JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(result.body())
+                                .getString("search")).getString("direction"));
+                ManagerMain main = new ManagerMain();
+                main.setName("全部");
+                balanceTypeList.add(0, main);
+                for (ManagerMain managerMain : balanceTypeList) {
+                    managerMain.setHasSelected(false);
+                    IconAndFont font = new IconAndFont();
+                    font.setName("全部");
+                    if (ListUtils.getSize(managerMain.getArray()) != 0) {
+                        managerMain.getArray().add(0, font);
+                    }
                 }
                 balanceTypeList.get(0).setHasSelected(true);
                 mFinancialCallbacks.getInOutComeData(originList, balanceTypeList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
         // 分类统计数据
         else if (result.url().contains("cla=profit&fun=profitTotal")) {

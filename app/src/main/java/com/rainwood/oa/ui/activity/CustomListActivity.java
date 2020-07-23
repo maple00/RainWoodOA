@@ -7,6 +7,9 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +34,7 @@ import com.rainwood.oa.ui.adapter.CustomListFilterAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
@@ -46,6 +50,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
@@ -64,14 +69,18 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     @ViewInject(R.id.ll_search_view)
-    private LinearLayout searchView;
-    @ViewInject(R.id.tv_search_tips)
-    private TextView searchTipsView;
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
     @ViewInject(R.id.gti_status)
     private GroupTextIcon mStatus;
     @ViewInject(R.id.gti_head_man)
-    private GroupTextIcon mHeadMan;
+    private GroupTextIcon mHeadManView;
     @ViewInject(R.id.gti_area)
     private GroupTextIcon mArea;
     @ViewInject(R.id.gti_selected_filter)
@@ -110,6 +119,15 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     private RecyclerView mScreenAllView;
     private List<CustomScreenAll> mCustomListConditionList;
     private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
+    private String mState;
+    private String mOrigin;
+    private String mSorting;
+    private String mIntroduceMan;
+    private String mHeadMan;
+    private String mProvince;
+    private String mCity;
+    private String mCountry;
 
     @Override
     protected int getLayoutResId() {
@@ -143,8 +161,8 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @Override
     protected void loadData() {
         // 从这里请求数据 -------- 默认从第一页开始加载
-        netRequestCustomList("", "", "", "",
-                "", "", "");
+        netRequestCustomList(
+        );
         // request condition
         mCustomListPresenter.requestStateCondition();
         mCustomListPresenter.requestCustomCondition();
@@ -154,11 +172,10 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     /**
      * 请求客户列表
      */
-    private void netRequestCustomList(String headMan, String introduceMan, String origin, String sorting,
-                                      String province, String city, String area) {
+    private void netRequestCustomList() {
         showLoading();
-        mCustomListPresenter.requestALlCustomData(mKeyWord, headMan, introduceMan, "",
-                origin, province, city, area, sorting, pageCount = 1);
+        mCustomListPresenter.requestALlCustomData(mKeyWord, mHeadMan, mIntroduceMan, mState,
+                mOrigin, mProvince, mCity, mCountry, mSorting, pageCount = 1);
     }
 
     @Override
@@ -172,9 +189,9 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 stateConditionPopDialog(mStateList, mStatus);
             }
         });
-        mHeadMan.setOnItemClick(text -> {
+        mHeadManView.setOnItemClick(text -> {
             selectedHeadFlag = !selectedHeadFlag;
-            mHeadMan.setRightIcon(selectedHeadFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+            mHeadManView.setRightIcon(selectedHeadFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedHeadFlag ? this.getColor(R.color.colorPrimary) : this.getColor(R.color.fontColor));
             if (selectedHeadFlag) {
                 toast(text);
@@ -204,7 +221,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 if (mCustomListPresenter != null) {
-                    mCustomListPresenter.requestALlCustomData("", "", "", "",
+                    mCustomListPresenter.requestALlCustomData("", "", "", mState,
                             "", "", "", "", "", ++pageCount);
                 }
             }
@@ -223,13 +240,9 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    searchView.setVisibility(View.GONE);
-                    mKeyWord = "";
-                } else {
-                    searchView.setVisibility(View.VISIBLE);
-                    netRequestCustomList("", "", "", "", "", "", "");
-                }
+                mKeyWord = s.toString();
+                mCustomListPresenter.requestALlCustomData(mKeyWord, mHeadMan, mIntroduceMan, mState, mOrigin,
+                        mProvince, mCity, mCountry, mSorting, pageCount = 1);
             }
         });
     }
@@ -246,18 +259,29 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     }
 
     @SingleClick
-    @OnClick({R.id.iv_search, R.id.iv_page_back})
+    @OnClick({R.id.iv_search, R.id.iv_page_back, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "staffManager");
-                intent.putExtra("title", "客户列表");
-                intent.putExtra("tips", "请输入公司名称");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入公司名称");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
@@ -266,6 +290,9 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     @Override
     public void getAllCustomList(List customList) {
         showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
         // 拿到客户列表
         if (pageCount != 1) {
             if (pagerRefresh != null) {
@@ -274,12 +301,17 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             toast("加载了" + ListUtils.getSize(customList) + "条数据");
             mCustomAdapter.addData(customList);
         } else {
+            if (ListUtils.getSize(customList) == 0) {
+                showEmpty();
+                return;
+            }
             mCustomAdapter.setList(customList);
         }
     }
 
     @Override
     public void getStateCondition(List<SelectedItem> stateList) {
+        Collections.reverse(stateList);
         mStateList = stateList;
     }
 
@@ -344,7 +376,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
     }
 
     /**
-     * 类型选择
+     * 客户状态查询
      */
     private void stateConditionPopDialog(List<SelectedItem> stateList, GroupTextIcon targetGTI) {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
@@ -356,6 +388,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -373,17 +406,19 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             mStatusPopWindow.dismiss();
             // TODO: 状态查询
+            mState = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             showLoading();
-            mCustomListPresenter.requestALlCustomData(mKeyWord, "", "", item.getName(),
-                    "", "", "", "", "", pageCount = 1);
+            mCustomListPresenter.requestALlCustomData(mKeyWord, mHeadMan, mIntroduceMan,
+                    mState, mOrigin, mProvince, mCity, mCountry, mSorting, pageCount = 1);
         });
     }
 
@@ -459,6 +494,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
             @Override
             public void afterTextChanged(Editable s) {
+                //  showDialog();
                 if (!TextUtils.isEmpty(s)) {
                     mCityEt.setVisibility(View.VISIBLE);
                     mAreaEt.setVisibility(View.GONE);
@@ -470,7 +506,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                     mCityEt.setVisibility(View.GONE);
                     mAreaEt.setVisibility(View.GONE);
                 }
-                showDialog();
             }
         });
         mCityEt.addTextChangedListener(new TextWatcher() {
@@ -485,6 +520,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
             @Override
             public void afterTextChanged(Editable s) {
+                // showDialog();
                 if (!TextUtils.isEmpty(s)) {
                     mAreaEt.setVisibility(View.VISIBLE);
                     // TODO: 请求区
@@ -496,7 +532,6 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                         mAreaEt.setVisibility(View.GONE);
                     }
                 }
-                showDialog();
             }
         });
 
@@ -537,11 +572,12 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             mAreaEt.setText(null);
             mAreaEt.setHint(null);
             // 清空筛选
-            if (isShowDialog()){
+            if (isShowDialog()) {
                 hideDialog();
             }
-            netRequestCustomList("", "", "", "", "", "", "");
             areaPopWindow.dismiss();
+            showLoading();
+            netRequestCustomList();
         });
         mConfirmView.setOnClickListener(v -> {
             // TODO: 查询客户列表
@@ -551,9 +587,11 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
                 return;
             }
             //toast(mProvinceEt.getText() + "-" + mCityEt.getText() + "-" + mAreaEt.getText());
+            mProvince = mProvinceEt.getText().toString().trim();
+            mCity = mCityEt.getText().toString().trim();
+            mCountry = mAreaEt.getHint().toString().trim();
             showLoading();
-            netRequestCustomList("", "", "", "", mProvinceEt.getText().toString().trim(),
-                    mCityEt.getText().toString().trim(), mAreaEt.getHint().toString().trim());
+            netRequestCustomList();
             areaPopWindow.dismiss();
         });
     }
@@ -595,28 +633,24 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             }
             screenAllPopWindow.dismiss();
             // TODO: 清空筛选
-            netRequestCustomList("", "", "", "", "", "", "");
+            netRequestCustomList();
         });
         mConfirmView.setOnClickListener(v -> {
-            String headMan = "";
-            String introduceMan = "";
-            String origin = "";
-            String sorting = "";
             for (CustomScreenAll screenAll : mCustomListConditionList) {
                 for (CustomScreenAll.InnerCustomScreen customScreen : screenAll.getArray()) {
                     if (customScreen.isSelected()) {
                         switch (screenAll.getTitle()) {
                             case "负责人":
-                                headMan = customScreen.getName();
+                                mHeadMan = customScreen.getName();
                                 break;
                             case "介绍人":
-                                introduceMan = customScreen.getName();
+                                mIntroduceMan = customScreen.getName();
                                 break;
                             case "客户来源":
-                                origin = customScreen.getName();
+                                mOrigin = customScreen.getName();
                                 break;
                             case "排序方式":
-                                sorting = customScreen.getName();
+                                mSorting = customScreen.getName();
                                 break;
                         }
                     }
@@ -624,7 +658,7 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
             }
             screenAllPopWindow.dismiss();
             // TODO: 请求接口
-            netRequestCustomList(headMan, introduceMan, origin, sorting, "", "", "");
+            netRequestCustomList();
         });
         // 设置数据
         CustomListFilterAdapter customListFilterAdapter = new CustomListFilterAdapter();

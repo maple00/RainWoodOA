@@ -65,6 +65,7 @@ public final class SystemUtil {
     /**
      * 获取手机IMEI(需要“android.permission.READ_PHONE_STATE”权限)
      * Android 版本文件读取限制，获取不到了
+     * android 10之后彻底获取不到了
      * @return 手机IMEI
      */
     @SuppressLint("HardwareIds")

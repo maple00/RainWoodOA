@@ -18,6 +18,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 禁用返回键-->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <!-- 网络-->
+    <uses-permission android:name="android.permission.NETWORK_PROVIDER"/>
 
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
@@ -62,6 +64,9 @@
             android:label="@string/attendance_title"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
+
+        <!-- 网络诊断-->
+        <receiver android:name=".network.receiver.NetReceiver"/>
 
         <!--
         四种启动模式的区别和常用场景：
@@ -217,9 +222,23 @@
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
 
+        <!-- 客户记录详情 CustomRecordDetailActivity-->
+        <activity
+            android:name=".ui.activity.CustomRecordDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
         <!-- 开票申请  InvoiceApplyActivity-->
         <activity
             android:name=".ui.activity.InvoiceApplyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 开票详情 InvoiceDetailActivity-->
+        <activity
+            android:name=".ui.activity.InvoiceDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
@@ -379,6 +398,13 @@
         <!-- 收支详情 PaymentDetailActivity-->
         <activity
             android:name=".ui.activity.PaymentDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 收支平衡详情 BalanceRecordDetailAty-->
+        <activity
+            android:name=".ui.activity.BalanceRecordDetailAty"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />
@@ -595,6 +621,13 @@
         <!-- 加班申请 MineOverTimeApplyActivity-->
         <activity
             android:name=".ui.activity.MineOverTimeApplyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified" />
+
+        <!-- 成果提交 CustomRecordDetailActivity-->
+        <activity
+            android:name=".ui.activity.CommitMineAchievementAty"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified" />

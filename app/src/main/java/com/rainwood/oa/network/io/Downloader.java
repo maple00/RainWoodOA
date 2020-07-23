@@ -1,5 +1,6 @@
 package com.rainwood.oa.network.io;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -398,6 +399,7 @@ public class Downloader {
      */
     private Handler handler = new Handler() {
 
+        @SuppressLint("HandlerLeak")
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

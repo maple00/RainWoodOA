@@ -27,6 +27,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
 
     /**
      * 请求日志列表
+     *
      * @param searchText
      * @param typeOne
      * @param typeTwo
@@ -76,6 +77,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mLogcatCallbacks.onError();
             return;

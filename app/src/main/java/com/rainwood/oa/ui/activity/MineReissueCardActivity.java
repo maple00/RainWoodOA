@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineRecords;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.MineRecordsAdapter;
@@ -25,6 +26,7 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ import java.util.List;
  * @Date: 2020/6/12 10:58
  * @Desc: 我的补卡记录
  */
-public final class MineReissueCardActivity extends BaseActivity implements IMineCallbacks {
+public final class MineReissueCardActivity extends BaseActivity implements IMineCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
@@ -41,6 +43,8 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     @ViewInject(R.id.line_all)
     private View lineAll;
     @ViewInject(R.id.line_through)
@@ -103,6 +107,7 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
 
     @Override
     protected void loadData() {
+        showDialog();
         mMinePresenter.requestMineReissueCards(mState, "", "", pageCount);
     }
 
@@ -174,6 +179,7 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 setTextBold(true, false, false, false);
                 setLineVisible(View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
                 mState = "";
+                showDialog();
                 mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_through:
@@ -181,6 +187,7 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 setTextBold(false, true, false, false);
                 setLineVisible(View.INVISIBLE, View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
                 mState = "已通过";
+                showDialog();
                 mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_audit:
@@ -188,6 +195,7 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 setTextBold(false, false, true, false);
                 setLineVisible(View.INVISIBLE, View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
                 mState = "审核中";
+                showDialog();
                 mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_draft:
@@ -195,6 +203,7 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 setTextBold(false, false, false, true);
                 setLineVisible(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
                 mState = "草稿";
+                showDialog();
                 mMinePresenter.requestMineReissueCards("mState", "", "", pageCount = 1);
                 break;
         }
@@ -236,15 +245,25 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
 
     @Override
     public void getMineReissueRecords(List<MineRecords> reissueList) {
-        if (ListUtils.getSize(reissueList) == 0) {
-            toast("当前记录为空");
+        if (isShowDialog()) {
+            hideDialog();
         }
+        showComplete();
         pageRefresh.finishLoadmore();
-        mMineRecordsAdapter.setLoaded(pageCount == 1);
         if (pageCount != 1) {
+            if (ListUtils.getSize(reissueList) == 0) {
+                pageCount--;
+                return;
+            }
             toast("加载了" + ListUtils.getSize(reissueList) + "条数据");
+            mMineRecordsAdapter.addData(reissueList);
+        } else {
+            if (ListUtils.getSize(reissueList) == 0) {
+                showEmpty();
+                return;
+            }
+            mMineRecordsAdapter.setReissueList(reissueList);
         }
-        mMineRecordsAdapter.setReissueList(reissueList);
     }
 
     @Override
@@ -261,5 +280,10 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

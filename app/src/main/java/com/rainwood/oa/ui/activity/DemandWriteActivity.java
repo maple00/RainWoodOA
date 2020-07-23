@@ -55,7 +55,7 @@ public final class DemandWriteActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        demandContent.setText(moduleMenu);
+        demandContent.setHint(moduleMenu);
     }
 
     @OnClick({R.id.iv_page_back, R.id.tv_page_right_title})

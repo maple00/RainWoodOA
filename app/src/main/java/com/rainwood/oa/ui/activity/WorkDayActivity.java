@@ -82,7 +82,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         mCalendarView.setOnYearChangeListener(this);
         mYear = mCalendarView.getCurYear();
         mTextMonth.setText(DateTimeUtils.getNowMonth() + "月");
-        mCurrentDay.setText(String.valueOf(mCalendarView.getCurDay()));
+        mCurrentDay.setText("今");
     }
 
     @Override

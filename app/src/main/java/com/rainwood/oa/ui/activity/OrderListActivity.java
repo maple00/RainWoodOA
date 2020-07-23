@@ -31,6 +31,7 @@ import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
@@ -46,6 +47,7 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +69,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private TextView pageTitle;
     @ViewInject(R.id.ll_search_view)
     private LinearLayout searchView;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTipsView;
     // content
     @ViewInject(R.id.cl_order_list_parent)
@@ -104,6 +106,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private String mOrderSorting;
     private String mStaffId;
     private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
 
     @Override
@@ -310,6 +313,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
 
     @Override
     public void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sortList) {
+        Collections.reverse(stateList);
         mStateList = stateList;
         mSortList = sortList;
     }
@@ -327,6 +331,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -348,19 +353,23 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             // TODO: 查询订单状态列表
-            mOrderState = item.getName();
+            mOrderState = selectedItem.getName();
             mStatusPopWindow.dismiss();
-            netRequestOrderList(mKeyWord, mOrderState, "");
+            netRequestOrderList(mKeyWord, "全部".equals(mOrderState) ? "" : mOrderState, "");
         });
     }
 
+    /**
+     * 排序
+     */
     private void defaultSortConditionPopDialog() {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
@@ -369,8 +378,11 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(1);
+                    contentList.setVisibility(View.VISIBLE);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
+                    TextSelectedItemFlowLayout itemFlowLayout = view.findViewById(R.id.tfl_text);
+                    itemFlowLayout.setVisibility(View.GONE);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })

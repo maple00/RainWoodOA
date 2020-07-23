@@ -7,7 +7,9 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,8 +33,10 @@ import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.utils.TransactionUtil;
@@ -42,9 +46,11 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
@@ -53,7 +59,7 @@ import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 /**
  * @Author: sxs
  * @Time: 2020/5/30 17:41
- * @Desc: 客户开票记录
+ * @Desc: 客户开票记录、财务管理开票记录
  */
 public final class InvoiceRecordActivity extends BaseActivity implements IRecordCallbacks, StatusAction {
 
@@ -68,13 +74,17 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private TextView pageTitle;
     @ViewInject(R.id.ll_search_view)
     private LinearLayout searchTopView;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTipsView;
+    @ViewInject(R.id.tv_page_menu_title)
+    private TextView pageMenuTitle;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
     @ViewInject(R.id.rv_invoice_records)
     private RecyclerView invoiceRecordView;
-    // @ViewInject(R.id.nsv_invoice_record)
-    // private NestedScrollView invoiceRecordNest;
     @ViewInject(R.id.ll_status_invoice)
     private LinearLayout invoiceStatus;
     @ViewInject(R.id.ll_type_invoice)
@@ -111,7 +121,6 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @ViewInject(R.id.hl_status_hint)
     private HintLayout mHintLayout;
 
-
     private IRecordManagerPresenter mRecordManagerPresenter;
     private InvoiceRecordAdapter mInvoiceRecordAdapter;
     private FinancialInvoiceRecordAdapter mFinancialInvoiceRecordAdapter;
@@ -131,6 +140,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private String mStartTime;
     private String mEndTime;
     private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -140,29 +150,31 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     protected void initView() {
         StatusBarUtils.immersive(this);
-        pageTitle.setText(title);
         // 设置布局管理器
         invoiceRecordView.setLayoutManager(new GridLayoutManager(this, 1));
-        invoiceRecordView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
+        invoiceRecordView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
+                FontSwitchUtil.dip2px(this, 10f)));
         if (Constants.CUSTOM_ID == null) {
             // 财务管理 --- 开票记录
+            pageTitle.setText(title);
             pageTop.setVisibility(View.GONE);
             pageTopSearch.setVisibility(View.VISIBLE);
-            StatusBarUtils.setPaddingSmart(this, pageTopSearch);
             applyInvoice.setVisibility(View.GONE);
             invoiceStatus.setVisibility(View.VISIBLE);
             invoiceType.setVisibility(View.VISIBLE);
+            StatusBarUtils.setPaddingSmart(this, pageTopSearch);
             // 适配器
             mFinancialInvoiceRecordAdapter = new FinancialInvoiceRecordAdapter();
             invoiceRecordView.setAdapter(mFinancialInvoiceRecordAdapter);
         } else {
             // 客户详情 -- 开票记录
+            pageMenuTitle.setText(title);
             pageTop.setVisibility(View.VISIBLE);
             pageTopSearch.setVisibility(View.GONE);
-            StatusBarUtils.setPaddingSmart(this, pageTop);
             invoiceStatus.setVisibility(View.GONE);
             invoiceType.setVisibility(View.GONE);
             applyInvoice.setVisibility(View.VISIBLE);
+            StatusBarUtils.setPaddingSmart(this, pageTop);
             // 适配器
             mInvoiceRecordAdapter = new InvoiceRecordAdapter();
             invoiceRecordView.setAdapter(mInvoiceRecordAdapter);
@@ -206,10 +218,15 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     protected void initEvent() {
         if (Constants.CUSTOM_ID != null) {
+            // 客户详情开票记录
             int measuredHeight = applyOpen.getMinHeight();
             pageRefresh.setPadding(0, 0, 0, measuredHeight + 70);
+        } else {
+            // 管理 --- 开票记录
+            mFinancialInvoiceRecordAdapter.setInvoiceListener((invoiceRecord, position) ->
+                    PageJumpUtil.page2InvoiceDetail(InvoiceRecordActivity.this, InvoiceDetailActivity.class,
+                            "开票详情", invoiceRecord.getId(), invoiceRecord.getOpen()));
         }
-
         departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(InvoiceRecordActivity.this,
                 ContactsActivity.class, "通讯录", ""),
                 CHOOSE_STAFF_REQUEST_SIZE));
@@ -238,6 +255,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                     .setCancel(getString(R.string.common_text_clear_screen))
                     .setAutoDismiss(false)
                     //.setIgnoreDay()
+                    .setEndTime(mEndTime)
+                    .setStartTime(mStartTime)
                     .setCanceledOnTouchOutside(false)
                     .setListener(new StartEndDateDialog.OnListener() {
                         @Override
@@ -270,7 +289,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 if (Constants.CUSTOM_ID == null) {
                     mRecordManagerPresenter.requestInvoiceRecords(selectedAllocated, mStaffId,
                             mSeller, mAllocated, mStartTime, mEndTime, (++pageCount));
-                }else {
+                } else {
                     mRecordManagerPresenter.requestCustomInvoiceRecords(Constants.CUSTOM_ID, ++pageCount);
                 }
             }
@@ -308,7 +327,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 mStaffId = data.getStringExtra("staffId");
                 String position = data.getStringExtra("position");
 
-                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
                 if (Constants.CUSTOM_ID == null) {
                     netRequestData("", mStaffId, "", "", "", "");
                 }
@@ -323,8 +342,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated,
-            R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_menu, R.id.btn_apply_open, R.id.tv_query_all, R.id.tv_allocated,
+            R.id.tv_un_allocated, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
@@ -365,13 +384,22 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 }
                 break;
             case R.id.iv_search:
-                toast("搜索 -- 暂无接口字段");
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra("pageFlag", "invoiceRecord");
-                intent.putExtra("title", "开票记录");
-                intent.putExtra("tips", "请输入备注信息");
-                startActivityForResult(intent, PAGE_SEARCH_CODE);
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入备注信息");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
         }
     }
 
@@ -413,11 +441,11 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     public void getCustomInvoiceRecords(List<InvoiceRecord> invoiceRecordList) {
         showComplete();
         pageRefresh.finishLoadmore();
-        if (pageCount != 1){
+        if (pageCount != 1) {
             toast("为您加载了" + ListUtils.getSize(invoiceRecordList) + "条数据");
             mInvoiceRecordAdapter.addData(invoiceRecordList);
-        }else {
-            if (ListUtils.getSize(invoiceRecordList) ==0){
+        } else {
+            if (ListUtils.getSize(invoiceRecordList) == 0) {
                 showEmpty();
             }
             mInvoiceRecordAdapter.setRecordList(invoiceRecordList);
@@ -452,6 +480,8 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
      */
     @Override
     public void getInvoiceCondition(List<SelectedItem> saleList, List<SelectedItem> typeList) {
+        Collections.reverse(saleList);
+        Collections.reverse(typeList);
         mFinancialSaleList = saleList;
         mFinancialTypeList = typeList;
     }
@@ -469,6 +499,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -488,19 +519,20 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             mSeller = "";
             mAllocated = "";
             if (SELECTED_TYPE_FLAG) {
-                mAllocated = item.getName();
+                mAllocated = selectedItem.getName();
             }
             if (SELECTED_SALE_FLAG) {
-                mSeller = item.getName();
+                mSeller = selectedItem.getName();
             }
             if (Constants.CUSTOM_ID == null) {
                 netRequestData("", "", mSeller, mAllocated, "", "");

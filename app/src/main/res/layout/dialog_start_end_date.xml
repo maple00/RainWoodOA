@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_start_time"
                 style="@style/DateEditText"
                 android:layout_width="match_parent"
@@ -34,7 +34,7 @@
 
         </LinearLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_end_time"
                 style="@style/DateEditText"
                 android:layout_width="match_parent"
@@ -107,7 +107,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_clear_screen"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
             android:textColor="@color/green05"
             android:textSize="15sp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_confirm"
             style="@style/ButtonStyle"
             android:layout_width="0dp"

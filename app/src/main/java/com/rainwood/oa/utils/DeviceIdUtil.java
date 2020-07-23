@@ -1,28 +1,13 @@
 package com.rainwood.oa.utils;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
-import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -32,181 +17,166 @@ import java.util.UUID;
  */
 public final class DeviceIdUtil {
 
-    private static final String TAG = DeviceIdUtil.class.getSimpleName();
-
-    private static final String TEMP_DIR = "system_config";
-    private static final String TEMP_FILE_NAME = "system_file";
-    private static final String TEMP_FILE_NAME_MIME_TYPE = "application/octet-stream";
-    private static final String SP_NAME = "device_info";
-    private static final String SP_KEY_DEVICE_ID = "device_id";
-
+    /**
+     * 获得设备硬件标识
+     *
+     * @param context 上下文
+     * @return 设备硬件标识
+     */
     public static String getDeviceId(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        String deviceId = sharedPreferences.getString(SP_KEY_DEVICE_ID, null);
-        if (!TextUtils.isEmpty(deviceId)) {
-            return deviceId;
+        StringBuilder sbDeviceId = new StringBuilder();
+
+        //获得设备默认IMEI（>=6.0 需要ReadPhoneState权限）
+        String imei = getIMEI(context);
+        //获得AndroidId（无需权限）
+        String androidid = getAndroidId(context);
+        //获得设备序列号（无需权限）
+        String serial = getSERIAL();
+        //获得硬件uuid（根据硬件相关属性，生成uuid）（无需权限）
+        String uuid = getDeviceUUID().replace("-", "");
+
+        //追加imei
+        if (imei != null && imei.length() > 0) {
+            sbDeviceId.append(imei);
+            sbDeviceId.append("|");
         }
-        deviceId = getIMEI(context);
-        if (TextUtils.isEmpty(deviceId)) {
-            deviceId = createUUID(context);
+        //追加androidid
+        if (androidid != null && androidid.length() > 0) {
+            sbDeviceId.append(androidid);
+            sbDeviceId.append("|");
         }
-        sharedPreferences.edit()
-                .putString(SP_KEY_DEVICE_ID, deviceId)
-                .apply();
-        return deviceId;
+        //追加serial
+        if (serial != null && serial.length() > 0) {
+            sbDeviceId.append(serial);
+            sbDeviceId.append("|");
+        }
+        //追加硬件uuid
+        if (uuid != null && uuid.length() > 0) {
+            sbDeviceId.append(uuid);
+        }
+
+        //生成SHA1，统一DeviceId长度
+        if (sbDeviceId.length() > 0) {
+            try {
+                byte[] hash = getHashByString(sbDeviceId.toString());
+                String sha1 = bytesToHex(hash);
+                if (sha1 != null && sha1.length() > 0) {
+                    //返回最终的DeviceId
+                    return sha1;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        //如果以上硬件标识数据均无法获得，
+        //则DeviceId默认使用系统随机数，这样保证DeviceId不为空
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
-    private static String createUUID(Context context) {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Uri externalContentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
-            ContentResolver contentResolver = context.getContentResolver();
-            String[] projection = new String[]{
-                    MediaStore.Downloads._ID
-            };
-            String selection = MediaStore.Downloads.TITLE + "=?";
-            String[] args = new String[]{
-                    TEMP_FILE_NAME
-            };
-            Cursor query = contentResolver.query(externalContentUri, projection, selection, args, null);
-            if (query != null && query.moveToFirst()) {
-                Uri uri = ContentUris.withAppendedId(externalContentUri, query.getLong(0));
-                query.close();
-
-                InputStream inputStream = null;
-                BufferedReader bufferedReader = null;
-                try {
-                    inputStream = contentResolver.openInputStream(uri);
-                    if (inputStream != null) {
-                        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        uuid = bufferedReader.readLine();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (bufferedReader != null) {
-                        try {
-                            bufferedReader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (inputStream != null) {
-                        try {
-                            inputStream.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Downloads.TITLE, TEMP_FILE_NAME);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, TEMP_FILE_NAME_MIME_TYPE);
-                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, TEMP_FILE_NAME);
-                contentValues.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + File.separator + TEMP_DIR);
-
-                Uri insert = contentResolver.insert(externalContentUri, contentValues);
-                if (insert != null) {
-                    OutputStream outputStream = null;
-                    try {
-                        outputStream = contentResolver.openOutputStream(insert);
-                        if (outputStream == null) {
-                            return uuid;
-                        }
-                        outputStream.write(uuid.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (outputStream != null) {
-                            try {
-                                outputStream.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            File externalDownloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File applicationFileDir = new File(externalDownloadsDir, TEMP_DIR);
-            if (!applicationFileDir.exists()) {
-                if (!applicationFileDir.mkdirs()) {
-                    Log.e(TAG, "文件夹创建失败: " + applicationFileDir.getPath());
-                }
-            }
-            File file = new File(applicationFileDir, TEMP_FILE_NAME);
-            if (!file.exists()) {
-                FileWriter fileWriter = null;
-                try {
-                    if (file.createNewFile()) {
-                        fileWriter = new FileWriter(file, false);
-                        fileWriter.write(uuid);
-                    } else {
-                        Log.e(TAG, "文件创建失败：" + file.getPath());
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "文件创建失败：" + file.getPath());
-                    e.printStackTrace();
-                } finally {
-                    if (fileWriter != null) {
-                        try {
-                            fileWriter.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else {
-                FileReader fileReader = null;
-                BufferedReader bufferedReader = null;
-                try {
-                    fileReader = new FileReader(file);
-                    bufferedReader = new BufferedReader(fileReader);
-                    uuid = bufferedReader.readLine();
-
-                    bufferedReader.close();
-                    fileReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (bufferedReader != null) {
-                        try {
-                            bufferedReader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (fileReader != null) {
-                        try {
-                            fileReader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-
-        return uuid;
-    }
-
+    //需要获得READ_PHONE_STATE权限，>=6.0，默认返回null
+    @SuppressLint({"MissingPermission", "HardwareIds"})
     private static String getIMEI(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return null;
-        }
         try {
-            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (telephonyManager == null) {
-                return null;
+            TelephonyManager tm = (TelephonyManager)
+                    context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (tm != null) {
+                return tm.getDeviceId();
             }
-            @SuppressLint({"MissingPermission", "HardwareIds"}) String imei = telephonyManager.getDeviceId();
-            return imei;
-        } catch (Exception e) {
-            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+        return "";
+    }
+
+    /**
+     * 获得设备的AndroidId
+     *
+     * @param context 上下文
+     * @return 设备的AndroidId
+     */
+    @SuppressLint("HardwareIds")
+    private static String getAndroidId(Context context) {
+        try {
+            return Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * 获得设备序列号（如：WTK7N16923005607）, 个别设备无法获取
+     *
+     * @return 设备序列号
+     */
+    private static String getSERIAL() {
+        try {
+            return Build.SERIAL;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * 获得设备硬件uuid
+     * 使用硬件信息，计算出一个随机数
+     *
+     * @return 设备硬件uuid
+     */
+    private static String getDeviceUUID() {
+        try {
+            String dev = "3883756" +
+                    Build.BOARD.length() % 10 +
+                    Build.BRAND.length() % 10 +
+                    Build.DEVICE.length() % 10 +
+                    Build.HARDWARE.length() % 10 +
+                    Build.ID.length() % 10 +
+                    Build.MODEL.length() % 10 +
+                    Build.PRODUCT.length() % 10 +
+                    Build.SERIAL.length() % 10;
+            return new UUID(dev.hashCode(),
+                    Build.SERIAL.hashCode()).toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * 取SHA1
+     *
+     * @param data 数据
+     * @return 对应的hash值
+     */
+    private static byte[] getHashByString(String data) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+            messageDigest.reset();
+            messageDigest.update(data.getBytes("UTF-8"));
+            return messageDigest.digest();
+        } catch (Exception e) {
+            return "".getBytes();
+        }
+    }
+
+    /**
+     * 转16进制字符串
+     *
+     * @param data 数据
+     * @return 16进制字符串
+     */
+    private static String bytesToHex(byte[] data) {
+        StringBuilder sb = new StringBuilder();
+        String stmp;
+        for (int n = 0; n < data.length; n++) {
+            stmp = (Integer.toHexString(data[n] & 0xFF));
+            if (stmp.length() == 1)
+                sb.append("0");
+            sb.append(stmp);
+        }
+        return sb.toString().toUpperCase(Locale.CHINA);
     }
 }

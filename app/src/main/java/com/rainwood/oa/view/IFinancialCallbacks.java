@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
+import com.rainwood.oa.model.domain.BalanceDetailData;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
@@ -98,4 +99,10 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * @param reimbursement
      */
     default void getReimburseDetail(MineReimbursement reimbursement){}
+
+    /**
+     * 收支记录详情
+     * @param balanceDetailData
+     */
+    default void getBalanceDetailData(BalanceDetailData balanceDetailData){};
 }

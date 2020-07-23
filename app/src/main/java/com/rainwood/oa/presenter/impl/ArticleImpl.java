@@ -27,6 +27,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
 
     /**
      * 沟通技巧
+     *
      * @param searchText
      * @param pageCount
      */
@@ -40,11 +41,14 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
 
     /**
      * 管理制度
+     *
+     * @param title
      */
     @Override
-    public void requestManagerSystemData() {
+    public void requestManagerSystemData(String title) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        params.add("title", title);
         OkHttp.post(Constants.BASE_URL + "cla=article&fun=adSystem", params, this);
     }
 
@@ -58,6 +62,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
 
     /**
      * 帮助中心
+     *
      * @param searchText
      * @param pageCount
      */
@@ -125,7 +130,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
             }
         }
         // 管理制度
-        else if (result.url().contains("cla=article&fun=adSystem")){
+        else if (result.url().contains("cla=article&fun=adSystem")) {
             try {
                 List<Article> skillList = JsonParser.parseJSONArray(Article.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("article"));
@@ -135,7 +140,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
             }
         }
         // 帮助中心
-        else if (result.url().contains("cla=article&fun=adHelp")){
+        else if (result.url().contains("cla=article&fun=adHelp")) {
             try {
                 List<Article> skillList = JsonParser.parseJSONArray(Article.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("article"));
@@ -149,7 +154,7 @@ public final class ArticleImpl implements IArticlePresenter, OnHttpListener {
             try {
                 Article article = JsonParser.parseJSONObject(Article.class, JsonParser.parseJSONObjectString(result.body()).getString("article"));
                 Style style = JsonParser.parseJSONObject(Style.class, JsonParser.parseJSONObjectString(result.body()).getString("style"));
-                mArticleCallbacks.getArticleDetail(article,style);
+                mArticleCallbacks.getArticleDetail(article, style);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -41,7 +41,7 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchTip;
     // content
     @ViewInject(R.id.trl_pager_refresh)
@@ -112,6 +112,7 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
                 mArticlePresenter.requestHelperData(mText, ++pageCount);
             }
         });
+        // 搜索框UI监听
         searchTip.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -125,9 +126,8 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
-                    netRequestData("");
-                }
+                mText = s.toString();
+                mArticlePresenter.requestHelperData(mText, pageCount = 1);
             }
         });
     }
@@ -144,8 +144,6 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
                     toast("请输入文章标题");
                     return;
                 }
-                mText = searchTip.getText().toString().trim();
-                netRequestData(mText);
                 break;
         }
     }
@@ -153,8 +151,16 @@ public final class HelperActivity extends BaseActivity implements IArticleCallba
     @Override
     public void getHelperData(List<Article> helperList) {
         showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        pageRefresh.finishLoadmore();
         if (pageCount != 1) {
-            pageRefresh.finishLoadmore();
+            if (ListUtils.getSize(helperList) == 0) {
+                pageCount--;
+                toast("我是有底线滴");
+                return;
+            }
             toast("加载了" + ListUtils.getSize(helperList) + "条数据");
             mHelperAdapter.addData(helperList);
         } else {

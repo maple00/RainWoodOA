@@ -238,7 +238,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <com.rainwood.oa.ui.widget.MeasureGridView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/mgv_assist_photo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -246,7 +246,6 @@
                     android:layout_marginTop="25dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="25dp"
-                    android:numColumns="3"
                     android:verticalSpacing="10dp" />
 
                 <View

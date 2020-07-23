@@ -196,6 +196,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     public void requestMineOverTimeRecords() {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        // TODO: 添加分页、条件查询
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAdd", params, this);
     }
 
@@ -206,6 +207,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     public void requestMineLeaveOutRecords() {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        // TODO: 添加分页、条件查询
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workOut", params, this);
     }
 
@@ -213,7 +215,8 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
      * 我的费用报销
      */
     @Override
-    public void requestMineReimburseData() {
+    public void requestMineReimburseData(String text, String type, String payer, String payState,
+                                         String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=cost", params, this);
@@ -352,7 +355,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
                 return;
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            LogUtils.d("sxs", "接口字段错误");
         }
         // 个人中心
         if (result.url().contains("cla=my&fun=home")) {
@@ -449,9 +452,11 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
                 List<SelectedItem> stateList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("workFlow"));
+                stateList.add(0, new SelectedItem("全部"));
                 List<SelectedItem> leaveTypeList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("type"));
+                leaveTypeList.add(0, new SelectedItem("全部"));
                 mMineCallbacks.getMineLeaveRecords(stateList, leaveTypeList);
             } catch (JSONException e) {
                 e.printStackTrace();

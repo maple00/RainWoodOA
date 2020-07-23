@@ -1,5 +1,9 @@
 package com.rainwood.oa.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * @Author: a797s
  * @Date: 2020/4/27 15:50
@@ -12,7 +16,6 @@ public final class Constants {
      */
     // public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp";
     public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
-
 
     /**
      * 无网络-What
@@ -142,4 +145,6 @@ public final class Constants {
     public static final String PERSONAL_REISSUE_CARD_DETAIL_MENU = "personalReissueCardDetail";
     public static final String KEY_BLOCK_PAGER_State = "0x1003";
     public static final String POSITION_BLOCK_PAGER_State = "0x1004";
+
+
 }

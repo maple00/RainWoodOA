@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public final class LogcatAdapter extends RecyclerView.Adapter<LogcatAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.name.setText(mLogcatList.get(position).getStaffName());
-        holder.logcat.setText(mLogcatList.get(position).getText());
+        holder.logcat.setText(Html.fromHtml(mLogcatList.get(position).getText()));
         holder.origin.setText(mLogcatList.get(position).getType());
         holder.time.setText(mLogcatList.get(position).getTime());
         // 点击事件

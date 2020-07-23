@@ -25,7 +25,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
                 android:text="回款/该订单分得"
                 android:textColor="@color/fontColor"
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:layout_marginBottom="48dp"
+                android:layout_marginBottom="24dp"
                 android:gravity="center_horizontal"
                 android:textColor="@color/fontColor"
                 android:textSize="30sp"
@@ -51,6 +51,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 app:title="备注"
+                android:layout_marginTop="24dp"
                 app:title_color="@color/labelColor"
                 app:value_color="@color/fontColor" />
 
@@ -59,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="27dp"
+                android:layout_marginTop="14dp"
                 android:layout_marginEnd="30dp"
                 app:title_color="@color/labelColor"
                 app:value_color="@color/fontColor"
@@ -69,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="27dp"
+                android:layout_marginTop="14dp"
                 android:layout_marginEnd="30dp">
 
                 <TextView

@@ -63,6 +63,7 @@ public final class MineOverTimeAdapter extends RecyclerView.Adapter<MineOverTime
                 holder.edit.setText("提交成果");
             } else {
                 holder.edit.setVisibility(View.GONE);
+                holder.delete.setVisibility(View.GONE);
             }
         }
         // 点击事件

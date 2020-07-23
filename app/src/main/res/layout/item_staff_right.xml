@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/iv_head_photo"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_default_head" />
 
@@ -22,7 +22,7 @@
         android:id="@+id/tv_staff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/iv_head_photo"
         android:text="邵雪松"
         android:textColor="@color/fontColor"
@@ -36,15 +36,15 @@
         android:layout_alignParentEnd="true"
         android:text="基2000+津1500"
         android:textColor="@color/fontColor"
-        android:textSize="10sp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_depart_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_staff"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/iv_head_photo"
         android:text="研发部-Android研发工程师"
         android:textColor="@color/colorMiddle"
@@ -55,8 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_depart_post"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="6dp"
         android:layout_toEndOf="@+id/iv_head_photo"
         app:icon="@drawable/ic_staff_phone_num"
         app:text="15847251880"

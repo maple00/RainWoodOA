@@ -43,7 +43,7 @@ public final class CustomFollowRecordActivity extends BaseActivity implements IR
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView rightPageTitle;
