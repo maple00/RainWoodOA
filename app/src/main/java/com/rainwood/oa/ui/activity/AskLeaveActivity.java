@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IMinePresenter;
@@ -72,7 +73,21 @@ public final class AskLeaveActivity extends BaseActivity implements IMineCallbac
         setRequiredValue(startTimeTv, "开始时间");
         setRequiredValue(endTimeTv, "结束时间");
         setRequiredValue(leaveReasonTv, "请假事由");
+    }
 
+    @Override
+    protected void initData() {
+        // 编辑请假申请
+        MineRecords leaveRecord = (MineRecords) getIntent().getSerializableExtra("record");
+        if (leaveRecord != null) {
+            if (leaveRecord.getTime() != null) {
+                String[] timeSpd = leaveRecord.getTime().split("~");
+                mTextStartTime.setText(timeSpd[0]);
+                mTextEndTime.setText(timeSpd[1]);
+            }
+            mTextLeaveType.setText(leaveRecord.getType());
+            mEditLeaveReason.setText(leaveRecord.getText());
+        }
     }
 
     @Override
@@ -144,6 +159,7 @@ public final class AskLeaveActivity extends BaseActivity implements IMineCallbac
                 String leaveReason = mEditLeaveReason.getText().toString().trim();
                 // TODO: 提交请假申请
                 String leaveId = RandomUtil.getItemID(20);
+                showDialog();
                 mMinePresenter.createMineLeaveRecord(leaveId, leaveType, startTime, endTime, leaveReason);
                 break;
         }
@@ -186,6 +202,24 @@ public final class AskLeaveActivity extends BaseActivity implements IMineCallbac
         for (SelectedItem item : leaveTypeList) {
             mLeaveList.add(item.getName());
         }
+    }
+
+    @Override
+    public void getLeaveResult(boolean success) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        if (success) {
+
+        }
+    }
+
+    @Override
+    public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        toast(tips);
     }
 
     @Override

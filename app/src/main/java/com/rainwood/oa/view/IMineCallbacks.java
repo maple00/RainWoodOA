@@ -128,4 +128,15 @@ public interface IMineCallbacks extends IBaseCallback {
      * @param leaveTypeList
      */
     default void getMineLeaveRecords(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList){}
+
+    /**
+     * 请假申请结果
+     */
+    default void getLeaveResult(boolean success){};
+
+    /**
+     * 删除请假记录回调
+     * @param success
+     */
+    default void getDelLeaveResults(boolean success){};
 }

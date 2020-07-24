@@ -26,6 +26,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
+import com.rainwood.oa.model.domain.HomeSalaryDesc;
 import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.okhttp.NetworkUtils;
@@ -33,7 +34,8 @@ import com.rainwood.oa.presenter.IHomePresenter;
 import com.rainwood.oa.ui.activity.LoginActivity;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
-import com.rainwood.oa.ui.widget.MyMarkerView;
+import com.rainwood.oa.ui.widget.MyChartMarkerView;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
@@ -197,6 +199,9 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         if (mHomePresenter != null) {
             setUpState(State.SUCCESS);
         }
+        // banner---模拟加载返回的图片
+        mStackBanner.setTransitionEffect(TransitionEffect.Accordion);
+        loadBannerData(mStackBanner, 3);
         // 加载返回的数据
         mSalaryAdapter.setList(baseSalaryList);
         // 工资曲线 -- V1.0
@@ -209,13 +214,23 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         salaryChartView.setNoDataText("您当前还没有工资数据哦~~~");
         salaryChartView.setData(new LineData(setDrawLine(salaryList, 1, "工资曲线")));
         // 标注
-        MyMarkerView mv = new MyMarkerView(getContext(), R.layout.marker_salary_marker, monthList, this);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        salaryChartView.setMarker(mv);
-        // banner---模拟加载返回的图片
-        mStackBanner.setTransitionEffect(TransitionEffect.Accordion);
-        loadBannerData(mStackBanner, 3);
-        // mStackBanner.setAnimation();
+        MyChartMarkerView chartMarkerView = new MyChartMarkerView(getContext(), R.layout.marker_salary_marker);
+        chartMarkerView.setChartView(salaryChartView);///如果没有加这句MyMarkView draw会报空指针
+        List<HomeSalaryDesc> descList = new ArrayList<>();
+        chartMarkerView.setCallBack((x, value) -> {
+            int index = (int) (x);
+            if (index < 0) {
+                return;
+            }
+            if (index > ListUtils.getSize(monthList)) {
+                return;
+            }
+            descList.clear();
+            descList.add(new HomeSalaryDesc(Float.parseFloat(value) *1000, "工资："));
+            chartMarkerView.getTvPerson().setText(monthList.get(index));
+            chartMarkerView.getTvFirm().setDescList(descList);
+        });
+        salaryChartView.setMarker(chartMarkerView);
     }
 
     @Override
@@ -360,12 +375,7 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
     public void onError(String tips) {
         toast(tips);
         // 错误则返回到登录页面
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                openActivity(LoginActivity.class);
-            }
-        }, 200);
+        postDelayed(() -> openActivity(LoginActivity.class), 200);
     }
 
     @Override

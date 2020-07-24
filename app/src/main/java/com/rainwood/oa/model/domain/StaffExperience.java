@@ -15,6 +15,10 @@ public final class StaffExperience implements Serializable {
     private String id;
 
     /**
+     * 员工id
+     */
+    private String stid;
+    /**
      * 公司
      */
     private String companyName;
@@ -28,7 +32,6 @@ public final class StaffExperience implements Serializable {
      * 入职时间
      */
     private String entryTime;
-
     /**
      * 离职时间
      */
@@ -38,7 +41,7 @@ public final class StaffExperience implements Serializable {
      * 入职离职时间
      */
     private String dayStart;
-
+    private String dayEnd;
     /**
      * 职责
      */
@@ -48,6 +51,22 @@ public final class StaffExperience implements Serializable {
      * 离职原因
      */
     private String cause;
+
+    public String getDayEnd() {
+        return dayEnd;
+    }
+
+    public void setDayEnd(String dayEnd) {
+        this.dayEnd = dayEnd;
+    }
+
+    public String getStid() {
+        return stid;
+    }
+
+    public void setStid(String stid) {
+        this.stid = stid;
+    }
 
     public String getId() {
         return id;

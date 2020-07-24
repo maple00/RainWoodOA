@@ -11,7 +11,9 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.presenter.ICustomPresenter;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
@@ -137,6 +139,7 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
                 } else {
                     contactId = mContact.getId();
                 }
+                showDialog();
                 mCustomPresenter.requestCreateContact(mCustomId, contactId, position, name, tel, lineTel, qqNumber,
                         wxNumber, noteStr);
                 break;
@@ -145,12 +148,19 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
 
     @Override
     public void createContactData(boolean success) {
-        toast(success ? "提交成功" : "提交失败");
-        postDelayed(this::finish, 500);
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        toast(success ? "添加成功" : "添加失败");
+        postDelayed(() -> PageJumpUtil.customDetail2ContactList(AddContactActivity.this,
+                CommonActivity.class, Constants.CUSTOM_ID), 500);
     }
 
     @Override
     public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(tips);
     }
 

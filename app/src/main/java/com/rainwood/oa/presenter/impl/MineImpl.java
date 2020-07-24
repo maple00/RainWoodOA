@@ -101,27 +101,41 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
     /**
      * 我的会计账户
      *
-     * @param type 类型
+     * @param searchText
+     * @param endTime
+     * @param startTime
+     * @param type       类型
+     * @param page
      */
     @Override
-    public void requestAccountingAccount(String type) {
+    public void requestAccountingAccount(String searchText, String type, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("direction", type);
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=account", params, this);
+        params.add("text", searchText);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=account&page=" + page, params, this);
     }
 
     /**
      * 我的结算账户
      *
-     * @param type 状态类型
+     * @param searchText
+     * @param endTime
+     * @param startTime
+     * @param type       状态类型
+     * @param page
      */
     @Override
-    public void requestSettlementAccount(String type) {
+    public void requestSettlementAccount(String searchText, String type, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         params.add("direction", type);
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=settle", params, this);
+        params.add("text", searchText);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=settle&page=" + page, params, this);
     }
 
     /**
@@ -191,24 +205,72 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
 
     /**
      * 我的加班记录
+     *
+     * @param stateText
+     * @param startTime
+     * @param endTime
+     * @param page
      */
     @Override
-    public void requestMineOverTimeRecords() {
+    public void requestMineOverTimeRecords(String stateText, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
-        // TODO: 添加分页、条件查询
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAdd", params, this);
+        params.add("workFlow", stateText);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workAdd&page=" + page, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "----- result ---- " + result.body());
+                LogUtils.d("sxs", "----- result ---- " + result.requestParams());
+                try {
+                    List<MineRecordTime> recordsList = JsonParser.parseJSONArray(MineRecordTime.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("add"));
+                    mMineCallbacks.getMineOverTimeRecords(recordsList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
      * 我的外出记录
+     *
+     * @param stateText
+     * @param startTime
+     * @param endTime
+     * @param page
      */
     @Override
-    public void requestMineLeaveOutRecords() {
+    public void requestMineLeaveOutRecords(String stateText, String startTime, String endTime, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
-        // TODO: 添加分页、条件查询
-        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workOut", params, this);
+        params.add("workFlow", stateText);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workOut&page=" + page, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                try {
+                    List<MineRecordTime> recordsList = JsonParser.parseJSONArray(MineRecordTime.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("out"));
+                    mMineCallbacks.getMineOverTimeRecords(recordsList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -285,6 +347,41 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         params.add("endTime", endTime);
         params.add("text", leaveReason);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=workHolidayEdit", params, this);
+    }
+
+    /**
+     * 删除请假记录
+     *
+     * @param id
+     */
+    @Override
+    public void delMineLeaveRecord(String id) {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", id);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=workHolidayDel", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+                try {
+                    String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                    if (!"success".equals(warn)) {
+                        mMineCallbacks.onError(warn);
+                        return;
+                    }
+                } catch (JSONException e) {
+                    LogUtils.d("sxs", "接口字段错误");
+                }
+                // 删除回调
+                mMineCallbacks.getDelLeaveResults(true);
+            }
+        });
     }
 
     /**
@@ -462,29 +559,9 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
                 e.printStackTrace();
             }
         }
-        // 加班记录
-        else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=workAdd")) {
-            try {
-                List<MineRecordTime> recordsList = JsonParser.parseJSONArray(MineRecordTime.class,
-                        JsonParser.parseJSONObjectString(result.body()).getString("add"));
-                mMineCallbacks.getMineOverTimeRecords(recordsList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
         // 加班申请
         else if (result.url().contains("cla=my&fun=workAddEdit")) {
-
-        }
-        // 外出记录
-        else if (result.url().equals(Constants.BASE_URL + "cla=my&fun=workOut")) {
-            try {
-                List<MineRecordTime> recordsList = JsonParser.parseJSONArray(MineRecordTime.class,
-                        JsonParser.parseJSONObjectString(result.body()).getString("out"));
-                mMineCallbacks.getMineOverTimeRecords(recordsList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            mMineCallbacks.getLeaveResult(true);
         }
         // 费用报销
         else if (result.url().contains("cla=my&fun=cost")) {

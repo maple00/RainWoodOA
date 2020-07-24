@@ -1,11 +1,13 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.StaffExperience;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IStaffCallbacks;
@@ -60,10 +62,10 @@ public final class ExperienceDetailActivity extends BaseActivity implements ISta
     @Override
     protected void loadData() {
         String experienceId = getIntent().getStringExtra("experienceId");
-        if (experienceId != null){
+        if (experienceId != null) {
+            showDialog();
             mStaffPresenter.requestExperienceById(experienceId);
         }
-        // TODO：无员工经历详情接口
     }
 
     @OnClick(R.id.iv_page_back)
@@ -73,6 +75,19 @@ public final class ExperienceDetailActivity extends BaseActivity implements ISta
                 finish();
                 break;
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void getStaffExperience(StaffExperience experience) {
+        if (isShowDialog()){
+            hideDialog();
+        }
+        companyName.setText(experience.getCompanyName());
+        post.setText(experience.getPosition());
+        entryOutTime.setText(experience.getDayStart() + "-" + experience.getDayEnd());
+        duty.setText(experience.getContent());
+        reason.setText(experience.getCause());
     }
 
     @Override

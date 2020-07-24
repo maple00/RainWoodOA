@@ -129,6 +129,7 @@
             android:paddingStart="15dp"
             android:paddingTop="10dp"
             android:paddingEnd="15dp"
+            android:visibility="gone"
             android:paddingBottom="12dp">
 
             <Button

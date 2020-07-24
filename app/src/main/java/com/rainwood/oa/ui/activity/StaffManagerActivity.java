@@ -34,6 +34,7 @@ import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -283,7 +284,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         }
         mDepartList.get(parentPos).getArray().get(position).setSelected(true);
         // 根据职位/部门id查询该所属员工
-        // showDialog();
+        showDialog();
         mPostId = mDepartList.get(parentPos).getArray().get(position).getId();
         netRequestStaffList(keyWord, mPostId, mSocialStr, mGateKeyStr);
     }
@@ -330,11 +331,13 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         if (isShowDialog()) {
             hideDialog();
         }
+        LogUtils.d("sxs", "11111111111111111111111111111");
         showComplete();
         pagerRefresh.finishLoadmore();
         if (pageCount != 1) {
             if (ListUtils.getSize(staffList) == 0) {
                 pageCount--;
+                return;
             }
             mRightAdapter.addData(staffList);
         } else {
@@ -570,6 +573,13 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     public void onEmpty() {
         if (isShowDialog()) {
             hideDialog();
+        }
+    }
+
+    @Override
+    protected void release() {
+        if (mStaffPresenter != null) {
+            mStaffPresenter.unregisterViewCallback(this);
         }
     }
 

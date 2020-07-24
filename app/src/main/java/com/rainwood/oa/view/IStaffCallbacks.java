@@ -52,9 +52,9 @@ public interface IStaffCallbacks extends IBaseCallback {
 
     /**
      * 获取员工详情的工作经历
-     * @param experienceList
+     * @param experience
      */
-    default void getStaffExperience(List<StaffExperience> experienceList){};
+    default void getStaffExperience(StaffExperience experience){};
 
     /**
      * 员工账户类型

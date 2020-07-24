@@ -73,7 +73,26 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         params.add("socialSecurity", social);
         params.add("gateKey", gateKey);
         params.add("orderBy", orderBy);
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home&page=" + page, params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home&page=" + page, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+                try {
+                    List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                    LogUtils.d("sxs", "2222222222222");
+                    mStaffCallbacks.getAllStaff(staffList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -91,19 +110,29 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
 
     @Override
     public void requestExperienceById(String experienceId) {
-        // 模拟工作经历
-        List<StaffExperience> experienceList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            StaffExperience experience = new StaffExperience();
-            experience.setCompanyName("重庆雨木科技有限公司");
-            experience.setPosition("Android研发工程师");
-            experience.setEntryTime("2020.05.25");
-            experience.setDepartureTime("2020.06.25");
-            experience.setContent("负责公司移动客户端UI界面设计，为公司新产品与新功能提供创意及设计方案，参与设计讨论，和开发团队共同创建用户界面，跟踪设计效果，提出设计优化方案...");
-            experience.setCause("公司离家太远，无法照顾家庭");
-            experienceList.add(experience);
-        }
-        mStaffCallbacks.getStaffExperience(experienceList);
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", experienceId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=jobHistory", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "---------- result --------- " + result.body());
+                LogUtils.d("sxs", "---------- result --------- " + result.requestParams());
+                try {
+                    StaffExperience experience = JsonParser.parseJSONObject(StaffExperience.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("detail"));
+                    mStaffCallbacks.getStaffExperience(experience);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private String[] accountTypes = {"全部", "收入", "支出"};
@@ -260,16 +289,6 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("gateKey"));
                 mStaffCallbacks.getQueryCondition(defaultSortList, sexList, socialList, gateList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        // 职位下的员工
-        else if (result.url().contains("cla=staff&fun=home")) {
-            try {
-                List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
-                        JsonParser.parseJSONObjectString(result.body()).getString("staff"));
-                mStaffCallbacks.getAllStaff(staffList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

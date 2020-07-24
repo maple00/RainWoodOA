@@ -104,8 +104,10 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickA
         }
         if (!mDialog.isShowing()) {
             mDialog.show();
-            // loading显示时长监听
-            // mPolling.startPolling(netTask, MSG_TIME_OUT);
+        }
+        if(mDialog.isShowing()){
+            // loading显示时长监听 -- 5s后消失
+            postDelayed(this::hideDialog, 5*1000);
         }
         mDialogTotal++;
     }

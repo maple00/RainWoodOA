@@ -50,8 +50,6 @@ public final class MineOverTimeApplyActivity extends BaseActivity implements IMi
     private TextView endTimeTitle;
     @ViewInject(R.id.tv_overtime_reason_title)
     private TextView reasonTitle;
-    @ViewInject(R.id.tv_approver_title)
-    private TextView approverTitle;
 
     @ViewInject(R.id.et_obj)
     private EditText objName;
@@ -85,7 +83,6 @@ public final class MineOverTimeApplyActivity extends BaseActivity implements IMi
         setRequiredValue(startTimeTitle, "开始时间");
         setRequiredValue(endTimeTitle, "结束时间");
         setRequiredValue(reasonTitle, "加班事由");
-        setRequiredValue(approverTitle, "审批人");
         //
     }
 
@@ -152,6 +149,7 @@ public final class MineOverTimeApplyActivity extends BaseActivity implements IMi
                 String startTimeStr = startTime.getText().toString().trim();
                 String endTimeStr = endTime.getText().toString().trim();
                 String reasonStr = overTimeReason.getText().toString().trim();
+                showDialog();
                 switch (moduleMenu){
                     case "askOvertime":
                         mMinePresenter.createMineOvertimeApply(recordId, startTimeStr, endTimeStr, reasonStr);
@@ -206,6 +204,9 @@ public final class MineOverTimeApplyActivity extends BaseActivity implements IMi
 
     @Override
     public void onError(String tips) {
+        if (isShowDialog()){
+            hideDialog();
+        }
         toast(tips);
     }
 

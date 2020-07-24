@@ -35,7 +35,6 @@ import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Author: a797s
@@ -162,7 +161,7 @@ public final class StaffDataFragment extends BaseFragment implements IStaffCallb
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
-                Objects.requireNonNull(getActivity()).finish();
+                getActivity().finish();
                 break;
         }
     }

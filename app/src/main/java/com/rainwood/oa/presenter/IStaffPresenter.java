@@ -40,7 +40,7 @@ public interface IStaffPresenter extends IBasePresenter<IStaffCallbacks> {
     void requestStaffData(String staffId);
 
     /**
-     * 请求员工的所有的工作经历
+     * 请求员工工作经历详情
      */
     void requestExperienceById(String experienceId);
 

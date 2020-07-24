@@ -25,13 +25,26 @@ public final class MineRecords implements Serializable {
     private String signTime;
 
     /**
-     * 时间1
+     * 请假时间段
      */
     private String time;
     /**
      * 内容
      */
     private String text;
+
+    /**
+     * 类型
+     */
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getId() {
         return id;

@@ -20,6 +20,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.HomeSalaryDesc;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.StaffCurveList;
 import com.rainwood.oa.network.aop.SingleClick;
@@ -27,7 +28,7 @@ import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.StaffCurveAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.MeasureListView;
-import com.rainwood.oa.ui.widget.MyMarkerView;
+import com.rainwood.oa.ui.widget.MyChartMarkerView;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
@@ -39,8 +40,12 @@ import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import static com.rainwood.tools.utils.DateTimeUtils.dateToString;
 
 /**
  * @Author: a797s
@@ -93,10 +98,17 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         int nowYear = DateTimeUtils.getNowYear();
         int nowMonth = DateTimeUtils.getNowMonth();
         int nowDay = DateTimeUtils.getNowDay();
-        mTextDate.setText(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01" + "-" +
-                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
-        mFinancialPresenter.requestStaffNum(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
-                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        // -- 默认选择6个月
+        Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
+        ca.set(nowYear, nowMonth - 1, nowDay);// 月份是从0开始的，所以11表示12月
+        ca.add(Calendar.YEAR, 0); // 年份减1
+        ca.add(Calendar.MONTH, -6);// 月份减1
+        ca.add(Calendar.DATE, 0);// 日期减1
+        Date resultDate = ca.getTime(); // 结果
+        String oldTime = dateToString(resultDate, DateTimeUtils.DatePattern.ONLY_DAY);
+        String nowDate = DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY);
+        mTextDate.setText(oldTime + "-" + nowDate);
+        mFinancialPresenter.requestStaffNum(oldTime, nowDate);
     }
 
     @SingleClick
@@ -182,12 +194,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             lineDataSet.setFillFormatter((dataSet, dataProvider) -> yMinValues);
             lineDataSetList.add(lineDataSet);
         }
-        // 标注
-        MyMarkerView mv = new MyMarkerView(this, R.layout.marker_salary_marker, xValues, null, staffNumList);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        staffCurveView.setMarker(mv);
         staffCurveView.setData(new LineData(lineDataSetList));
-
         // 列表展示
         List<StaffCurveList> curveListData = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(xValues); i++) {
@@ -199,6 +206,24 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             curveListData.add(listData);
         }
         mStaffCurveAdapter.setCurveList(curveListData);
+        // 标注
+        MyChartMarkerView chartMarkerView = new MyChartMarkerView(this, R.layout.marker_salary_marker);
+        chartMarkerView.setChartView(staffCurveView);///如果没有加这句MyMarkView draw会报空指针
+        List<HomeSalaryDesc> descList = new ArrayList<>();
+        chartMarkerView.setCallBack((x, value) -> {
+            int index = (int) (x);
+            if (index < 0) {
+                return;
+            }
+            if (index > ListUtils.getSize(xValues)) {
+                return;
+            }
+            descList.clear();
+            descList.add(new HomeSalaryDesc(Float.parseFloat(value), "员工数："));
+            chartMarkerView.getTvPerson().setText(xValues.get(index));
+            chartMarkerView.getTvFirm().setDescList(descList);
+        });
+        staffCurveView.setMarker(chartMarkerView);
     }
 
     /**

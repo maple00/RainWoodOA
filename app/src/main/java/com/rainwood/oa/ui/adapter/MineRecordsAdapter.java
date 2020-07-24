@@ -53,6 +53,11 @@ public final class MineRecordsAdapter extends RecyclerView.Adapter<MineRecordsAd
         notifyDataSetChanged();
     }
 
+    public void removeItem(int position){
+        mReissueList.remove(position);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -362,7 +362,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             mReceivableRecordAdapter.setClickReceivable((record, position) ->
                     PageJumpUtil.receivable2Detail(RecordManagerActivity.this, ReceivableDetailActivity.class, record.getId()));
         }
-
         //选择时间段
         periodTime.setOnItemClick(text -> {
             selectedTimeFlag = !selectedTimeFlag;
@@ -428,7 +427,7 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             periodTime.setRightIcon(selectedTimeFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
                     selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
         });
-
+        // 选中部门员工
         departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(RecordManagerActivity.this,
                 ContactsActivity.class, "通讯录", ""),
                 CHOOSE_STAFF_REQUEST_SIZE));
@@ -473,7 +472,6 @@ public final class RecordManagerActivity extends BaseActivity implements IRecord
             String staff = data.getStringExtra("staff");
             mStaffId = data.getStringExtra("staffId");
             String position = data.getStringExtra("position");
-
             // toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
             // TODO: 通过员工查询
             if (title.contains("加班")) {

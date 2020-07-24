@@ -9,6 +9,13 @@ import java.io.Serializable;
  */
 public final class BalanceItem implements Serializable {
 
+    @Override
+    public String toString() {
+        return "BalanceItem{" +
+                "money=" + money +
+                '}';
+    }
+
     /**
      *金额
      */

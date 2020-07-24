@@ -412,4 +412,19 @@ public final class PageJumpUtil {
         sIntent.putExtra("recordId", recordId);
         context.startActivity(sIntent);
     }
+
+    /**
+     * 跳转到编辑请假
+     * @param context
+     * @param clazz
+     * @param title
+     * @param records
+     */
+    public static void page2LeaveApply(Context context, Class<? extends BaseActivity> clazz,String title, MineRecords records){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("record", records);
+        context.startActivity(sIntent);
+    }
+
 }

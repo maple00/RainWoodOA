@@ -30,7 +30,7 @@
             android:textColor="@color/colorMiddle"
             android:textSize="15sp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_leave_type_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
