@@ -63,7 +63,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     public void requestRoleScreenCondition() {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
-        OkHttp.post(Constants.BASE_URL + "cla=role&fun=power", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=role&fun=search", params, this);
     }
 
     /**

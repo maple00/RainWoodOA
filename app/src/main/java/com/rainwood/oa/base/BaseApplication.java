@@ -1,6 +1,7 @@
 package com.rainwood.oa.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.oa.model.domain.VersionData;
 import com.rainwood.oa.network.caught.CaughtException;
 import com.rainwood.oa.network.caught.OnCaughtExceptionListener;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
@@ -56,7 +58,7 @@ public final class BaseApplication extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
-            builder.detectFileUriExposure();
+//            builder.detectFileUriExposure();
         }
         app = this;
         // initActivity 初始化Activity 栈管理
@@ -111,6 +113,7 @@ public final class BaseApplication extends Application {
      * 初始化工具类
      */
     private void initUtil() {
+
         // 获取IMEI
         Constants.IMEI = DeviceIdUtil.getDeviceId(this);
         // 异常抓捕
@@ -121,6 +124,7 @@ public final class BaseApplication extends Application {
             @Override
             public void onCaughtExceptionSucceed(File file) {
                 // TODO: 上传caught文件
+
             }
 
             @Override
@@ -148,7 +152,8 @@ public final class BaseApplication extends Application {
         // 创建登录表
         //SQLiteHelper.with(this).dropTable("loginTab");
         SQLiteHelper.with(this).createTable("loginTab", new String[]{"userName", "pwd", "life"});
-
+        // 创建版本相关数据库
+        SQLiteHelper.with(this).createTable(VersionData.class);
     }
 
     private void initActivity() {
@@ -235,5 +240,11 @@ public final class BaseApplication extends Application {
             resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
         }
         return resources;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        // MultiDex.install(this);
     }
 }

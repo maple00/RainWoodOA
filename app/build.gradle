@@ -1,20 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.rainwood.oa"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
+        versionCode 202007301
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
         // TBS 暂时不提供64位的so文件，X5兼容64位手机
         ndk {
             abiFilters "armeabi","x86"
         }
-
         multiDexEnabled true
     }
 
@@ -29,9 +31,9 @@ android {
     }
 
 //    // console 中文乱码问题
-//    tasks.withType(JavaCompile) {
-//        options.encoding = "UTF-8"
-//    }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
 
     // JDK版本
     compileOptions {
@@ -73,6 +75,9 @@ dependencies {
     implementation project(path: ':contactslibrary')
     implementation project(path: ':MPChartLib')
     implementation project(path: ':normalCalendarLibrary')
+    implementation project(path: ':customchartview')
+    // Dex 分包，解决 64k 方法问题
+    //implementation 'androidx.multidex:multidex:2.0.1'
     // glide
     implementation 'com.caverock:androidsvg-aar:1.3'
     // Google
@@ -96,7 +101,5 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     // EventBus
     implementation 'org.greenrobot:eventbus:3.1.1'
-    // Badge
-    //implementation 'com.ashokvarma.android:bottom-navigation-bar:1.3.0'
 
 }

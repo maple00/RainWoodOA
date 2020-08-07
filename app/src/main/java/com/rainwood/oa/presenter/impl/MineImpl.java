@@ -17,6 +17,7 @@ import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.TeamFunds;
+import com.rainwood.oa.model.domain.VersionData;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
 import com.rainwood.oa.network.okhttp.OkHttp;
@@ -327,6 +328,38 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=my&fun=loginOut", params, this);
+    }
+
+    /**
+     * 请求版本信息
+     */
+    @Override
+    public void requestVersionData() {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        OkHttp.post(Constants.BASE_URL + "cla=my&fun=version", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mMineCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+                try {
+                    String warn = JsonParser.parseJSONObjectString(result.body()).getString("warn");
+                    if (!"success".equals(warn)) {
+                        mMineCallbacks.onError(warn);
+                        return;
+                    }
+                } catch (JSONException e) {
+                    LogUtils.d("sxs", "接口字段错误");
+                }
+                VersionData versionData = JsonParser.parseJSONObject(VersionData.class, result.body());
+                mMineCallbacks.getVersionData(versionData);
+            }
+        });
     }
 
     /**

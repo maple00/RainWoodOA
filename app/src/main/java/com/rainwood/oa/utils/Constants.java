@@ -1,9 +1,5 @@
 package com.rainwood.oa.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 /**
  * @Author: a797s
  * @Date: 2020/4/27 15:50
@@ -14,8 +10,10 @@ public final class Constants {
     /**
      * 后台请求BaseURL
      */
-    // public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp";
-    public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
+    // 正式环境 https://www.yumukeji.com/interface/controlApp/
+    // public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
+    // 参数环境 https://www.yumukej.cn/project/demo/interface/controlApp/
+    public static final String BASE_URL = "https://www.yumukej.cn/project/demo/interface/controlApp/app.php?";
 
     /**
      * 无网络-What

@@ -114,16 +114,6 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
     void requestSmsVerifyCode();
 
     /**
-     * 验证短信验证码
-     */
-    void requestCheckedSms(String currentPwd, String newPwd, String confirmPwd, String verifyCode, String smsSecret);
-
-    /**
-     * 退出登录
-     */
-    void requestLogout();
-
-    /**
      * 请假申请
      *
      * @param leaveType   请假类型
@@ -156,4 +146,20 @@ public interface IMinePresenter extends IBasePresenter<IMineCallbacks> {
      * @param reasonStr
      */
     void createMineLeaveOutApply(String recordId, String startTimeStr, String endTimeStr, String reasonStr);
+
+    /**
+     * 验证短信验证码
+     */
+    void requestCheckedSms(String currentPwd, String newPwd, String confirmPwd, String verifyCode, String smsSecret);
+
+    /**
+     * 退出登录
+     */
+    void requestLogout();
+
+    /**
+     * 请求版本信息
+     */
+    void requestVersionData();
+
 }

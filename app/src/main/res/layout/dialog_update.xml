@@ -94,7 +94,7 @@
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="5dp"
                 android:indeterminate="false"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">雨木科技</string>
+<!--    <string name="app_name">yumu</string>-->
 
     <string name="frame_name" translatable="true">AndroidOHP</string>
     <string name="common_copyright">\u00a9 2015 All Rights Reserved</string>
@@ -40,7 +41,14 @@
     <string name="update_title">发现新版本</string>
     <string name="update_content">更新内容</string>
     <string name="update_no">下次再说</string>
+    <string name="update_status_start">正在下载</string>
     <string name="update_yes">立即更新</string>
+    <string name="update_background">后台更新</string>
+    <string name="update_status_running">下载中 %d%%</string>
+    <string name="update_status_finished">下载完成</string>
+    <string name="update_status_successful">立即安装</string>
+    <string name="update_status_failed">当前网络较弱，下载失败</string>
+
     <string name="common_permission_hint">请先授予权限</string>
     <string name="common_permission_fail">授权失败，请手动授予权限</string>
     <string name="text_common_search">搜索</string>

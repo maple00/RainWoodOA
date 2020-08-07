@@ -18,6 +18,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 public final class NetReceiver extends BroadcastReceiver {
 
     private static volatile NetReceiver sInstance;
+
     // 创建单例的网络检测对象
     public static NetReceiver getInstance() {
         if (sInstance == null) {
@@ -48,10 +49,10 @@ public final class NetReceiver extends BroadcastReceiver {
         } else {
             // 提示没网
             mNetDialog = new MessageDialog.Builder(context)
-                    .setMessage("网络中断了")
+                    .setMessage("当前网络较弱")
                     .setCanceledOnTouchOutside(false)
                     .setCancel(context.getString(R.string.common_cancel))
-                    .setConfirm("设置")
+                    .setConfirm("切换网络")
                     .setShowImageClose(false)
                     .setShowConfirm(false)
                     .setListener(new MessageDialog.OnListener() {

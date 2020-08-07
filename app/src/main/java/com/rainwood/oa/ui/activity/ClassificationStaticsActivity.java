@@ -1,40 +1,31 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.MPPointF;
+import com.rainwood.customchartview.chart.bean.ChartLable;
+import com.rainwood.customchartview.chart.piechart.PieChartLayout;
+import com.rainwood.customchartview.utils.DensityUtil;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.ClassificationStatics;
+import com.rainwood.oa.model.domain.PieBean;
 import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
@@ -47,7 +38,7 @@ import java.util.List;
  * @Desc: 分类统计
  */
 public final class ClassificationStaticsActivity extends BaseActivity
-        implements OnChartValueSelectedListener, IFinancialCallbacks, StatusAction {
+        implements IFinancialCallbacks, StatusAction {
 
     @ViewInject(R.id.hl_status_hint)
     private HintLayout mHintLayout;
@@ -65,9 +56,9 @@ public final class ClassificationStaticsActivity extends BaseActivity
     private TextView inOutCome;
 
     @ViewInject(R.id.pc_income_statics)
-    private PieChart incomeStaticsView;
+    private PieChartLayout incomeStaticsView;
     @ViewInject(R.id.pc_outcome_statics)
-    private PieChart outcomeStaticsView;
+    private PieChartLayout outcomeStaticsView;
 
     private IFinancialPresenter mFinancialPresenter;
     private List<ClassificationStatics> mIncomeList;
@@ -85,51 +76,20 @@ public final class ClassificationStaticsActivity extends BaseActivity
         StatusBarUtils.setPaddingSmart(this, pageTop);
         pageTitle.setText(title);
 
-        setValues(incomeStaticsView, "收入统计");
-        setValues(outcomeStaticsView, "支出统计");
-    }
-
-    /**
-     * 饼图初始化
-     *
-     * @param staticsView
-     */
-    private void setValues(PieChart staticsView, String tips) {
-        staticsView.setUsePercentValues(true);
-        staticsView.getDescription().setEnabled(false);
-        staticsView.setExtraOffsets(5, 10, 5, 5);
-        staticsView.setDragDecelerationFrictionCoef(0.95f);
-        staticsView.setCenterText(new SpannableString(tips));
-        staticsView.setDrawHoleEnabled(true);
-        staticsView.setDrawEntryLabels(false);
-        staticsView.setHoleColor(Color.WHITE);
-        staticsView.setTransparentCircleColor(Color.WHITE);
-        staticsView.setTransparentCircleAlpha(110);
-        staticsView.setHoleRadius(58f);
-        staticsView.setTransparentCircleRadius(61f);
-        staticsView.setDrawCenterText(true);
-        staticsView.setRotationAngle(0);
-        // enable rotation of the chart by touch
-        staticsView.setRotationEnabled(true);
-        staticsView.setHighlightPerTapEnabled(true);
-        // chart.setDrawUnitsInChart(true);
-        // add a selection listener
-        staticsView.setOnChartValueSelectedListener(this);
-        staticsView.animateY(1400, Easing.EaseInOutQuad);
-        // chart.spin(2000, 0, 360);
-        Legend legend = staticsView.getLegend();
-        legend.setEnabled(true);
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        legend.setDrawInside(false);
-        legend.setXEntrySpace(7f);
-        legend.setYEntrySpace(7f);
-        legend.setWordWrapEnabled(true);
-        legend.setYOffset(0f);
-        // entry label styling
-        staticsView.setEntryLabelColor(Color.WHITE);
-        staticsView.setEntryLabelTextSize(12f);
+        // 统计收入
+        incomeStaticsView.setRingWidth(DensityUtil.dip2px(this, 15));
+        incomeStaticsView.setLineLenth(DensityUtil.dip2px(this, 8)); // //指示线长度
+        incomeStaticsView.setTagModul(PieChartLayout.TAG_MODUL.MODUL_CHART);       //在扇形图上显示tag
+        incomeStaticsView.setTagType(PieChartLayout.TAG_TYPE.TYPE_PERCENT);        // 显示百分比
+        incomeStaticsView.setDebug(false);
+        incomeStaticsView.setLoading(false);
+        // 支出统计
+        outcomeStaticsView.setRingWidth(DensityUtil.dip2px(this, 15));
+        outcomeStaticsView.setLineLenth(DensityUtil.dip2px(this, 8)); // //指示线长度
+        outcomeStaticsView.setTagType(PieChartLayout.TAG_TYPE.TYPE_PERCENT);        // 显示百分比
+        outcomeStaticsView.setTagModul(PieChartLayout.TAG_MODUL.MODUL_CHART);       //在扇形图上显示tag
+        outcomeStaticsView.setDebug(false);
+        outcomeStaticsView.setLoading(false);
     }
 
     @Override
@@ -220,38 +180,16 @@ public final class ClassificationStaticsActivity extends BaseActivity
      * @param moneyList
      */
     private void setIncomeData(List<ClassificationStatics> moneyList) {
-        ArrayList<PieEntry> entries = new ArrayList<>();
+        ArrayList<PieBean> datalist = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(moneyList); i++) {
-            entries.add(new PieEntry(Float.parseFloat(moneyList.get(i).getMoney()),
+            datalist.add(new PieBean(Float.parseFloat(moneyList.get(i).getMoney()),
                     moneyList.get(i).getType() + "：" + moneyList.get(i).getMoney() + "元"));
         }
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setDrawIcons(false);
-        dataSet.setSliceSpace(3f);
-        dataSet.setIconsOffset(new MPPointF(0, 40));
-        dataSet.setSelectionShift(5f);
-        // add a lot of colors
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-        colors.add(ColorTemplate.getHoloBlue());
-        dataSet.setColors(colors);
-        //dataSet.setSelectionShift(0f);
-        PieData data = new PieData(dataSet);
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.TRANSPARENT);
-        incomeStaticsView.setData(data);
-        // undo all highlights
-        incomeStaticsView.highlightValues(null);
-        incomeStaticsView.invalidate();
+        // label 标签
+        List<ChartLable> tableList = new ArrayList<>();
+        tableList.add(new ChartLable("收入统计", FontSwitchUtil.sp2px(this, 12),
+                getColor(R.color.text_color_light_gray)));
+        incomeStaticsView.setChartData(PieBean.class, "Numner", "Name", datalist, tableList);
     }
 
     /**
@@ -260,53 +198,16 @@ public final class ClassificationStaticsActivity extends BaseActivity
      * @param moneyList
      */
     private void setOutcomeData(List<ClassificationStatics> moneyList) {
-        ArrayList<PieEntry> entries = new ArrayList<>();
+        ArrayList<PieBean> datalist = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(moneyList); i++) {
-            entries.add(new PieEntry(Float.parseFloat(moneyList.get(i).getMoney()),
+            datalist.add(new PieBean(Float.parseFloat(moneyList.get(i).getMoney()),
                     moneyList.get(i).getType() + "：" + moneyList.get(i).getMoney() + "元"));
         }
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setDrawIcons(false);
-        dataSet.setSliceSpace(3f);
-        dataSet.setIconsOffset(new MPPointF(0, 40));
-        dataSet.setSelectionShift(5f);
-        // add a lot of colors
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-        colors.add(ColorTemplate.getHoloBlue());
-        dataSet.setColors(colors);
-        //dataSet.setSelectionShift(0f);
-        PieData data = new PieData(dataSet);
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.TRANSPARENT);
-        outcomeStaticsView.setData(data);
-        // undo all highlights
-        outcomeStaticsView.highlightValues(null);
-        outcomeStaticsView.invalidate();
-    }
-
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-        if (e == null)
-            return;
-        LogUtils.d("sxs",
-                "Value: " + e.getY() + ", xIndex: " + e.getX()
-                        + ", DataSet index: " + h.toString());
-
-    }
-
-    @Override
-    public void onNothingSelected() {
-        LogUtils.d("sxs", "nothing selected");
+        // label 标签
+        List<ChartLable> tableList = new ArrayList<>();
+        tableList.add(new ChartLable("支出统计", FontSwitchUtil.sp2px(this, 12),
+                getColor(R.color.text_color_light_gray)));
+        outcomeStaticsView.setChartData(PieBean.class, "Numner", "Name", datalist, tableList);
     }
 
     @Override
