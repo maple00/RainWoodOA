@@ -1,5 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.network.aop.CheckNet;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -85,6 +86,7 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
 
     @Override
     public void onHttpFailure(HttpResponse result) {
+        //LogUtil.d("sxs", "----- result ---" );
         mLoginAboutCallback.onError();
     }
 

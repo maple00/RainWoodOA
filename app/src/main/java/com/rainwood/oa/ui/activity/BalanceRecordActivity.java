@@ -206,11 +206,11 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
                 .setListener(new StartEndDateDialog.OnListener() {
                     @Override
                     public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)){
+                        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
                             toast("请选择时间");
                             return;
                         }
-                        if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)){
+                        if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
                             toast("开始时间不能大于结束时间");
                             return;
                         }
@@ -321,10 +321,12 @@ public final class BalanceRecordActivity extends BaseActivity implements IFinanc
     }
 
     @Override
-    public void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList) {
+    public void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList, String showDepart) {
         mOriginList = originList;
         mBalanceTypeList = balanceTypeList;
         Collections.reverse(mOriginList);
+        //
+        mStaffView.setVisibility("是".equals(showDepart) ? View.VISIBLE : View.GONE);
     }
 
     /**

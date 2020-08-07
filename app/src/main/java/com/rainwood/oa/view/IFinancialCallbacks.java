@@ -69,8 +69,9 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * 收支平衡
      * @param originList
      * @param balanceTypeList
+     * @param showDepart
      */
-    default void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList) {
+    default void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList, String showDepart) {
     }
 
     /**

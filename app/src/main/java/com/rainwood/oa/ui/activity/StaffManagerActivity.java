@@ -156,6 +156,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
     @Override
     protected void loadData() {
         showDialog();
+        mStaffPresenter.registerViewCallback(this);
         // 请求所有的部门数据
         mStaffPresenter.requestAllDepartData();
         // 请求查询条件(默认排序、性别、全部筛选)
@@ -168,6 +169,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
      * @param keyWord
      */
     private void netRequestStaffList(String keyWord, String postId, String social, String gateKey) {
+        mStaffPresenter.registerViewCallback(this);
         mStaffPresenter.requestAllStaff(postId, keyWord, mSex, social, gateKey, mSortMethod, pageCount = 1);
     }
 
@@ -222,6 +224,7 @@ public final class StaffManagerActivity extends BaseActivity implements IStaffCa
         pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mStaffPresenter.registerViewCallback(StaffManagerActivity.this);
                 mStaffPresenter.requestAllStaff(mPostId, keyWord, mSex, mSocialStr, mGateKeyStr, mSortMethod, ++pageCount);
             }
         });

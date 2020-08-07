@@ -107,7 +107,7 @@ public final class ItemModuleAdapter extends BaseAdapter {
             Glide.with(convertView).load(mList.get(position).getLocalMipmap())
                     .placeholder(R.mipmap.ic_logo)
                     .error(R.mipmap.ic_logo)
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    //.apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(holder.moduleImg);
         } else {
             Glide.with(convertView).as(PictureDrawable.class)

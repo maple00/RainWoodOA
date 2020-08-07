@@ -111,6 +111,12 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
 
     @Override
     protected void loadData() {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         // 从这里加载数据
         mManagerPresenter.getManagerData();
     }

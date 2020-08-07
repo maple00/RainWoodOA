@@ -113,13 +113,9 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
     @Override
     protected void initEvent() {
         // 员工选中
-        mContactsAdapter.setContactListener((contact, position) -> {
-            UIBack(contact);
-        });
+        mContactsAdapter.setContactListener((contact, position) -> UIBack(contact));
         // 搜索员工选中
-        mSearchContactAdapter.setOnClickItemListener((contacts, position) -> {
-            UIBack(contacts);
-        });
+        mSearchContactAdapter.setOnClickItemListener((contacts, position) -> UIBack(contacts));
         // 通讯录搜索
         List<ContactsBean> newContactList = new ArrayList<>();
         searchTips.addTextChangedListener(new TextWatcher() {
@@ -146,11 +142,10 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
                     }
                     mTextContactNum.setVisibility(View.VISIBLE);
                     mTextContactNum.setText("找到" + ListUtils.getSize(newContactList) + "个联系人");
-                    mSearchContactAdapter.setContactsList(newContactList, s.toString());
                 } else {
                     mTextContactNum.setVisibility(View.GONE);
-                    mSearchContactAdapter.setContactsList(newContactList, s.toString());
                 }
+                mSearchContactAdapter.setContactsList(newContactList, s.toString());
             }
         });
         // 设置聚焦
@@ -214,7 +209,7 @@ public final class ContactsActivity extends BaseActivity implements IMineCallbac
         mContactsAdapter.setDatas(mContactsList);
         //使用indexBar
         indexBar.setmPressedShowTextView(sideBarHint)//设置HintTextView
-                .setNeedRealIndex(true)//设置需要真实的索引
+                .setNeedRealIndex(false)//设置需要真实的索引
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
                 .setmSourceDatas(contactsList);//设置数据源
     }

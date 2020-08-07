@@ -129,11 +129,11 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private InnerPainter mInnerPainter;
     private int tempMonth = 0;
     private int tempYear = 0;
-    private List<String> mHolidayList = new ArrayList<>();
-    private List<String> mJiaBanList = new ArrayList<>();
-    private List<String> mChiDaoList = new ArrayList<>();
-    private List<String> mKuangGongList = new ArrayList<>();
-    private List<String> mBuKaList = new ArrayList<>();
+    private List<String> mHolidayList;
+    private List<String> mJiaBanList;
+    private List<String> mChiDaoList;
+    private List<String> mKuangGongList;
+    private List<String> mBuKaList;
 
     @Override
     protected int getLayoutResId() {
@@ -239,6 +239,22 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                                 year + "-" + (month < 10 ? "0" + month : month));
                     });
                 }
+            } else {
+                // 同一个月份内的点击
+                int dayOfMonth = localDate.getDayOfMonth();
+                //LogUtil.d("sxs--- centuryOfEra", dayOfMonth + " -------  当月 --------" + ListUtils.getSize(mCurrentDayData));
+                for (CalendarStatics statics : mDayDescList) {
+                    if (statics.getDescData().contains("打卡时间(上班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth).getStart().getTime());
+                    } else if (statics.getDescData().contains("打卡时间(下班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth).getEnd().getTime());
+                    } else if (statics.getDescData().contains("今日打卡")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth).getSignNum()));
+                    } else if (statics.getDescData().contains("今日工时")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth).getHour()));
+                    }
+                }
+                mDayAdapter.setList(mDayDescList);
             }
             tempYear = year;
             tempMonth = month;
@@ -301,7 +317,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                 break;
             case R.id.tv_page_right_title:
             case R.id.iv_menu:
-                // 回到今天
+                // 部门员工
                 startActivityForResult(getNewIntent(this, ContactsActivity.class, "通讯录", ""),
                         CHOOSE_STAFF_REQUEST_SIZE);
                 break;
@@ -360,6 +376,9 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
             }
         }
         mMonthAdapterTwo.setList(mMonthDescTwoList);
+        /*
+        本月工资
+         */
         for (CalendarStatics statics : mMonthSalaryList) {
             if (statics.getDescData().contains("基本工资")) {
                 statics.setData(attendanceData.getBasePayMoon());
@@ -378,6 +397,11 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
          */
         mCurrentDayData = attendanceData.getCalendar();
         // 初始化当天的数据
+        mHolidayList = new ArrayList<>();
+        mJiaBanList = new ArrayList<>();
+        mChiDaoList = new ArrayList<>();
+        mKuangGongList = new ArrayList<>();
+        mBuKaList = new ArrayList<>();
         // 日历表的标记
         Map<String, List<String>> statusMap = new HashMap<>();
         for (AttendanceCalendarData currentDayDatum : mCurrentDayData) {
@@ -418,14 +442,12 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                     ? "" : currentDayDatum.getEnd().getTab().getAdd());
         }
         mDayAdapter.setList(mDayDescList);
+        // statusMap.clear();
         statusMap.put("假", mHolidayList);
         statusMap.put("加", mJiaBanList);
         statusMap.put("迟", mChiDaoList);
         statusMap.put("旷", mKuangGongList);
         statusMap.put("补", mBuKaList);
-        List<String> aaa = new ArrayList<>();
-        aaa.add("2020-07-11");
-        statusMap.put("测", aaa);
         // 设置日期的状态
         mInnerPainter.setTagDayCopy(statusMap, 4);
     }

@@ -393,7 +393,11 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
                     }
                 }
                 balanceTypeList.get(0).setHasSelected(true);
-                mFinancialCallbacks.getInOutComeData(originList, balanceTypeList);
+                // 权限显示部门员工
+                String showDepart = JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(result.body())
+                        .getString("search")).getString("stid");
+
+                mFinancialCallbacks.getInOutComeData(originList, balanceTypeList, showDepart);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

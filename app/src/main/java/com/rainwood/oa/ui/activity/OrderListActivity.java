@@ -256,8 +256,9 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 String staff = data.getStringExtra("staff");
                 mStaffId = data.getStringExtra("staffId");
                 String position = data.getStringExtra("position");
-
-                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                showDialog();
+                pageCount = 1;
                 mOrderPresenter.requestOrderList("", "", mStaffId, "", pageCount);
             }
             // 订单名称搜索
