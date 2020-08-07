@@ -75,10 +75,13 @@ public final class HomeActivity extends BaseActivity {
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
                 StatusBarUtils.darkMode(this, false);
+                // mHomeFragment.setBottomNavigationView(mBottomNavigationView);
+                // mFragmentManager.beginTransaction().replace(R.id.navigation_home, mHomeFragment).commitAllowingStateLoss();
                 switchFragment(mHomeFragment);
             } else if (item.getItemId() == R.id.navigation_manager) {
                 StatusBarUtils.darkMode(this, true);
                 switchFragment(mManagerFragment);
+                //mFragmentManager.beginTransaction().replace(R.id.navigation_manager, mManagerFragment).commitNowAllowingStateLoss();
             } else if (item.getItemId() == R.id.navigation_backlog) {
                 StatusBarUtils.darkMode(this, true);
                 switchFragment(mBlockLogFragment);
@@ -106,12 +109,15 @@ public final class HomeActivity extends BaseActivity {
             return;
         }
         if (targetFragment instanceof BlockLogFragment) {
-           mBlockLogFragment.setBottomNavigationView(mBottomNavigationView);
+            mBlockLogFragment.setBottomNavigationView(mBottomNavigationView);
         }
         if (targetFragment instanceof HomeFragment) {
             mHomeFragment.setBottomNavigationView(mBottomNavigationView);
         }
-
+        if (targetFragment instanceof ManagerFragment) {
+            //ManagerFragment.start();
+           // targetFragment.onDestroyView();
+        }
         //修改成add和hide的方式来控制Fragment的切换
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         // 隐藏上一个fragment

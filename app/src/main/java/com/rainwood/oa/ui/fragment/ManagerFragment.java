@@ -48,8 +48,13 @@ public final class ManagerFragment extends BaseFragment implements IManagerCallb
     @ViewInject(R.id.ll_manager_parent)
     private LinearLayout managerParent;
 
-    private IManagerPresenter mManagerPresenter;
+    private static IManagerPresenter mManagerPresenter;
     private ManagerMainAdapter mMainAdapter;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        this.onDetach();
+    }
 
     @Override
     protected int getRootViewResId() {
