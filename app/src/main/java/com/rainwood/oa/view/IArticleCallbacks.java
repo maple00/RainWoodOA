@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.Article;
+import com.rainwood.oa.model.domain.Style;
 
 import java.util.List;
 
@@ -39,6 +40,6 @@ public interface IArticleCallbacks extends IBaseCallback {
     /**
      * 文章详情
      */
-    default void getArticleDetail(Article article){}
+    default void getArticleDetail(Article article, Style style){}
 
 }

@@ -43,6 +43,7 @@ public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
     @Override
     public void requestBlockDetail(String blockId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", blockId);
         OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=detail", params, this);
     }
@@ -50,6 +51,7 @@ public final class BlockLogImpl implements IBlockLogPresenter, OnHttpListener {
     @Override
     public void requestBlockLogList() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=backlog&fun=home", params, this);
     }
 

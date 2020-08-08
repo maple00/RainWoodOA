@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/28 10:39
  * @Desc: 客户详情中的属性
  */
-public final class CustomValues {
+public final class CustomValues implements Serializable {
 
     /**
      * id

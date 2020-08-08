@@ -57,7 +57,7 @@ public final class StaffLeftAdapter extends RecyclerView.Adapter<StaffLeftAdapte
             holder.selectedFlag.setVisibility(View.VISIBLE);
             holder.selected.setVisibility(View.VISIBLE);
             holder.depart.setTextColor(mContext.getColor(R.color.colorPrimary));
-            if (tempSelected) {
+            if (!tempSelected) {
                 // 如果是再点一次-- 折叠当前
                 holder.selected.setImageResource(R.drawable.ic_up_arrow_green);
             } else {

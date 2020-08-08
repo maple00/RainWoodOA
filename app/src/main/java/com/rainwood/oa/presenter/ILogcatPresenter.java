@@ -12,8 +12,16 @@ public interface ILogcatPresenter extends IBasePresenter<ILogcatCallbacks> {
 
     /**
      * 请求获取系统日志
+     * @param searchText
+     * @param typeOne
+     * @param typeTwo
+     * @param staffId
+     * @param startTime
+     * @param endTime
+     * @param pageCount
      */
-    void requestLogcatData();
+    void requestLogcatData(String searchText, String typeOne, String typeTwo, String staffId,
+                           String startTime, String endTime, int pageCount);
 
     /**
      * 请求查询日志类型

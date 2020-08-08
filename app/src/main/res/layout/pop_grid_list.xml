@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -8,18 +10,37 @@
         android:id="@+id/mgv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:verticalSpacing="12dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="13dp"
         android:background="@color/white"
-        android:horizontalSpacing="10dp"/>
+        android:horizontalSpacing="10dp"
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="13dp"
+        android:paddingBottom="10dp"
+        android:verticalSpacing="10dp"
+        android:visibility="gone" />
+
+    <com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout
+        android:id="@+id/tfl_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingEnd="5dp"
+        app:horizontalSpace="8dp"
+        app:textFlowColor="@color/colorMiddle"
+        app:textFlowSize="5sp"
+        app:verticalSpace="8dp"
+        tools:ignore="RtlSymmetry" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="@color/white" />
 
     <View
         android:id="@+id/mask_layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#4C4C4C"/>
+        android:alpha="0.85"
+        android:background="#4C4C4C" />
 
 </LinearLayout>

@@ -1,9 +1,15 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,6 +21,7 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAttachmentPresenter;
 import com.rainwood.oa.ui.adapter.AttachKnowledgeAdapter;
@@ -23,6 +30,7 @@ import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
@@ -38,7 +46,9 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.view.RegexEditText;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
@@ -48,13 +58,21 @@ import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
  * @Time: 2020/6/7 16:10
  * @Desc: 知识管理-- 附件管理
  */
-public final class AttachManagerActivity extends BaseActivity implements IAttachmentCallbacks {
+public final class AttachManagerActivity extends BaseActivity implements IAttachmentCallbacks, StatusAction {
 
     //actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
     @ViewInject(R.id.gti_depart_staff)
     private GroupTextIcon departStaff;
@@ -71,6 +89,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_attach_list)
     private RecyclerView attachView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IAttachmentPresenter mAttachmentPresenter;
     private AttachKnowledgeAdapter mAttachKnowledgeAdapter;
@@ -89,6 +109,8 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     private String mSecret;
     private String mTargetType;
     private String mDefaultSorting;
+    private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -122,9 +144,17 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     protected void loadData() {
         // list
-        mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", "", pageCount);
+        netRequestData("", "");
         // request Condition
         mAttachmentPresenter.requestAttachCondition();
+    }
+
+    /**
+     * 请求网络数据
+     */
+    private void netRequestData(String attachName, String staffId) {
+        showLoading();
+        mAttachmentPresenter.requestKnowledgeAttach(attachName, staffId, mSecret, mTargetType, mDefaultSorting, pageCount = 1);
     }
 
     @Override
@@ -190,7 +220,25 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, mSecret, mTargetType, mDefaultSorting, ++pageCount);
+                mAttachmentPresenter.requestKnowledgeAttach(mKeyWord, mStaffId, mSecret, mTargetType, mDefaultSorting, ++pageCount);
+            }
+        });
+        // 搜索框UI监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                mAttachmentPresenter.requestKnowledgeAttach(mKeyWord, mStaffId, mSecret, mTargetType, mDefaultSorting, pageCount = 1);
             }
         });
     }
@@ -198,46 +246,65 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
-
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mAttachmentPresenter.requestKnowledgeAttach("", mStaffId, "", "", "", pageCount = 1);
+        if (data != null) {
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
+                //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                netRequestData("", mStaffId);
+            }
         }
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.iv_search})
+    @OnClick({R.id.iv_page_back, R.id.iv_search, R.id.tv_cancel})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
             case R.id.iv_search:
-                toast("搜索");
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入附件名称");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
         }
     }
 
     @Override
     public void getKnowledgeAttach(List<KnowledgeAttach> attachList) {
-        if (ListUtils.getSize(attachList) == 0) {
-            toast("当前内容为空");
-            return;
-        }
-        mAttachKnowledgeAdapter.setLoaded(pageCount == 1);
+        showComplete();
         if (pageCount != 1) {
             pageRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(attachList) + "条数据");
+            mAttachKnowledgeAdapter.addData(attachList);
+        } else {
+            if (ListUtils.getSize(attachList) == 0) {
+                showEmpty();
+            }
+            mAttachKnowledgeAdapter.setAttachList(attachList);
         }
-        mAttachKnowledgeAdapter.setAttachList(attachList);
     }
 
     @Override
     public void getAttachCondition(List<SelectedItem> targetList, List<SelectedItem> secretList,
                                    List<SelectedItem> sortList) {
+        Collections.reverse(targetList);
+        Collections.reverse(secretList);
         mTargetList = targetList;
         mSecretList = secretList;
         mSortList = sortList;
@@ -256,6 +323,7 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -275,22 +343,29 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             // TODO: 条件查询
             mSecret = "";
             mTargetType = "";
             if (CHECKED_SECRET_FLAG) {
-                mSecret = item.getName();
+                mSecret = selectedItem.getName();
             } else if (CHECKED_TARGET_FLAG) {
-                mTargetType = item.getName();
+                mTargetType = selectedItem.getName();
             }
-            mAttachmentPresenter.requestKnowledgeAttach("", "", mSecret, mTargetType, "", pageCount = 1);
+            netRequestData("", ""
+            );
             mStatusPopWindow.dismiss();
+        });
+
+        mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+
         });
     }
 
@@ -305,8 +380,11 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(1);
+                    contentList.setVisibility(View.VISIBLE);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
+                    TextSelectedItemFlowLayout itemFlowLayout = view.findViewById(R.id.tfl_text);
+                    itemFlowLayout.setVisibility(View.GONE);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -334,14 +412,13 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
             mStatusPopWindow.dismiss();
             // TODO: 排序方式查询
             mDefaultSorting = selectedItem.getName();
-            mAttachmentPresenter.requestKnowledgeAttach("", "", "", "", mDefaultSorting, pageCount = 1);
+            netRequestData("", "");
         });
     }
 
-
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
     }
 
     @Override
@@ -352,5 +429,10 @@ public final class AttachManagerActivity extends BaseActivity implements IAttach
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

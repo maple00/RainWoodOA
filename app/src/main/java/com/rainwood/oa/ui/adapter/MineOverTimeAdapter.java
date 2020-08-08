@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.MineRecordTime;
+import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -32,6 +33,24 @@ public final class MineOverTimeAdapter extends RecyclerView.Adapter<MineOverTime
 
     public void setList(List<MineRecordTime> list) {
         mList = list;
+        notifyDataSetChanged();
+    }
+
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<MineRecordTime> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mList == null || mList.size() == 0) {
+            setList(data);
+        } else {
+            mList.addAll(data);
+            notifyItemRangeInserted(mList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 
@@ -63,6 +82,7 @@ public final class MineOverTimeAdapter extends RecyclerView.Adapter<MineOverTime
                 holder.edit.setText("提交成果");
             } else {
                 holder.edit.setVisibility(View.GONE);
+                holder.delete.setVisibility(View.GONE);
             }
         }
         // 点击事件

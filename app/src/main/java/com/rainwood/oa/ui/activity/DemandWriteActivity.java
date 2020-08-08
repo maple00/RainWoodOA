@@ -55,7 +55,7 @@ public final class DemandWriteActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        demandContent.setText(moduleMenu);
+        demandContent.setHint(moduleMenu);
     }
 
     @OnClick({R.id.iv_page_back, R.id.tv_page_right_title})
@@ -66,7 +66,7 @@ public final class DemandWriteActivity extends BaseActivity {
                 break;
             case R.id.tv_page_right_title:
                 if (TextUtils.isEmpty(demandContent.getText())) {
-                    toast("请填写需求");
+                    toast("请填写" + title);
                     return;
                 }
                 Intent demandIntent = new Intent();

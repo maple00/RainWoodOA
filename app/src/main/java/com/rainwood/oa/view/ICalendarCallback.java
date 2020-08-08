@@ -2,6 +2,7 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.AttendanceData;
+import com.rainwood.oa.model.domain.CalendarBody;
 import com.rainwood.oa.model.domain.Month;
 
 import java.util.List;
@@ -22,14 +23,15 @@ public interface ICalendarCallback extends IBaseCallback {
     /**
      * 当前工作月工作日
      *
-     * @param dayList
+     * @param calendarBody
      * @param dayNote
      */
-    default void getWorkDayData(List<String> dayList, String dayNote) {
+    default void getWorkDayData(CalendarBody calendarBody, String dayNote) {
     }
 
     /**
      * 获取当月得考勤
+     *
      * @param attendanceData
      */
     default void getAttendanceData(AttendanceData attendanceData) {

@@ -42,6 +42,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestAllDepartData() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=department", params, this);
     }
 
@@ -51,6 +52,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestQueryCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=search", params, this);
     }
 
@@ -58,18 +60,39 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * 通过职位id查询该职位下的员工
      *
      * @param postId
+     * @param page
      */
     @Override
     public void requestAllStaff(String postId, String name, String sex, String social, String gateKey,
-                                String orderBy) {
+                                String orderBy, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("departmentId", postId);
         params.add("name", name);
         params.add("sex", sex);
         params.add("socialSecurity", social);
         params.add("gateKey", gateKey);
         params.add("orderBy", orderBy);
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=home&page=" + page, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "result ---- " + result.body());
+                LogUtils.d("sxs", "result ---- " + result.requestParams());
+                try {
+                    List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("staff"));
+                    LogUtils.d("sxs", "2222222222222");
+                    mStaffCallbacks.getAllStaff(staffList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -80,25 +103,36 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestStaffData(String staffId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", staffId);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=detail", params, this);
     }
 
     @Override
     public void requestExperienceById(String experienceId) {
-        // 模拟工作经历
-        List<StaffExperience> experienceList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            StaffExperience experience = new StaffExperience();
-            experience.setCompanyName("重庆雨木科技有限公司");
-            experience.setPosition("Android研发工程师");
-            experience.setEntryTime("2020.05.25");
-            experience.setDepartureTime("2020.06.25");
-            experience.setContent("负责公司移动客户端UI界面设计，为公司新产品与新功能提供创意及设计方案，参与设计讨论，和开发团队共同创建用户界面，跟踪设计效果，提出设计优化方案...");
-            experience.setCause("公司离家太远，无法照顾家庭");
-            experienceList.add(experience);
-        }
-        mStaffCallbacks.getStaffExperience(experienceList);
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("id", experienceId);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=jobHistory", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtils.d("sxs", "---------- result --------- " + result.body());
+                LogUtils.d("sxs", "---------- result --------- " + result.requestParams());
+                try {
+                    StaffExperience experience = JsonParser.parseJSONObject(StaffExperience.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("detail"));
+                    mStaffCallbacks.getStaffExperience(experience);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private String[] accountTypes = {"全部", "收入", "支出"};
@@ -119,22 +153,52 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
      * 员工会计账户
      *
      * @param type
+     * @param keyWord
+     * @param pageCount
      */
     @Override
-    public void requestAllAccountData(String type) {
+    public void requestAllAccountData(String type, String keyWord, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
+        params.add("life", Constants.life);
+        params.add("id", Constants.staffId);
+        params.add("text", keyWord);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=" + pageCount, params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                mStaffCallbacks.onError();
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                try {
+                    List<StaffAccount> accountList = JsonParser.parseJSONArray(StaffAccount.class,
+                            JsonParser.parseJSONObjectString(result.body()).getString("account"));
+                    mStaffCallbacks.getAccountData(accountList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
      * 员工结算账户
      *
      * @param type
+     * @param keyWord
+     * @param pageCount
      */
     @Override
-    public void requestAllSettlementData(String type) {
+    public void requestAllSettlementData(String type, String keyWord, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type, params, this);
+        params.add("life", Constants.life);
+        params.add("id", Constants.staffId);
+        params.add("text", keyWord);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=staff&fun=" + type + "&page=" + pageCount, params, this);
     }
 
     /**
@@ -145,6 +209,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void requestStaffAccountDetailById(String accountId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", accountId);
         OkHttp.post(Constants.BASE_URL + "cla=staff&fun=accountDetail", params, this);
     }
@@ -167,6 +232,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mStaffCallbacks.onError();
             return;
@@ -209,6 +275,7 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                 List<SelectedItem> defaultSortList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("list"));
+                defaultSortList.add(0, new SelectedItem("默认排序"));
                 // 性别
                 List<SelectedItem> sexList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
@@ -222,16 +289,6 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
                         JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(
                                 result.body()).getString("search")).getString("gateKey"));
                 mStaffCallbacks.getQueryCondition(defaultSortList, sexList, socialList, gateList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        // 职位下的员工
-        else if (result.url().contains("cla=staff&fun=home")) {
-            try {
-                List<Staff> staffList = JsonParser.parseJSONArray(Staff.class,
-                        JsonParser.parseJSONObjectString(result.body()).getString("staff"));
-                mStaffCallbacks.getAllStaff(staffList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -283,13 +340,13 @@ public final class StaffImpl implements IStaffPresenter, OnHttpListener {
         // 员工会计账户--全部、收入、支出
         else if (result.url().contains("cla=staff&fun=accountAll") || result.url().contains("cla=staff&fun=accountIn")
                 || result.url().contains("cla=staff&fun=accountOut")) {
-            try {
+          /*  try {
                 List<StaffAccount> accountList = JsonParser.parseJSONArray(StaffAccount.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("account"));
                 mStaffCallbacks.getAccountData(accountList);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
         // 员工结算账户-- 全部、收入、支出
         else if (result.url().contains("cla=staff&fun=settleAccountAll") || result.url().contains("cla=staff&fun=settleAccountIn")

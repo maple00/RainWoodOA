@@ -10,291 +10,280 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="21dp"
-                android:layout_marginEnd="17dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="21dp"
+                    android:layout_marginEnd="17dp">
+
+                    <TextView
+                        android:id="@+id/tv_staff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/fontColor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_depart_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="11dp"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tv_staff"
+                    android:id="@+id/tv_note_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="杨嘉"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginEnd="17dp"
                     android:textColor="@color/fontColor"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/tv_depart_post"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="17dp"
+                    android:layout_marginBottom="20dp">
+
+                    <com.rainwood.oa.ui.widget.GroupIconText
+                        android:id="@+id/git_staff_tel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/ic_staff_phone_num"
+                        app:textColor="@color/fontColor" />
+
+                    <com.rainwood.oa.ui.widget.GroupIconText
+                        android:id="@+id/git_staff_qq"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        app:icon="@drawable/ic_staff_qq"
+                        app:textColor="@color/fontColor" />
+
+                </LinearLayout>
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_staff_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="11dp"
-                    android:text="市场部-销售顾问"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="17dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    app:title="员工ID" />
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_staff_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="17dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    app:title="用户名" />
+
+                <!-- <com.rainwood.oa.ui.widget.GroupTextText
+                     android:id="@+id/gtt_staff_pwd"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="16dp"
+                     android:layout_marginEnd="17dp"
+                     android:paddingTop="13dp"
+                     android:paddingBottom="13dp"
+                     app:title="登录密码"
+                     app:values="123456" />-->
+
+                <com.rainwood.oa.ui.widget.GroupTextText
+                    android:id="@+id/gtt_direct_supervisor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="17dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    app:title="直属上级" />
+
+                <LinearLayout
+                    android:id="@+id/ll_show_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_school"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="5dp"
+                        app:title="毕业院校" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_major"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="所学专业" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_graduation_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="毕业时间" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_staff_bank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="5dp"
+                        app:title="工资卡银行" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_back_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="银行卡号" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_social_security"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="社保号" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_entry_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="5dp"
+                        app:title="入职时间" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_ding_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="员工钉钉ID" />
+
+                    <com.rainwood.oa.ui.widget.GroupTextText
+                        android:id="@+id/gtt_staff_note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        app:title="备注" />
+                </LinearLayout>
+
+                <com.rainwood.oa.ui.widget.GroupTextIcon
+                    android:id="@+id/gti_show_hide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="15dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    app:right_icon="@drawable/ic_down_arrow_blue"
+                    app:status_text="展开"
+                    app:text_color="@color/blue05" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="25dp"
+                    android:text="@string/text_assist_data"
                     android:textColor="@color/fontColor"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mgv_assist_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="25dp"
+                    android:verticalSpacing="10dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/assistColor10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:text="@string/text_work_experience"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.rainwood.oa.ui.widget.MeasureListView
+                    android:id="@+id/mlv_work_experience"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="20dp" />
+
+                <TextView
+                    android:id="@+id/tv_none_job_experience"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="暂无工作经历"
+                    android:textColor="@color/colorMiddle"
+                    android:textSize="16sp" />
+
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_note_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="18dp"
-                android:layout_marginEnd="17dp"
-                android:text="女 · 2020.03.16入职 · 在岗 · 有社保 · 没有钥匙"
-                android:textColor="@color/fontColor"
-                android:textSize="14sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="17dp"
-                android:layout_marginBottom="20dp">
-
-                <com.rainwood.oa.ui.widget.GroupIconText
-                    android:id="@+id/git_staff_tel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_staff_phone_num"
-                    app:text="13512270415"
-                    app:textColor="@color/fontColor" />
-
-                <com.rainwood.oa.ui.widget.GroupIconText
-                    android:id="@+id/git_staff_qq"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    app:icon="@drawable/ic_staff_qq"
-                    app:text="1129566908"
-                    app:textColor="@color/fontColor" />
-
-            </LinearLayout>
-
-            <View style="@style/HorizontalLineStyle" />
-
-            <com.rainwood.oa.ui.widget.GroupTextText
-                android:id="@+id/gtt_staff_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="17dp"
-                android:paddingTop="13dp"
-                android:paddingBottom="13dp"
-                app:title="员工ID"
-                app:values="kjj2hx2mxvu1" />
-
-            <com.rainwood.oa.ui.widget.GroupTextText
-                android:id="@+id/gtt_staff_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="17dp"
-                android:paddingTop="13dp"
-                android:paddingBottom="13dp"
-                app:title="用户名"
-                app:values="yangjia" />
-
-           <!-- <com.rainwood.oa.ui.widget.GroupTextText
-                android:id="@+id/gtt_staff_pwd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="17dp"
-                android:paddingTop="13dp"
-                android:paddingBottom="13dp"
-                app:title="登录密码"
-                app:values="123456" />-->
-
-            <com.rainwood.oa.ui.widget.GroupTextText
-                android:id="@+id/gtt_direct_supervisor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="17dp"
-                android:paddingTop="13dp"
-                android:paddingBottom="13dp"
-                app:title="直属上级"
-                app:values="市场部-部门经理-九黎" />
-
-            <LinearLayout
-                android:id="@+id/ll_show_hide"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_school"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="13dp"
-                    app:title="毕业院校"
-                    app:values="重庆工商大学" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_major"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="所学专业"
-                    app:values="市场营销策略" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_graduation_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="毕业时间"
-                    app:values="2020.05.25" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_staff_bank"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="13dp"
-                    app:title="工资卡银行"
-                    app:values="中国工商银行" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_back_no"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="银行卡号"
-                    app:values="kjj2hx2mxvu1" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_social_security"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="社保号"
-                    app:values="kjj2hx2mxvu1" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_entry_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="13dp"
-                    app:title="入职时间"
-                    app:values="kjj2hx2mxvu1" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_ding_no"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="员工钉钉ID"
-                    app:values="kjj2hx2mxvu1" />
-
-                <com.rainwood.oa.ui.widget.GroupTextText
-                    android:id="@+id/gtt_staff_note"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="13dp"
-                    android:paddingBottom="13dp"
-                    app:title="备注"
-                    app:values="这里是备注文案这里是备注文案这里是备注文案这里是备注文案" />
-            </LinearLayout>
-
-            <com.rainwood.oa.ui.widget.GroupTextIcon
-                android:id="@+id/gti_show_hide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="15dp"
-                android:gravity="center"
-                android:padding="5dp"
-                app:right_icon="@drawable/ic_down_arrow_blue"
-                app:status_text="展开"
-                app:text_color="@color/blue05" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:background="@color/assistColor10" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
-                android:text="@string/text_assist_data"
-                android:textColor="@color/fontColor"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <com.rainwood.oa.ui.widget.MeasureGridView
-                android:id="@+id/mgv_assist_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="25dp"
-                android:numColumns="3"
-                android:verticalSpacing="7dp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:background="@color/assistColor10" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="25dp"
-                android:text="@string/text_work_experience"
-                android:textColor="@color/fontColor"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <com.rainwood.oa.ui.widget.MeasureListView
-                android:id="@+id/mlv_work_experience"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@color/transparent"
-                android:dividerHeight="20dp" />
-
-            <TextView
-                android:id="@+id/tv_none_job_experience"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="暂无工作经历"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textColor="@color/colorMiddle"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+        </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </LinearLayout>

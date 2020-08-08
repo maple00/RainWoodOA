@@ -14,8 +14,10 @@ import java.io.File;
 public interface OnDownloadListener {
 
 
+    void start();
+
     /**
-     * 文件下载过程监听
+     * 文件下载进度监听
      *
      * @param total    文件总大小
      * @param progress 下载中大小

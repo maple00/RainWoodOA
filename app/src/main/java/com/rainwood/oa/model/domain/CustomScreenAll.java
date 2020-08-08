@@ -46,7 +46,7 @@ public final class CustomScreenAll implements Serializable {
         this.array = array;
     }
 
-    private static final class InnerCustomScreen implements Serializable {
+    public static final class InnerCustomScreen implements Serializable {
         /**
          * 员工id
          */
@@ -56,6 +56,11 @@ public final class CustomScreenAll implements Serializable {
          * value
          */
         private String name;
+
+        /**
+         * 是否被选中
+         */
+        private boolean selected;
 
         public String getStid() {
             return stid;
@@ -71,6 +76,14 @@ public final class CustomScreenAll implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
         }
     }
 }

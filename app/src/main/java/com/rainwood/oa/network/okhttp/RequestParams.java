@@ -17,6 +17,17 @@ import java.util.TreeMap;
 
 public class RequestParams {
 
+    @Override
+    public String toString() {
+        return "RequestParams{" +
+                "fileParams=" + fileParams +
+                ", stringParams=" + stringParams +
+                ", headerParams=" + headerParams +
+                ", optionParams=" + optionParams +
+                ", body='" + body + '\'' +
+                '}';
+    }
+
     /**
      * 连接超时
      */

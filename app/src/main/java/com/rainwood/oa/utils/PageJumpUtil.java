@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
+import com.rainwood.oa.model.domain.CustomDemand;
 import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.TempData;
@@ -182,10 +183,11 @@ public final class PageJumpUtil {
      * @param clazz
      * @param reimburseId
      */
-    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz, String reimburseId) {
+    public static void reimburseList2Detail(Context context, Class<? extends BaseActivity> clazz,
+                                            String reimburseId) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", "费用详情");
-        sIntent.putExtra(reimburseId, reimburseId);
+        sIntent.putExtra("reimburseId", reimburseId);
         context.startActivity(sIntent);
     }
 
@@ -280,18 +282,20 @@ public final class PageJumpUtil {
     }
 
     /**
-     * 行政人事---加班列表跳转到详情页面
+     * 加班列表跳转到详情页面
      *
      * @param context
      * @param clazz
      * @param title
      * @param recordId
      */
-    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+    public static void overTimeList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId,
+                                           String pageFlag) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
         sIntent.putExtra("menu", Constants.PERSONAL_OVER_TIME_DETAIL_MENU);
+        sIntent.putExtra("pageFlag", pageFlag);
         context.startActivity(sIntent);
     }
 
@@ -319,11 +323,13 @@ public final class PageJumpUtil {
      * @param title
      * @param recordId
      */
-    public static void askOutList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId) {
+    public static void askOutList2Detail(Context context, Class<? extends BaseActivity> clazz, String title, String recordId,
+                                         String pageFlag) {
         sIntent = new Intent(context, clazz);
         sIntent.putExtra("title", title);
         sIntent.putExtra("recordId", recordId);
         sIntent.putExtra("menu", Constants.PERSONAL_ASK_OUT_DETAIL_MENU);
+        sIntent.putExtra("pageFlag", pageFlag);
         context.startActivity(sIntent);
     }
 
@@ -359,4 +365,66 @@ public final class PageJumpUtil {
         sIntent.putExtra("tips", tips);
         context.startActivity(sIntent);
     }
+
+    /**
+     * 编辑客户需求
+     *
+     * @param context
+     * @param clazz
+     * @param title
+     * @param menu
+     */
+    public static void customEditDemand(Context context, Class<? extends BaseActivity> clazz, String title, String menu, CustomDemand demand) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("menu", menu);
+        sIntent.putExtra("demand", demand);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到开票记录详情页面
+     * @param context
+     * @param clazz
+     * @param title
+     * @param invoiceId
+     */
+    public static void page2InvoiceDetail(Context context, Class<? extends BaseActivity> clazz, String title,
+                                          String invoiceId, String hasOpenInvoice) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("invoiceId", invoiceId);
+        sIntent.putExtra("hasOpen", hasOpenInvoice);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到收支记录详情
+     * @param context
+     * @param clazz
+     * @param title
+     * @param recordId
+     */
+    public static void page2BalanceDetail(Context context, Class<? extends BaseActivity> clazz, String title,
+                                          String recordId) {
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("recordId", recordId);
+        context.startActivity(sIntent);
+    }
+
+    /**
+     * 跳转到编辑请假
+     * @param context
+     * @param clazz
+     * @param title
+     * @param records
+     */
+    public static void page2LeaveApply(Context context, Class<? extends BaseActivity> clazz,String title, MineRecords records){
+        sIntent = new Intent(context, clazz);
+        sIntent.putExtra("title", title);
+        sIntent.putExtra("record", records);
+        context.startActivity(sIntent);
+    }
+
 }

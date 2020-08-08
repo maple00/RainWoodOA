@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.AdminLeaveOut;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
@@ -30,19 +31,29 @@ public final class AdminLeaveOutAdapter extends RecyclerView.Adapter<AdminLeaveO
 
     private List<AdminLeaveOut> mLeaveOutRecordList = new ArrayList<>();
     private Context mContext;
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setLeaveOutRecordList(List<AdminLeaveOut> leaveOutRecordList) {
-        if (loaded) {
-            mLeaveOutRecordList.clear();
-        }
-        mLeaveOutRecordList.addAll(leaveOutRecordList);
+        mLeaveOutRecordList = leaveOutRecordList;
         notifyDataSetChanged();
     }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<AdminLeaveOut> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mLeaveOutRecordList == null || mLeaveOutRecordList.size() == 0) {
+            setLeaveOutRecordList(data);
+        } else {
+            mLeaveOutRecordList.addAll(data);
+            notifyItemRangeInserted(mLeaveOutRecordList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override

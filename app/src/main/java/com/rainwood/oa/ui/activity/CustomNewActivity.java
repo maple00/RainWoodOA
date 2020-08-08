@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,16 +15,19 @@ import androidx.annotation.Nullable;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.CustomDemand;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.dialog.SelectorListDialog;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
+import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -38,7 +42,7 @@ import static com.rainwood.oa.utils.Constants.CUSTOM_DEMAND_WRITE_SIZE;
 public final class CustomNewActivity extends BaseActivity implements ICustomCallbacks {
 
     // actionBar
-    @ViewInject(R.id.rl_pager_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
@@ -90,11 +94,14 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
     private EditText openingBank;
     @ViewInject(R.id.cet_brought_account)
     private EditText broughtAccount;
+    @ViewInject(R.id.btn_confirm)
+    private Button mButton;
 
     private ICustomPresenter mCustomPresenter;
 
     private List<String> mFollows;
     private List<String> mOriginList;
+    private String mRandomId;
 
     @Override
     protected int getLayoutResId() {
@@ -106,6 +113,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
         pageTitle.setText(title);
+        mButton.setText(title.contains("编辑") ? "保存" : "确认新建");
         setRequiredValue(contactTV, "联系人");
         setRequiredValue(telNumber, "手机号");
         setRequiredValue(followStatus, "跟进状态");
@@ -115,7 +123,14 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
 
     @Override
     protected void initData() {
-        super.initData();
+        CustomDemand customDemand = (CustomDemand) getIntent().getSerializableExtra("demand");
+        if (customDemand != null) {
+            followStatus.setText(customDemand.getWorkFlow());
+            customOrigin.setText(customDemand.getSource());
+            budget.setText(customDemand.getBudget());
+            industry.setText(customDemand.getIndustry());
+            demandContent.setText(customDemand.getText());
+        }
     }
 
     @Override
@@ -216,7 +231,7 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
                 break;
             case R.id.tv_demand_detail_content:
                 // 填写需求详情
-                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情","需求详情"),
+                startActivityForResult(getNewIntent(this, DemandWriteActivity.class, "需求详情", "需求详情"),
                         CUSTOM_DEMAND_WRITE_SIZE);
                 break;
             case R.id.btn_confirm:
@@ -263,7 +278,9 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
                 String specialPlaneStr = specialPlane.getText().toString().trim();
                 String openingBankStr = openingBank.getText().toString().trim();
                 String broughtAccountStr = broughtAccount.getText().toString().trim();
-                mCustomPresenter.createCustomData(contact, tel, wxNum, qqNum, postStr, followStr, customStr,
+                mRandomId = RandomUtil.getItemID(20);
+                showDialog();
+                mCustomPresenter.createCustomData(mRandomId, contact, tel, wxNum, qqNum, postStr, followStr, customStr,
                         customNote, budgetStr, industryStr, demandStr, companyNameStr, taxNumStr,
                         mailingAddressStr, billingAddressStr, specialPlaneStr, openingBankStr,
                         broughtAccountStr);
@@ -294,12 +311,20 @@ public final class CustomNewActivity extends BaseActivity implements ICustomCall
         mOriginList = originList;
     }
 
+    /**
+     * 创建成功之后跳转到客户详情页面
+     * @param isSuccess
+     * @param warn
+     */
     @Override
     public void createCustomData(boolean isSuccess, String warn) {
-        if (isSuccess){
-            startActivity(getNewIntent(this, CustomDetailActivity.class, "客户详情", "客户详情"));
-        }else {
-           toast(warn);
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        if (isSuccess) {
+            PageJumpUtil.listJump2CustomDetail(this, CustomDetailActivity.class, mRandomId);
+        } else {
+            toast(warn);
         }
     }
 

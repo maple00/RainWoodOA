@@ -10,13 +10,23 @@ import java.util.List;
  */
 public final class BalanceByMonthOrYear implements Serializable {
 
+    @Override
+    public String toString() {
+        return "BalanceByMonthOrYear{" +
+                "name='" + name + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
     /**
      * 名称
      */
     private String name;
 
+    /**
+     * 数据
+     */
     private List<BalanceItem> data;
-
 
     public String getName() {
         return name;

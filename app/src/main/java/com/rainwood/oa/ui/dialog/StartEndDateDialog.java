@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PickerLayoutManager;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.MyAdapter;
 
@@ -38,8 +39,9 @@ public final class StartEndDateDialog {
     public static final class Builder
             extends UIDialog.Builder<Builder>
             implements PickerLayoutManager.OnPickerListener {
-
-        private final int mStartYear = Calendar.getInstance().get(Calendar.YEAR) - 100;
+        // 日期开始时间
+        private final int mStartYear = 2014;
+        // 日期结束时间
         private final int mEndYear = Calendar.getInstance().get(Calendar.YEAR) + 100;
         private boolean hasIgnoreDay = false;       // 是否忽略了天
 
@@ -149,7 +151,6 @@ public final class StartEndDateDialog {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             // 设置开始时间默认聚焦（UI初始化时设置默认的日期）
             int index = startTime.getHint().toString().length();
             if (index > 0) {
@@ -162,9 +163,28 @@ public final class StartEndDateDialog {
             // 结束时间焦点监听
             endTime.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
-                    endTime.setText(calendar.get(Calendar.YEAR) + "-"
-                            + ((calendar.get(Calendar.MONTH) + 1) < 10 ? "0" + (calendar.get(Calendar.MONTH) + 1) : (calendar.get(Calendar.MONTH) + 1))
-                            + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
+                    String endTimeStr = endTime.getText().toString();
+                    endTime.setText(endTimeStr);
+                    if (!TextUtils.isEmpty(endTime.getText().toString())) {
+                        Date date = DateTimeUtils.stringToDate(endTimeStr,
+                                hasIgnoreDay ? DateTimeUtils.DatePattern.ONLY_MONTH : DateTimeUtils.DatePattern.ONLY_DAY);
+                        int year = date.getYear() + 1900;
+                        int month = date.getMonth();
+                        setYear(year);
+                        setMonth(month + 1);
+                        if (!hasIgnoreDay) {
+                            // 没有忽略天
+                            setDay(date.getDate());
+                        }
+                    } else {
+                        String endTimeEmptyStr = endTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
+                                + "-" + ((mMonthManager.getPickedPosition() + 1) < 10 ? "0"
+                                + (mMonthManager.getPickedPosition() + 1) : (mMonthManager.getPickedPosition() + 1))
+                                + (hasIgnoreDay ? "" : "-" + ((mDayManager.getPickedPosition() + 1) < 10 ? "0"
+                                + (mDayManager.getPickedPosition() + 1) : (mDayManager.getPickedPosition() + 1))))
+                                : (TextUtils.isEmpty(endTime.getText()) ? "" : endTime.getText().toString().trim());
+                        endTime.setText(endTimeEmptyStr);
+                    }
                     endTime.setTextColor(getResources().getColor(R.color.colorPrimary));
                 } else {
                     endTime.setTextColor(getResources().getColor(R.color.fontColor));
@@ -173,14 +193,36 @@ public final class StartEndDateDialog {
             // 开始时间焦点监听
             startTime.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
-                    startTime.setText(calendar.get(Calendar.YEAR) + "-"
-                            + (calendar.get(Calendar.MONTH) + 1)
-                            + (hasIgnoreDay ? "" : "-" + calendar.get(Calendar.DAY_OF_MONTH)));
-                    startTime.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    String startTimeStr = startTime.getText().toString();
+                    startTime.setText(startTimeStr);
+                    if (!TextUtils.isEmpty(startTimeStr)) {
+                        Date date = DateTimeUtils.stringToDate(startTimeStr,
+                                hasIgnoreDay ? DateTimeUtils.DatePattern.ONLY_MONTH : DateTimeUtils.DatePattern.ONLY_DAY);
+                        int year = date.getYear() + 1900;
+                        int month = date.getMonth();
+                        setYear(year);
+                        setMonth(month + 1);
+                        if (!hasIgnoreDay) {
+                            // 没有忽略天
+                            setDay(date.getDate());
+                        }
+                        startTime.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    } else {
+                        String startEmptyStr = startTime.hasFocus() ? (mStartYear + mYearManager.getPickedPosition()
+                                + "-" + ((mMonthManager.getPickedPosition() + 1) < 10 ? "0"
+                                + (mMonthManager.getPickedPosition() + 1) : (mMonthManager.getPickedPosition() + 1))
+                                + (hasIgnoreDay ? "" : "-" + ((mDayManager.getPickedPosition() + 1) < 10 ? "0"
+                                + (mDayManager.getPickedPosition() + 1) : (mDayManager.getPickedPosition() + 1))))
+                                : (TextUtils.isEmpty(endTime.getText()) ? "" : endTime.getText().toString().trim());
+                        startTime.setText(startEmptyStr);
+                    }
                 } else {
                     startTime.setTextColor(getResources().getColor(R.color.fontColor));
                 }
             });
+
+            // 按钮置灰
+
         }
 
         public Builder setListener(OnListener listener) {
@@ -221,7 +263,7 @@ public final class StartEndDateDialog {
         }
 
         public Builder setYear(String year) {
-            return setYear(Integer.valueOf(year));
+            return setYear(Integer.parseInt(year));
         }
 
         public Builder setYear(int year) {
@@ -236,7 +278,7 @@ public final class StartEndDateDialog {
         }
 
         public Builder setMonth(String month) {
-            return setMonth(Integer.valueOf(month));
+            return setMonth(Integer.parseInt(month));
         }
 
         public Builder setMonth(int month) {
@@ -251,7 +293,7 @@ public final class StartEndDateDialog {
         }
 
         public Builder setDay(String day) {
-            return setDay(Integer.valueOf(day));
+            return setDay(Integer.parseInt(day));
         }
 
         public Builder setDay(int day) {
@@ -262,6 +304,24 @@ public final class StartEndDateDialog {
                 index = mDayAdapter.getItemCount() - 1;
             }
             mDayView.scrollToPosition(index);
+            return this;
+        }
+
+        public Builder setStartTime(String startTime) {
+            LogUtils.d("sxs", "----------- startTime ------- " + startTime);
+            this.startTime.setText(startTime);
+            if (!TextUtils.isEmpty(startTime)) {
+                Date date = DateTimeUtils.stringToDate(startTime, DateTimeUtils.DatePattern.ONLY_MONTH);
+                int year = date.getYear() + 1900;
+                int month = date.getMonth();
+                setYear(year);
+                setMonth(month + 1);
+            }
+            return this;
+        }
+
+        public Builder setEndTime(String endTime) {
+            this.endTime.setText(endTime);
             return this;
         }
 
@@ -316,7 +376,8 @@ public final class StartEndDateDialog {
                 case R.id.tv_ui_confirm:
                     autoDismiss();
                     if (mListener != null) {
-                        mListener.onSelected(getDialog(), mStartYear + mYearManager.getPickedPosition(), mMonthManager.getPickedPosition() + 1, mDayManager.getPickedPosition() + 1);
+                        mListener.onSelected(getDialog(), mStartYear + mYearManager.getPickedPosition(),
+                                mMonthManager.getPickedPosition() + 1, mDayManager.getPickedPosition() + 1);
                     }
                     break;
                 case R.id.tv_ui_cancel:
@@ -327,7 +388,6 @@ public final class StartEndDateDialog {
                     break;
                 case R.id.btn_clear_screen:         // 清空筛选
                     autoDismiss();
-                    LogUtils.d("sxs", "清空筛选....");
                     if (!TextUtils.isEmpty(startTime.getText())) {
                         startTime.setText("");
                     }
@@ -337,7 +397,6 @@ public final class StartEndDateDialog {
                     break;
                 case R.id.btn_confirm:          // 确定选择
                     autoDismiss();
-                    LogUtils.d("sxs", "确定选择....");
                     if (mListener != null) {
                         mListener.onSelected(getDialog(), startTime.getText().toString().trim(), endTime.getText().toString().trim());
                     }

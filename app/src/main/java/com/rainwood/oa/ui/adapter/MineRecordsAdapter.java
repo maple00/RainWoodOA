@@ -12,11 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +33,28 @@ public final class MineRecordsAdapter extends RecyclerView.Adapter<MineRecordsAd
 
     public void setReissueList(List<MineRecords> reissueList) {
         mReissueList = reissueList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<MineRecords> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mReissueList == null || mReissueList.size() == 0) {
+            setReissueList(data);
+        } else {
+            mReissueList.addAll(data);
+            notifyItemRangeInserted(mReissueList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position){
+        mReissueList.remove(position);
         notifyDataSetChanged();
     }
 

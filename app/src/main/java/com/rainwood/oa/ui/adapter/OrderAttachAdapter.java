@@ -24,10 +24,11 @@ import java.util.List;
  */
 public final class OrderAttachAdapter extends BaseAdapter {
 
-    List<Attachment> mList;
+    private List<Attachment> mList;
 
     public void setList(List<Attachment> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -61,7 +62,10 @@ public final class OrderAttachAdapter extends BaseAdapter {
         holder.nameTime.setText((TextUtils.isEmpty(getItem(position).getStaffName()) ? "" : getItem(position).getStaffName()) +
                 (TextUtils.isEmpty(getItem(position).getTime()) ? "" : getItem(position).getTime()));
         // 点击事件
-        holder.wasteClear.setOnClickListener(v -> mClickWasteClear.onClickClear(position));
+        holder.wasteClear.setOnClickListener(v -> {
+            mClickWasteClear.onClickClear(position);
+            notifyDataSetChanged();
+        });
         return convertView;
     }
 

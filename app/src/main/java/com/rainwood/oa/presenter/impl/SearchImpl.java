@@ -27,6 +27,7 @@ public final class SearchImpl implements ISearchPresenter, OnHttpListener {
     @Override
     public void requestSearchRoleList(String roleName, String moduleOne, String moduleTwo) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("name", roleName);
         params.add("powerOne", moduleOne);
         params.add("powerTwo", moduleTwo);

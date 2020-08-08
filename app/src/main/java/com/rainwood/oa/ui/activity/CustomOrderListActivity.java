@@ -1,27 +1,28 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CustomOrder;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.CustomOrderAdapter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IOrderCallbacks;
+import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.List;
 
@@ -32,10 +33,12 @@ import java.util.List;
  */
 public final class CustomOrderListActivity extends BaseActivity implements IOrderCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pagerTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     // content
     @ViewInject(R.id.tv_company_name)
@@ -79,25 +82,35 @@ public final class CustomOrderListActivity extends BaseActivity implements IOrde
     @Override
     protected void loadData() {
         // 请求数据
+        showDialog();
         mOrderPresenter.requestCustomOrderList(Constants.CUSTOM_ID);
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back})
+    @OnClick({R.id.iv_page_back, R.id.iv_menu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_menu:
+                showQuickFunction(this, parentPager);
                 break;
         }
     }
 
     /**
      * 客户订单列表
+     *
      * @param customOrderList
      */
     @Override
     public void getCustomOrderList(List<CustomOrder> customOrderList) {
+        pagerRefresh.finishLoadmore();
+        if (isShowDialog()){
+            hideDialog();
+        }
+
         mOrderAdapter.setCustomOrderList(customOrderList);
     }
 

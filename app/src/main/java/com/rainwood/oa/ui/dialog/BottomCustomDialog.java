@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.CustomStaff;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.wheel.BaseAdapter;

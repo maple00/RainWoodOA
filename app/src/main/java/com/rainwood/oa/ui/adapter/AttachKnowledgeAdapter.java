@@ -19,7 +19,6 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,19 +28,28 @@ import java.util.List;
  */
 public final class AttachKnowledgeAdapter extends RecyclerView.Adapter<AttachKnowledgeAdapter.ViewHolder> {
 
-    private List<KnowledgeAttach> mAttachList = new ArrayList<>();
+    private List<KnowledgeAttach> mAttachList;
     private Context mContext;
-    private boolean loaded;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setAttachList(List<KnowledgeAttach> attachList) {
-        if (loaded){
-            mAttachList.clear();
+        mAttachList = attachList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<KnowledgeAttach> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mAttachList.addAll(attachList);
+
+        if (mAttachList == null || mAttachList.size() == 0) {
+            setAttachList(data);
+        } else {
+            mAttachList.addAll(data);
+            notifyItemRangeInserted(mAttachList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

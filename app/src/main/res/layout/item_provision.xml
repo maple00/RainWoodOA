@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
+    android:paddingStart="15dp"
     android:paddingTop="20dp"
+    android:paddingEnd="15dp"
     tools:ignore="ContentDescription">
 
     <TextView
@@ -23,10 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_money"
         android:layout_marginTop="13dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="域名3年的费用193元，服务器3年的费用5507元服..."
         android:textColor="@color/labelColor"
-        android:maxLines="1"
-        android:ellipsize="end"
         android:textSize="13sp" />
 
     <ImageView

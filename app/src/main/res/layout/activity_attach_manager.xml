@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_search_glass_view" />
+    <include layout="@layout/include_search_title_view" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,16 +49,22 @@
         android:id="@+id/divider"
         style="@style/HorizontalLineStyle" />
 
-    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-        android:id="@+id/trl_pager_refresh"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_attach_list"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_attach_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </LinearLayout>

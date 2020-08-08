@@ -16,6 +16,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RoleCondition;
 import com.rainwood.oa.model.domain.RolePermission;
 import com.rainwood.oa.model.domain.RoleSecondCondition;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.ui.adapter.RoleManagerAdapter;
@@ -34,7 +35,8 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,12 @@ import java.util.List;
  * @Desc: 角色管理pager
  */
 public final class RoleManagerActivity extends BaseActivity implements
-        IAdministrativeCallbacks, RoleManagerAdapter.OnClickRoleItem {
+        IAdministrativeCallbacks, RoleManagerAdapter.OnClickRoleItem, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_search_tips)
+    @ViewInject(R.id.et_search_tips)
     private TextView searchContent;
     @ViewInject(R.id.gti_screen)
     private GroupTextIcon screenTitle;
@@ -61,6 +63,9 @@ public final class RoleManagerActivity extends BaseActivity implements
     private RecyclerView mRoleList;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IAdministrativePresenter mRoleManagerPresenter;
     private RoleManagerAdapter mRoleManagerAdapter;
@@ -75,7 +80,7 @@ public final class RoleManagerActivity extends BaseActivity implements
     private CommonPopupWindow mStatusPopWindow;
     private TextView mTextClearScreen;
     private TextView mTextConfirm;
-    private int page = 0;
+    private int pageCount = 1;
     // 一级分类
     private String mConditionTypeFirst;
     // 二级分类
@@ -95,8 +100,7 @@ public final class RoleManagerActivity extends BaseActivity implements
         screenTitle.setText("筛选分类");
         // 设置局部管理器
         mRoleList.setLayoutManager(new GridLayoutManager(this, 1));
-        mRoleList.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
-                FontSwitchUtil.dip2px(this, 0f)));
+        mRoleList.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 0));
         // 创建适配器
         mRoleManagerAdapter = new RoleManagerAdapter();
         // 设置适配器
@@ -117,9 +121,20 @@ public final class RoleManagerActivity extends BaseActivity implements
     @Override
     protected void loadData() {
         // 请求数据 -- 角色列表 -- 筛选条件
-        page = 0;
-        mRoleManagerPresenter.requestAllRole("", "", "", page);
+        netRequestData();
         mRoleManagerPresenter.requestRoleScreenCondition();
+    }
+
+    /***
+     * 请求网络数据
+     */
+    private void netRequestData() {
+        netData("", "");
+    }
+
+    private void netData(String conditionTypeFirst, String conditionTypeSecond) {
+        showDialog();
+        mRoleManagerPresenter.requestAllRole("", conditionTypeFirst, conditionTypeSecond, pageCount = 1);
     }
 
     @Override
@@ -143,20 +158,20 @@ public final class RoleManagerActivity extends BaseActivity implements
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 // TODO: 加载更多
-                mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, ++page);
+                mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, ++pageCount);
             }
         });
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_search_tips, R.id.ll_search_view})
+    @OnClick({R.id.iv_page_back, R.id.et_search_tips, R.id.ll_search_view})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
             case R.id.ll_search_view:
-            case R.id.tv_search_tips:
+            case R.id.et_search_tips:
                 PageJumpUtil.page2SearchView(this, SearchActivity.class, "角色管理",
                         "roleManager", "请输入角色名称");
                 break;
@@ -214,16 +229,26 @@ public final class RoleManagerActivity extends BaseActivity implements
 
     @Override
     public void getAllData2List(List<RolePermission> rolePermissions) {
-        pagerRefresh.finishLoadmore();
-        // 得到数据
-        if (page == 0) {
-            // 初始化或者条件查询第一页
-            mRoleManagerAdapter.setPermissionList(rolePermissions);
-            mRoleManagerAdapter.setLoaded(false);
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
+        if (pageCount != 1) {
+            pagerRefresh.finishLoadmore();
+            if (ListUtils.getSize(rolePermissions) == 0) {
+                ToastUtils.show("我是有底线滴哟");
+                pageCount--;
+                ToastUtils.setGravity(Gravity.BOTTOM, 0, 30);
+                //ToastUtils.setToastInterceptor();
+                return;
+            }
+            mRoleManagerAdapter.addData(rolePermissions);
         } else {
-            // 加载
+            if (ListUtils.getSize(rolePermissions) == 0) {
+                showEmpty();
+                return;
+            }
             mRoleManagerAdapter.setPermissionList(rolePermissions);
-            mRoleManagerAdapter.setLoaded(true);
         }
     }
 
@@ -270,33 +295,31 @@ public final class RoleManagerActivity extends BaseActivity implements
                 }
             }
             // TODO: 清空分类接口
-            page = 0;
             mConditionTypeFirst = "";
             mConditionTypeSecond = "";
-            mRoleManagerPresenter.requestAllRole("", mConditionTypeFirst, mConditionTypeSecond, page);
             showPopScreen();
-            tempPos = -1;
+            mStatusPopWindow.dismiss();
+            netData(mConditionTypeFirst, mConditionTypeSecond);
         });
         mTextConfirm.setOnClickListener(v -> {
             for (RoleCondition condition : roleConditionList) {
                 if (condition.isSelected()) {
+                    mConditionTypeFirst = condition.getName();
                     if (ListUtils.getSize(condition.getArray()) != 0) {
-                        if (condition.getArray().get(tempPos).isSelected()) {
-                            // TODO: 查询分类接口
-                            mConditionTypeFirst = condition.getName();
-                            mConditionTypeSecond = condition.getArray().get(tempPos).getName();
+                        for (RoleSecondCondition secondCondition : condition.getArray()) {
+                            if (secondCondition.isSelected()) {
+                                // TODO: 查询分类接口
+                                mConditionTypeSecond = secondCondition.getKey();
+                                break;
+                            }
                         }
                     }
                 }
             }
-            page = 0;
-            mRoleManagerPresenter.requestAllRole("", TextUtils.isEmpty(mConditionTypeFirst) ? "" : mConditionTypeFirst,
-                    TextUtils.isEmpty(mConditionTypeSecond) ? "" : mConditionTypeSecond, page);
-            tempPos = -1;
             mStatusPopWindow.dismiss();
+            netData(TextUtils.isEmpty(mConditionTypeFirst) ? "" : mConditionTypeFirst, TextUtils.isEmpty(mConditionTypeSecond) ? "" : mConditionTypeSecond);
         });
     }
-
 
     @Override
     public void onError() {
@@ -314,4 +337,8 @@ public final class RoleManagerActivity extends BaseActivity implements
     }
 
 
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
+    }
 }

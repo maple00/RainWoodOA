@@ -61,14 +61,14 @@
                         android:textColor="@color/labelColor"
                         android:textSize="12sp" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_head_photo"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/bg_monkey_king" />
+                        android:src="@drawable/ic_default_head" />
                 </RelativeLayout>
 
                 <RelativeLayout

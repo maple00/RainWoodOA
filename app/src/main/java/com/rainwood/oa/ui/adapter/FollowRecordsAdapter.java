@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.KnowledgeAttach;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -20,6 +21,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.utils.FontSwitchUtil;
 import com.rainwood.tools.widget.ExpandTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ import java.util.List;
  */
 public final class FollowRecordsAdapter extends RecyclerView.Adapter<FollowRecordsAdapter.ViewHolder> {
 
-    private List<KnowledgeFollowRecord> mRecordList;
+    private List<KnowledgeFollowRecord> mRecordList ;
     private Context mContext;
     private int default_width;
 
@@ -39,6 +41,23 @@ public final class FollowRecordsAdapter extends RecyclerView.Adapter<FollowRecor
 
     public void setRecordList(List<KnowledgeFollowRecord> recordList) {
         mRecordList = recordList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<KnowledgeFollowRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mRecordList == null || mRecordList.size() == 0) {
+            setRecordList(data);
+        } else {
+            mRecordList.addAll(data);
+            notifyItemRangeInserted(mRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

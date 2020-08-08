@@ -11,7 +11,9 @@ public interface ILoginAboutCallbacks extends IBaseCallback {
 
     /**
      * 登录
+     * @param life
      */
-    void Login();
+    void Login(String life);
 
+    default void getVerifyResult(boolean warn){}
 }

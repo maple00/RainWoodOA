@@ -109,6 +109,7 @@ public class ManagerMainImpl implements IManagerPresenter, OnHttpListener {
         }
 
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=manage&fun=menu", params, this);
 
 

@@ -1,7 +1,10 @@
 package com.rainwood.oa.ui.activity;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,8 @@ public final class ManagerSystemActivity extends BaseActivity implements IArticl
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
+    @ViewInject(R.id.et_search_tips)
+    private TextView mSearchContent;
     // content
     @ViewInject(R.id.rv_manager_content)
     private RecyclerView managerContent;
@@ -49,6 +54,7 @@ public final class ManagerSystemActivity extends BaseActivity implements IArticl
     protected void initView() {
         StatusBarUtils.immersive(this);
         StatusBarUtils.setMargin(this, pageTop);
+        mSearchContent.setHint("请输入标题");
         // 设置布局管理
         managerContent.setLayoutManager(new GridLayoutManager(this, 1));
         managerContent.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
@@ -60,15 +66,15 @@ public final class ManagerSystemActivity extends BaseActivity implements IArticl
     }
 
     @Override
-    protected void loadData() {
-        // 请求数据
-        mArticlePresenter.requestManagerSystemData();
-    }
-
-    @Override
     protected void initPresenter() {
         mArticlePresenter = PresenterManager.getOurInstance().getArticlePresenter();
         mArticlePresenter.registerViewCallback(this);
+    }
+
+    @Override
+    protected void loadData() {
+        showDialog();
+        mArticlePresenter.requestManagerSystemData("");
     }
 
     @Override
@@ -77,6 +83,25 @@ public final class ManagerSystemActivity extends BaseActivity implements IArticl
             // toast("查看详情");
             // startActivity(getNewIntent(ManagerSystemActivity.this, ArticleDetailActivity.class, "管理制度"));
             PageJumpUtil.skillList2Detail(ManagerSystemActivity.this, ArticleDetailActivity.class, article.getId(), "管理制度");
+        });
+        // 监听
+        mSearchContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 请求数据
+                String title = s.toString();
+                mArticlePresenter.requestManagerSystemData(title);
+            }
         });
     }
 
@@ -91,6 +116,9 @@ public final class ManagerSystemActivity extends BaseActivity implements IArticl
 
     @Override
     public void getManagerSystemData(List<Article> managerSysList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         mSystemAdapter.setSystemList(managerSysList);
     }
 

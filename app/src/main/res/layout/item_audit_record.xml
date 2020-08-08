@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:lineSpacingExtra="11dp"
         android:text="韩梅梅驳回了蔡川的补卡申请，填写错误"
-        android:textColor="@color/fontColor"
+        android:textColor="@color/labelColor"
         android:textSize="15sp" />
 
     <TextView

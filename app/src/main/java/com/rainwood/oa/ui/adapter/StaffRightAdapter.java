@@ -41,6 +41,23 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<Staff> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mStaffList == null || mStaffList.size() == 0) {
+            setStaffList(data);
+        } else {
+            mStaffList.addAll(data);
+            notifyItemRangeInserted(mStaffList.size() - data.size(), data.size());
+        }
+    }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,6 +90,8 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
         //holder.departPost.setText(mStaffList.get(position).getDepart() + "-" + mStaffList.get(position).getPost());
         holder.departPost.setText(mStaffList.get(position).getDepartment());
         holder.telNum.setValue(mStaffList.get(position).getTel());
+        // 查看大图
+        // holder.headPhoto.setOnClickListener(v -> FileManagerUtil.queryBigPicture(mContext, mStaffList.get(position).getIco()));
         // 点击事件
         holder.itemStaff.setOnClickListener(v -> mClickStaffRight.onClickStaff(mStaffList.get(position), position));
     }
@@ -103,9 +122,10 @@ public final class StaffRightAdapter extends RecyclerView.Adapter<StaffRightAdap
         }
     }
 
-    public interface OnClickStaffRight{
+    public interface OnClickStaffRight {
         /**
          * 查看员工详情
+         *
          * @param position
          */
         void onClickStaff(Staff staff, int position);

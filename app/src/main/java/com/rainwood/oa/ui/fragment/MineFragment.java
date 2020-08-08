@@ -22,7 +22,10 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.MineData;
+import com.rainwood.oa.model.domain.VersionData;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.okhttp.NetworkUtils;
+import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.activity.AccountFundsActivity;
 import com.rainwood.oa.ui.activity.ChangePwdActivity;
@@ -35,15 +38,22 @@ import com.rainwood.oa.ui.dialog.UpdateDialog;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.AppCacheDataManager;
+import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.FileManagerUtil;
+import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IMineCallbacks;
 import com.rainwood.tkrefreshlayout.views.RWNestedScrollView;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.permission.OnPermission;
+import com.rainwood.tools.permission.Permission;
+import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.SmartUtil;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.tools.wheel.widget.SettingBar;
 
 import java.util.List;
@@ -69,6 +79,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     private TextView accountBalance;
     @ViewInject(R.id.sb_clear_cache)
     private SettingBar clearCacheView;
+    @ViewInject(R.id.sb_update_version)
+    private SettingBar mVersionView;
     // 账户
     @ViewInject(R.id.mgv_account)
     private MeasureGridView accountGv;
@@ -91,6 +103,9 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     private int mScrollY = 0;
     private String telNumber;
+    private String mheadPhotoPath;
+    private VersionData mVersionData;
+    private boolean hasLastVersion = true;
 
     @Override
     protected int getRootViewResId() {
@@ -128,11 +143,13 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
     @Override
     protected void loadData() {
         if (!NetworkUtils.isAvailable(getContext())) {
-            onError(getString(R.string.text_network_state));
+            onError(getString(R.string.common_network));
             return;
         }
         // 从这里请求数据
         mMinePresenter.getMineData();
+        // 请求版本信息
+        mMinePresenter.requestVersionData();
     }
 
     @Override
@@ -159,7 +176,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (lastScrollY < h) {
                     scrollY = Math.min(h, scrollY);
-                    mScrollY = scrollY > h ? h : scrollY;
+                    mScrollY = Math.min(scrollY, h);
                     mBarLayout.setAlpha(0.9f * mScrollY / h);
                     mineBar.setBackgroundColor(((255 * mScrollY / h) << 24) | color);
                 }
@@ -185,9 +202,13 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
 
     @SingleClick
     @OnClick({R.id.ll_network_error_tips, R.id.btn_logout, R.id.rl_mine_data, R.id.rl_account_account,
-            R.id.sb_mine_changed_pwd, R.id.sb_clear_cache, R.id.sb_update_version})
+            R.id.sb_mine_changed_pwd, R.id.sb_clear_cache, R.id.sb_update_version, R.id.iv_head_photo})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_head_photo:
+                // 头像放大
+                FileManagerUtil.queryBigPicture(getContext(), mheadPhotoPath);
+                break;
             case R.id.ll_network_error_tips:
                 onRetryClick();
                 break;
@@ -205,29 +226,69 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                 break;
             case R.id.sb_clear_cache:
                 //toast("清除缓存");
-                AppCacheDataManager.clearAllCache(getContext());
-                postDelayed(() -> {
-                    // 重新获取应用缓存大小
-                    clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(getContext()));
-                }, 500);
+                new MessageDialog.Builder(getContext())
+                        .setShowConfirm(false)
+                        .setShowImageClose(false)
+                        .setMessage("确认清除数据缓存？")
+                        .setConfirm(getString(R.string.common_confirm))
+                        .setCancel(getString(R.string.common_cancel))
+                        .setCanceledOnTouchOutside(true)
+                        .setListener(new MessageDialog.OnListener() {
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+                                AppCacheDataManager.clearAllCache(getContext());
+                                postDelayed(() -> {
+                                    // 重新获取应用缓存大小
+                                    clearCacheView.setRightText(AppCacheDataManager.getTotalCacheSize(getContext()));
+                                }, 500);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             case R.id.sb_update_version:
                 // toast("版本更新");
-                new UpdateDialog.Builder(getContext())
-                        // 版本名
-                        .setVersionName("2.0")
-                        // 是否强制更新
-                        .setForceUpdate(false)
-                        // 更新日志
-                        .setUpdateLog("到底更新了啥\n到底更新了啥\n到底更新了啥\n到底更新了啥\n到底更新了啥")
-                        // 下载 URL
-                        .setDownloadUrl("")
-                        // 文件 MD5
-                        .setFileMD5("56A5A5712D1856BDBD4C2AECA9B1FFE7")
-                        .show();
+                if (hasLastVersion) {
+                    toast("已是最新版本");
+                    return;
+                }
+                XXPermissions.with(getActivity())
+                        .permission(Permission.REQUEST_INSTALL_PACKAGES,Permission.WRITE_EXTERNAL_STORAGE,Permission.READ_EXTERNAL_STORAGE)
+                        .constantRequest()
+                        .request(new OnPermission() {
+                            @Override
+                            public void hasPermission(List<String> granted, boolean all) {
+                                if (all) {
+                                    new UpdateDialog.Builder(getContext())
+                                            // 版本名
+                                            .setVersionName(mVersionData.getVersion())
+                                            // 是否强制更新
+                                            .setForceUpdate(false)
+                                            // 更新日志
+                                            .setUpdateLog(mVersionData.getContent())
+                                            // 下载 URL https://www.pgyer.com/IWG8
+                                            //.setDownloadUrl(mVersionData.getUrl())
+                                            .setDownloadUrl("https://www.pgyer.com/IWG8")
+                                            .show();
+                                }
+                            }
+
+                            @Override
+                            public void noPermission(List<String> denied, boolean quick) {
+                                LogUtils.d("sxs", "-------- " + denied.toString());
+                                if (quick) {
+                                    ToastUtils.show(R.string.common_permission_fail);
+                                    XXPermissions.gotoPermissionSettings(ActivityStackManager.getInstance().getTopActivity(), false);
+                                } else {
+                                    ToastUtils.show(R.string.common_permission_hint);
+                                }
+                            }
+                        });
                 break;
             case R.id.btn_logout:
-                //toast("退出登录");
                 new MessageDialog.Builder(getContext())
                         .setTitle(null)
                         .setMessage("确定要退出登录吗？")
@@ -240,9 +301,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                             @Override
                             public void onConfirm(BaseDialog dialog) {
                                 // 返回到登录页面
-                                if (true) {
-                                    return;
-                                }
+                                dialog.dismiss();
+                                showDialog();
                                 mMinePresenter.requestLogout();
                             }
 
@@ -256,15 +316,22 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         }
     }
 
+    /**
+     * 个人中心模块
+     *
+     * @param mineData
+     * @param accountList
+     */
     @SingleClick
     @SuppressLint("SetTextI18n")
     @Override
     public void getMenuData(MineData mineData, List<FontAndFont> accountList) {
         setUpState(State.SUCCESS);
         mMineAccountAdapter.setList(accountList);
-        Glide.with(this).load(mineData.getIco())
-                .error(R.mipmap.ic_logo_mdpi)
-                .placeholder(R.mipmap.ic_logo_mdpi)
+        mheadPhotoPath = mineData.getIco();
+        Glide.with(this).load(mheadPhotoPath)
+                .error(R.mipmap.ic_logo)
+                .placeholder(R.mipmap.ic_logo)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(headPhoto);
         telNumber = mineData.getTel();
@@ -275,12 +342,60 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         mModuleAdapter.setList(mineData.getButton());
     }
 
+    /**
+     * 退出登录
+     *
+     * @param success
+     */
     @Override
     public void getLogout(boolean success) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(success ? "登出成功" : "登出失败");
         // 销毁所有的栈--返回到登录页面
-        ActivityStackManager.getInstance().finishAllActivities();
-        openActivity(LoginActivity.class);
+        postDelayed(() -> {
+            ActivityStackManager.getInstance().finishAllActivities(LoginActivity.class);
+            Constants.life = null;
+            openActivity(LoginActivity.class);
+        }, 500);
+    }
+
+    /**
+     * 版本信息
+     *
+     * @param versionData
+     */
+    @Override
+    public void getVersionData(VersionData versionData) {
+        mVersionData = versionData;
+        List<VersionData> versionList = SQLiteHelper.with(getContext()).query(VersionData.class);
+        // 删除 -- debug模式
+        // SQLiteHelper.with(getContext()).deleteTable(VersionData.class);
+        LogUtils.d("sxs", " ------------- versionList 0----------" + versionList);
+        if (ListUtils.getSize(versionList) != 0) {
+            String version = versionList.get(ListUtils.getSize(versionList) - 1).getVersion();
+            // 比较数据库中最新version大小 -- 比较字典大小
+            int compareResult = version.compareTo(versionData.getVersion());
+            LogUtils.d("sxs", "---- version ---- " + version + "----- compareResult -----" + compareResult);
+            // 不相等，则更新
+            if (compareResult != 0) {
+                hasLastVersion = false;
+                SQLiteHelper.with(getContext()).insert(versionData);
+                mVersionView.setRightText("发现新版本");
+            } else {
+                // 是最新版本
+                hasLastVersion = true;
+
+                hasLastVersion = false;
+                SQLiteHelper.with(getContext()).insert(versionData);
+                mVersionView.setRightText("发现新版本");
+            }
+        } else {
+            hasLastVersion = false;
+            SQLiteHelper.with(getContext()).insert(versionData);
+            mVersionView.setRightText("发现新版本");
+        }
     }
 
     @Override

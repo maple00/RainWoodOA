@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_parent_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -50,17 +51,25 @@
         style="@style/HorizontalLineStyle" />
 
 
-    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-        android:id="@+id/trl_pager_refresh"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_record_list"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarSize="@dimen/button_round_size_2"
-            android:scrollbars="vertical" />
+            android:background="@color/assistColor15">
 
-    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_record_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarSize="@dimen/button_round_size_2"
+                android:scrollbars="vertical" />
+
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
+
 </LinearLayout>

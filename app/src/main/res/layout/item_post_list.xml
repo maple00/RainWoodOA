@@ -5,11 +5,11 @@
     android:id="@+id/ll_item_post"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
+    android:paddingTop="20dp"
     android:paddingStart="15dp"
-    android:paddingTop="21dp"
-    android:paddingEnd="15dp"
-    android:paddingBottom="21dp">
+    android:paddingEnd="15dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,14 +38,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp">
+        android:layout_marginTop="6dp">
 
         <com.rainwood.oa.ui.widget.GroupIconText
             android:id="@+id/git_depart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_structure"
-            app:text="韩梅梅" />
+            app:text="韩梅梅"
+            app:textColor="@color/colorMiddle"/>
 
         <com.rainwood.oa.ui.widget.GroupIconText
             android:id="@+id/gti_role"
@@ -53,7 +54,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="17dp"
             app:icon="@drawable/ic_custom_head"
-            app:text="综合部" />
+            app:text="综合部"
+            app:textColor="@color/colorMiddle"/>
 
     </LinearLayout>
 
@@ -61,10 +63,13 @@
         android:id="@+id/tv_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/labelColor"
         android:textSize="12sp" />
+
+    <View style="@style/HorizontalLineStyle"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>

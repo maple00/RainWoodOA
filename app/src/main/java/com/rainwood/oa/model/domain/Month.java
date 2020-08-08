@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/6/10 13:29
  * @Desc: 月份
  */
-public final class Month {
+public final class Month implements Serializable {
 
     /**
      * 月份

@@ -13,67 +13,67 @@ public final class StaffDetail implements Serializable {
     /**
      * 员工姓名
      */
-    private String name;
+    private String name = "无";
 
     /**
      * 员工职位
      */
-    private String job;
+    private String job = "无";
 
     /**
      * 性别
      */
-    private String sex;
+    private String sex = "无";
 
     /**
      * 入职时间
      */
-    private String entryTime;
+    private String entryTime = "无";
 
     /**
      * 是否在岗
      */
-    private String state;
+    private String state = "无";
 
     /**
      * 是否有社保
      */
-    private String socialSecurity;
+    private String socialSecurity = "无";
 
     /**
      * 是否有门钥匙
      */
-    private String gateKey;
+    private String gateKey = "无";
 
     /**
      * 电话
      */
-    private String tel;
+    private String tel = "无";
 
     /**
      * QQ
      */
-    private String qq;
+    private String qq = "无";
 
     /**
      * 员工id
      */
-    private String stid;
+    private String stid = "无";
 
     /**
      * 登陆名字
      */
-    private String loginName;
+    private String loginName = "无";
 
     /**
      * 直属上级
      */
-    private String manager;
+    private String manager = "无";
 
     /**
      * 毕业院校
      */
-    private String school;
+    private String school = "无";
 
     /**
      * 所学专业
@@ -83,32 +83,32 @@ public final class StaffDetail implements Serializable {
     /**
      * 毕业时间
      */
-    private String schoolEnd;
+    private String schoolEnd = "无";
 
     /**
      * 工资卡银行
      */
-    private String bankName;
+    private String bankName = "无";
 
     /**
      * 银行卡号
      */
-    private String bankNum;
+    private String bankNum = "无";
 
     /**
      * 社保号
      */
-    private String socialSecurityNum;
+    private String socialSecurityNum = "无";
 
     /**
      * 钉钉id
      */
-    private String dingtalkId;
+    private String dingtalkId = "无";
 
     /**
      * 备注
      */
-    private String text;
+    private String text = "无";
 
     /**
      * 头像
@@ -123,7 +123,7 @@ public final class StaffDetail implements Serializable {
     /**
      * 身份证反面
      */
-    private String IDCardBack;
+    private String IDCardBack ;
 
     /**
      * 毕业证扫描证件码

@@ -14,6 +14,7 @@ public final class Post implements Serializable {
      */
 
     private String id;
+
     /**
      * 职位名称
      */
@@ -30,24 +31,37 @@ public final class Post implements Serializable {
     private String departmentType;
 
     /**
-     * 所属角色
+     * 角色名称
      */
     private String roleName;
 
     /**
      * 基本工资
      */
-    private String basePay;
+    private double basePay;
 
     /**
      * 岗位津贴
      */
-    private String subsidy;
+    private double subsidy;
+
+    /**
+     * 备注
+     */
+    private String text;
 
     /**
      * 津贴说明
      */
-    private String text;
+    private String subsidyText = "无";
+
+    public String getSubsidyText() {
+        return subsidyText;
+    }
+
+    public void setSubsidyText(String subsidyText) {
+        this.subsidyText = subsidyText;
+    }
 
     public String getId() {
         return id;
@@ -89,19 +103,19 @@ public final class Post implements Serializable {
         this.roleName = roleName;
     }
 
-    public String getBasePay() {
+    public double getBasePay() {
         return basePay;
     }
 
-    public void setBasePay(String basePay) {
+    public void setBasePay(double basePay) {
         this.basePay = basePay;
     }
 
-    public String getSubsidy() {
+    public double getSubsidy() {
         return subsidy;
     }
 
-    public void setSubsidy(String subsidy) {
+    public void setSubsidy(double subsidy) {
         this.subsidy = subsidy;
     }
 

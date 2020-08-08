@@ -1,9 +1,15 @@
 package com.rainwood.oa.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -99,5 +105,72 @@ public final class FileManagerUtil {
             intent.putExtras(bundle);
             context.startActivity(intent);
         }
+    }
+
+    /**
+     * 查看大图
+     * @param context
+     * @param filePath
+     */
+    public static void queryBigPicture(Context context, String filePath){
+        ImageActivity.start(context, filePath);
+    }
+
+
+    /**
+     * 通过Uri获取文件的实际路径
+     * @param context
+     * @param uri
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static String handleFilePath(Context context, Uri uri) {
+        LogUtils.d("sxs", uri.toString());
+        String path = null;
+        if (DocumentsContract.isDocumentUri(context, uri)) {
+            if (isMediaDocument(uri)) {
+                String id = DocumentsContract.getDocumentId(uri).split(":")[1];
+                String selection = "_id = " + id;
+                String type = DocumentsContract.getDocumentId(uri).split(":")[0];
+                if (type.equals("music"))
+                    path = getFilePath(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, selection);
+                else if (type.equals("movie"))
+                    path = getFilePath(context, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, selection);
+                else if (type.equals("image"))
+                    path = getFilePath(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if (isDownloadsDocument(uri)) {
+                path = DocumentsContract.getDocumentId(uri).substring(DocumentsContract.getDocumentId(uri).indexOf(":"));
+            } else if (isExternalStorageDocument(uri)) {
+                path = Environment.getExternalStorageDirectory() + "/" + DocumentsContract.getDocumentId(uri).split(":")[1];
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            path = getFilePath(context, uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            path = uri.getPath();
+        }
+        return path;
+    }
+
+    private static String getFilePath(Context context, Uri uri, String selection) {
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex("_data"));
+            }
+            cursor.close();
+        }
+        return null;
+    }
+
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }

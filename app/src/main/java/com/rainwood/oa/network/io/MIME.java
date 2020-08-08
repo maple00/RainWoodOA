@@ -1,5 +1,9 @@
 package com.rainwood.oa.network.io;
 
+import com.rainwood.oa.utils.LogUtils;
+
+import java.lang.reflect.Method;
+
 /**
  * Created by Relin
  * on 2018-06-06.
@@ -72,4 +76,18 @@ public class MIME {
     public static String ANY = "*/*";
     public static String FOLDER = "file/*";
 
+    /**
+     * 匹配文件类型
+     */
+    public static String matchFileType(String filePath) {
+        MIME mime = new MIME();
+        Class<? extends MIME> clz = mime.getClass();
+        // 获取所有的属性
+        Method[] methods = clz.getMethods();
+        for (Method method : methods) {
+            String name = method.getName();
+            LogUtils.d("sxs", "---------- " + name);
+        }
+        return "";
+    }
 }

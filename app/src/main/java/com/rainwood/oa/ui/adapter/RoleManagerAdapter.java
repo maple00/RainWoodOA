@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.adapter;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.RolePermission;
-import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.model.domain.SubRoleXModule;
+import com.rainwood.oa.ui.widget.TextFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
-import com.rainwood.tools.toast.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,23 +27,27 @@ import java.util.List;
  */
 public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAdapter.ViewHolder> {
 
-    private List<RolePermission> mPermissionList = new ArrayList<>();
-    // 是否是加载数据 --- 默认不是
-    private boolean Loaded = false;
+    private List<RolePermission> mPermissionList;
 
     public void setPermissionList(List<RolePermission> permissionList) {
-        if (!Loaded) {
-            mPermissionList.clear();
-        } else {
-            ToastUtils.show("本次加载了" + ListUtils.getSize(permissionList) + "条数据");
-        }
-        mPermissionList.addAll(permissionList);
+        mPermissionList = permissionList;
         notifyDataSetChanged();
     }
 
-    public void setLoaded(boolean Loaded) {
-        this.Loaded = Loaded;
+    public void addData(List<RolePermission> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mPermissionList == null || mPermissionList.size() == 0) {
+            setPermissionList(data);
+        } else {
+            mPermissionList.addAll(data);
+            notifyItemRangeInserted(mPermissionList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
     }
+
 
     @NonNull
     @Override
@@ -57,15 +60,15 @@ public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.roleName.setText(mPermissionList.get(position).getName());
         holder.roleDesc.setText(mPermissionList.get(position).getText());
-        // 角色下的模块
-        RoleDescAdapter moduleAdapter = new RoleDescAdapter();
-        holder.roleModule.setNumColumns(5);
-        holder.roleModule.setAdapter(moduleAdapter);
-        //LogUtils.d("sxs", "------- " + mPermissionList.get(position).getPower());
-        moduleAdapter.setList(mPermissionList.get(position).getPower());
+        // 流式布局
+        List<String> xRoleName = new ArrayList<>();
+        for (SubRoleXModule roleXModule : mPermissionList.get(position).getPower()) {
+            xRoleName.add(roleXModule.getName());
+        }
+        holder.mTextFlowLayout.setTextList(xRoleName);
         // 点击事件
         holder.roleItem.setOnClickListener(v -> mClickRoleItem.onClick(mPermissionList.get(position)));
-        holder.roleModule.setOnItemClickListener((parent, view, position1, id) -> mClickRoleItem.onClick(mPermissionList.get(position)));
+        holder.mTextFlowLayout.setOnFlowTextItemClickListener(text -> mClickRoleItem.onClick(mPermissionList.get(position)));
     }
 
     @Override
@@ -81,8 +84,8 @@ public final class RoleManagerAdapter extends RecyclerView.Adapter<RoleManagerAd
         private TextView roleName;
         @ViewInject(R.id.tv_role_desc)
         private TextView roleDesc;
-        @ViewInject(R.id.mgv_role_module)
-        private MeasureGridView roleModule;
+        @ViewInject(R.id.tfl_text)
+        private TextFlowLayout mTextFlowLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

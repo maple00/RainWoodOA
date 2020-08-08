@@ -1,12 +1,14 @@
 package com.rainwood.oa.ui.activity;
 
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.CustomInvoice;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICustomPresenter;
 import com.rainwood.oa.ui.widget.GroupTextText;
 import com.rainwood.oa.utils.ClipboardUtil;
@@ -17,7 +19,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
 
 /**
  * @Author: sxs
@@ -26,6 +27,8 @@ import com.rainwood.oa.network.aop.SingleClick;
  */
 public final class BillingDataActivity extends BaseActivity implements ICustomCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
@@ -97,10 +100,10 @@ public final class BillingDataActivity extends BaseActivity implements ICustomCa
                         "开户行：" + openBank.getValue() + "，" +
                         "对公账号：" + bankNum.getValue();
                 ClipboardUtil.clipFormat2Board(this, "customInvoiceData", clipBoardData);
-                toast("已复制");
+                toast("文本已复制");
                 break;
             case R.id.iv_menu:
-                toast("menu");
+                showQuickFunction(this, parentPager);
                 break;
         }
     }

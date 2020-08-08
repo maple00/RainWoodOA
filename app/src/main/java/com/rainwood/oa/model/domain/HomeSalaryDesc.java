@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/6/16 16:06
  * @Desc: 首页工资描述
  */
-public final class HomeSalaryDesc {
+public final class HomeSalaryDesc implements Serializable {
 
     /**
      * 圆点得颜色

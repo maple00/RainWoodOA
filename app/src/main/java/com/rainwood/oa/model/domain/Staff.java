@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/22 14:44
  * @Desc: 员工信息
  */
-public final class Staff {
+public final class Staff implements Serializable {
 
     /**
      * 员工id

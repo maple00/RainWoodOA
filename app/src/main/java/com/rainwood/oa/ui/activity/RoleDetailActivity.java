@@ -62,7 +62,7 @@ public final class RoleDetailActivity extends BaseActivity implements IAdministr
         // 设置管理布局
         permissionsView.setLayoutManager(new GridLayoutManager(this, 1));
         permissionsView.addItemDecoration(new SpacesItemDecoration(0, 0, 0,
-                FontSwitchUtil.dip2px(this, 10f)));
+                FontSwitchUtil.dip2px(this, 6f)));
         // 创建适配器
         mDetailModuleAdapter = new RoleDetailModuleAdapter();
         // 设置适配器

@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,13 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffSettlement;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -36,6 +37,23 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<StaffSettlement> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mSettlementList == null || mSettlementList.size() == 0) {
+            setSettlementList(data);
+        } else {
+            mSettlementList.addAll(data);
+            notifyItemRangeInserted(mSettlementList.size() - data.size(), data.size());
+            notifyDataSetChanged();
+        }
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,16 +62,20 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.event.setText(TextUtils.isEmpty(mSettlementList.get(position).getText()) ? "" : mSettlementList.get(position).getText());
         holder.time.setText(mSettlementList.get(position).getTime());
+
         holder.money.setText("收入".equals(mSettlementList.get(position).getDirection())
-                ? "+" + mSettlementList.get(position).getMoney()
-                : "-" + mSettlementList.get(position).getMoney());
+                ? "金额：+" + mSettlementList.get(position).getMoney()
+                : "金额：-" + mSettlementList.get(position).getMoney());
         holder.money.setTextColor("收入".equals(mSettlementList.get(position).getDirection())
                 ? mContext.getColor(R.color.colorPrimary)
-                : mContext.getColor(R.color.fontColor));
+                : mContext.getColor(R.color.red05));
+
+        holder.banlanceMoney.setText("余额：￥" + mSettlementList.get(position).getBalance());
         holder.voucher.setVisibility(TextUtils.isEmpty(mSettlementList.get(position).getIco()) ? View.GONE : View.VISIBLE);
         // 点击事件
         holder.itemSettlement.setOnClickListener(v -> mItemAccount.onClickAccount(mSettlementList.get(position)));
@@ -66,10 +88,12 @@ public final class StaffSettlementAdapter extends RecyclerView.Adapter<StaffSett
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @ViewInject(R.id.ll_item_settlement)
-        private LinearLayout itemSettlement;
+        @ViewInject(R.id.rl_item_settlement)
+        private RelativeLayout itemSettlement;
         @ViewInject(R.id.tv_event)
         private TextView event;
+        @ViewInject(R.id.tv_balance_money)
+        private TextView banlanceMoney;
         @ViewInject(R.id.iv_voucher)
         private ImageView voucher;
         @ViewInject(R.id.tv_money)

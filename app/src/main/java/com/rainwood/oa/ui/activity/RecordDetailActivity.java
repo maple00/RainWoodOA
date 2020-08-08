@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.RecordsDetail;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICommonPresenter;
 import com.rainwood.oa.ui.adapter.AuditRecordAdapter;
 import com.rainwood.oa.ui.adapter.RecordsResultsAdapter;
@@ -24,7 +25,6 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
 
 import java.util.Map;
 
@@ -101,6 +101,9 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
     @ViewInject(R.id.mlv_record_result)
     private MeasureListView resultRecordListView;
 
+    @ViewInject(R.id.ll_bottom_button)
+    private LinearLayout bottomButton;
+
     private ICommonPresenter mCommonPresenter;
     // 审核记录
     private AuditRecordAdapter mAuditRecordAdapter;
@@ -150,7 +153,19 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
 
     @Override
     protected void initData() {
-
+        String pageFlag = getIntent().getStringExtra("pageFlag");
+        if (pageFlag != null) {
+            switch (pageFlag) {
+                case "mineOvertime":
+                case "mineLeaveOut":
+                    bottomButton.setVisibility(View.GONE);
+                    break;
+                case "ovetime":
+                case "leaveOut":
+                    bottomButton.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -163,31 +178,34 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
     protected void loadData() {
         String recordId = getIntent().getStringExtra("recordId");
         // 请求数据
-        if (title.contains("加班")) {
-            if (moduleMenu.equals(Constants.PERSONAL_OVER_TIME_DETAIL_MENU)) {
-                // 行政人事--加班详情
-                mCommonPresenter.requestOverTimeRecordsById(recordId);
-            } else {
-                mCommonPresenter.AuditRecords();
-            }
-        } else if (title.contains("请假")) {
-            if (moduleMenu.equals(Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU)) {
-                // 行政人事 --- 请假详情
-                mCommonPresenter.requestAskLeaveById(recordId);
-            } else {
-                mCommonPresenter.AuditRecords();
-            }
-        } else if (title.contains("外出")) {
-            if (moduleMenu.equals(Constants.PERSONAL_ASK_OUT_DETAIL_MENU)) {
-                mCommonPresenter.requestAskOutByStaffId(recordId);
-            } else {
-                mCommonPresenter.AuditRecords();
-            }
-        } else if (title.contains("补卡")) {
-            if (moduleMenu.equals(Constants.PERSONAL_REISSUE_CARD_DETAIL_MENU)) {
-                mCommonPresenter.requestReissueCardDetailById(recordId);
-            } else {
-                mCommonPresenter.AuditRecords();
+        if (recordId != null) {
+            showDialog();
+            if (title.contains("加班")) {
+                if (moduleMenu.equals(Constants.PERSONAL_OVER_TIME_DETAIL_MENU)) {
+                    // 行政人事--加班详情
+                    mCommonPresenter.requestOverTimeRecordsById(recordId);
+                } else {
+                    mCommonPresenter.AuditRecords();
+                }
+            } else if (title.contains("请假")) {
+                if (moduleMenu.equals(Constants.PERSONAL_ASK_LEAVE_DETAIL_MENU)) {
+                    // 行政人事 --- 请假详情
+                    mCommonPresenter.requestAskLeaveById(recordId);
+                } else {
+                    mCommonPresenter.AuditRecords();
+                }
+            } else if (title.contains("外出")) {
+                if (moduleMenu.equals(Constants.PERSONAL_ASK_OUT_DETAIL_MENU)) {
+                    mCommonPresenter.requestAskOutByStaffId(recordId);
+                } else {
+                    mCommonPresenter.AuditRecords();
+                }
+            } else if (title.contains("补卡")) {
+                if (moduleMenu.equals(Constants.PERSONAL_REISSUE_CARD_DETAIL_MENU)) {
+                    mCommonPresenter.requestReissueCardDetailById(recordId);
+                } else {
+                    mCommonPresenter.AuditRecords();
+                }
             }
         }
     }
@@ -240,6 +258,14 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
      */
     @Override
     public void getOverTimeDetail(RecordsDetail recordsDetail) {
+        if (isShowDialog()){
+            hideDialog();
+        }
+        if ("已通过".equals(recordsDetail.getWorkFlow()) || "草稿".equals(recordsDetail.getWorkFlow())) {
+            bottomButton.setVisibility(View.GONE);
+        } else {
+            bottomButton.setVisibility(View.VISIBLE);
+        }
         overTimeName.setText(recordsDetail.getStaffName());
         preTime.setText(recordsDetail.getExpectTime());
         actualTime.setText(recordsDetail.getTime());
@@ -262,6 +288,14 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
      */
     @Override
     public void getAskLeaveDetailData(RecordsDetail recordsDetail) {
+        if (isShowDialog()){
+            hideDialog();
+        }
+        if ("已通过".equals(recordsDetail.getWorkFlow()) || "草稿".equals(recordsDetail.getWorkFlow())) {
+            bottomButton.setVisibility(View.GONE);
+        } else {
+            bottomButton.setVisibility(View.VISIBLE);
+        }
         askLeaveName.setText(recordsDetail.getStaffName());
         leaveTime.setText(recordsDetail.getTime());
         mGroupState.setValue(recordsDetail.getWorkFlow());
@@ -284,6 +318,14 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
      */
     @Override
     public void getAskOutDetailData(RecordsDetail recordsDetail) {
+        if (isShowDialog()){
+            hideDialog();
+        }
+        if ("已通过".equals(recordsDetail.getWorkFlow()) || "草稿".equals(recordsDetail.getWorkFlow())) {
+            bottomButton.setVisibility(View.GONE);
+        } else {
+            bottomButton.setVisibility(View.VISIBLE);
+        }
         outApplyName.setText(recordsDetail.getStaffName());
         outPreTime.setText(recordsDetail.getExpectTime());
         outActualTime.setText(recordsDetail.getTime());
@@ -301,6 +343,14 @@ public final class RecordDetailActivity extends BaseActivity implements ICommonC
 
     @Override
     public void getReissueDetailData(RecordsDetail recordsDetail) {
+        if (isShowDialog()){
+            hideDialog();
+        }
+        if ("已通过".equals(recordsDetail.getWorkFlow()) || "草稿".equals(recordsDetail.getWorkFlow())) {
+            bottomButton.setVisibility(View.GONE);
+        } else {
+            bottomButton.setVisibility(View.VISIBLE);
+        }
         reissueApplyName.setText(recordsDetail.getStaffName());
         reissueTime.setText(recordsDetail.getSignTime());
         reissueReason.setText(recordsDetail.getText());

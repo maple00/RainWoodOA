@@ -77,4 +77,17 @@ public class HttpResponse implements Serializable {
     public void code(int code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "isCache=" + isCache +
+                ", body='" + body + '\'' +
+                ", url='" + url + '\'' +
+                ", code=" + code +
+                ", requestParams=" + requestParams +
+                ", exception=" + exception +
+                ", httpListener=" + httpListener +
+                '}';
+    }
 }

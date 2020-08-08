@@ -532,7 +532,9 @@ public class SQLiteHelper implements OnSQLiteOpenHelperListener {
         db.beginTransaction();
         try {
             db.execSQL(sql);
-            db.setTransactionSuccessful();//Notice:if you beginTransaction() method and endTransaction() method you must use this method.if you don't while your data insert、update、delete fail.
+            //Notice:if you beginTransaction() method and endTransaction()
+            // method you must use this method.if you don't while your data insert、update、delete fail.
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(this.getClass().getSimpleName(), this.getClass().getSimpleName() + " execSQL Exception:" + e.toString());
         }

@@ -27,12 +27,26 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
 
     /**
      * 请求日志列表
+     *
+     * @param searchText
+     * @param typeOne
+     * @param typeTwo
+     * @param staffId
+     * @param startTime
+     * @param endTime
+     * @param pageCount
      */
     @Override
-    public void requestLogcatData() {
+    public void requestLogcatData(String searchText, String typeOne, String typeTwo, String staffId, String startTime, String endTime, int pageCount) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=log&fun=home", params, this);
-        //mSettingCallback.getSystemLogcat(logcatList);
+        params.add("life", Constants.life);
+        params.add("text", searchText);
+        params.add("powerOne", typeOne);
+        params.add("powerTwo", typeTwo);
+        params.add("stid", staffId);
+        params.add("startDay", startTime);
+        params.add("endDay", endTime);
+        OkHttp.post(Constants.BASE_URL + "cla=log&fun=home&page=" + pageCount, params, this);
     }
 
     /**
@@ -41,6 +55,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     @Override
     public void requestLogcatType() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=manage&fun=menu", params, this);
     }
 
@@ -62,6 +77,7 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mLogcatCallbacks.onError();
             return;

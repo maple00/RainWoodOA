@@ -1,9 +1,16 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,6 +23,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.presenter.IMinePresenter;
@@ -26,6 +34,7 @@ import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
@@ -38,9 +47,11 @@ import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
@@ -50,16 +61,25 @@ import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
  * @Date: 2020/6/4 11:55
  * @Desc: 费用报销
  */
-public final class ReimbursementActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks {
+public final class ReimbursementActivity extends BaseActivity implements IFinancialCallbacks, IMineCallbacks,
+        StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchTopView;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTipsView;
+    @ViewInject(R.id.tv_cancel)
+    private TextView mTextCancel;
+    @ViewInject(R.id.iv_search)
+    private ImageView mImageSearch;
     // content
-    @ViewInject(R.id.tv_search)
-    private TextView searchView;
+    //  @ViewInject(R.id.tv_search)
+    // private TextView searchView;
     @ViewInject(R.id.tv_query_all)
     private TextView mTextQueryAll;
     @ViewInject(R.id.line_all)
@@ -87,6 +107,8 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_reimbursement)
     private RecyclerView reimbursementView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IFinancialPresenter mFinancialPresenter;
     private IMinePresenter mMinePresenter;
@@ -107,6 +129,8 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     private String hasAllocated = "";
     private String mType;
     private String mPayer;
+    private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
     @Override
     protected int getLayoutResId() {
@@ -129,12 +153,6 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                 break;
             case "mycost":
                 // 我的费用报销
-                searchView.setTextSize(14f);
-                searchView.setText("费用申请");
-                searchView.setTextColor(getColor(R.color.white));
-                searchView.setPadding(FontSwitchUtil.dip2px(this, 12f), FontSwitchUtil.dip2px(this, 10f),
-                        FontSwitchUtil.dip2px(this, 12f), FontSwitchUtil.dip2px(this, 10f));
-                searchView.setBackgroundResource(R.drawable.selector_apply_button);
                 departStaff.setVisibility(View.GONE);
                 // 设置适配器
                 reimbursementView.setAdapter(mMineReimbursementAdapter);
@@ -151,24 +169,52 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @Override
     protected void initPresenter() {
         mFinancialPresenter = PresenterManager.getOurInstance().getFinancialPresenter();
-        mMinePresenter = PresenterManager.getOurInstance().getIMinePresenter();
         mFinancialPresenter.registerViewCallback(this);
+        mMinePresenter = PresenterManager.getOurInstance().getIMinePresenter();
         mMinePresenter.registerViewCallback(this);
     }
 
     @Override
     protected void loadData() {
+        showDialog();
+        // condition
+        mFinancialPresenter.requestReimburseCondition();
         switch (moduleMenu) {
             case "mycost":
                 //我的费用报销
-                mMinePresenter.requestMineReimburseData();
+                setNetMineReimbursement("", "", "", "", "", "");
                 break;
             case "reimbursement":
                 // 管理--费用报销
-                mFinancialPresenter.requestReimburseData("", "", "", "", "", "", "", pageCount);
-                mFinancialPresenter.requestReimburseCondition();
+                netManagerReimbursement("", "", "", "", "", "", "");
                 break;
         }
+    }
+
+    /**
+     * 我的 -- 费用报销
+     */
+    private void setNetMineReimbursement(String text, String type, String payer, String payState, String startTime, String endTime) {
+        showDialog();
+        mMinePresenter.requestMineReimburseData(text, type, payer, payState, startTime, endTime, pageCount = 1);
+    }
+
+    /**
+     * 管理费用报销
+     */
+    private void netManagerReimbursement(String allocated, String staffId, String type, String payer,
+                                         String startTime, String endTime, String searchText) {
+        showDialog();
+        mFinancialPresenter.requestReimburseData(allocated, staffId, type, payer, startTime, endTime, searchText, pageCount = 1);
+    }
+
+
+    /**
+     * 财务管理 -- 费用报销
+     */
+    private void netReimbursementData(String allocated, String staffId, String type, String payer,
+                                      String startTime, String endTime, String keyWord) {
+        netManagerReimbursement(allocated, staffId, type, payer, startTime, endTime, keyWord);
     }
 
     @Override
@@ -192,68 +238,81 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                 stateConditionPopDialog(mPayerList, payTeam);
             }
         });
-        periodTime.setOnItemClick(text -> {
-            selectedTimeFlag = !selectedTimeFlag;
-            new StartEndDateDialog.Builder(ReimbursementActivity.this, false)
-                    .setTitle(null)
-                    .setConfirm(getString(R.string.common_text_confirm))
-                    .setCancel(getString(R.string.common_text_clear_screen))
-                    .setAutoDismiss(false)
-                    //.setIgnoreDay()
-                    .setCanceledOnTouchOutside(false)
-                    .setListener(new StartEndDateDialog.OnListener() {
-                        @Override
-                        public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                            dialog.dismiss();
-                            selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
-                            // TODO: 通过时间查询
-                            switch (moduleMenu) {
-                                case "mycost":
-                                    //我的费用报销
-                                    mMinePresenter.requestMineReimburseData();
-                                    break;
-                                case "reimbursement":
-                                    // 管理--费用报销
-                                    mStartTime = startTime;
-                                    mEndTime = endTime;
-                                    mFinancialPresenter.requestReimburseData("", "", "",
-                                            "", mStartTime, mEndTime, "", pageCount = 1);
-                                    break;
+        periodTime.setOnItemClick(new GroupTextIcon.onItemClick() {
+            @SingleClick
+            @Override
+            public void onItemClick(String text) {
+                selectedTimeFlag = !selectedTimeFlag;
+                new StartEndDateDialog.Builder(ReimbursementActivity.this, false)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
+                        //.setIgnoreDay()
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new StartEndDateDialog.OnListener() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+                                // TODO: 通过时间查询
+                                dialog.dismiss();
+                                selectedTimeFlag = false;
+                                periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                switch (moduleMenu) {
+                                    case "mycost":
+                                        //我的费用报销
+                                        setNetMineReimbursement("", "", "", "", startTime, endTime);
+                                        break;
+                                    case "reimbursement":
+                                        // 管理--费用报销
+                                        netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, mKeyWord);
+                                        break;
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancel(BaseDialog dialog) {
-                            dialog.dismiss();
-                            selectedTimeFlag = false;
-                            periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
-                        }
-                    })
-                    .show();
-            periodTime.setRightIcon(selectedTimeFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
-                    selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                                selectedTimeFlag = false;
+                                mStartTime = "";
+                                mEndTime = "";
+                                periodTime.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
+                            }
+                        })
+                        .show();
+                periodTime.setRightIcon(selectedTimeFlag ? R.drawable.ic_triangle_up : R.drawable.ic_triangle_down,
+                        selectedTimeFlag ? getColor(R.color.colorPrimary) : getColor(R.color.labelColor));
+            }
         });
 
         // 管理费用报销查看详情
         mReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
-                PageJumpUtil.receivable2Detail(ReimbursementActivity.this, CostDetailActivity.class, reimbursement.getStaffName()));
+                PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this,
+                        CostDetailActivity.class, reimbursement.getStaffName()));
         // 我的费用报销查看详情
-        mMineReimbursementAdapter.setOnClickReimburse(new MineReimbursementAdapter.OnClickReimburse() {
-            @Override
-            public void onClickItem(MineReimbursement reimbursement, int position) {
-                toast("查看详情");
-            }
-        });
+        mMineReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
+                PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this, CostDetailActivity.class,
+                        reimbursement.getId()));
 
-        // 加载更过
+        // 加载更多
         pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 switch (moduleMenu) {
                     case "mycost":
                         //我的费用报销
-                        mMinePresenter.requestMineReimburseData();
+                        mMinePresenter.requestMineReimburseData(mKeyWord, hasAllocated, mPayer, mType, mStartTime, mEndTime, ++pageCount);
                         break;
                     case "reimbursement":
                         // 管理--费用报销
@@ -263,95 +322,137 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                 }
             }
         });
+        // 搜索条件监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                switch (moduleMenu) {
+                    case "mycost":
+                        //我的费用报销
+                        setNetMineReimbursement(mKeyWord, "", "", "", "", "");
+                        break;
+                    case "reimbursement":
+                        // 管理--费用报销
+                        mFinancialPresenter.requestReimburseData(hasAllocated, mStaffId, mType, mPayer,
+                                mStartTime, mEndTime, mKeyWord, pageCount = 1);
+                        break;
+                }
+                /*if (TextUtils.isEmpty(s)) {
+                    searchTopView.setVisibility(View.GONE);
+                    hideSoftKeyboard();
+                } else {
+                    searchTopView.setVisibility(View.VISIBLE);
+                    netReimbursementData("", "", "", "", "", "", s.toString());
+                }*/
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
+        if (data != null) {
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
 
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            switch (moduleMenu) {
-                case "mycost":
-                    //我的费用报销
-                    mMinePresenter.requestMineReimburseData();
-                    break;
-                case "reimbursement":
-                    // 管理--费用报销
-                    mFinancialPresenter.requestReimburseData("", mStaffId, "", "", "", "", "", pageCount = 1);
-                    break;
+                toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, "");
             }
         }
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_search, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated,
+    @OnClick({R.id.iv_page_back, R.id.tv_cancel, R.id.tv_query_all, R.id.tv_allocated, R.id.tv_un_allocated,
             R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
                 break;
-            case R.id.tv_search:
-                switch (searchView.getText().toString().trim()) {
-                    case "搜索":
-                        toast("搜索");
-                        break;
-                    case "费用申请":
-                        toast("费用申请");
-                        break;
-                }
+            case R.id.tv_cancel:
+                mTextCancel.setVisibility(View.GONE);
+                searchTopView.setVisibility(View.GONE);
+                pageTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                searchTipsView.setText("");
+                // 向左边移出
+                searchTopView.setAnimation(AnimationUtils.makeOutAnimation(this, false));
+                break;
+            case R.id.iv_search:
+                mTextCancel.setVisibility(View.VISIBLE);
+                searchTopView.setVisibility(View.VISIBLE);
+                pageTitle.setVisibility(View.GONE);
+                mImageSearch.setVisibility(View.GONE);
+                searchTipsView.setHint("请输入备注信息");
+                // 向右边移入
+                searchTopView.setAnimation(AnimationUtils.makeInAnimation(this, true));
                 break;
             case R.id.tv_query_all:
+                if (lineAll.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(true, false, false);
                 setTextBold(mTextQueryAll, mTextUnAllocated, mTextAllocated);
                 hasAllocated = "";
                 switch (moduleMenu) {
                     case "mycost":
                         //我的费用报销
-                        mMinePresenter.requestMineReimburseData();
+                        setNetMineReimbursement("", "全部", "", "", "", "");
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("", "", "", "", "", "", "", pageCount = 1);
+                        netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, mKeyWord);
                         break;
                 }
                 break;
             case R.id.tv_allocated:
+                if (lineAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(false, true, false);
                 setTextBold(mTextAllocated, mTextQueryAll, mTextUnAllocated);
                 hasAllocated = "是";
                 switch (moduleMenu) {
                     case "mycost":
                         //我的费用报销
-                        mMinePresenter.requestMineReimburseData();
+                        setNetMineReimbursement("", "已拨付", "", "", "", "");
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("是", "", "", "", "", "", "", pageCount = 1);
+                        netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, mKeyWord);
                         break;
                 }
                 break;
             case R.id.tv_un_allocated:
+                if (lineUnAllocated.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 setStatusLine(false, false, true);
                 setTextBold(mTextUnAllocated, mTextQueryAll, mTextAllocated);
                 hasAllocated = "否";
                 switch (moduleMenu) {
                     case "mycost":
                         //我的费用报销
-                        mMinePresenter.requestMineReimburseData();
+                        setNetMineReimbursement("", "未拨付", "", "", "", "");
                         break;
                     case "reimbursement":
                         // 管理--费用报销
-                        mFinancialPresenter.requestReimburseData("否", "", "", "", "", "", "", pageCount = 1);
+                        netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, mKeyWord);
                         break;
                 }
-                break;
-            case R.id.iv_search:
-                toast("搜索");
                 break;
         }
     }
@@ -382,16 +483,26 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     public void getReimburseData(List<Reimbursement> reimbursementList) {
         // 管理---费用报销
         pageRefresh.finishLoadmore();
-        mReimbursementAdapter.setLoaded(pageCount == 1);
+        showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
         if (pageCount != 1) {
             toast("为您加载了" + ListUtils.getSize(reimbursementList) + "条数据");
+            mReimbursementAdapter.addData(reimbursementList);
+        } else {
+            if (ListUtils.getSize(reimbursementList) == 0) {
+                showEmpty();
+            }
+            mReimbursementAdapter.setList(reimbursementList);
         }
-        mReimbursementAdapter.setList(reimbursementList);
     }
 
     @Override
     public void getReimburseCondition(List<SelectedItem> typeList, List<SelectedItem> payerList) {
         // 管理 -- 费用报销condition
+        Collections.reverse(typeList);
+        Collections.reverse(payerList);
         mTypeList = typeList;
         mPayerList = payerList;
     }
@@ -399,9 +510,11 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @Override
     public void getMineReimbursementRecords(List<MineReimbursement> reimbursementList) {
         // 我的-- 费用报销
+        if (isShowDialog()) {
+            hideDialog();
+        }
         mMineReimbursementAdapter.setList(reimbursementList);
     }
-
 
     /**
      * 类型选择
@@ -416,6 +529,8 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    contentList.setVisibility(View.GONE);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -435,32 +550,36 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             // TODO: 条件查询
-            mType = "";
-            mPayer = "";
             if (SELECTED_TYPE_FLAG) {
-                mType = item.getName();
+                mType = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             }
             if (SELECTED_PAYER_FLAG) {
-                mPayer = item.getName();
+                mPayer = "全部".equals(selectedItem.getName()) ? "" : selectedItem.getName();
             }
             switch (moduleMenu) {
                 case "mycost":
                     //我的费用报销
-                    mMinePresenter.requestMineReimburseData();
+                    setNetMineReimbursement("", "", mPayer, mType, "", "");
                     break;
                 case "reimbursement":
                     // 管理--费用报销
-                    mFinancialPresenter.requestReimburseData("", "", mType, mPayer, "", "", "", pageCount = 1);
+                    netReimbursementData(hasAllocated, mStaffId, mType, mPayer, mStartTime, mEndTime, mKeyWord);
                     break;
             }
             mStatusPopWindow.dismiss();
+        });
+
+        mSelectedAdapter.setTextList(stateList);
+        mSelectedAdapter.setOnClickListener((item, position) -> {
+
         });
     }
 
@@ -477,5 +596,21 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    protected void release() {
+        super.release();
+        if (mFinancialPresenter != null) {
+            mFinancialPresenter = null;
+        }
+        if (mMinePresenter != null) {
+            mMinePresenter = null;
+        }
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

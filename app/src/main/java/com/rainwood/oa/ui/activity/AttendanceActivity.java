@@ -13,17 +13,16 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.necer.calendar.BaseCalendar;
 import com.necer.calendar.Miui9Calendar;
 import com.necer.enumeration.CheckModel;
-import com.necer.enumeration.DateChangeBehavior;
-import com.necer.listener.OnCalendarChangedListener;
 import com.necer.painter.InnerPainter;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.AttendanceCalendarData;
 import com.rainwood.oa.model.domain.AttendanceData;
 import com.rainwood.oa.model.domain.CalendarStatics;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.ui.adapter.CalendarStaticsAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
@@ -34,8 +33,7 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
-
-import org.joda.time.LocalDate;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,12 +47,12 @@ import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
  * @Date: 2020/5/9 17:49
  * @Desc: 行政人事 --- 考勤记录
  */
-public final class AttendanceActivity extends BaseActivity implements ICalendarCallback {
+public final class AttendanceActivity extends BaseActivity implements ICalendarCallback, StatusAction {
 
     // page
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;
@@ -98,6 +96,8 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     private TextView accountAccount;
     @ViewInject(R.id.tv_settlement_account)
     private TextView settlementAccount;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     // 固定页面数据
     private String monthAvgWorkHours = "164.47";
@@ -124,11 +124,16 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     private ICalendarPresenter mCalendarPresenter;
     private String mStaffId;
-    private List<AttendanceCalendarData> mCurrentDayData;
 
-    private int tempYear = 0;
-    private int tempMonth = 0;
+    private List<AttendanceCalendarData> mCurrentDayData;
     private InnerPainter mInnerPainter;
+    private int tempMonth = 0;
+    private int tempYear = 0;
+    private List<String> mHolidayList;
+    private List<String> mJiaBanList;
+    private List<String> mChiDaoList;
+    private List<String> mKuangGongList;
+    private List<String> mBuKaList;
 
     @Override
     protected int getLayoutResId() {
@@ -222,59 +227,34 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
             currentMonth.setText(year + "年" + month + "月");
             // 不是同一个月份则请求
             if (tempMonth != month || year != tempYear) {
-                mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
-                        year + "-" + (month < 10 ? "0" + month : month));
-            }
-            // 展示选中天的考勤数据
-            if (tempMonth == month && tempYear == year) {
-                Map<String, List<String>> statusMap = new HashMap<>();
-                List<String> holidayList = new ArrayList<>();
-                List<String> jiaBanList = new ArrayList<>();
-                List<String> chiDaoList = new ArrayList<>();
-                List<String> kuangGongList = new ArrayList<>();
-                List<String> buKaList = new ArrayList<>();
-                for (AttendanceCalendarData currentDayDatum : mCurrentDayData) {
-                    // 如果是当天
-                    if (currentDayDatum.getDay().equals(String.valueOf(localDate.getDayOfMonth()))) {
-                        for (CalendarStatics statics : mDayDescList) {
-                            if (statics.getDescData().contains("打卡时间(上班)")) {
-                                statics.setData(currentDayDatum.getStart().getTime());
-                            } else if (statics.getDescData().contains("打卡时间(下班)")) {
-                                statics.setData(currentDayDatum.getEnd().getTime());
-                            } else if (statics.getDescData().contains("今日打卡")) {
-                                statics.setData(String.valueOf(currentDayDatum.getSignNum()));
-                            } else if (statics.getDescData().contains("今日工时")) {
-                                statics.setData(String.valueOf(currentDayDatum.getHour()));
-                            }
-                        }
-                        // 上班请假
-                        setValues(holidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getHoliday()) ? "" : currentDayDatum.getStart().getTab().getHoliday());
-                        // 上班补卡
-                        setValues(buKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getSignAdd()) ? "" : currentDayDatum.getStart().getTab().getSignAdd());
-                        // 上班矿工
-                        setValues(kuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLeave()) ? "" : currentDayDatum.getStart().getTab().getLeave());
-                        // 上班迟到
-                        setValues(chiDaoList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLate()) ? "" : currentDayDatum.getStart().getTab().getLate());
-                        // 下班请假
-                        setValues(holidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getHoliday()) ? "" : currentDayDatum.getEnd().getTab().getHoliday());
-                        // 下班补卡
-                        setValues(buKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getSignAdd()) ? "" : currentDayDatum.getEnd().getTab().getSignAdd());
-                        // 下班矿工
-                        setValues(kuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getLeave()) ? "" : currentDayDatum.getEnd().getTab().getLeave());
-                        // 下班加班
-                        setValues(jiaBanList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getAdd()) ? "" : currentDayDatum.getEnd().getTab().getAdd());
+                if (NetworkUtils.isAvailable(AttendanceActivity.this)) {
+                    showDialog();
+                    mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
+                            year + "-" + (month < 10 ? "0" + month : month));
+                } else {
+                    toast("当前网络不可用");
+                    showError(v -> {
+                        showLoading();
+                        mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
+                                year + "-" + (month < 10 ? "0" + month : month));
+                    });
+                }
+            } else {
+                // 同一个月份内的点击
+                int dayOfMonth = localDate.getDayOfMonth();
+                //LogUtil.d("sxs--- centuryOfEra", dayOfMonth + " -------  当月 --------" + ListUtils.getSize(mCurrentDayData));
+                for (CalendarStatics statics : mDayDescList) {
+                    if (statics.getDescData().contains("打卡时间(上班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth).getStart().getTime());
+                    } else if (statics.getDescData().contains("打卡时间(下班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth).getEnd().getTime());
+                    } else if (statics.getDescData().contains("今日打卡")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth).getSignNum()));
+                    } else if (statics.getDescData().contains("今日工时")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth).getHour()));
                     }
                 }
                 mDayAdapter.setList(mDayDescList);
-
-                mDayAdapter.setList(mDayDescList);
-                statusMap.put("假", holidayList);
-                statusMap.put("加", jiaBanList);
-                statusMap.put("迟", chiDaoList);
-                statusMap.put("旷", kuangGongList);
-                statusMap.put("补", buKaList);
-                // 设置日期的状态
-                mInnerPainter.setTagDayCopy(statusMap, 4);
             }
             tempYear = year;
             tempMonth = month;
@@ -315,7 +295,10 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                 String staff = data.getStringExtra("staff");
                 String position = data.getStringExtra("position");
                 mStaffId = data.getStringExtra("staffId");
-                toast("员工：" + staff + "\n职位：" + position + "\n员工id：" + mStaffId);
+                showDialog();
+                //toast("员工：" + staff + "\n职位：" + position + "\n员工id：" + mStaffId);
+                mCalendarPresenter.requestCurrentDayAttendance(TextUtils.isEmpty(mStaffId) ? "" : mStaffId,
+                        DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_MONTH));
             }
         }
     }
@@ -334,7 +317,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
                 break;
             case R.id.tv_page_right_title:
             case R.id.iv_menu:
-                // 回到今天
+                // 部门员工
                 startActivityForResult(getNewIntent(this, ContactsActivity.class, "通讯录", ""),
                         CHOOSE_STAFF_REQUEST_SIZE);
                 break;
@@ -346,7 +329,10 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
 
     @Override
     public void getAttendanceData(AttendanceData attendanceData) {
-        // TODO: 将考勤数据展示 ---> 根据dateSelectedListener 展示当天得数据
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         /*
         个人信息
          */
@@ -390,6 +376,9 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
             }
         }
         mMonthAdapterTwo.setList(mMonthDescTwoList);
+        /*
+        本月工资
+         */
         for (CalendarStatics statics : mMonthSalaryList) {
             if (statics.getDescData().contains("基本工资")) {
                 statics.setData(attendanceData.getBasePayMoon());
@@ -408,51 +397,57 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
          */
         mCurrentDayData = attendanceData.getCalendar();
         // 初始化当天的数据
+        mHolidayList = new ArrayList<>();
+        mJiaBanList = new ArrayList<>();
+        mChiDaoList = new ArrayList<>();
+        mKuangGongList = new ArrayList<>();
+        mBuKaList = new ArrayList<>();
         // 日历表的标记
         Map<String, List<String>> statusMap = new HashMap<>();
-        List<String> holidayList = new ArrayList<>();
-        List<String> jiaBanList = new ArrayList<>();
-        List<String> chiDaoList = new ArrayList<>();
-        List<String> kuangGongList = new ArrayList<>();
-        List<String> buKaList = new ArrayList<>();
         for (AttendanceCalendarData currentDayDatum : mCurrentDayData) {
-            // 如果是当天
-            if (currentDayDatum.getDay().contains(String.valueOf(DateTimeUtils.getNowDay()))) {
-                for (CalendarStatics statics : mDayDescList) {
-                    if (statics.getDescData().contains("打卡时间(上班)")) {
-                        statics.setData(currentDayDatum.getStart().getTime());
-                    } else if (statics.getDescData().contains("打卡时间(下班)")) {
-                        statics.setData(currentDayDatum.getEnd().getTime());
-                    } else if (statics.getDescData().contains("今日打卡")) {
-                        statics.setData(String.valueOf(currentDayDatum.getSignNum()));
-                    } else if (statics.getDescData().contains("今日工时")) {
-                        statics.setData(String.valueOf(currentDayDatum.getHour()));
-                    }
+            for (CalendarStatics statics : mDayDescList) {
+                if (statics.getDescData().contains("打卡时间(上班)")) {
+                    statics.setData(currentDayDatum.getStart().getTime());
+                } else if (statics.getDescData().contains("打卡时间(下班)")) {
+                    statics.setData(currentDayDatum.getEnd().getTime());
+                } else if (statics.getDescData().contains("今日打卡")) {
+                    statics.setData(String.valueOf(currentDayDatum.getSignNum()));
+                } else if (statics.getDescData().contains("今日工时")) {
+                    statics.setData(String.valueOf(currentDayDatum.getHour()));
                 }
-                // 上班请假
-                setValues(holidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getHoliday()) ? "" : currentDayDatum.getStart().getTab().getHoliday());
-                // 上班补卡
-                setValues(buKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getSignAdd()) ? "" : currentDayDatum.getStart().getTab().getSignAdd());
-                // 上班矿工
-                setValues(kuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLeave()) ? "" : currentDayDatum.getStart().getTab().getLeave());
-                // 上班迟到
-                setValues(chiDaoList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLate()) ? "" : currentDayDatum.getStart().getTab().getLate());
-                // 下班请假
-                setValues(holidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getHoliday()) ? "" : currentDayDatum.getEnd().getTab().getHoliday());
-                // 下班补卡
-                setValues(buKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getSignAdd()) ? "" : currentDayDatum.getEnd().getTab().getSignAdd());
-                // 下班矿工
-                setValues(kuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getLeave()) ? "" : currentDayDatum.getEnd().getTab().getLeave());
-                // 下班加班
-                setValues(jiaBanList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getAdd()) ? "" : currentDayDatum.getEnd().getTab().getAdd());
             }
+            // 上班请假
+            setValues(mHolidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getHoliday())
+                    ? "" : currentDayDatum.getStart().getTab().getHoliday());
+            // 上班补卡
+            setValues(mBuKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getSignAdd())
+                    ? "" : currentDayDatum.getStart().getTab().getSignAdd());
+            // 上班矿工
+            setValues(mKuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLeave())
+                    ? "" : currentDayDatum.getStart().getTab().getLeave());
+            // 上班迟到
+            setValues(mChiDaoList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getStart().getTab().getLate())
+                    ? "" : currentDayDatum.getStart().getTab().getLate());
+            // 下班请假
+            setValues(mHolidayList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getHoliday())
+                    ? "" : currentDayDatum.getEnd().getTab().getHoliday());
+            // 下班补卡
+            setValues(mBuKaList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getSignAdd())
+                    ? "" : currentDayDatum.getEnd().getTab().getSignAdd());
+            // 下班矿工
+            setValues(mKuangGongList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getLeave())
+                    ? "" : currentDayDatum.getEnd().getTab().getLeave());
+            // 下班加班
+            setValues(mJiaBanList, currentDayDatum, TextUtils.isEmpty(currentDayDatum.getEnd().getTab().getAdd())
+                    ? "" : currentDayDatum.getEnd().getTab().getAdd());
         }
         mDayAdapter.setList(mDayDescList);
-        statusMap.put("假", holidayList);
-        statusMap.put("加", jiaBanList);
-        statusMap.put("迟", chiDaoList);
-        statusMap.put("旷", kuangGongList);
-        statusMap.put("补", buKaList);
+        // statusMap.clear();
+        statusMap.put("假", mHolidayList);
+        statusMap.put("加", mJiaBanList);
+        statusMap.put("迟", mChiDaoList);
+        statusMap.put("旷", mKuangGongList);
+        statusMap.put("补", mBuKaList);
         // 设置日期的状态
         mInnerPainter.setTagDayCopy(statusMap, 4);
     }
@@ -465,24 +460,32 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
      * @param holiday
      */
     private void setValues(List<String> holidayList, AttendanceCalendarData currentDayDatum, String holiday) {
-        if (holiday.equals("是")) {
-            holidayList.add(tempYear + "-" + tempMonth + "-" + currentDayDatum.getDay());
+        if (holiday.equals("是") || "缺卡".equals(holiday)) {
+            holidayList.add(tempYear + "-" + (tempMonth < 10 ? "0" + tempMonth : tempMonth) + "-"
+                    + (Integer.parseInt(currentDayDatum.getDay()) < 10 ? "0" + currentDayDatum.getDay() : currentDayDatum.getDay()));
         }
     }
 
     @Override
     public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         toast(tips);
     }
 
     @Override
     public void onLoading() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
     public void onEmpty() {
-
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
@@ -490,5 +493,10 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
         if (mCalendarPresenter != null) {
             mCalendarPresenter.unregisterViewCallback(this);
         }
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

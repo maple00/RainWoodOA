@@ -1,6 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,20 +22,24 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
 import com.rainwood.oa.model.domain.BalanceCurveListData;
+import com.rainwood.oa.model.domain.HomeSalaryDesc;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.BalanceCurveAdapter;
+import com.rainwood.oa.ui.dialog.BottomYearDialog;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.MeasureListView;
-import com.rainwood.oa.ui.widget.MyMarkerView;
+import com.rainwood.oa.ui.widget.MyChartMarkerView;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +50,7 @@ import java.util.Random;
  * @Date: 2020/6/28 16:04
  * @Desc: 收支曲线
  */
-public final class BalanceCurveActivity extends BaseActivity implements IFinancialCallbacks {
+public final class BalanceCurveActivity extends BaseActivity implements IFinancialCallbacks, StatusAction {
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -59,15 +65,19 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     private TextView mTextMonth;
 
     @ViewInject(R.id.lc_salary_chart)
-    private LineChart mSalaryChart;
+    private LineChart mSalaryChartView;
     @ViewInject(R.id.mlv_salary_list)
     private MeasureListView salaryListView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IFinancialPresenter mFinancialPresenter;
     private BalanceCurveAdapter mBalanceCurveAdapter;
     //flag
     private boolean SELECTED_MONTH = true;
     private boolean SELECTED_YEAR = false;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -98,8 +108,23 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     protected void loadData() {
-        // 工资曲线，默认查询月
-        mFinancialPresenter.requestBalanceByMonth();
+        // 工资曲线，默认查询月---默认一年的数据
+        showDialog();
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        netLoadingData((nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        mStartTime = (nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
+        mEndTime = nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
+    }
+
+    /**
+     * 查询收支曲线
+     */
+    private void netLoadingData(String startMonth, String endTime) {
+        showLoading();
+        mFinancialPresenter.requestBalanceByMonth(startMonth, endTime);
     }
 
     @SingleClick
@@ -110,41 +135,77 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
                 finish();
                 break;
             case R.id.tv_year:
-                setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg, R.color.white, R.color.colorPrimary);
-                //
+                setUI(R.drawable.shape_selectted_right_button_bg, R.drawable.shape_unselectted_left_button_bg,
+                        R.color.white, R.color.colorPrimary);
+                // 查询年的数据 -- 默认展示5年数据
+                showDialog();
                 SELECTED_MONTH = false;
                 SELECTED_YEAR = true;
-                mFinancialPresenter.requestBalanceByYear();
+                mFinancialPresenter.requestBalanceByYear(String.valueOf(DateTimeUtils.getNowYear() - 5),
+                        String.valueOf(DateTimeUtils.getNowYear()));
                 break;
             case R.id.tv_month:
-                setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg, R.color.colorPrimary, R.color.white);
+                setUI(R.drawable.shape_unselectted_right_button_bg, R.drawable.shape_selectted_left_button_bg,
+                        R.color.colorPrimary, R.color.white);
                 //
+                showDialog();
                 SELECTED_MONTH = true;
                 SELECTED_YEAR = false;
-                mFinancialPresenter.requestBalanceByMonth();
+                netLoadingData(mStartTime, mEndTime);
                 break;
             case R.id.tv_date:
                 // 默认选择月
-                new StartEndDateDialog.Builder(this, false)
-                        .setTitle(null)
-                        .setConfirm(getString(R.string.common_text_confirm))
-                        .setCancel(getString(R.string.common_text_clear_screen))
-                        .setAutoDismiss(false)
-                        .setCanceledOnTouchOutside(false)
-                        .setIgnoreDay()
-                        .setListener(new StartEndDateDialog.OnListener() {
-                            @Override
-                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
-                                dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
-                            }
+                if (SELECTED_MONTH) {
+                    new StartEndDateDialog.Builder(this, true)
+                            .setTitle(null)
+                            .setConfirm(getString(R.string.common_text_confirm))
+                            .setCancel(getString(R.string.common_text_clear_screen))
+                            .setAutoDismiss(false)
+                            .setStartTime(mStartTime)
+                            .setEndTime(mEndTime)
+                            .setCanceledOnTouchOutside(false)
+                            .setIgnoreDay()
+                            .setListener(new StartEndDateDialog.OnListener() {
+                                @Override
+                                public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                    if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                        toast("请选择时间");
+                                        return;
+                                    }
+                                    if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_MONTH)) {
+                                        toast("开始时间不能大于结束时间");
+                                        return;
+                                    }
+                                    dialog.dismiss();
+                                    // toast("选中的时间段：" + startTime + "至" + endTime);
+                                    mStartTime = startTime;
+                                    mEndTime = endTime;
+                                    netLoadingData(mStartTime, mEndTime);
+                                }
 
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+                if (SELECTED_YEAR) {
+                    new BottomYearDialog.Builder(this, true)
+                            .setYear(DateTimeUtils.getNowYear())
+                            .setShowImageClose(false)
+                            .setAutoDismiss(false)
+                            .setListener((dialog, startTime, endTime) -> {
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_YEAR)) {
+                                    toast("开始年份不能大于结束年份");
+                                    return;
+                                }
                                 dialog.dismiss();
-                            }
-                        })
-                        .show();
+                                // TODO: 查询年
+                                showDialog();
+                                mFinancialPresenter.requestBalanceByYear(startTime, endTime);
+                            }).show();
+                }
                 break;
         }
     }
@@ -164,6 +225,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
      */
     @Override
     public void getBalanceMonthData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, monthBalanceList);
     }
@@ -171,6 +236,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     public void getBalanceYearData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> yearBalanceList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, yearBalanceList);
     }
@@ -181,14 +250,16 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
      * @param balanceYearMonth X轴数据
      * @param monthBalanceList Y轴数据
      */
+    @SuppressLint("SetTextI18n")
     private void setStaticsChart(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
         if (ListUtils.getSize(monthBalanceList) == 0) {
-            mSalaryChart.setNoDataText("当前暂无收支数据");
+            mSalaryChartView.setNoDataText("当前暂无收支数据");
             return;
         }
+        mTextDate.setText(balanceYearMonth.get(0) + "--" + balanceYearMonth.get(ListUtils.getSize(balanceYearMonth) - 1));
+
         List<ILineDataSet> lineDataSetList = new ArrayList<>();
         float yMinValues = initSalaryChartValues(balanceYearMonth);
-        LogUtils.d("sxs", "--- Y轴的最小值 ---- " + yMinValues);
         for (int i = 0; i < ListUtils.getSize(monthBalanceList); i++) {
             List<Entry> entryList = new ArrayList<>();
             for (int j = 0; j < ListUtils.getSize(monthBalanceList.get(i).getData()); j++) {
@@ -210,13 +281,9 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             lineDataSet.setFillFormatter((dataSet, dataProvider) -> yMinValues);
             lineDataSetList.add(lineDataSet);
         }
-        // 标注
-        MyMarkerView mv = new MyMarkerView(this, R.layout.marker_salary_marker, balanceYearMonth, monthBalanceList, null);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        mSalaryChart.setMarker(mv);
-        mSalaryChart.setData(new LineData(lineDataSetList));
+        mSalaryChartView.setData(new LineData(lineDataSetList));
 
-        // 列表展示
+        // 底部列表展示
         List<BalanceCurveListData> curveListData = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(balanceYearMonth); i++) {
             BalanceCurveListData listData = new BalanceCurveListData();
@@ -238,6 +305,28 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             curveListData.add(listData);
         }
         mBalanceCurveAdapter.setCurveListData(curveListData);
+        // 标注
+        MyChartMarkerView chartMarkerView = new MyChartMarkerView(this, R.layout.marker_salary_marker);
+        chartMarkerView.setChartView(mSalaryChartView);///如果没有加这句MyMarkView draw会报空指针
+        List<HomeSalaryDesc> descList = new ArrayList<>();
+        chartMarkerView.setCallBack((x, value) -> {
+            int index = (int) (x);
+            if (index < 0) {
+                return;
+            }
+            if (index > ListUtils.getSize(balanceYearMonth)) {
+                return;
+            }
+            descList.clear();
+            for (BalanceByMonthOrYear lineValue : monthBalanceList) {
+                // 遍历所有的曲线
+                descList.add(new HomeSalaryDesc(lineValue.getData().get(index).getMoney(),
+                        lineValue.getName() + "："));
+            }
+            chartMarkerView.getTvPerson().setText(balanceYearMonth.get(index));
+            chartMarkerView.getTvFirm().setDescList(descList);
+        });
+        mSalaryChartView.setMarker(chartMarkerView);
     }
 
     /**
@@ -251,29 +340,29 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         Description description = new Description();
         description.setEnabled(false);
         description.setText("收支曲线图");
-        mSalaryChart.setDescription(description);
+        mSalaryChartView.setDescription(description);
         // 设置是否可以触摸
-        mSalaryChart.setTouchEnabled(true);
+        mSalaryChartView.setTouchEnabled(true);
         // 设置是否可以拖拽
-        mSalaryChart.setDragEnabled(true);
+        mSalaryChartView.setDragEnabled(true);
         // 设置是否可以缩放
-        mSalaryChart.setScaleEnabled(true);
+        mSalaryChartView.setScaleEnabled(true);
         // Y轴的值是否跟随图表缩放
-        mSalaryChart.setPinchZoom(false);
+        mSalaryChartView.setPinchZoom(false);
         // 是否允许双击进行缩放
-        mSalaryChart.setDoubleTapToZoomEnabled(true);
+        mSalaryChartView.setDoubleTapToZoomEnabled(true);
         // 是否以X轴进行缩放
-        mSalaryChart.setScaleXEnabled(false);
+        mSalaryChartView.setScaleXEnabled(false);
         // 是否显示表格颜色
-        mSalaryChart.setBackgroundColor(Color.TRANSPARENT);
+        mSalaryChartView.setBackgroundColor(Color.TRANSPARENT);
         // 设置动画
-        mSalaryChart.animateY(1000, Easing.Linear);
+        mSalaryChartView.animateY(1000, Easing.Linear);
         // 防止底部数据显示不完整，设置底部偏移量
-        mSalaryChart.setExtraBottomOffset(5f);
+        mSalaryChartView.setExtraBottomOffset(5f);
         /*
          X轴配置
          */
-        XAxis xAxis = mSalaryChart.getXAxis();
+        XAxis xAxis = mSalaryChartView.getXAxis();
         // 是否可用
         xAxis.setEnabled(true);
         // 是否显示数值
@@ -296,7 +385,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         xAxis.setSpaceMax(0f);
         xAxis.setSpaceMin(0f);
         // count显示数量
-        xAxis.setLabelCount(ListUtils.getSize(monthList), true);
+        xAxis.setLabelCount(5, true);
         // 设置X轴显示值
         xAxis.setValueFormatter(new IndexAxisValueFormatter(monthList));
         // 偏移量---
@@ -308,7 +397,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         /*
         左Y轴配置
          */
-        YAxis lyAxis = mSalaryChart.getAxisLeft();
+        YAxis lyAxis = mSalaryChartView.getAxisLeft();
         lyAxis.setEnabled(true);//是否可用
         lyAxis.setDrawLabels(true);//是否显示数值
         lyAxis.setDrawAxisLine(false);//是否显示坐标线
@@ -331,10 +420,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         /*
         右Y轴配置
          */
-        YAxis ryAxis = mSalaryChart.getAxisRight();
+        YAxis ryAxis = mSalaryChartView.getAxisRight();
         ryAxis.setEnabled(false);//是否可用
         //标签配置
-        Legend legend = mSalaryChart.getLegend();
+        Legend legend = mSalaryChartView.getLegend();
         legend.setEnabled(true);//是否可用
         return yMinValues;
     }
@@ -347,5 +436,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

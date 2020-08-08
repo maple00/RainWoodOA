@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/25 18:55
  * @Desc: 管理制度
  */
-public final class ManagerSystem {
+public final class ManagerSystem implements Serializable {
 
     /**
      * 标题

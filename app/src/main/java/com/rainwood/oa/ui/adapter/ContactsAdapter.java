@@ -35,14 +35,14 @@ public final class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.
     }
 
     @Override
-    public ContactsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_address_book, parent, false);
-        return new ContactsAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final ContactsBean contactsBean = mDatas.get(position);
         holder.staffName.setText(contactsBean.getName());
         holder.position.setText(contactsBean.getJob());
@@ -51,12 +51,7 @@ public final class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.
                 .error(mContext.getDrawable(R.drawable.ic_default_head))
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContactListener.onClickItem(contactsBean, position);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> mContactListener.onClickItem(contactsBean, position));
     }
 
     @Override

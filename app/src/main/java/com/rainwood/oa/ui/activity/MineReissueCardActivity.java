@@ -1,6 +1,5 @@
 package com.rainwood.oa.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -11,19 +10,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineRecords;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IMinePresenter;
 import com.rainwood.oa.ui.adapter.MineRecordsAdapter;
-import com.rainwood.oa.ui.dialog.DateDialog;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IMineCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -32,7 +35,7 @@ import java.util.List;
  * @Date: 2020/6/12 10:58
  * @Desc: 我的补卡记录
  */
-public final class MineReissueCardActivity extends BaseActivity implements IMineCallbacks {
+public final class MineReissueCardActivity extends BaseActivity implements IMineCallbacks, StatusAction {
 
     // actionBar
     @ViewInject(R.id.rl_page_top)
@@ -40,6 +43,8 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
     @ViewInject(R.id.line_all)
     private View lineAll;
     @ViewInject(R.id.line_through)
@@ -52,9 +57,22 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_reissue_records)
     private RecyclerView reissueRecordsView;
+    @ViewInject(R.id.tv_query_all)
+
+    private TextView mTextQueryAll;
+    @ViewInject(R.id.tv_through)
+    private TextView mTextThrough;
+    @ViewInject(R.id.tv_audit)
+    private TextView mTextAudit;
+    @ViewInject(R.id.tv_draft)
+    private TextView mTextDraft;
 
     private IMinePresenter mMinePresenter;
     private MineRecordsAdapter mMineRecordsAdapter;
+    private int pageCount = 1;
+    private String mStartTime;
+    private String mEndTime;
+    private String mState = "";
 
     @Override
     protected int getLayoutResId() {
@@ -76,6 +94,9 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
         // 设置刷新属性
         pageRefresh.setEnableRefresh(false);
         pageRefresh.setEnableLoadmore(true);
+        // 设置TextView字体加粗
+        mTextQueryAll.getPaint().setFakeBoldText(true);
+        mTextQueryAll.invalidate();
     }
 
     @Override
@@ -86,15 +107,18 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
 
     @Override
     protected void loadData() {
-        mMinePresenter.requestMineReissueCards("");
+        showDialog();
+        mMinePresenter.requestMineReissueCards(mState, "", "", pageCount);
     }
 
     @Override
     protected void initEvent() {
+        // item点击事件
         mMineRecordsAdapter.setItemReissue(new MineRecordsAdapter.OnClickItemReissue() {
             @Override
             public void onClickItem(MineRecords reissue, int position) {
-                toast("查看详情");
+                PageJumpUtil.ReissueCardList2Detail(MineReissueCardActivity.this, RecordDetailActivity.class,
+                        "补卡详情", reissue.getId());
             }
 
             @Override
@@ -109,6 +133,13 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 toast("删除");
             }
         });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mMinePresenter.requestMineReissueCards(mState, mStartTime, mEndTime, ++pageCount);
+            }
+        });
     }
 
     @SingleClick
@@ -121,19 +152,19 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 break;
             case R.id.ll_top_right:
                 //toast("选择时间");
-                new DateDialog.Builder(this)
-                        .setTitle(getString(R.string.date_title))
-                        .setConfirm(getString(R.string.common_confirm))
-                        // 设置 null 表示不显示取消按钮
-                        .setCancel(getString(R.string.common_cancel))
-                        .setShowConfirm(true)
-                        .setShowImageClose(false)
-                        .setListener(new DateDialog.OnListener() {
-                            @SuppressLint("SetTextI18n")
+                new StartEndDateDialog.Builder(this, false)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(true)
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new StartEndDateDialog.OnListener() {
                             @Override
-                            public void onSelected(BaseDialog dialog, int year, int month, int day) {
-                                toast(year + getString(R.string.common_year) + month + getString(R.string.common_month) + day + getString(R.string.common_day));
-                                // chooseTime.setText(year + "-" + month + "-" + day);
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                dialog.dismiss();
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                mMinePresenter.requestMineReissueCards("", mStartTime, mEndTime, pageCount = 1);
                             }
 
                             @Override
@@ -145,25 +176,56 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
                 break;
             case R.id.tv_query_all:
                 //toast("查看全部");
+                setTextBold(true, false, false, false);
                 setLineVisible(View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
-                mMinePresenter.requestMineReissueCards("");
+                mState = "";
+                showDialog();
+                mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_through:
                 //toast("已通过");
+                setTextBold(false, true, false, false);
                 setLineVisible(View.INVISIBLE, View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
-                mMinePresenter.requestMineReissueCards("已通过");
+                mState = "已通过";
+                showDialog();
+                mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_audit:
                 // toast("待审核");
+                setTextBold(false, false, true, false);
                 setLineVisible(View.INVISIBLE, View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
-                mMinePresenter.requestMineReissueCards("审核中");
+                mState = "审核中";
+                showDialog();
+                mMinePresenter.requestMineReissueCards(mState, "", "", pageCount = 1);
                 break;
             case R.id.tv_draft:
                 // toast("草稿");
+                setTextBold(false, false, false, true);
                 setLineVisible(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
-                mMinePresenter.requestMineReissueCards("草稿");
+                mState = "草稿";
+                showDialog();
+                mMinePresenter.requestMineReissueCards("mState", "", "", pageCount = 1);
                 break;
         }
+    }
+
+    /**
+     * 设置字体加粗
+     *
+     * @param b
+     * @param b2
+     * @param b3
+     * @param b4
+     */
+    private void setTextBold(boolean b, boolean b2, boolean b3, boolean b4) {
+        mTextQueryAll.getPaint().setFakeBoldText(b);
+        mTextThrough.getPaint().setFakeBoldText(b2);
+        mTextAudit.getPaint().setFakeBoldText(b3);
+        mTextDraft.getPaint().setFakeBoldText(b4);
+        mTextQueryAll.invalidate();
+        mTextThrough.invalidate();
+        mTextAudit.invalidate();
+        mTextDraft.invalidate();
     }
 
     /**
@@ -183,12 +245,31 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
 
     @Override
     public void getMineReissueRecords(List<MineRecords> reissueList) {
-        mMineRecordsAdapter.setReissueList(reissueList);
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
+        pageRefresh.finishLoadmore();
+        if (pageCount != 1) {
+            if (ListUtils.getSize(reissueList) == 0) {
+                pageCount--;
+                return;
+            }
+            toast("加载了" + ListUtils.getSize(reissueList) + "条数据");
+            mMineRecordsAdapter.addData(reissueList);
+        } else {
+            if (ListUtils.getSize(reissueList) == 0) {
+                showEmpty();
+                return;
+            }
+            mMineRecordsAdapter.setReissueList(reissueList);
+        }
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
+        pageRefresh.finishLoadmore();
     }
 
     @Override
@@ -199,5 +280,10 @@ public final class MineReissueCardActivity extends BaseActivity implements IMine
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

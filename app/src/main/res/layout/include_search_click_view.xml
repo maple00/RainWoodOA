@@ -23,11 +23,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="6dp"
         android:gravity="center"
-        android:text="@string/text_common_search"
-        android:textColor="@color/fontColor"
-        android:textSize="20sp" />
+        android:text="@string/common_cancel"
+        android:textColor="@color/colorPrimary"
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/ll_search_view"
@@ -51,14 +52,15 @@
             android:src="@drawable/ic_search" />
 
         <com.rainwood.tools.wheel.view.ClearEditText
-            android:id="@+id/tv_search_tips"
+            android:id="@+id/et_search_tips"
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="请输入搜索内容"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:textColor="@color/labelColor"
+            android:textColor="@color/fontColor"
+            android:textColorHint="@color/labelColor"
             android:textSize="16sp" />
     </LinearLayout>
 

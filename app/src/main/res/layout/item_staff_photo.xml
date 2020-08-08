@@ -2,10 +2,11 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/iv_photo"
-    android:layout_width="110dp"
+    android:layout_width="match_parent"
     android:layout_height="110dp"
-    android:scaleType="fitXY"
-    android:src="@mipmap/ic_logo_mdpi"
+    android:scaleType="center"
+    android:src="@mipmap/ic_logo"
+    android:adjustViewBounds="true"
     tools:ignore="ContentDescription">
 
 </ImageView>

@@ -23,7 +23,7 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     /**
      * 新增客户
      */
-    void createCustomData(String userName, String tel, String wxNum, String qqNum, String post,
+    void createCustomData(String randomId, String userName, String tel, String wxNum, String qqNum, String post,
                           String followStatus, String origin, String note, String preMoney, String industry,
                           String demand, String company, String taxNum, String emailAddress,
                           String invoiceAddress, String landLine, String bankName, String bankNo);
@@ -40,9 +40,21 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
                                String followState, String introduceObj);
 
     /**
-     * 请求客户列表
+     * 客户列表
+     *
+     * @param companyName 公司名称
+     * @param headMan     负责人
+     * @param references  介绍人
+     * @param state       跟进状态
+     * @param origin      客户来源
+     * @param province    省
+     * @param city        市
+     * @param area        区
+     * @param sorting     排序方式
+     * @param page        页码
      */
-    void requestALlCustomData(int page);
+    void requestALlCustomData(String companyName, String headMan, String references, String state,
+                              String origin, String province, String city, String area, String sorting, int page);
 
     /**
      * 客户列表 -- condition
@@ -55,9 +67,22 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
     void requestStateCondition();
 
     /**
-     * 客户列表 -- 区域 condition
+     * 客户列表 -- 省 condition
      */
-    void requestAreaCondition();
+    void requestProvinceCondition();
+
+    /**
+     * 客户列表 -- 通过 省 查询市
+     */
+    void requestCityByProvince(String province);
+
+    /**
+     * 通过省市查询区
+     *
+     * @param province
+     * @param city
+     */
+    void requestAreaByProvinceCity(String province, String city);
 
     /**
      * 查询状态
@@ -118,4 +143,24 @@ public interface ICustomPresenter extends IBasePresenter<ICustomCallbacks> {
      */
     void requestCustomInvoice(String customId);
 
+    /**
+     * 请求跟进记录的标签
+     */
+    void requestFollowLabel();
+
+    /**
+     * 新增跟进记录
+     * @param recordId
+     * @param target
+     * @param targetId
+     * @param content
+     * @param time
+     */
+    void createFollowRecord(String recordId, String target, String targetId, String content, String time);
+
+    /**
+     * 请求记录详情
+     * @param recordsId
+     */
+    void requestCustomRecordDetailById(String recordsId);
 }

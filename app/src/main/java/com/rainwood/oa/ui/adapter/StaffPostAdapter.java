@@ -57,6 +57,7 @@ public final class StaffPostAdapter extends BaseAdapter {
         holder.post.setText(getItem(position).getName());
         holder.post.setTextColor(getItem(position).isSelected() ? parent.getContext().getColor(R.color.colorPrimary)
                 : parent.getContext().getColor(R.color.fontColor));
+
         // 点击事件
         holder.post.setOnClickListener(v -> {
             mClickPost.onClickPost(parentPos, position);

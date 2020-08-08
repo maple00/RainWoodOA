@@ -50,7 +50,7 @@
             android:src="@drawable/ic_search" />
 
         <com.rainwood.tools.wheel.view.ClearEditText
-            android:id="@+id/tv_search_tips"
+            android:id="@+id/et_search_tips"
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

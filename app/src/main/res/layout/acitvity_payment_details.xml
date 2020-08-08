@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="20dp"
         android:textColor="@color/fontColor"
         android:textSize="16sp" />
 
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="bottom"
         android:textColor="@color/fontColor"
         android:textSize="30sp"
@@ -33,27 +33,54 @@
     <View
         style="@style/HorizontalLineStyle"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="15dp" />
 
     <com.rainwood.oa.ui.widget.GroupTextText
         android:id="@+id/gtt_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="30dp"
-        app:title="简要说明"
-        app:values=" " />
+        app:title="简要说明：" />
 
     <com.rainwood.oa.ui.widget.GroupTextText
         android:id="@+id/gtt_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="30dp"
-        app:title="时间"
-        app:values=" " />
+        app:title="时间：" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="end"
+            android:text="支付凭证"
+            android:textColor="@color/labelColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_doubt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitXY" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/6/29 11:15
  * @Desc: 收支曲线统计列表
  */
-public final class BalanceCurveListData {
+public final class BalanceCurveListData implements Serializable {
 
     /**
      * 月份

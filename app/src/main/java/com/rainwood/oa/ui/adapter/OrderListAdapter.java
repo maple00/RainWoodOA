@@ -10,16 +10,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.Order;
-import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
+import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,25 +29,32 @@ import java.util.List;
  */
 public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.ViewHolder> {
 
-    private List<Order> mList = new ArrayList<>();
+    private List<Order> mList;
     private Context mContext;
-    private boolean loaded;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setList(List<Order> list) {
-        if (loaded){
-            mList.clear();
-        }
-        mList.addAll(list);
+        mList = list;
         notifyDataSetChanged();
     }
 
+    public void addData(List<Order> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mList == null || mList.size() == 0) {
+            setList(data);
+        } else {
+            mList.addAll(data);
+            notifyItemRangeInserted(mList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
+
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
     }
 
     @NonNull
@@ -74,10 +81,10 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
                 + mList.get(position).getEndTime());
         // 订单的属性
         OrderNatureAdapter natureAdapter = new OrderNatureAdapter();
-        natureAdapter.setList(mList.get(position).getNatureList());
+        holder.orderNature.setLayoutManager(new GridLayoutManager(mContext, 2));
+        holder.orderNature.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 16));
         holder.orderNature.setAdapter(natureAdapter);
-        holder.orderNature.setNumColumns(2);
-
+        natureAdapter.setList(mList.get(position).getNatureList());
         if (TextUtils.isEmpty(mList.get(position).getTimeLimit())
                 || TextUtils.isEmpty(mList.get(position).getStartTime())
                 || TextUtils.isEmpty(mList.get(position).getEndTime())) {
@@ -86,8 +93,7 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
             holder.limit.setVisibility(View.VISIBLE);
         }
         // 点击事件
-        holder.orderNature.setOnItemClickListener((parent, view, position1, id) ->
-                mClickItemOrder.onClickOrder(mList.get(position), position));
+        natureAdapter.setOnClickItemListener(() -> mClickItemOrder.onClickOrder(mList.get(position), position));
         holder.itemOrder.setOnClickListener(v -> mClickItemOrder.onClickOrder(mList.get(position), position));
     }
 
@@ -109,8 +115,8 @@ public final class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapte
         private TextView money;
         @ViewInject(R.id.tv_charge_man)
         private TextView chargeMan;
-        @ViewInject(R.id.mgv_order_nature)
-        private MeasureGridView orderNature;
+        @ViewInject(R.id.rv_order_nature)
+        private RecyclerView orderNature;
         @ViewInject(R.id.tv_limit_day)
         private TextView limitDay;
         @ViewInject(R.id.tv_limit_date)

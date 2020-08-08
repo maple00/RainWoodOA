@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CustomOrder;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.utils.ListUtils;
@@ -35,6 +36,24 @@ public final class CustomOrderAdapter extends RecyclerView.Adapter<CustomOrderAd
         mCustomOrderList = customOrderList;
         notifyDataSetChanged();
     }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<CustomOrder> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mCustomOrderList == null || mCustomOrderList.size() == 0) {
+            setCustomOrderList(data);
+        } else {
+            mCustomOrderList.addAll(data);
+            notifyItemRangeInserted(mCustomOrderList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override

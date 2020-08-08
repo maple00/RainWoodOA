@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/25 10:40
  * @Desc: 员工照片信息
  */
-public final class StaffPhoto {
+public final class StaffPhoto implements Serializable {
 
     /**
      * 照片来源

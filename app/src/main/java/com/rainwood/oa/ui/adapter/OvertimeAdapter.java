@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.OvertimeRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -33,6 +34,24 @@ public final class OvertimeAdapter extends RecyclerView.Adapter<OvertimeAdapter.
         mOvertimeRecordList = overtimeRecordList;
         notifyDataSetChanged();
     }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<OvertimeRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mOvertimeRecordList == null || mOvertimeRecordList.size() == 0) {
+            setOvertimeRecordList(data);
+        } else {
+            mOvertimeRecordList.addAll(data);
+            notifyItemRangeInserted(mOvertimeRecordList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override

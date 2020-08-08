@@ -1,17 +1,23 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/25 10:40
  * @Desc: 员工工作经历
  */
-public final class StaffExperience {
+public final class StaffExperience implements Serializable {
 
     /**
      * 工作经历id
      */
     private String id;
 
+    /**
+     * 员工id
+     */
+    private String stid;
     /**
      * 公司
      */
@@ -26,7 +32,6 @@ public final class StaffExperience {
      * 入职时间
      */
     private String entryTime;
-
     /**
      * 离职时间
      */
@@ -36,7 +41,7 @@ public final class StaffExperience {
      * 入职离职时间
      */
     private String dayStart;
-
+    private String dayEnd;
     /**
      * 职责
      */
@@ -46,6 +51,22 @@ public final class StaffExperience {
      * 离职原因
      */
     private String cause;
+
+    public String getDayEnd() {
+        return dayEnd;
+    }
+
+    public void setDayEnd(String dayEnd) {
+        this.dayEnd = dayEnd;
+    }
+
+    public String getStid() {
+        return stid;
+    }
+
+    public void setStid(String stid) {
+        this.stid = stid;
+    }
 
     public String getId() {
         return id;

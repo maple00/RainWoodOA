@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.LeaveOutRecord;
 import com.rainwood.oa.model.domain.ReceivableRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -29,6 +30,20 @@ public final class ReceivableRecordAdapter extends RecyclerView.Adapter<Receivab
 
     public void setRecordList(List<ReceivableRecord> recordList) {
         mRecordList = recordList;
+        notifyDataSetChanged();
+    }
+
+    public void addData(List<ReceivableRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mRecordList == null || mRecordList.size() == 0) {
+            setRecordList(data);
+        } else {
+            mRecordList.addAll(data);
+            notifyItemRangeInserted(mRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

@@ -1,11 +1,13 @@
 package com.rainwood.oa.model.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/5/19 16:27
  * @Desc: 审批
  */
-public final class Examination {
+public final class Examination implements Serializable {
 
     /**
      * 头像

@@ -33,6 +33,23 @@ public final class TeamFundsAdapter extends RecyclerView.Adapter<TeamFundsAdapte
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<TeamFunds> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mList == null || mList.size() == 0) {
+            setList(data);
+        } else {
+            mList.addAll(data);
+            notifyItemRangeInserted(mList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

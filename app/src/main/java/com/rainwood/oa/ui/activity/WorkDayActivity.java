@@ -1,6 +1,7 @@
 package com.rainwood.oa.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -11,14 +12,16 @@ import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.CalendarBody;
 import com.rainwood.oa.model.domain.Month;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.ICalendarPresenter;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ICalendarCallback;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.utils.DateTimeUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,14 +62,16 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
     @ViewInject(R.id.tv_day_note)
     private TextView mTextDayNote;
 
-    private int mYear;
     private ICalendarPresenter mCalendarPresenter;
+    private int mYear;
+    private int tempMonth = DateTimeUtils.getNowMonth();
 
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_work_day;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void initView() {
         StatusBarUtils.immersive(this);
@@ -76,7 +81,8 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         mCalendarView.setOnCalendarSelectListener(this);
         mCalendarView.setOnYearChangeListener(this);
         mYear = mCalendarView.getCurYear();
-        mCurrentDay.setText(String.valueOf(mCalendarView.getCurDay()));
+        mTextMonth.setText(DateTimeUtils.getNowMonth() + "月");
+        mCurrentDay.setText("今");
     }
 
     @Override
@@ -90,7 +96,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         // 获取月份
         mCalendarPresenter.begWorkDayMonth();
         // 当前月分的工作日
-        mCalendarPresenter.requestCurrentWorkDay("202006");
+        netDataLoading(DateTimeUtils.getNowYear(), DateTimeUtils.getNowMonth());
     }
 
     @Override
@@ -105,7 +111,7 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
 
     @SuppressLint("SetTextI18n")
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.tv_page_right_title, R.id.fl_current, R.id.tv_year})
+    @OnClick({R.id.iv_page_back, R.id.fl_current, R.id.tv_year})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
@@ -163,8 +169,25 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
         mTextYear.setVisibility(View.VISIBLE);
         mTextMonth.setVisibility(View.VISIBLE);
         mTextYear.setText(calendar.getYear() + "年");
-        mTextMonth.setText(mCalendarView.getCurMonth() + "月");
+        mTextMonth.setText(calendar.getMonth() + "月");
         mYear = calendar.getYear();
+        // TODO: 请求当前显示月份的上班情况
+        if (calendar.getMonth() != tempMonth) {
+            netDataLoading(calendar.getYear(), calendar.getMonth());
+        }
+        tempMonth = calendar.getMonth();
+    }
+
+    /**
+     * 请求网络数据
+     *
+     * @param year
+     * @param month
+     */
+    private void netDataLoading(int year, int month) {
+        showDialog();
+        mCalendarPresenter.requestCurrentWorkDay("" + year +
+                (month < 10 ? "0" + month : month));
     }
 
     @Override
@@ -173,15 +196,19 @@ public final class WorkDayActivity extends BaseActivity implements ICalendarCall
     }
 
     @Override
-    public void getWorkDayData(List<String> dayList, String dayNote) {
+    public void getWorkDayData(CalendarBody calendarBody, String dayNote) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         mTextDayNote.setText(dayNote);
-        int year = mCalendarView.getCurYear();
-        int month = mCalendarView.getCurMonth();
+        mTextDayNote.setVisibility(TextUtils.isEmpty(dayNote) ? View.GONE : View.VISIBLE);
+        String yearStr = calendarBody.getMoon().substring(0, 4);
+        String monthStr = calendarBody.getMoon().substring(4);
 
         Map<String, Calendar> dayMap = new HashMap<>();
-        for (String day : dayList) {
-            dayMap.put(getSchemeCalendar(year, month, Integer.parseInt(day), getColor(R.color.blue25), "班").toString(),
-                    getSchemeCalendar(year, month, Integer.parseInt(day), getColor(R.color.blue25), "班"));
+        for (String day : calendarBody.getDay()) {
+            dayMap.put(getSchemeCalendar(Integer.parseInt(yearStr), Integer.parseInt(monthStr), Integer.parseInt(day), getColor(R.color.blue25), "班").toString(),
+                    getSchemeCalendar(Integer.parseInt(yearStr), Integer.parseInt(monthStr), Integer.parseInt(day), getColor(R.color.blue25), "班"));
         }
         //此方法在巨大的数据量上不影响遍历性能，推荐使用
         mCalendarView.setSchemeDate(dayMap);

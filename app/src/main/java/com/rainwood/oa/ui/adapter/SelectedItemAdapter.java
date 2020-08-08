@@ -25,8 +25,8 @@ public final class SelectedItemAdapter extends BaseAdapter {
     private List<SelectedItem> mList;
 
     public void setList(List<SelectedItem> list) {
-        LogUtils.d("sxs", "数据 ---- >" + list);
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -62,12 +62,32 @@ public final class SelectedItemAdapter extends BaseAdapter {
                 ? parent.getContext().getColor(R.color.colorPrimary)
                 : parent.getContext().getColor(R.color.colorMiddle));
         holder.content.setText(getItem(position).getName());
+        // d点击事件
+        holder.content.setOnClickListener(v -> {
+            mOnClickItem.onClickItem(getItem(position), position);
+            notifyDataSetChanged();
+        });
         return convertView;
     }
-
 
     private static class ViewHolder {
         @ViewInject(R.id.tv_content)
         private TextView content;
+    }
+
+    public interface OnClickItem {
+        /**
+         * selected item
+         *
+         * @param item
+         * @param position
+         */
+        void onClickItem(SelectedItem item, int position);
+    }
+
+    private OnClickItem mOnClickItem;
+
+    public void setOnClickItem(OnClickItem onClickItem) {
+        mOnClickItem = onClickItem;
     }
 }

@@ -29,6 +29,7 @@ public class SingleClickAspect {
 
     /**
      * 方法切入点
+     *                    com.rainwood.oa.network.aop.SingleClick
      */
     @Pointcut("execution(@com.rainwood.oa.network.aop.SingleClick * *(..))")
     public void method() {}
@@ -48,7 +49,7 @@ public class SingleClickAspect {
             long currentTime = Calendar.getInstance().getTimeInMillis();
             if (currentTime - mLastTime < singleClick.value() && view.getId()
                     == mLastId) {
-                Log.i("SingleClick", "发生快速点击");
+                Log.d("sxs", "发生快速点击");
                 return;
             }
             mLastTime = currentTime;

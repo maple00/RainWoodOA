@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.utils.ListUtils;
@@ -30,19 +31,27 @@ import java.util.List;
  */
 public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<FinancialInvoiceRecordAdapter.ViewHolder> {
 
-    private List<FinancialInvoiceRecord> mRecordList = new ArrayList<>();
+    private List<FinancialInvoiceRecord> mRecordList;
     private Context mContext;
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
 
     public void setRecordList(List<FinancialInvoiceRecord> recordList) {
-        if (loaded){
-            mRecordList.clear();
+        mRecordList = recordList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<FinancialInvoiceRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mRecordList.addAll(recordList);
+        if (mRecordList == null || mRecordList.size() == 0) {
+            setRecordList(data);
+        } else {
+            mRecordList.addAll(data);
+            notifyItemRangeInserted(mRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 
@@ -58,6 +67,7 @@ public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<Fi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.type.setText(mRecordList.get(position).getType());
+        holder.mTextName.setText(mRecordList.get(position).getStffName());
         holder.invoiceId.setText("发票编号" + mRecordList.get(position).getInvoiceNum());
         holder.status.setText("是".equals(mRecordList.get(position).getOpen()) ? "已开票" : "未开票");
         holder.status.setTextColor("是".equals(mRecordList.get(position).getOpen())
@@ -69,6 +79,8 @@ public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<Fi
                 + FontSwitchUtil.dip2px(mContext, 12f) + "' >￥</font>"
                 + "<font size='" + FontSwitchUtil.dip2px(mContext, 16f) + "' >"
                 + mRecordList.get(position).getMoney() + "</font>"));
+        // 点击事件
+        holder.itemInvoiceRecord.setOnClickListener(v -> mInvoiceListener.onClickItem(mRecordList.get(position), position));
     }
 
     @Override
@@ -79,6 +91,8 @@ public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<Fi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @ViewInject(R.id.ll_item_invoice_record)
         private LinearLayout itemInvoiceRecord;
+        @ViewInject(R.id.tv_name)
+        private TextView mTextName;
         @ViewInject(R.id.tv_type)
         private TextView type;
         @ViewInject(R.id.tv_invoice_id)
@@ -96,5 +110,18 @@ public final class FinancialInvoiceRecordAdapter extends RecyclerView.Adapter<Fi
             super(itemView);
             ViewBind.inject(this, itemView);
         }
+    }
+
+    public interface OnClickInvoiceListener{
+        /**
+         * 点击详情
+         */
+        void onClickItem(FinancialInvoiceRecord invoiceRecord, int position);
+    }
+
+    private OnClickInvoiceListener mInvoiceListener;
+
+    public void setInvoiceListener(OnClickInvoiceListener invoiceListener) {
+        mInvoiceListener = invoiceListener;
     }
 }

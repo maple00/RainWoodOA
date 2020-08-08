@@ -12,7 +12,6 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.model.domain.OrderDetailAttachment;
 import com.rainwood.oa.ui.widget.GroupIconText;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
@@ -62,19 +61,10 @@ public final class OrderDetailAttachAdapter extends BaseAdapter {
         holder.checked.setVisibility(View.GONE);
         holder.attachName.setText(getItem(position).getName());
         holder.nameTime.setText(getItem(position).getStaffName() + " " + getItem(position).getTime());
+        holder.preview.setVisibility(getItem(position).getFormat().endsWith(".zip") ? View.GONE : View.VISIBLE);
         // 点击事件
-        holder.download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtils.d("sxs", "订单附件下载");
-            }
-        });
-        holder.preview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtils.d("sxs", "订单附件预览");
-            }
-        });
+        holder.download.setOnClickListener(v -> mOnClickAttachListener.onClickDownload(getItem(position), position));
+        holder.preview.setOnClickListener(v -> mOnClickAttachListener.onClickPreview(getItem(position), position));
         return convertView;
     }
 
@@ -89,5 +79,29 @@ public final class OrderDetailAttachAdapter extends BaseAdapter {
         private GroupIconText download;
         @ViewInject(R.id.git_preview)
         private GroupIconText preview;
+    }
+
+    public interface OnClickAttachListener {
+        /**
+         * 下载
+         *
+         * @param attachment
+         * @param position
+         */
+        void onClickDownload(OrderDetailAttachment attachment, int position);
+
+        /**
+         * 预览
+         *
+         * @param attachment
+         * @param position
+         */
+        void onClickPreview(OrderDetailAttachment attachment, int position);
+    }
+
+    private OnClickAttachListener mOnClickAttachListener;
+
+    public void setOnClickAttachListener(OnClickAttachListener onClickAttachListener) {
+        mOnClickAttachListener = onClickAttachListener;
     }
 }

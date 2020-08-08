@@ -34,6 +34,21 @@ public final class LeaveOutAdapter extends RecyclerView.Adapter<LeaveOutAdapter.
         notifyDataSetChanged();
     }
 
+    public void addData(List<LeaveOutRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+
+        if (mLeaveOutRecordList == null || mLeaveOutRecordList.size() == 0) {
+            setLeaveOutRecordList(data);
+        } else {
+            mLeaveOutRecordList.addAll(data);
+            notifyItemRangeInserted(mLeaveOutRecordList.size() - data.size(), data.size());
+        }
+        notifyDataSetChanged();
+    }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

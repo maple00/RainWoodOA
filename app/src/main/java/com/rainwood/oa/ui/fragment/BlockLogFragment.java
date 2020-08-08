@@ -15,10 +15,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.BlockLog;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.presenter.IBlockLogPresenter;
 import com.rainwood.oa.ui.activity.BlockLogDetailActivity;
 import com.rainwood.oa.ui.adapter.BlockLogPagerAdapter;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
@@ -26,6 +29,7 @@ import com.rainwood.oa.view.IBlockLogCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 
@@ -34,7 +38,7 @@ import java.util.List;
  * @Date: 2020/4/27 17:45
  * @Desc: 待办事项fragment
  */
-public final class BlockLogFragment extends BaseFragment implements IBlockLogCallbacks {
+public final class BlockLogFragment extends BaseFragment implements IBlockLogCallbacks, StatusAction {
 
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout searchView;
@@ -43,6 +47,8 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     // content
     @ViewInject(R.id.rv_block_log_list)
     private RecyclerView blockLogView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private BottomNavigationView mBottomNavigationView;
     private BlockLogPagerAdapter mBlockLogPagerAdapter;
@@ -80,6 +86,10 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
 
     @Override
     protected void loadData() {
+        if (!NetworkUtils.isAvailable(getContext())) {
+            onError(getString(R.string.common_network));
+            return;
+        }
         mBlockLogPresenter.requestStateData();
         mBlockLogPresenter.requestBlockLogList();
     }
@@ -99,6 +109,9 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
     @OnClick({R.id.ll_network_error_tips})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_network_error_tips:
+                mBlockLogPresenter.requestBlockLogList();
+                break;
           /*  case R.id.btn_dialog_pay:
                 // 支付密码输入对话框
                 new PayPasswordDialog.Builder(view.getContext())
@@ -190,14 +203,14 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         TextView msgCount = badge.findViewById(R.id.tv_msg_count);
         //添加到Tab上
         itemView.addView(badge);
-        int unDelBlockCount = 0;
-        for (BlockLog blockLog : blockLogList) {
-            if ("待处理".equals(blockLog.getWorkFlow())) {
-                unDelBlockCount++;
-            }
+        int size = ListUtils.getSize(blockLogList);
+        msgCount.setVisibility(size == 0 ? View.GONE : View.VISIBLE);
+        msgCount.setText(size > 99 ? (size + "+") : String.valueOf(size));
+
+        //
+        if (ListUtils.getSize(blockLogList) == 0) {
+            showEmpty();
         }
-        msgCount.setVisibility(unDelBlockCount == 0 ? View.GONE : View.VISIBLE);
-        msgCount.setText(unDelBlockCount > 99 ? (unDelBlockCount + "+") : String.valueOf(unDelBlockCount));
     }
 
     @Override
@@ -221,5 +234,10 @@ public final class BlockLogFragment extends BaseFragment implements IBlockLogCal
         if (mBlockLogPresenter != null) {
             mBlockLogPresenter.unregisterViewCallback(this);
         }
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

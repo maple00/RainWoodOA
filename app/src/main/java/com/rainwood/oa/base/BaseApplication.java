@@ -1,12 +1,17 @@
 package com.rainwood.oa.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.oa.model.domain.VersionData;
+import com.rainwood.oa.network.caught.CaughtException;
+import com.rainwood.oa.network.caught.OnCaughtExceptionListener;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.utils.ActivityStackManager;
 import com.rainwood.oa.utils.Constants;
@@ -15,8 +20,10 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
+import com.rainwood.tools.toast.style.ToastAliPayStyle;
 import com.tencent.smtt.sdk.QbSdk;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +58,7 @@ public final class BaseApplication extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
-            builder.detectFileUriExposure();
+//            builder.detectFileUriExposure();
         }
         app = this;
         // initActivity 初始化Activity 栈管理
@@ -80,6 +87,7 @@ public final class BaseApplication extends Application {
         });
         // 吐司工具类
         ToastUtils.init(this);
+        ToastUtils.initStyle(new ToastAliPayStyle(this));
 
         //初始化X5内核
         QbSdk.PreInitCallback callback = new QbSdk.PreInitCallback() {
@@ -93,11 +101,6 @@ public final class BaseApplication extends Application {
             public void onViewInitFinished(boolean b) {
                 //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
                 LogUtils.d("sxs", "TBS is loading: " + b);
-                // 如果加载失败，多次回调
-                /*if (!b && initialSize < 3) {
-                    initialSize++;
-                    QbSdk.initX5Environment(app.getApplicationContext(), null);
-                }*/
                 //QbSdk.initX5Environment(app.getApplicationContext(), null);
             }
         };
@@ -110,8 +113,26 @@ public final class BaseApplication extends Application {
      * 初始化工具类
      */
     private void initUtil() {
+
         // 获取IMEI
         Constants.IMEI = DeviceIdUtil.getDeviceId(this);
+        // 异常抓捕
+        CaughtException.Builder caughtBuilder = new CaughtException.Builder(this);
+        caughtBuilder.fileName("rainWoodCaught.txt");
+        caughtBuilder.folderName("Exception");
+        caughtBuilder.listener(new OnCaughtExceptionListener() {
+            @Override
+            public void onCaughtExceptionSucceed(File file) {
+                // TODO: 上传caught文件
+
+            }
+
+            @Override
+            public void onCaughtExceptionFailure(String error) {
+
+            }
+        });
+        caughtBuilder.build();
     }
 
     /**
@@ -128,6 +149,11 @@ public final class BaseApplication extends Application {
                     "VALUES('customIntroduce', '温馨提示：是否是第一次加载', 'notLoaded')";
             SQLiteHelper.with(this).insert(sql);
         }
+        // 创建登录表
+        //SQLiteHelper.with(this).dropTable("loginTab");
+        SQLiteHelper.with(this).createTable("loginTab", new String[]{"userName", "pwd", "life"});
+        // 创建版本相关数据库
+        SQLiteHelper.with(this).createTable(VersionData.class);
     }
 
     private void initActivity() {
@@ -199,7 +225,26 @@ public final class BaseApplication extends Application {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        LogUtils.d(TAG, "onConfigurationChanged");
         super.onConfigurationChanged(newConfig);
+        if (newConfig.fontScale != 1) { //fontScale不为1，需要强制设置为1
+            getResources();
+        }
+    }
+
+    @Override
+    public Resources getResources() {
+        Resources resources = super.getResources();
+        if (resources.getConfiguration().fontScale != 1) { //fontScale不为1，需要强制设置为1
+            Configuration newConfig = new Configuration();
+            newConfig.setToDefaults();//设置成默认值，即fontScale为1
+            resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
+        }
+        return resources;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        // MultiDex.install(this);
     }
 }

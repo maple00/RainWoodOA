@@ -24,12 +24,11 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
-import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.IOrderCallbacks;
 import com.rainwood.tools.toast.ToastUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
             examination.setDepart("技术部");
             examination.setPost("开发攻城狮");
             examination.setHeadPhoto("https://www.baidu.com/img/bd_logo.png");
-            examinationList.add(examination);
+            // examinationList.add(examination);
         }
         Map<String, List<Examination>> dataMap = new HashMap<>();
         dataMap.put("examination", examinationList);
@@ -71,6 +70,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     @Override
     public void requestCustomOrderList(String customId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=orderLi", params, this);
     }
@@ -79,10 +79,11 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
      * 创建订单
      */
     @Override
-    public void CreateNewOrder(String customId, String orderNameStr, String moneyStr, String noteStr) {
+    public void CreateNewOrder(String customId, String orderId, String orderNameStr, String moneyStr, String noteStr) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("khid", customId);
-        params.add("id", RandomUtil.getNumberId(20));
+        params.add("id", orderId);
         params.add("name", orderNameStr);
         params.add("money", moneyStr);
         params.add("text", noteStr);
@@ -97,6 +98,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     @Override
     public void requestCustomName(String key) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("key", key);
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=clientKey", params, this);
     }
@@ -112,6 +114,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     @Override
     public void requestOrderList(String orderName, String state, String staffId, String sorting, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("name", orderName);
         params.add("workFlow", state);
         params.add("stid", staffId);
@@ -125,6 +128,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     @Override
     public void requestCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=search", params, this);
     }
 
@@ -136,6 +140,7 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
     @Override
     public void requestOrderDetailById(String orderId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", orderId);
         OkHttp.post(Constants.BASE_URL + "cla=order&fun=detail", params, this);
     }
@@ -499,20 +504,22 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
         // 订单 --condition
         else if (result.url().contains("cla=order&fun=search")) {
             try {
-                JSONArray typeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("workFlow"));
-                JSONArray payerArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(
+                List<String> payerArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("orderBy"));
+                typeArray.add(0, "全部");
+                payerArray.add(0, "默认排序");
                 List<SelectedItem> stateList = new ArrayList<>();
                 List<SelectedItem> sortList = new ArrayList<>();
-                for (int i = 0; i < typeArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(typeArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(typeArray.getString(i));
+                    item.setName(typeArray.get(i));
                     stateList.add(item);
                 }
-                for (int i = 0; i < payerArray.length(); i++) {
+                for (int i = 0; i < ListUtils.getSize(payerArray); i++) {
                     SelectedItem item = new SelectedItem();
-                    item.setName(payerArray.getString(i));
+                    item.setName(payerArray.get(i));
                     sortList.add(item);
                 }
                 mOrderEditCallbacks.getOrderCondition(stateList, sortList);

@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,6 +36,24 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         notifyDataSetChanged();
     }
 
+    /**
+     * 追加一些数据
+     *
+     * @param data
+     */
+    public void addData(List<StaffAccount> data) {
+        if (data == null || data.size() == 0) {
+            return;
+        }
+        if (mAccountList == null || mAccountList.size() == 0) {
+            setAccountList(data);
+        } else {
+            mAccountList.addAll(data);
+            notifyItemRangeInserted(mAccountList.size() - data.size(), data.size());
+            notifyDataSetChanged();
+        }
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,18 +62,24 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.event.setText(TextUtils.isEmpty(mAccountList.get(position).getText()) ? "" : mAccountList.get(position).getText());
         holder.time.setText(mAccountList.get(position).getTime());
         holder.money.setText("收入".equals(mAccountList.get(position).getDirection())
-                ? "+" + mAccountList.get(position).getMoney()
-                : "-" + mAccountList.get(position).getMoney());
+                ? "金额：+" + mAccountList.get(position).getMoney()
+                : "金额：-" + mAccountList.get(position).getMoney());
         holder.money.setTextColor("收入".equals(mAccountList.get(position).getDirection())
                 ? mContext.getColor(R.color.colorPrimary)
-                : mContext.getColor(R.color.fontColor));
+                : mContext.getColor(R.color.red05));
         // TODO: 文字+图片---图片紧跟文字之后
-        holder.voucher.setVisibility(TextUtils.isEmpty(mAccountList.get(position).getIco()) ? View.GONE : View.VISIBLE);
+        holder.voucher.setVisibility((mAccountList.get(position).getIco().endsWith("jpg")
+                || mAccountList.get(position).getIco().endsWith("jpg"))
+                ? View.VISIBLE : View.GONE);
+        // 结余
+        holder.mTextBalance.setText("余额：￥" + mAccountList.get(position).getBalance());
+
         // 点击事件
         holder.itemAccount.setOnClickListener(v -> mItemAccount.onClickAccount(mAccountList.get(position)));
     }
@@ -70,6 +95,8 @@ public final class StaffAccountAdapter extends RecyclerView.Adapter<StaffAccount
         private RelativeLayout itemAccount;
         @ViewInject(R.id.tv_money)
         private TextView money;
+        @ViewInject(R.id.tv_balance)
+        private TextView mTextBalance;
         @ViewInject(R.id.iv_voucher)
         private ImageView voucher;
         @ViewInject(R.id.tv_event)

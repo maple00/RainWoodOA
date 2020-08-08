@@ -6,10 +6,9 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_search_glass_view" />
+    <include layout="@layout/include_search_title_view" />
 
     <LinearLayout
-        android:id="@+id/ll_status_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"

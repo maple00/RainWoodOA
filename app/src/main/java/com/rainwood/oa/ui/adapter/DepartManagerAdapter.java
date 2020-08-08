@@ -17,6 +17,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,10 +27,11 @@ import java.util.List;
  */
 public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManagerAdapter.ViewHolder> {
 
-    private List<Depart> mDepartList;
+    private List<Depart> mDepartList = new ArrayList<>();
 
     public void setDepartList(List<Depart> departList) {
-        mDepartList = departList;
+        mDepartList.clear();
+        mDepartList.addAll(departList);
         notifyDataSetChanged();
     }
 
@@ -43,7 +45,7 @@ public final class DepartManagerAdapter extends RecyclerView.Adapter<DepartManag
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.depart.setText(mDepartList.get(position).getName());
-        holder.selectedImg.setImageResource(mDepartList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
+        holder.selectedImg.setImageResource(!mDepartList.get(position).isHasSelected() ? R.drawable.ic_down_arrow : R.drawable.ic_up_arrow);
         // 设置隐藏
         holder.managerTop.setOnClickListener(v -> {
             mDepartList.get(position).setHasSelected(!mDepartList.get(position).isHasSelected());

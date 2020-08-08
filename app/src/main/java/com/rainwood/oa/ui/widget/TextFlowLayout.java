@@ -26,6 +26,9 @@ public class TextFlowLayout extends ViewGroup {
     private float mItemVerticalSpace = DEFAULT_SPACE;
     private int mSelfWidth;
     private int mItemHeight;
+    private float DEFAULT_TEXT_SIZE = 12.0f;
+    private float textSize;
+    private int textColor;
     private OnFlowTextItemClickListener mItemClickListener = null;
 
     public int getContentSize() {
@@ -65,11 +68,18 @@ public class TextFlowLayout extends ViewGroup {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FlowTextStyle);
         mItemHorizontalSpace = ta.getDimension(R.styleable.FlowTextStyle_horizontalSpace, DEFAULT_SPACE);
         mItemVerticalSpace = ta.getDimension(R.styleable.FlowTextStyle_verticalSpace, DEFAULT_SPACE);
+        textSize = ta.getDimension(R.styleable.FlowTextStyle_textFlowSize, DEFAULT_TEXT_SIZE);
+        textColor = ta.getColor(R.styleable.FlowTextStyle_textFlowColor, context.getColor(R.color.colorMiddle));
         ta.recycle();
         LogUtils.d(this, "mItemHorizontalSpace == > " + mItemHorizontalSpace);
         LogUtils.d(this, "mItemVerticalSpace == > " + mItemVerticalSpace);
     }
 
+    /**
+     * 对外暴露添加数据方法
+     *
+     * @param textList
+     */
     public void setTextList(List<String> textList) {
         removeAllViews();
         this.mTextList.clear();
@@ -82,6 +92,8 @@ public class TextFlowLayout extends ViewGroup {
             // 等价于
             TextView item = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.flow_text_view, this, false);
             item.setText(text);
+            item.setTextSize(textSize);
+            item.setTextColor(textColor);
             item.setOnClickListener(v -> {
                 if (mItemClickListener != null) {
                     mItemClickListener.onFlowItemClick(text);
@@ -116,10 +128,10 @@ public class TextFlowLayout extends ViewGroup {
                 continue;
             }
             //测量前
-            //LogUtils.d(this,"before height -- > " + itemView.getMeasuredHeight());
+            LogUtils.d(this, "before height -- > " + itemView.getMeasuredHeight());
             measureChild(itemView, widthMeasureSpec, heightMeasureSpec);
             //测量后
-            // LogUtils.d(this,"after height -- > " + itemView.getMeasuredHeight());
+            LogUtils.d(this, "after height -- > " + itemView.getMeasuredHeight());
             if (line == null) {
                 //说明当前行为空，可以添加进来
                 line = createNewLine(itemView);

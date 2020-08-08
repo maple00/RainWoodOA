@@ -1,5 +1,6 @@
 package com.rainwood.oa.network.io;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +39,7 @@ public class Downloader {
      */
     public static final String CACHE_FOLDER = "Downloader";
 
+    public static final int WHAT_DOWNLOAD_START = 0x000;
     public static final int WHAT_DOWNLOADING = 0x001;
     public static final int WHAT_DOWNLOAD_COMPLETED = 0x002;
     public static final int WHAT_DOWNLOAD_FAILED = 0x003;
@@ -158,6 +160,8 @@ public class Downloader {
         isPause = false;
         isCancel = false;
         if (!isDownloading) {
+            // 发送开始下载信号
+            sendStartMsg();
             download();
         }
     }
@@ -351,6 +355,15 @@ public class Downloader {
     }
 
     /**
+     * 发送开始下载消息
+     */
+    protected void sendStartMsg() {
+        Message msg = handler.obtainMessage();
+        msg.what = WHAT_DOWNLOAD_START;
+        handler.sendMessage(msg);
+    }
+
+    /**
      * 发送成功的信息
      *
      * @param file
@@ -396,8 +409,10 @@ public class Downloader {
     /**
      * 下载Handler处理
      */
+    @SuppressWarnings("all")
     private Handler handler = new Handler() {
 
+        @SuppressLint("HandlerLeak")
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -415,6 +430,9 @@ public class Downloader {
                     break;
                 case WHAT_DOWNLOAD_FAILED:
                     onDownloadListener.onDownloadFailed((Exception) obj);
+                    break;
+                case WHAT_DOWNLOAD_START:
+                    onDownloadListener.start();
                     break;
             }
         }

@@ -1,6 +1,8 @@
 package com.rainwood.oa.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,14 +20,15 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
-import com.rainwood.oa.model.domain.BalanceCurveListData;
+import com.rainwood.oa.model.domain.HomeSalaryDesc;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.StaffCurveList;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.StaffCurveAdapter;
+import com.rainwood.oa.ui.dialog.StartEndDateDialog;
 import com.rainwood.oa.ui.widget.MeasureListView;
-import com.rainwood.oa.ui.widget.MyMarkerView;
+import com.rainwood.oa.ui.widget.MyChartMarkerView;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
@@ -33,10 +36,16 @@ import com.rainwood.oa.view.IFinancialCallbacks;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
+import com.rainwood.tools.utils.DateTimeUtils;
+import com.rainwood.tools.wheel.BaseDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import static com.rainwood.tools.utils.DateTimeUtils.dateToString;
 
 /**
  * @Author: a797s
@@ -50,7 +59,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     @ViewInject(R.id.tv_date)
-    private TextView date;
+    private TextView mTextDate;
     @ViewInject(R.id.lc_staff_chart)
     private LineChart staffCurveView;
     @ViewInject(R.id.mlv_staff_list)
@@ -58,6 +67,8 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
 
     private IFinancialPresenter mFinancialPresenter;
     private StaffCurveAdapter mStaffCurveAdapter;
+    private String mStartTime;
+    private String mEndTime;
 
     @Override
     protected int getLayoutResId() {
@@ -80,9 +91,24 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         mFinancialPresenter.registerViewCallback(this);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
-        mFinancialPresenter.requestStaffNum();
+        showDialog();
+        int nowYear = DateTimeUtils.getNowYear();
+        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowDay = DateTimeUtils.getNowDay();
+        // -- 默认选择6个月
+        Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
+        ca.set(nowYear, nowMonth - 1, nowDay);// 月份是从0开始的，所以11表示12月
+        ca.add(Calendar.YEAR, 0); // 年份减1
+        ca.add(Calendar.MONTH, -6);// 月份减1
+        ca.add(Calendar.DATE, 0);// 日期减1
+        Date resultDate = ca.getTime(); // 结果
+        String oldTime = dateToString(resultDate, DateTimeUtils.DatePattern.ONLY_DAY);
+        String nowDate = DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY);
+        mTextDate.setText(oldTime + "-" + nowDate);
+        mFinancialPresenter.requestStaffNum(oldTime, nowDate);
     }
 
     @SingleClick
@@ -93,17 +119,57 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
                 finish();
                 break;
             case R.id.tv_date:
-                toast("时间");
+                new StartEndDateDialog.Builder(this, true)
+                        .setTitle(null)
+                        .setConfirm(getString(R.string.common_text_confirm))
+                        .setCancel(getString(R.string.common_text_clear_screen))
+                        .setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
+                        .setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
+                        .setListener(new StartEndDateDialog.OnListener() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_MONTH)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+                                dialog.dismiss();
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                mTextDate.setText(mStartTime + "-" + mEndTime);
+                                showDialog();
+                                mFinancialPresenter.requestStaffNum(startTime, endTime);
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
         if (ListUtils.getSize(staffNumList) == 0) {
             staffCurveView.setNoDataText("当前暂无收支数据");
             return;
         }
+        mTextDate.setText(xValues.get(0) + "--" + xValues.get(ListUtils.getSize(xValues) - 1));
         List<ILineDataSet> lineDataSetList = new ArrayList<>();
         float yMinValues = initSalaryChartValues(xValues);
         LogUtils.d("sxs", "--- Y轴的最小值 ---- " + yMinValues);
@@ -128,12 +194,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             lineDataSet.setFillFormatter((dataSet, dataProvider) -> yMinValues);
             lineDataSetList.add(lineDataSet);
         }
-        // 标注
-        MyMarkerView mv = new MyMarkerView(this, R.layout.marker_salary_marker, xValues, null, staffNumList);
-        mv.setOffset(-mv.getMeasuredWidth() >> 1, -mv.getMeasuredHeight());
-        staffCurveView.setMarker(mv);
         staffCurveView.setData(new LineData(lineDataSetList));
-
         // 列表展示
         List<StaffCurveList> curveListData = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(xValues); i++) {
@@ -145,6 +206,24 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             curveListData.add(listData);
         }
         mStaffCurveAdapter.setCurveList(curveListData);
+        // 标注
+        MyChartMarkerView chartMarkerView = new MyChartMarkerView(this, R.layout.marker_salary_marker);
+        chartMarkerView.setChartView(staffCurveView);///如果没有加这句MyMarkView draw会报空指针
+        List<HomeSalaryDesc> descList = new ArrayList<>();
+        chartMarkerView.setCallBack((x, value) -> {
+            int index = (int) (x);
+            if (index < 0) {
+                return;
+            }
+            if (index > ListUtils.getSize(xValues)) {
+                return;
+            }
+            descList.clear();
+            descList.add(new HomeSalaryDesc(Float.parseFloat(value), "员工数："));
+            chartMarkerView.getTvPerson().setText(xValues.get(index));
+            chartMarkerView.getTvFirm().setDescList(descList);
+        });
+        staffCurveView.setMarker(chartMarkerView);
     }
 
     /**
@@ -203,7 +282,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         xAxis.setSpaceMax(0f);
         xAxis.setSpaceMin(0f);
         // count显示数量
-        xAxis.setLabelCount(ListUtils.getSize(monthList), true);
+        xAxis.setLabelCount(5, true);
         // 设置X轴显示值
         xAxis.setValueFormatter(new IndexAxisValueFormatter(monthList));
         // 偏移量---

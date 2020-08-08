@@ -6,6 +6,7 @@ import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
 import com.rainwood.oa.model.domain.CustomFollowRecord;
 import com.rainwood.oa.model.domain.FinancialInvoiceRecord;
+import com.rainwood.oa.model.domain.InvoiceDetailData;
 import com.rainwood.oa.model.domain.InvoiceRecord;
 import com.rainwood.oa.model.domain.KnowledgeFollowRecord;
 import com.rainwood.oa.model.domain.LeaveOutRecord;
@@ -161,4 +162,9 @@ public interface IRecordCallbacks extends IBaseCallback {
     default void getAdminOverTimeState(List<SelectedItem> overTimeStateList) {
     }
 
+    /**
+     * 开票记录详情
+     * @param invoiceDetail
+     */
+    default void getInvoiceDetail(InvoiceDetailData invoiceDetail){}
 }

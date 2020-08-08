@@ -9,18 +9,25 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-        android:id="@+id/trl_pager_refresh"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_communication_list"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="18dp" />
+            android:layout_height="match_parent">
 
-    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_communication_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="18dp" />
+
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
+
 </LinearLayout>

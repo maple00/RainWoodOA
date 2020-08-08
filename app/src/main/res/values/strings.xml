@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">雨木科技</string>
+<!--    <string name="app_name">yumu</string>-->
 
     <string name="frame_name" translatable="true">AndroidOHP</string>
+    <string name="common_copyright">\u00a9 2015 All Rights Reserved</string>
     <string name="navigation_home">首页</string>
     <string name="navigation_manager">管理</string>
     <string name="navigation_backlog">待办事项</string>
@@ -13,7 +15,9 @@
     <string name="text_home_salary_line_curve">工资曲线</string>
     <string name="text_query_all">查看全部</string>
 
+    <string name="common_network">当前没有网络连接，请检查网络设置</string>
     <string name="text_network_state">请确认网络良好</string>
+    <string name="common_loading">加载中&#8230;</string>
     <!-- 日期组合控件-->
     <string name="common_year">年</string>
     <string name="common_month">月</string>
@@ -33,14 +37,18 @@
     <string name="address_title">请选择地区</string>
     <string name="address_hint">请选择</string>
     <!-- 支付密码对话框 -->
-    <string name="select_min_hint">至少要选择 %d 项</string>
-    <string name="select_max_hint">最多只能选择 %d 项</string>
     <!-- 升级对话框 -->
     <string name="update_title">发现新版本</string>
     <string name="update_content">更新内容</string>
     <string name="update_no">下次再说</string>
+    <string name="update_status_start">正在下载</string>
     <string name="update_yes">立即更新</string>
     <string name="update_background">后台更新</string>
+    <string name="update_status_running">下载中 %d%%</string>
+    <string name="update_status_finished">下载完成</string>
+    <string name="update_status_successful">立即安装</string>
+    <string name="update_status_failed">当前网络较弱，下载失败</string>
+
     <string name="common_permission_hint">请先授予权限</string>
     <string name="common_permission_fail">授权失败，请手动授予权限</string>
     <string name="text_common_search">搜索</string>
@@ -63,7 +71,6 @@
 
     <string name="custom_input_please">请输入</string>
     <string name="custom_choose_please">请选择</string>
-    <string name="custom_text_manager">管理</string>
     <string name="custom_demand_write_detail">请填写需求详情</string>
     <string name="text_plus">添加</string>
     <string name="text_edit">编辑</string>
@@ -74,7 +81,7 @@
     <string name="text_login">登录</string>
     <string name="text_account">请输入用户名</string>
     <string name="text_password">请输入密码</string>
-    <string name="text_verification_hint">请输入图片验证码</string>
+    <string name="text_verification_hint">图形验证码</string>
     <string name="text_forget_password">忘记密码？</string>
     <string name="text_login_account">账号密码登录</string>
     <string name="text_next_step">下一步</string>
@@ -100,7 +107,6 @@
     <string name="text_input_provision_money">请输入计提金额</string>
     <string name="text_follow_tips">点击上方标签或填写跟进情况</string>
     <string name="text_follow_next_time">下次跟进时间</string>
-    <string name="text_screen_type">筛选分类</string>
     <string name="text_post_allowance">津贴说明</string>
     <string name="text_post_desc">职位描述</string>
     <string name="navigation_staff_data">员工资料</string>
@@ -128,7 +134,6 @@
     <string name="text_record_out_obj">外出对象</string>
     <string name="text_record_pre_out_time">预计外出时间</string>
     <string name="text_record_actual_out_time">实际外出时间</string>
-    <string name="text_record_out_reason">外出事由</string>
     <string name="text_record_reissue_time">补卡时间</string>
     <string name="text_record_reissue_reason">补卡事由</string>
     <string name="text_custom_associates">协作人</string>
@@ -147,5 +152,19 @@
     <string name="text_income">收入</string>
     <string name="text_speeding">支出</string>
     <string name="text_audit_records">审核记录</string>
+    <string name="text_sms_verify">请输入短信验证码</string>
+    <string name="text_invoice_name">开票人</string>
+    <string name="text_sellers">销售方</string>
+    <string name="text_purchaser">购买方</string>
+    <string name="text_invoice_type">发票类型</string>
+    <string name="text_Levied_in_total">价税合计</string>
+    <string name="text_invoice_amount">开票金额</string>
+    <string name="text_invoice_tax">纳税金额</string>
+    <string name="text_invoice_ico">发票扫描件</string>
+    <string name="text_principal">负责人</string>
+    <string name="text_origin">来源</string>
+    <string name="text_balance_type">收支类型</string>
+    <string name="text_balance_money">收支金额</string>
+    <string name="text_pay_voucher">付款凭证</string>
 
 </resources>

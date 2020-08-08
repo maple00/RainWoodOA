@@ -1,5 +1,7 @@
 package com.rainwood.oa.presenter.impl;
 
+import android.text.TextUtils;
+
 import com.rainwood.oa.model.domain.FontAndFont;
 import com.rainwood.oa.model.domain.HomeSalary;
 import com.rainwood.oa.network.json.JsonParser;
@@ -12,7 +14,6 @@ import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IHomeCallbacks;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
             mHomeCallbacks.onLoading();
         }
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("startMoon", startMonth);
         params.add("endMoon", endMonth);
         OkHttp.post(Constants.BASE_URL + "cla=home&fun=wages", params, this);
@@ -79,17 +81,9 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
         if (result.url().contains("cla=home&fun=wages")) {
             try {
                 // 收入
-                JSONArray incomeJsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("income"));
-                List<String> incomeList = new ArrayList<>();
-                for (int i = 0; i < incomeJsonArray.length(); i++) {
-                    incomeList.add(incomeJsonArray.getString(i));
-                }
+                List<String> incomeList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("income"));
                 //年份
-                JSONArray monthJsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObjectString(result.body()).getString("list"));
-                List<String> monthList = new ArrayList<>();
-                for (int i = 0; i < monthJsonArray.length(); i++) {
-                    monthList.add(monthJsonArray.getString(i));
-                }
+                List<String> monthList = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(result.body()).getString("list"));
                 //
                 HomeSalary homeSalary = JsonParser.parseJSONObject(HomeSalary.class, result.body());
                 List<FontAndFont> salaryList = new ArrayList<>();
@@ -112,7 +106,9 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
                     }
                     salaryList.add(andFont);
                 }
+                String backlog = JsonParser.parseJSONObject(result.body()).get("backlog");
                 mHomeCallbacks.getSalariesData(incomeList, monthList, salaryList);
+                mHomeCallbacks.getBlockLogNum(Integer.parseInt(TextUtils.isEmpty(backlog) ? "0" : backlog));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

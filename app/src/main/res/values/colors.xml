@@ -5,7 +5,6 @@
     <color name="colorAccent">#11CA8D</color>
     <color name="colorGrey">#7B7B7B</color>
     <color name="windowBackground">#F4F4F4</color>
-    <color name="light_gray">#bfbfbf</color>
     <!-- 按钮按压时的颜色 -->
     <color name="colorButtonPressed">#11CA8D</color>
     <!-- 重要字体颜色-->
@@ -24,17 +23,15 @@
     <!-- 对话框确认按钮文本颜色 -->
     <color name="colorConfirm">#007AFF</color>
     <!-- 对话框取消按钮文本颜色 -->
-    <color name="colorCancel">#F44336</color>
     <!-- 一般文字颜色-->
     <color name="tipsColor">#FFA627</color>
-    <color name="tipsColor05">#FF8278</color>
-    <color name="tipsColor10">#FF8278</color>
 
     <!-- 辅助颜色-->
     <color name="assistColor">#eeeeee</color>
-    <color name="assistColor05">#f4f4f4</color>
     <color name="assistColor10">#F9F9F9</color>
     <color name="assistColor15">#F8F8F8</color>
+
+    <color name="tipsColor1">#888888</color>
 
     <!-- common color-->
     <!-- 黑色-->
@@ -54,7 +51,6 @@
     <!-- 绿色-->
     <color name="green05">#11CA8D</color>
     <color name="green10">#3AD7A9</color>
-    <color name="green15">#2AE3DC</color>
     <color name="green20">#E8FFF7</color>
     <!-- 红色-->
     <color name="red05">#FF686D</color>

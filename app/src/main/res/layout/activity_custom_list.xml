@@ -8,8 +8,7 @@
     android:orientation="vertical"
     tools:ignore="UselessLeaf">
 
-
-    <include layout="@layout/include_search_click_view" />
+    <include layout="@layout/include_search_title_view" />
 
     <!-- tabLayout-->
     <LinearLayout
@@ -68,17 +67,23 @@
         style="@style/HorizontalLineStyle" />
 
     <!-- 客户列表-->
-    <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
-        android:id="@+id/trl_pager_refresh"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_custom_list"
+        <com.rainwood.tkrefreshlayout.TwinklingRefreshLayout
+            android:id="@+id/trl_pager_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/assistColor10" />
+            android:background="@color/assistColor10">
 
-    </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_custom_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.rainwood.tkrefreshlayout.TwinklingRefreshLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </LinearLayout>

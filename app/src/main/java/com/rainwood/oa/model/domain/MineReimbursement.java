@@ -14,6 +14,7 @@ public final class MineReimbursement implements Serializable {
      */
     private String id;
 
+    private String staffName;
     /**
      * 费用类型
      */
@@ -48,6 +49,14 @@ public final class MineReimbursement implements Serializable {
      * 费用是否报销
      */
     private String pay;
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
 
     public String getId() {
         return id;

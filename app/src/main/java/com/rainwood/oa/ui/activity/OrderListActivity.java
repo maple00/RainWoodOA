@@ -1,10 +1,14 @@
 package com.rainwood.oa.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,6 +21,8 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Order;
 import com.rainwood.oa.model.domain.SelectedItem;
+import com.rainwood.oa.model.domain.TempData;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IOrderPresenter;
 import com.rainwood.oa.ui.adapter.CommonGridAdapter;
@@ -25,6 +31,7 @@ import com.rainwood.oa.ui.adapter.StaffDefaultSortAdapter;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.ui.widget.GroupTextIcon;
 import com.rainwood.oa.ui.widget.MeasureGridView;
+import com.rainwood.oa.ui.widget.TextSelectedItemFlowLayout;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
@@ -38,23 +45,32 @@ import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.rainwood.oa.utils.Constants.CHOOSE_STAFF_REQUEST_SIZE;
+import static com.rainwood.oa.utils.Constants.PAGE_SEARCH_CODE;
 
 /**
  * @Author: a797s
  * @Date: 2020/5/20 9:11
  * @Desc: 订单列表
  */
-public final class OrderListActivity extends BaseActivity implements IOrderCallbacks {
+public final class OrderListActivity extends BaseActivity implements IOrderCallbacks, StatusAction {
 
     // action Bar
     @ViewInject(R.id.rl_search_click)
     private RelativeLayout pageTop;
     @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
+    @ViewInject(R.id.ll_search_view)
+    private LinearLayout searchView;
+    @ViewInject(R.id.et_search_tips)
+    private TextView searchTipsView;
     // content
     @ViewInject(R.id.cl_order_list_parent)
     private CoordinatorLayout orderListParent;
@@ -71,6 +87,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private RecyclerView orderView;
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pagerRefresh;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IOrderPresenter mOrderPresenter;
     private OrderListAdapter mOrderListAdapter;
@@ -87,6 +105,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     private String mOrderState;
     private String mOrderSorting;
     private String mStaffId;
+    private String mKeyWord;
+    private TextSelectedItemFlowLayout mItemFlowLayout;
 
 
     @Override
@@ -120,11 +140,19 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     protected void loadData() {
         // 请求数据
-        mOrderPresenter.requestOrderList("", "", "", "", pageCount);
+        netRequestOrderList("", "", "");
         // 订单-- condition
         mOrderPresenter.requestCondition();
     }
 
+
+    /**
+     * 查询订单列表
+     */
+    private void netRequestOrderList(String keyWord, String orderState, String sorting) {
+        showLoading();
+        mOrderPresenter.requestOrderList(keyWord, orderState, "", sorting, pageCount = 1);
+    }
 
     @Override
     protected void initEvent() {
@@ -165,13 +193,56 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
         // 查看订单详情
         mOrderListAdapter.setClickItemOrder((order, position) -> {
             // 订单详情
-            PageJumpUtil.orderList2Detail(OrderListActivity.this, OrderDetailActivity.class, order.getId(), order.getWorkFlow());
+            if ("草稿".equals(order.getWorkFlow())) {
+                TempData tempData = new TempData();
+                Map<String, String> tempMap = new HashMap<>();
+                tempMap.put("customName", order.getName());
+                tempMap.put("orderName", order.getName());
+                tempMap.put("note", "");
+                // 合同金额
+                tempMap.put("money", order.getMoney());
+
+                tempMap.put("orderNo", order.getId());
+                tempMap.put("createTime", order.getTimeLimit());
+                tempMap.put("cost", order.getNatureList().get(0).getDesc());
+                tempMap.put("netWorthOrder", order.getNatureList().get(1).getDesc());
+                tempMap.put("moneyWait", order.getNatureList().get(2).getDesc());
+                tempMap.put("netWorthWait", order.getNatureList().get(4).getDesc());
+                tempData.setTempMap(tempMap);
+                PageJumpUtil.orderNew2OrderEditPage(this, OrderEditActivity.class, tempData);
+            } else {
+                PageJumpUtil.orderList2Detail(OrderListActivity.this, OrderDetailActivity.class, order.getId(), order.getWorkFlow());
+            }
         });
         // 加载更多
         pagerRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
-                mOrderPresenter.requestOrderList("", mOrderState, mStaffId, mOrderSorting, ++pageCount);
+                mOrderPresenter.requestOrderList(mKeyWord, mOrderState, mStaffId, mOrderSorting, ++pageCount);
+            }
+        });
+        // 搜索关键字监听
+        searchTipsView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    searchView.setVisibility(View.GONE);
+                    mKeyWord = "";
+                    netRequestOrderList("", "", "");
+                } else {
+                    searchView.setVisibility(View.VISIBLE);
+                    netRequestOrderList(mKeyWord, "", "");
+                }
             }
         });
     }
@@ -179,13 +250,22 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
-            String staff = data.getStringExtra("staff");
-            mStaffId = data.getStringExtra("staffId");
-            String position = data.getStringExtra("position");
-
-            toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
-            mOrderPresenter.requestOrderList("", "", mStaffId, "", pageCount);
+        if (data != null) {
+            // 选择员工
+            if (requestCode == CHOOSE_STAFF_REQUEST_SIZE && resultCode == CHOOSE_STAFF_REQUEST_SIZE) {
+                String staff = data.getStringExtra("staff");
+                mStaffId = data.getStringExtra("staffId");
+                String position = data.getStringExtra("position");
+                //toast("员工：" + staff + "\n员工编号：" + mStaffId + "\n 职位：" + position);
+                showDialog();
+                pageCount = 1;
+                mOrderPresenter.requestOrderList("", "", mStaffId, "", pageCount);
+            }
+            // 订单名称搜索
+            if (requestCode == PAGE_SEARCH_CODE && resultCode == PAGE_SEARCH_CODE) {
+                mKeyWord = data.getStringExtra("keyWord");
+                searchTipsView.setText(mKeyWord);
+            }
         }
     }
 
@@ -197,7 +277,11 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 finish();
                 break;
             case R.id.iv_search:
-                toast("搜索");
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("pageFlag", "staffManager");
+                intent.putExtra("title", "订单列表");
+                intent.putExtra("tips", "请输入订单名称");
+                startActivityForResult(intent, PAGE_SEARCH_CODE);
                 break;
         }
     }
@@ -209,17 +293,28 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
      */
     @Override
     public void getOrderList(List<Order> orderList) {
-        LogUtils.d("sxs", "共-- " + ListUtils.getSize(orderList) + "-- 条数据");
-        mOrderListAdapter.setLoaded(pageCount == 1);
+        LogUtils.d("sxs", "-- orderList --" + orderList);
+        showComplete();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        pagerRefresh.finishLoadmore();
         if (pageCount != 1) {
             pagerRefresh.finishLoadmore();
             toast("为您加载了" + ListUtils.getSize(orderList) + "条数据");
+            mOrderListAdapter.addData(orderList);
+        } else {
+            if (ListUtils.getSize(orderList) == 0) {
+                showEmpty();
+                return;
+            }
+            mOrderListAdapter.setList(orderList);
         }
-        mOrderListAdapter.setList(orderList);
     }
 
     @Override
     public void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sortList) {
+        Collections.reverse(stateList);
         mStateList = stateList;
         mSortList = sortList;
     }
@@ -237,6 +332,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                     contentList.setNumColumns(4);
                     mSelectedAdapter = new CommonGridAdapter();
                     contentList.setAdapter(mSelectedAdapter);
+                    mItemFlowLayout = view.findViewById(R.id.tfl_text);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -258,19 +354,23 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 targetGTI.setRightIcon(R.drawable.ic_triangle_down, getColor(R.color.fontColor));
             }
         });
-        mSelectedAdapter.setTextList(stateList);
-        mSelectedAdapter.setOnClickListener((item, position) -> {
-            for (SelectedItem selectedItem : stateList) {
-                selectedItem.setHasSelected(false);
+
+        mItemFlowLayout.setTextList(stateList);
+        mItemFlowLayout.setOnFlowTextItemClickListener(selectedItem -> {
+            for (SelectedItem item : stateList) {
+                item.setHasSelected(false);
             }
-            item.setHasSelected(true);
+            selectedItem.setHasSelected(true);
             // TODO: 查询订单状态列表
-            mOrderState = item.getName();
+            mOrderState = selectedItem.getName();
             mStatusPopWindow.dismiss();
-            mOrderPresenter.requestOrderList("", mOrderState, "", "", pageCount = 1);
+            netRequestOrderList(mKeyWord, "全部".equals(mOrderState) ? "" : mOrderState, "");
         });
     }
 
+    /**
+     * 排序
+     */
     private void defaultSortConditionPopDialog() {
         CommonPopupWindow mStatusPopWindow = new CommonPopupWindow.Builder(this)
                 .setAnimationStyle(R.style.IOSAnimStyle)
@@ -279,8 +379,11 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
                 .setViewOnclickListener((view, layoutResId) -> {
                     MeasureGridView contentList = view.findViewById(R.id.mgv_content);
                     contentList.setNumColumns(1);
+                    contentList.setVisibility(View.VISIBLE);
                     mDefaultSortAdapter = new StaffDefaultSortAdapter();
                     contentList.setAdapter(mDefaultSortAdapter);
+                    TextSelectedItemFlowLayout itemFlowLayout = view.findViewById(R.id.tfl_text);
+                    itemFlowLayout.setVisibility(View.GONE);
                     mMaskLayer = view.findViewById(R.id.mask_layer);
                     TransactionUtil.setAlphaAllView(mMaskLayer, 0.7f);
                 })
@@ -307,7 +410,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             mStatusPopWindow.dismiss();
             // TODO: 排序查询订单列表
             mOrderSorting = selectedItem.getName();
-            mOrderPresenter.requestOrderList("", "", "", mOrderSorting, pageCount = 1);
+            netRequestOrderList(mKeyWord, "", mOrderSorting);
         });
         mDefaultSortAdapter.setItemList(mSortList);
     }
@@ -325,5 +428,10 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

@@ -13,7 +13,9 @@ import com.rainwood.oa.model.domain.MineInvoice;
 import com.rainwood.oa.model.domain.MineRecordTime;
 import com.rainwood.oa.model.domain.MineRecords;
 import com.rainwood.oa.model.domain.MineReimbursement;
+import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.TeamFunds;
+import com.rainwood.oa.model.domain.VersionData;
 
 import java.util.List;
 
@@ -120,4 +122,28 @@ public interface IMineCallbacks extends IBaseCallback {
      * @param departList
      */
     default void getDepartListData(List<Depart> departList){}
+
+    /**
+     * 我的请假记录 -- condition
+     * @param stateList
+     * @param leaveTypeList
+     */
+    default void getMineLeaveRecords(List<SelectedItem> stateList, List<SelectedItem> leaveTypeList){}
+
+    /**
+     * 请假申请结果
+     */
+    default void getLeaveResult(boolean success){};
+
+    /**
+     * 删除请假记录回调
+     * @param success
+     */
+    default void getDelLeaveResults(boolean success){};
+
+    /**
+     * 获得版本信息
+     * @param versionData
+     */
+    default void getVersionData(VersionData versionData){}
 }

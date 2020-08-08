@@ -13,6 +13,7 @@ import com.rainwood.oa.network.okhttp.OnHttpListener;
 import com.rainwood.oa.network.okhttp.RequestParams;
 import com.rainwood.oa.presenter.IAdministrativePresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.view.IAdministrativeCallbacks;
 
 import org.json.JSONException;
@@ -35,9 +36,11 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     public void requestAllRole(String roleName, String moduleFirst, String moduleSecond, int page) {
         RequestParams params = new RequestParams();
         params.add("name", roleName);
-        params.add("powerOne", moduleFirst);
-        params.add("powerTwo", moduleSecond);
-        OkHttp.post(Constants.BASE_URL + "cla=role&fun=home&page=" + page, params, this);
+        params.add("powerOne", "全部".equals(moduleFirst) ? "" : moduleFirst);
+        params.add("powerTwo", "全部".equals(moduleSecond) ? "" : moduleSecond);
+        params.add("life", Constants.life);
+        String url = Constants.BASE_URL + "cla=role&fun=home&page=" + page;
+        OkHttp.post(url, params, this);
     }
 
     /**
@@ -49,6 +52,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     public void requestRoleDetailById(String roleId) {
         RequestParams params = new RequestParams();
         params.add("id", roleId);
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=role&fun=detail", params, this);
     }
 
@@ -58,7 +62,8 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestRoleScreenCondition() {
         RequestParams params = new RequestParams();
-        OkHttp.post(Constants.BASE_URL + "cla=role&fun=power", params, this);
+        params.add("life", Constants.life);
+        OkHttp.post(Constants.BASE_URL + "cla=role&fun=search", params, this);
     }
 
     /**
@@ -70,6 +75,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestAllDepartData(String departName, String departType) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("name", departName);
         params.add("type", departType);
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=home", params, this);
@@ -81,6 +87,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestDepartScreenCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=type", params, this);
     }
 
@@ -92,6 +99,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestDepartDetailById(String departId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", departId);
         OkHttp.post(Constants.BASE_URL + "cla=department&fun=detail", params, this);
     }
@@ -101,14 +109,16 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
      *
      * @param positionName
      * @param departId
+     * @param page
      */
     @Override
-    public void requestPostListData(String positionName, String departId, String roleId) {
+    public void requestPostListData(String positionName, String departId, String roleId, int page) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("name", positionName);
         params.add("departmentId", departId);
         params.add("roleId", roleId);
-        OkHttp.post(Constants.BASE_URL + "cla=job&fun=home", params, this);
+        OkHttp.post(Constants.BASE_URL + "cla=job&fun=home&page=" + page, params, this);
     }
 
     /**
@@ -117,6 +127,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestPostRoleCondition() {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         OkHttp.post(Constants.BASE_URL + "cla=job&fun=role", params, this);
     }
 
@@ -128,6 +139,7 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
     @Override
     public void requestPostDetailById(String postId) {
         RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
         params.add("id", postId);
         OkHttp.post(Constants.BASE_URL + "cla=job&fun=detail", params, this);
     }
@@ -149,7 +161,8 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        //LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mAdministrativeCallbacks.onError();
             return;
@@ -232,7 +245,9 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
             try {
                 List<Post> postList = JsonParser.parseJSONArray(Post.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("job"));
-                mAdministrativeCallbacks.getPostListData(postList);
+                if (mAdministrativeCallbacks != null) {
+                    mAdministrativeCallbacks.getPostListData(postList);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -242,6 +257,9 @@ public final class AdministrativeImpl implements IAdministrativePresenter, OnHtt
             try {
                 List<SelectedItem> postList = JsonParser.parseJSONArray(SelectedItem.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("role"));
+                SelectedItem item = new SelectedItem();
+                item.setName("全部");
+                postList.add(0, item);
                 mAdministrativeCallbacks.getPostRoleData(postList);
             } catch (JSONException e) {
                 e.printStackTrace();

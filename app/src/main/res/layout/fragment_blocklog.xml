@@ -9,12 +9,15 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_block_log_list"
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <include layout="@layout/include_search_click_view" />
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_block_log_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </LinearLayout>

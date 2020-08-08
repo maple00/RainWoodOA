@@ -7,260 +7,261 @@
     android:orientation="vertical"
     tools:ignore="ContentDescription,SmallSp">
 
-    <LinearLayout
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_miui10_bg"
-            android:orientation="vertical"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp">
-
-                <ImageView
-                    android:id="@+id/iv_head_photo"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_default_head" />
-
-                <TextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:layout_toEndOf="@+id/iv_head_photo"
-                    android:text="王海"
-                    android:textColor="@color/fontColor"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_position"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_name"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_toEndOf="@+id/iv_head_photo"
-                    android:text="总经办-总经理"
-                    android:textColor="@color/labelColor"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_name"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="12dp"
-                    android:text="本年月平均工作(小时)"
-                    android:textColor="@color/labelColor"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/tv_work_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="164.67"
-                    android:textColor="@color/fontColor"
-                    android:textSize="15sp" />
-
-            </RelativeLayout>
-
-            <View style="@style/HorizontalLineStyle" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_miui10_bg"
+                android:orientation="vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp">
+
+                    <ImageView
+                        android:id="@+id/iv_head_photo"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_default_head" />
 
                     <TextView
-                        android:id="@+id/tv_base_salary"
+                        android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2000"
+                        android:layout_marginStart="13dp"
+                        android:layout_toEndOf="@+id/iv_head_photo"
                         android:textColor="@color/fontColor"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_position"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="基本工资(元)"
+                        android:layout_below="@id/tv_name"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_toEndOf="@+id/iv_head_photo"
                         android:textColor="@color/labelColor"
-                        android:textSize="11sp"
-                        tools:ignore="SmallSp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/tv_post_allowance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2000"
+                        android:layout_below="@+id/tv_name"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="12dp"
+                        android:textColor="@color/labelColor"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tv_work_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:textColor="@color/fontColor"
                         android:textSize="15sp"
-                        android:textStyle="bold" />
+                        tools:ignore="RelativeOverlap" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="岗位津贴(元)"
-                        android:textColor="@color/labelColor"
-                        android:textSize="11sp"
-                        tools:ignore="SmallSp" />
-                </LinearLayout>
+                </RelativeLayout>
+
+                <View style="@style/HorizontalLineStyle" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_account_account"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="2000"
-                        android:textColor="@color/fontColor"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_base_salary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/fontColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="基本工资(元)"
+                            android:textColor="@color/labelColor"
+                            android:textSize="11sp"
+                            tools:ignore="SmallSp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="会计账户(元)"
-                        android:textColor="@color/labelColor"
-                        android:textSize="11sp"
-                        tools:ignore="SmallSp" />
-                </LinearLayout>
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tv_post_allowance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/fontColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tv_settlement_account"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="岗位津贴(元)"
+                            android:textColor="@color/labelColor"
+                            android:textSize="11sp"
+                            tools:ignore="SmallSp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="2000"
-                        android:textColor="@color/fontColor"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_account_account"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/fontColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="会计账户(元)"
+                            android:textColor="@color/labelColor"
+                            android:textSize="11sp"
+                            tools:ignore="SmallSp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="结算账户(元)"
-                        android:textColor="@color/labelColor"
-                        android:textSize="11sp"
-                        tools:ignore="SmallSp" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_settlement_account"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/fontColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="结算账户(元)"
+                            android:textColor="@color/labelColor"
+                            android:textSize="11sp"
+                            tools:ignore="SmallSp" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
 
+            <!-- 当日考勤-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dialog_ui_round_size"
+                android:paddingBottom="@dimen/dialog_ui_round_size"
+                android:text="@string/attendance_current_day"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_day_attendance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_default_white_bg"
+                android:paddingTop="15dp"
+                android:paddingBottom="20dp" />
+
+            <!-- 本月考勤-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dialog_ui_round_size"
+                android:paddingBottom="@dimen/dialog_ui_round_size"
+                android:text="@string/attendance_current_month"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_month_attendance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_default_white_bg"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
+
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_month_attendance_normal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_default_white_bg"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
+
+            <!-- 本月工资-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dialog_ui_round_size"
+                android:paddingBottom="@dimen/dialog_ui_round_size"
+                android:text="@string/salary_current_day"
+                android:textColor="@color/fontColor"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.rainwood.oa.ui.widget.MeasureGridView
+                android:id="@+id/mgv_month_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/shape_default_white_bg"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
         </LinearLayout>
 
-        <!-- 当日考勤-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dialog_ui_round_size"
-            android:paddingBottom="@dimen/dialog_ui_round_size"
-            android:text="@string/attendance_current_day"
-            android:textColor="@color/fontColor"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <com.rainwood.oa.ui.widget.MeasureGridView
-            android:id="@+id/mgv_day_attendance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_default_white_bg"
-            android:paddingTop="15dp"
-            android:paddingBottom="20dp" />
-
-        <!-- 本月考勤-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dialog_ui_round_size"
-            android:paddingBottom="@dimen/dialog_ui_round_size"
-            android:text="@string/attendance_current_month"
-            android:textColor="@color/fontColor"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <com.rainwood.oa.ui.widget.MeasureGridView
-            android:id="@+id/mgv_month_attendance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_default_white_bg"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp" />
-
-        <com.rainwood.oa.ui.widget.MeasureGridView
-            android:id="@+id/mgv_month_attendance_normal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_default_white_bg"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp" />
-
-        <!-- 本月工资-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dialog_ui_round_size"
-            android:paddingBottom="@dimen/dialog_ui_round_size"
-            android:text="@string/salary_current_day"
-            android:textColor="@color/fontColor"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <com.rainwood.oa.ui.widget.MeasureGridView
-            android:id="@+id/mgv_month_salary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/shape_default_white_bg"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp" />
-    </LinearLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 
 </androidx.core.widget.NestedScrollView>

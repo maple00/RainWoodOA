@@ -14,6 +14,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public final class FollowAdapter extends BaseAdapter {
 
     public void setList(List<FollowRecord> list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -49,7 +51,7 @@ public final class FollowAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_custom_follow_record, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_follow_record, parent, false);
             ViewBind.inject(holder, convertView);
             convertView.setTag(holder);
         } else {

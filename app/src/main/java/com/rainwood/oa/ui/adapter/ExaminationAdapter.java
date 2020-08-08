@@ -18,6 +18,7 @@ import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,12 @@ import java.util.List;
  */
 public final class ExaminationAdapter extends BaseAdapter {
 
-    List<Examination> mList;
+    private List<Examination> mList = new ArrayList<>();
 
     public void setList(List<Examination> list) {
-        mList = list;
+        mList.clear();
+        mList.addAll(list);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -73,15 +76,18 @@ public final class ExaminationAdapter extends BaseAdapter {
         }
         // 头像
         Glide.with(convertView).load(getItem(position).getHeadPhoto())
-                .error(R.drawable.bg_monkey_king)
-                .placeholder(R.drawable.bg_monkey_king)
+                .error(R.drawable.ic_default_head)
+                .placeholder(R.drawable.ic_default_head)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.headPhoto);
         holder.name.setText(TextUtils.isEmpty(getItem(position).getName()) ? "" : getItem(position).getName());
         holder.departPost.setText(TextUtils.isEmpty(getItem(position).getDepart() + "-" + getItem(position).getPost()) ?
                 "" : getItem(position).getDepart() + "-" + getItem(position).getPost());
         // 点击事件事件
-        holder.itemClear.setOnClickListener(v -> mClickClear.onClickExaminationClear(position));
+        holder.itemClear.setOnClickListener(v -> {
+            mClickClear.onClickExaminationClear(position);
+            notifyDataSetChanged();
+        });
         return convertView;
     }
 
@@ -100,9 +106,10 @@ public final class ExaminationAdapter extends BaseAdapter {
         private TextView departPost;
     }
 
-    public interface OnClickClear{
+    public interface OnClickClear {
         /**
          * 删除
+         *
          * @param position
          */
         void onClickExaminationClear(int position);

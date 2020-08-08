@@ -1,6 +1,10 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,19 +13,24 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.StaffAccount;
 import com.rainwood.oa.model.domain.StaffAccountType;
+import com.rainwood.oa.network.action.StatusAction;
+import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IStaffPresenter;
 import com.rainwood.oa.ui.activity.PaymentDetailActivity;
 import com.rainwood.oa.ui.adapter.StaffAccountAdapter;
 import com.rainwood.oa.ui.dialog.StartEndDateDialog;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.SpacesItemDecoration;
 import com.rainwood.oa.view.IStaffCallbacks;
+import com.rainwood.tkrefreshlayout.RefreshListenerAdapter;
 import com.rainwood.tkrefreshlayout.TwinklingRefreshLayout;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
+import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
-import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,12 +40,14 @@ import java.util.Objects;
  * @Date: 2020/5/22 17:04
  * @Desc: 会计账户
  */
-public final class StaffAccountFragment extends BaseFragment implements IStaffCallbacks {
+public final class StaffAccountFragment extends BaseFragment implements IStaffCallbacks, StatusAction {
 
     @ViewInject(R.id.trl_pager_refresh)
     private TwinklingRefreshLayout pageRefresh;
     @ViewInject(R.id.rv_account_list)
     private RecyclerView accountContentList;
+    @ViewInject(R.id.et_search_tips)
+    private EditText searchTip;
 
     @ViewInject(R.id.line_all)
     private View checkedAll;
@@ -44,10 +55,18 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     private View checkedIncome;
     @ViewInject(R.id.line_speeding)
     private View checkedSpeeding;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IStaffPresenter mStaffPresenter;
     private StaffAccountAdapter mAccountAdapter;
     private String mStaffId;
+    private int pageCount = 1;
+    private boolean isClickType = false;
+    private String queryType = "accountAll";
+    private String mKeyWord;
+    private String mStartTime;
+    private String mEndTime;
 
     public StaffAccountFragment(String staffId) {
         mStaffId = staffId;
@@ -82,7 +101,15 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     @Override
     protected void loadData() {
         // 请求数据-- 默认请求全部数据
-        mStaffPresenter.requestAllAccountData("accountAll");
+        netDataLoading(null);
+    }
+
+    /**
+     * 网络数据请求
+     */
+    private void netDataLoading(String startTime) {
+        showDialog();
+        mStaffPresenter.requestAllAccountData(queryType, mKeyWord, startTime, mEndTime, pageCount = 1);
     }
 
     @Override
@@ -90,6 +117,32 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
         mAccountAdapter.setItemAccount(account -> {
             // 查看会计账户详情
             PageJumpUtil.staffAccount2Detail(getContext(), PaymentDetailActivity.class, account.getId());
+        });
+        // 加载更多
+        pageRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, TextUtils.isEmpty(mEndTime) ?"":mStartTime, mEndTime, ++pageCount);
+            }
+        });
+        // 搜索监听
+        searchTip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mKeyWord = s.toString();
+                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, TextUtils.isEmpty(mEndTime) ? "" : mStartTime,
+                        mEndTime, pageCount = 1);
+            }
         });
     }
 
@@ -102,7 +155,7 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 Objects.requireNonNull(getActivity()).finish();
                 break;
             case R.id.tv_search:
-                toast("搜索");
+                toast("搜索\n 接口没字段");
                 break;
             case R.id.iv_screen_time:
             case R.id.tv_screen_time:
@@ -112,12 +165,27 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                         .setCancel(getString(R.string.common_text_clear_screen))
                         .setAutoDismiss(false)
                         //.setIgnoreDay()
+                        .setStartTime(mStartTime)
+                        .setEndTime(mEndTime)
                         .setCanceledOnTouchOutside(false)
                         .setListener(new StartEndDateDialog.OnListener() {
                             @Override
                             public void onSelected(BaseDialog dialog, String startTime, String endTime) {
+                                if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+                                    toast("请选择时间");
+                                    return;
+                                }
+                                if (DateTimeUtils.isDateOneBigger(startTime, endTime, DateTimeUtils.DatePattern.ONLY_DAY)) {
+                                    toast("开始时间不能大于结束时间");
+                                    return;
+                                }
+
                                 dialog.dismiss();
-                                toast("选中的时间段：" + startTime + "至" + endTime);
+                                mStartTime = startTime;
+                                mEndTime = endTime;
+                                // toast("选中的时间段：" + startTime + "至" + endTime);
+                                showDialog();
+                                mStaffPresenter.requestAllAccountData(queryType, mKeyWord, mStartTime, mEndTime, pageCount = 1);
                             }
 
                             @Override
@@ -129,21 +197,27 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
                 break;
             case R.id.tv_query_all:
             case R.id.line_all:
+                isClickType = true;
                 checkedType(true, false, false);
                 // 查询全部
-                mStaffPresenter.requestAllAccountData("accountAll");
+                queryType = "accountAll";
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_income:
             case R.id.line_income:
+                isClickType = true;
                 checkedType(false, true, false);
                 // 查询收入
-                mStaffPresenter.requestAllAccountData("accountIn");
+                queryType = "accountIn";
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
             case R.id.tv_speeding:
             case R.id.line_speeding:
+                isClickType = true;
                 checkedType(false, false, true);
                 // 查询支出
-                mStaffPresenter.requestAllAccountData("accountOut");
+                queryType = "accountOut";
+                netDataLoading(TextUtils.isEmpty(mEndTime) ? "" : mStartTime);
                 break;
         }
     }
@@ -169,12 +243,30 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
 
     @Override
     public void getAccountData(List<StaffAccount> accountList) {
-        mAccountAdapter.setAccountList(accountList);
+        pageRefresh.finishLoadmore();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        showComplete();
+        if (pageCount != 1) {
+            if (ListUtils.getSize(accountList) == 0) {
+                toast("");
+            }
+            mAccountAdapter.addData(accountList);
+        } else {
+            if (ListUtils.getSize(accountList) == 0) {
+                showEmpty();
+            }
+            mAccountAdapter.setAccountList(accountList);
+        }
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        toast(tips);
+        if (isShowDialog()) {
+            hideDialog();
+        }
     }
 
     @Override
@@ -185,5 +277,10 @@ public final class StaffAccountFragment extends BaseFragment implements IStaffCa
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

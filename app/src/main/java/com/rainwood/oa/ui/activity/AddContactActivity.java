@@ -3,6 +3,7 @@ package com.rainwood.oa.ui.activity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -10,7 +11,9 @@ import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.Contact;
 import com.rainwood.oa.presenter.ICustomPresenter;
+import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.oa.utils.PageJumpUtil;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.utils.RandomUtil;
 import com.rainwood.oa.view.ICustomCallbacks;
@@ -26,10 +29,12 @@ import com.rainwood.tools.statusbar.StatusBarUtils;
  **/
 public final class AddContactActivity extends BaseActivity implements ICustomCallbacks {
 
+    @ViewInject(R.id.ll_parent_pager)
+    private LinearLayout parentPager;
     // actionBar
-    @ViewInject(R.id.rl_page_top)
+    @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_title)
+    @ViewInject(R.id.tv_page_menu_title)
     private TextView pageTitle;
     // 必填项
     @ViewInject(R.id.tv_post)
@@ -72,14 +77,14 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
         setRequiredValue(post, "职位");
         setRequiredValue(name, "姓名");
         setRequiredValue(telNumber, "手机号");
-
-        mContact = (Contact) getIntent().getSerializableExtra("contact");
-        mCustomId = getIntent().getStringExtra("customId");
     }
 
     @Override
     protected void initData() {
+        mContact = (Contact) getIntent().getSerializableExtra("contact");
+        mCustomId = getIntent().getStringExtra("customId");
         if (mContact != null) {
+            LogUtils.d("sxs", "编辑联系人....");
             postContent.setText(mContact.getPosition());
             nameContent.setText(mContact.getName());
             tel.setText(mContact.getTel());
@@ -98,11 +103,15 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
         mCustomPresenter.registerViewCallback(this);
     }
 
-    @OnClick(R.id.btn_confirm)
+
+    @OnClick({R.id.btn_confirm, R.id.iv_page_back, R.id.iv_menu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_back:
                 finish();
+                break;
+            case R.id.iv_menu:
+                showQuickFunction(this, parentPager);
                 break;
             case R.id.btn_confirm:
                 if (TextUtils.isEmpty(postContent.getText())) {
@@ -130,6 +139,7 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
                 } else {
                     contactId = mContact.getId();
                 }
+                showDialog();
                 mCustomPresenter.requestCreateContact(mCustomId, contactId, position, name, tel, lineTel, qqNumber,
                         wxNumber, noteStr);
                 break;
@@ -138,13 +148,20 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
 
     @Override
     public void createContactData(boolean success) {
-        toast(success ? "提交成功" : "提交失败");
-        finish();
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        toast(success ? "添加成功" : "添加失败");
+        postDelayed(() -> PageJumpUtil.customDetail2ContactList(AddContactActivity.this,
+                CommonActivity.class, Constants.CUSTOM_ID), 500);
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String tips) {
+        if (isShowDialog()) {
+            hideDialog();
+        }
+        toast(tips);
     }
 
     @Override

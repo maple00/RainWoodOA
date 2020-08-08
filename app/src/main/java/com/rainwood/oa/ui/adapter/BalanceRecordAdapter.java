@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
+import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
@@ -28,18 +29,26 @@ import java.util.List;
 public final class BalanceRecordAdapter extends RecyclerView.Adapter<BalanceRecordAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<BalanceRecord> mRecordList = new ArrayList<>();
-    private boolean loaded = false;
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
+    private List<BalanceRecord> mRecordList;
 
     public void setRecordList(List<BalanceRecord> recordList) {
-        if (loaded) {
-            mRecordList.clear();
+        mRecordList = recordList;
+        notifyDataSetChanged();
+    }
+    /**
+     * 追加一些数据
+     */
+    public void addData(List<BalanceRecord> data) {
+        if (data == null || data.size() == 0) {
+            return;
         }
-        mRecordList.addAll(recordList);
+
+        if (mRecordList == null || mRecordList.size() == 0) {
+            setRecordList(data);
+        } else {
+            mRecordList.addAll(data);
+            notifyItemRangeInserted(mRecordList.size() - data.size(), data.size());
+        }
         notifyDataSetChanged();
     }
 

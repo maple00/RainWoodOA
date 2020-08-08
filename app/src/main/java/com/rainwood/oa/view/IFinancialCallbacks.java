@@ -2,9 +2,11 @@ package com.rainwood.oa.view;
 
 import com.rainwood.oa.base.IBaseCallback;
 import com.rainwood.oa.model.domain.BalanceByMonthOrYear;
+import com.rainwood.oa.model.domain.BalanceDetailData;
 import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
+import com.rainwood.oa.model.domain.MineReimbursement;
 import com.rainwood.oa.model.domain.Reimbursement;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.StaffCurve;
@@ -67,8 +69,9 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * 收支平衡
      * @param originList
      * @param balanceTypeList
+     * @param showDepart
      */
-    default void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList) {
+    default void getInOutComeData(List<SelectedItem> originList, List<ManagerMain> balanceTypeList, String showDepart) {
     }
 
     /**
@@ -91,4 +94,16 @@ public interface IFinancialCallbacks extends IBaseCallback {
      * @param staffNumList
      */
     default void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList){};
+
+    /**
+     * 费用报销详情
+     * @param reimbursement
+     */
+    default void getReimburseDetail(MineReimbursement reimbursement){}
+
+    /**
+     * 收支记录详情
+     * @param balanceDetailData
+     */
+    default void getBalanceDetailData(BalanceDetailData balanceDetailData){};
 }
