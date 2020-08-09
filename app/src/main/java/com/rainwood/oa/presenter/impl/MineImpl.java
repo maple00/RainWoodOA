@@ -227,8 +227,7 @@ public class MineImpl implements IMinePresenter, OnHttpListener {
 
             @Override
             public void onHttpSucceed(HttpResponse result) {
-                LogUtils.d("sxs", "----- result ---- " + result.body());
-                LogUtils.d("sxs", "----- result ---- " + result.requestParams());
+                // LogUtils.d("sxs", "----- result ---- " + result.requestParams());
                 try {
                     List<MineRecordTime> recordsList = JsonParser.parseJSONArray(MineRecordTime.class,
                             JsonParser.parseJSONObjectString(result.body()).getString("add"));

@@ -564,11 +564,9 @@ public class CustomImpl implements ICustomPresenter, OnHttpListener {
             try {
                 List<Custom> customList = JsonParser.parseJSONArray(Custom.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("kehu"));
-                if (ListUtils.getSize(customList) == 0) {
-                    mCustomCallback.onEmpty();
-                    return;
+                if (mCustomCallback != null){
+                    mCustomCallback.getAllCustomList(customList);
                 }
-                mCustomCallback.getAllCustomList(customList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

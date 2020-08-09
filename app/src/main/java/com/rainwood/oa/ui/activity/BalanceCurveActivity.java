@@ -42,6 +42,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -106,17 +107,18 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         mFinancialPresenter.registerViewCallback(this);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
         // 工资曲线，默认查询月---默认一年的数据
-        showDialog();
         int nowYear = DateTimeUtils.getNowYear();
-        int nowMonth = DateTimeUtils.getNowMonth();
+        int nowMonth = DateTimeUtils.getNowMonth() ;
         int nowDay = DateTimeUtils.getNowDay();
-        netLoadingData((nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
-                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
         mStartTime = (nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
         mEndTime = nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth);
+        //netLoadingData((nowYear - 1) + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
+        //       nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        netLoadingData(mStartTime,mEndTime);
     }
 
     /**
@@ -225,10 +227,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
      */
     @Override
     public void getBalanceMonthData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> monthBalanceList) {
+        showComplete();
         if (isShowDialog()) {
             hideDialog();
         }
-        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, monthBalanceList);
     }
@@ -236,10 +238,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
 
     @Override
     public void getBalanceYearData(List<String> balanceYearMonth, List<BalanceByMonthOrYear> yearBalanceList) {
+        showComplete();
         if (isShowDialog()) {
             hideDialog();
         }
-        showComplete();
         // 统计图展示
         setStaticsChart(balanceYearMonth, yearBalanceList);
     }
@@ -304,8 +306,10 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             }
             curveListData.add(listData);
         }
+        // 倒叙
+        Collections.reverse(curveListData);
         mBalanceCurveAdapter.setCurveListData(curveListData);
-        // 标注
+        // 统计图上的标注
         MyChartMarkerView chartMarkerView = new MyChartMarkerView(this, R.layout.marker_salary_marker);
         chartMarkerView.setChartView(mSalaryChartView);///如果没有加这句MyMarkView draw会报空指针
         List<HomeSalaryDesc> descList = new ArrayList<>();

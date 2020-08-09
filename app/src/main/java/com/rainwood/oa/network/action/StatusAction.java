@@ -4,19 +4,15 @@ import android.app.Application;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.utils.ActivityStackManager;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 /**
@@ -46,7 +42,6 @@ public interface StatusAction {
         layout.setHint("加载中，请稍后");
         layout.setOnClickListener(null);
     }
-
 
 
     /**
@@ -82,7 +77,7 @@ public interface StatusAction {
                 }
             }
         }
-        showLayout(R.drawable.ic_hint_error, com.rainwood.tools.R.string.hint_layout_error_request, listener);
+        showLayout(R.drawable.ic_hint_error, R.string.hint_layout_error_request_empty, listener);
     }
 
     /**

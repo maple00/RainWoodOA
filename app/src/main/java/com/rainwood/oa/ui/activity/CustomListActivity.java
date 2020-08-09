@@ -160,13 +160,18 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
 
     @Override
     protected void loadData() {
-        // 从这里请求数据 -------- 默认从第一页开始加载
-        netRequestCustomList(
-        );
         // request condition
         mCustomListPresenter.requestStateCondition();
         mCustomListPresenter.requestCustomCondition();
         mCustomListPresenter.requestProvinceCondition();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 从这里请求数据 -------- 默认从第一页开始加载
+        mCustomListPresenter.registerViewCallback(this);
+        netRequestCustomList();
     }
 
     /**
@@ -286,6 +291,10 @@ public final class CustomListActivity extends BaseActivity implements ICustomCal
         }
     }
 
+    /**
+     * 获取客户列表
+     * @param customList
+     */
     @SuppressWarnings("all")
     @Override
     public void getAllCustomList(List customList) {

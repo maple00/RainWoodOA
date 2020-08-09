@@ -235,7 +235,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
     public void requestCustomInvoiceRecords(String customId, int page) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
-        params.add("id ", customId);
+        params.add("khid", customId);
         OkHttp.post(Constants.BASE_URL + "cla=client&fun=invoiceLi&page=" + page, params, this);
     }
 

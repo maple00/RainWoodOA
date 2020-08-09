@@ -41,6 +41,7 @@ import com.rainwood.oa.ui.dialog.WaitDialog;
 import com.rainwood.oa.ui.pop.CommonPopupWindow;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.tools.annotation.ViewBind;
+import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.utils.FontSwitchUtil;

@@ -354,7 +354,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
                 break;
             case R.id.btn_apply_open:
                 //toast("申请开通");
-                startActivity(getNewIntent(this, InvoiceApplyActivity.class, "开票记录", "开票记录"));
+                startActivity(getNewIntent(this, InvoiceApplyActivity.class, "开票申请", "开票记录"));
                 break;
             case R.id.tv_query_all:
                 //toast("全部");
@@ -544,6 +544,12 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     @Override
     public void onError(String tips) {
         toast(tips);
+        showError(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override

@@ -28,4 +28,10 @@ public interface ICalendarPresenter extends IBasePresenter<ICalendarCallback> {
      * @param currentMonth
      */
     void requestCurrentDayAttendance(String staffId, String currentMonth);
+
+    /**
+     * 请求我的考勤数据
+     * @param month
+     */
+    void requestMineAttendanceData( String month);
 }

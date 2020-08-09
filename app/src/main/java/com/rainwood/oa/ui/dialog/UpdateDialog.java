@@ -18,6 +18,7 @@ import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.app.AppConfig;
 import com.rainwood.oa.network.io.Downloader;
 import com.rainwood.oa.network.io.OnDownloadListener;
+import com.rainwood.oa.utils.FileManagerUtil;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.tools.permission.Permission;
 import com.rainwood.tools.toast.ToastUtils;
@@ -25,6 +26,7 @@ import com.rainwood.tools.wheel.BaseDialog;
 import com.rainwood.tools.wheel.action.AnimAction;
 
 import java.io.File;
+import java.net.URI;
 
 /**
  * author : a797s
@@ -42,7 +44,6 @@ public final class UpdateDialog {
 
         private final TextView mUpdateView;
         private final TextView mCloseView;
-
         /**
          * Apk 文件
          */
@@ -66,7 +67,6 @@ public final class UpdateDialog {
 
         public Builder(Context context) {
             super(context);
-
             setContentView(R.layout.dialog_update);
             setAnimStyle(AnimAction.BOTTOM);
             setCancelable(false);
@@ -143,12 +143,11 @@ public final class UpdateDialog {
         /**
          * 下载 Apk
          */
-        @Permissions({Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE})
         private void downloadApk() {
             // 创建要下载的文件对象
             mApkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                     getString(R.string.app_name) + "_v" + mNameView.getText().toString().trim() + ".apk");
-            LogUtils.d("sxs", "---- 文件下载的路径 -------- " + mApkFile.getAbsolutePath());
+            LogUtils.d("sxs", "---- 文件下载的路径 -------- " + mApkFile.getPath());
             // 设置对话框不能被取消
             setCancelable(false);
             new Downloader.Builder()
@@ -198,20 +197,18 @@ public final class UpdateDialog {
         /**
          * 安装 Apk
          */
+        @Permissions({Permission.REQUEST_INSTALL_PACKAGES})
         private void installApk() {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             Uri uri;
-            // /storage/emulated/0/Download/雨木科技_v1.1.2.apk
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                uri = FileProvider.getUriForFile(getContext(),
-                        AppConfig.getPackageName() + ".provider", mApkFile);
+                uri = FileProvider.getUriForFile(getContext(), AppConfig.getPackageName() + ".provider", mApkFile);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             } else {
                 uri = Uri.fromFile(mApkFile);
             }
-            LogUtil.d("sxs", "-----------  安装时找的uri ------- " + uri);
-            // LogUtil.d("sxs", "-----------  安装时找的uri 转File------- " + FileManagerUtil.handleFilePath(getContext(), uri));
+
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);

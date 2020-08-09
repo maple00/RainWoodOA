@@ -13,6 +13,7 @@ import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.StringUtil;
 import com.rainwood.oa.view.ICalendarCallback;
+import com.rainwood.tkrefreshlayout.utils.LogUtil;
 
 import org.json.JSONException;
 
@@ -68,6 +69,34 @@ public final class CalendarImpl implements ICalendarPresenter, OnHttpListener {
         params.add("stid", staffId);
         params.add("month", currentMonth);
         OkHttp.post(Constants.BASE_URL + "cla=workSign&fun=home", params, this);
+    }
+
+    /**
+     * 请求我的考勤数据
+     * @param month
+     */
+    @Override
+    public void requestMineAttendanceData(String month) {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        params.add("month", month);
+        OkHttp.post(Constants.BASE_URL + "cla=workSign&fun=my", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                if (mCalendarCallbacks != null){
+                    mCalendarCallbacks.onError();
+                }
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                //LogUtils.d("sxs", "------ result ------" + result.body());
+                AttendanceData attendanceData = JsonParser.parseJSONObject(AttendanceData.class, result.body());
+                if (mCalendarCallbacks != null){
+                    mCalendarCallbacks.getAttendanceData(attendanceData);
+                }
+            }
+        });
     }
 
     @Override

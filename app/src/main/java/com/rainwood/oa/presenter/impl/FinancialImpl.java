@@ -223,6 +223,7 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
     public void requestReimburseDetail(String reimburseId) {
         RequestParams params = new RequestParams();
         params.add("life", Constants.life);
+        params.add("id", reimburseId);
         OkHttp.post(Constants.BASE_URL + "cla=cost&fun=detail", params, this);
     }
 

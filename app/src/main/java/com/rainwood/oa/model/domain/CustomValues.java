@@ -9,6 +9,17 @@ import java.io.Serializable;
  */
 public final class CustomValues implements Serializable {
 
+    @Override
+    public String toString() {
+        return "CustomValues{" +
+                "id='" + id + '\'' +
+                ", ico='" + ico + '\'' +
+                ", name='" + name + '\'' +
+                ", job='" + job + '\'' +
+                ", manager='" + manager + '\'' +
+                '}';
+    }
+
     /**
      * id
      */

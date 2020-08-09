@@ -11,107 +11,102 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <com.rainwood.tools.wheel.widget.HintLayout
-        android:id="@+id/hl_status_hint"
+    <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <com.rainwood.tkrefreshlayout.views.RWNestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:text="结余"
-                        android:textColor="@color/orange25"
-                        android:textSize="12sp" />
-
-
-                    <ImageView
-                        android:id="@+id/iv_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_down_arrow" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/iv_arrow"
-                        android:paddingEnd="10dp"
-                        android:textColor="@color/colorMiddle"
-                        android:textSize="13sp" />
-
-                </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp">
 
                 <TextView
-                    android:id="@+id/tv_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="860191.98"
-                    android:textColor="@color/fontColor"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:layout_alignParentStart="true"
+                    android:text="结余"
+                    android:textColor="@color/orange25"
+                    android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/tv_in_out_come"
+
+                <ImageView
+                    android:id="@+id/iv_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="17dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="22dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_down_arrow" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/iv_arrow"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/colorMiddle"
                     android:textSize="13sp" />
 
-                <View style="@style/HorizontalLineStyle" />
+            </RelativeLayout>
+
+            <com.rainwood.tools.wheel.widget.HintLayout
+                android:id="@+id/hl_status_hint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical">
-
-                    <View
-                        android:layout_width="4dp"
-                        android:layout_height="14dp"
-                        android:background="@color/colorPrimary" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_balance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="收入统计"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
                         android:textColor="@color/fontColor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_in_out_come"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="22dp"
                         android:textSize="13sp" />
 
-                </LinearLayout>
+                    <View style="@style/HorizontalLineStyle" />
 
-<!--                <RelativeLayout-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_weight="3"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="20dp"-->
-<!--                    android:paddingEnd="20dp">-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="14dp"
+                            android:background="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="收入统计"
+                            android:textColor="@color/fontColor"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                     <com.rainwood.customchartview.chart.piechart.PieChartLayout
                         android:id="@+id/pc_income_statics"
@@ -135,38 +130,28 @@
 
                     </com.rainwood.customchartview.chart.piechart.PieChartLayout>
 
-<!--                </RelativeLayout>-->
+                    <!--                </RelativeLayout>-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical">
-
-                    <View
-                        android:layout_width="4dp"
-                        android:layout_height="14dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="支出统计"
-                        android:textColor="@color/fontColor"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="20dp"
+                        android:gravity="center_vertical">
 
-                </LinearLayout>
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="14dp"
+                            android:background="@color/colorPrimary" />
 
-            <!--    <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="支出统计"
+                            android:textColor="@color/fontColor"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                     <com.rainwood.customchartview.chart.piechart.PieChartLayout
                         android:id="@+id/pc_outcome_statics"
@@ -189,11 +174,11 @@
 
                     </com.rainwood.customchartview.chart.piechart.PieChartLayout>
 
-<!--                </RelativeLayout>-->
+                </LinearLayout>
 
-            </LinearLayout>
-        </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
+            </com.rainwood.tools.wheel.widget.HintLayout>
 
-    </com.rainwood.tools.wheel.widget.HintLayout>
+        </LinearLayout>
+    </com.rainwood.tkrefreshlayout.views.RWNestedScrollView>
 
 </LinearLayout>

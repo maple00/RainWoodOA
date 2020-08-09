@@ -736,6 +736,7 @@ public class LineChartView extends View {
 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
 
+
             if (enabled)
                 setLayerType(View.LAYER_TYPE_HARDWARE, null);
             else

@@ -159,7 +159,7 @@
                 android:textColor="@color/labelColor"
                 android:textSize="13sp" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_voucher"
                 android:layout_width="77dp"
                 android:layout_height="77dp"

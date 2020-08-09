@@ -193,8 +193,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_invoice_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="77dp"
+                android:layout_height="77dp"
+                android:scaleType="centerCrop"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/fontColor"

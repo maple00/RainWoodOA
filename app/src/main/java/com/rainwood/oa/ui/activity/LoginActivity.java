@@ -1,7 +1,6 @@
 package com.rainwood.oa.ui.activity;
 
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -9,11 +8,13 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.LoginData;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.utils.Constants;
+import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ILoginAboutCallbacks;
@@ -126,7 +127,7 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
                     return;
                 }
                 showDialog();
-
+                mLoginAboutPresenter.registerViewCallback(this);
                 mLoginAboutPresenter.Login(account.getText().toString().trim(),
                         password.getText().toString().trim());
                 break;
@@ -143,14 +144,18 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
             hideDialog();
         }
         // 登录之后的参数 -- 默认得id：pyj7y98y9juq
-        Constants.life = life;
         // TODO: 登录成功之后免登录
-        String insertSql = "REPLACE INTO loginTab(userName, pwd) VALUES ( '" + account.getText().toString()
-                + "','" + password.getText().toString() + "') ;";
-        SQLiteHelper.with(this).update(insertSql);
-        String querySql = "select * from loginTab;";
-        List<Map<String, String>> query = SQLiteHelper.with(this).query(querySql);
-        LogUtils.d("sxs", "-- 登录 --" + query.toString());
+        List<LoginData> loginDataList = SQLiteHelper.with(this).query(LoginData.class);
+        LoginData loginData = new LoginData();
+        loginData.setUserName(account.getText().toString());
+        loginData.setPwd(password.getText().toString());
+        loginData.setLife(life);
+        if (ListUtils.getSize(loginDataList) != 0) {
+            // 说明登录过，保证DB中只保留一条数据
+            loginDataList.clear();
+        }
+        SQLiteHelper.with(this).insert(loginData);
+        Constants.life = life;
         startActivity(HomeActivity.class);
     }
 
@@ -171,11 +176,17 @@ public final class LoginActivity extends BaseActivity implements ILoginAboutCall
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(true);
-            return true;//不执行父类点击事件
+    protected void release() {
+        if (mLoginAboutPresenter != null){
+            mLoginAboutPresenter.unregisterViewCallback(this);
         }
-        return super.onKeyDown(keyCode, event);//继续执行父类其他点击事件
+    }
+
+    /**
+     * 禁用返回键
+     */
+    @Override
+    public void onBackPressed() {
+
     }
 }

@@ -299,7 +299,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
         // 管理费用报销查看详情
         mReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
                 PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this,
-                        CostDetailActivity.class, reimbursement.getStaffName()));
+                        CostDetailActivity.class, reimbursement.getId()));
         // 我的费用报销查看详情
         mMineReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
                 PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this, CostDetailActivity.class,

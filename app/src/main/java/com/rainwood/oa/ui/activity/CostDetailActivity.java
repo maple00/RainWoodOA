@@ -97,6 +97,8 @@ public final class CostDetailActivity extends BaseActivity implements IFinancial
     @Override
     public void getReimburseDetail(MineReimbursement reimbursement) {
         mReimbursement = reimbursement;
+        mState.setIcon("是".equals(reimbursement.getPay()) ? R.drawable.ic_status_finished : R.drawable.ic_reimburse_unchecked);
+        mState.setValue("是".equals(reimbursement.getPay()) ? "已拨付" : "未拨付");
         mTextApplier.setText(reimbursement.getStaffName());
         mTextType.setText(reimbursement.getType());
         mTextMoney.setText(reimbursement.getMoney());
@@ -105,7 +107,7 @@ public final class CostDetailActivity extends BaseActivity implements IFinancial
         mTextTime.setText(reimbursement.getPayDate());
         Glide.with(this)
                 .load(reimbursement.getIco())
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(5)))
                 .into(mImageVoucher);
     }
 

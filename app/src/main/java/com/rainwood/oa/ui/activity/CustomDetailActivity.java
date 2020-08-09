@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,7 +70,11 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     private TextView employeeName;
     @ViewInject(R.id.tv_depart)
     private TextView depart;
+    @ViewInject(R.id.rl_share_man)
+    private RelativeLayout mShareManView;
     // 公客 start
+    @ViewInject(R.id.rl_none_share_man)
+    private RelativeLayout mNoneShareMan;
     @ViewInject(R.id.iv_princess)
     private ImageView princess;
     @ViewInject(R.id.tv_princess_name)
@@ -173,7 +176,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
     }
 
     @SingleClick
-    @OnClick({R.id.iv_page_back, R.id.btn_transfer_custom, R.id.tv_add_associates, R.id.iv_menu,
+    @OnClick({R.id.iv_page_back, R.id.btn_transfer_custom, R.id.tv_add_associates, R.id.iv_menu, R.id.btn_publish_custom_transfer,
             R.id.iv_add_associates, R.id.tv_query_all_contact, R.id.btn_copy_custom_id, R.id.tv_requested_edit})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -183,6 +186,7 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
                 finish();
                 break;
             case R.id.btn_transfer_custom:
+            case R.id.btn_publish_custom_transfer:
                 // 转让客户
                 plusFlag = false;
                 setValue();
@@ -278,13 +282,21 @@ public final class CustomDetailActivity extends BaseActivity implements ICustomC
         employeeName.setText(data.getStaff().getName());
         depart.setText(data.getStaff().getJob());
         // 介绍人
-        Glide.with(this).load(data.getShare().getIco())
-                .error(R.drawable.ic_default_head)
-                .placeholder(R.drawable.ic_default_head)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(referHeadSrc);
-        referName.setText(data.getShare().getName());
-        referPost.setText(data.getShare().getJob());
+        LogUtils.d(TAG, "------------ 客户详情 --- 分享人 ---" + data.getShare());
+        if (data.getShare() != null) {
+            Glide.with(this).load(data.getShare().getIco())
+                    .error(R.drawable.ic_default_head)
+                    .placeholder(R.drawable.ic_default_head)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(referHeadSrc);
+            referName.setText(data.getShare().getName());
+            referPost.setText(data.getShare().getJob());
+            mNoneShareMan.setVisibility(View.GONE);
+            mShareManView.setVisibility(View.VISIBLE);
+        } else {
+            mShareManView.setVisibility(View.GONE);
+            mNoneShareMan.setVisibility(View.VISIBLE);
+        }
         noneAssociates.setVisibility(ListUtils.getSize(data.getEdit()) == 0 ? View.VISIBLE : View.GONE);
         //协作人
         mAssociatesAdapter.setList(data.getEdit());

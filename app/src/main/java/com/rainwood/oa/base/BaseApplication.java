@@ -9,6 +9,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.oa.model.domain.LoginData;
 import com.rainwood.oa.model.domain.VersionData;
 import com.rainwood.oa.network.caught.CaughtException;
 import com.rainwood.oa.network.caught.OnCaughtExceptionListener;
@@ -150,8 +151,8 @@ public final class BaseApplication extends Application {
             SQLiteHelper.with(this).insert(sql);
         }
         // 创建登录表
-        //SQLiteHelper.with(this).dropTable("loginTab");
-        SQLiteHelper.with(this).createTable("loginTab", new String[]{"userName", "pwd", "life"});
+        // SQLiteHelper.with(this).dropTable(LoginData.class.getSimpleName());
+        SQLiteHelper.with(this).createTable(LoginData.class);
         // 创建版本相关数据库
         SQLiteHelper.with(this).createTable(VersionData.class);
     }

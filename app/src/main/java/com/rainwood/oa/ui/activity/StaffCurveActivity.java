@@ -23,6 +23,7 @@ import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.HomeSalaryDesc;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.StaffCurveList;
+import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
 import com.rainwood.oa.presenter.IFinancialPresenter;
 import com.rainwood.oa.ui.adapter.StaffCurveAdapter;
@@ -38,9 +39,11 @@ import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.BaseDialog;
+import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -52,7 +55,7 @@ import static com.rainwood.tools.utils.DateTimeUtils.dateToString;
  * @Date: 2020/6/29 13:38
  * @Desc: 员工数曲线
  */
-public final class StaffCurveActivity extends BaseActivity implements IFinancialCallbacks {
+public final class StaffCurveActivity extends BaseActivity implements IFinancialCallbacks , StatusAction {
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -64,6 +67,8 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     private LineChart staffCurveView;
     @ViewInject(R.id.mlv_staff_list)
     private MeasureListView staffListView;
+    @ViewInject(R.id.hl_status_hint)
+    private HintLayout mHintLayout;
 
     private IFinancialPresenter mFinancialPresenter;
     private StaffCurveAdapter mStaffCurveAdapter;
@@ -94,19 +99,19 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
-        showDialog();
+        showLoading();
         int nowYear = DateTimeUtils.getNowYear();
         int nowMonth = DateTimeUtils.getNowMonth();
         int nowDay = DateTimeUtils.getNowDay();
         // -- 默认选择6个月
         Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
-        ca.set(nowYear, nowMonth - 1, nowDay);// 月份是从0开始的，所以11表示12月
+        ca.set(nowYear, nowMonth -1, nowDay);// 月份是从0开始的，所以11表示12月
         ca.add(Calendar.YEAR, 0); // 年份减1
         ca.add(Calendar.MONTH, -6);// 月份减1
         ca.add(Calendar.DATE, 0);// 日期减1
         Date resultDate = ca.getTime(); // 结果
-        String oldTime = dateToString(resultDate, DateTimeUtils.DatePattern.ONLY_DAY);
-        String nowDate = DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_DAY);
+        String oldTime = dateToString(resultDate, DateTimeUtils.DatePattern.ONLY_MONTH);
+        String nowDate = DateTimeUtils.getNowDate(DateTimeUtils.DatePattern.ONLY_MONTH);
         mTextDate.setText(oldTime + "-" + nowDate);
         mFinancialPresenter.requestStaffNum(oldTime, nowDate);
     }
@@ -205,6 +210,8 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             }
             curveListData.add(listData);
         }
+        // 倒叙
+        Collections.reverse(curveListData);
         mStaffCurveAdapter.setCurveList(curveListData);
         // 标注
         MyChartMarkerView chartMarkerView = new MyChartMarkerView(this, R.layout.marker_salary_marker);
@@ -224,6 +231,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             chartMarkerView.getTvFirm().setDescList(descList);
         });
         staffCurveView.setMarker(chartMarkerView);
+        showComplete();
     }
 
     /**
@@ -325,6 +333,16 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         return yMinValues;
     }
 
+    @Override
+    public void onError(String tips) {
+        toast(tips);
+        showError(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
 
     @Override
     public void onLoading() {
@@ -334,5 +352,10 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @Override
     public void onEmpty() {
 
+    }
+
+    @Override
+    public HintLayout getHintLayout() {
+        return mHintLayout;
     }
 }

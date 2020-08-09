@@ -101,6 +101,7 @@ public final class ClassificationStaticsActivity extends BaseActivity
     @SuppressLint("SetTextI18n")
     @Override
     protected void loadData() {
+        showLoading();
         // 默认当月1号到当前日期
         int nowYear = DateTimeUtils.getNowYear();
         int nowMonth = DateTimeUtils.getNowMonth();
@@ -162,6 +163,7 @@ public final class ClassificationStaticsActivity extends BaseActivity
     @Override
     public void getClassificationIncome(List<ClassificationStatics> incomeList, String money,
                                         List<ClassificationStatics> classificationOutcomeList, String outcomeMoney, String balance) {
+        showComplete();
         mIncomeList = incomeList;
         mClassificationOutcomeList = classificationOutcomeList;
         // setData
@@ -208,6 +210,17 @@ public final class ClassificationStaticsActivity extends BaseActivity
         tableList.add(new ChartLable("支出统计", FontSwitchUtil.sp2px(this, 12),
                 getColor(R.color.text_color_light_gray)));
         outcomeStaticsView.setChartData(PieBean.class, "Numner", "Name", datalist, tableList);
+    }
+
+    @Override
+    public void onError(String tips) {
+        toast(tips);
+        showError(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override

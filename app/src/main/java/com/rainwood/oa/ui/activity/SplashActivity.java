@@ -9,13 +9,12 @@ import android.widget.TextView;
 
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
+import com.rainwood.oa.model.domain.LoginData;
 import com.rainwood.oa.network.action.StatusAction;
-import com.rainwood.oa.network.okhttp.NetworkUtils;
 import com.rainwood.oa.network.sqlite.SQLiteHelper;
 import com.rainwood.oa.presenter.ILoginAboutPresenter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
-import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.ILoginAboutCallbacks;
 import com.rainwood.tools.annotation.ViewInject;
@@ -27,7 +26,6 @@ import com.rainwood.tools.wheel.view.SmartTextView;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: a797s
@@ -126,26 +124,27 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
                     public void hasPermission(List<String> granted, boolean isAll) {
                         if (isAll) {
                             // 查询数据库
-                            String queryLoginTab = "select * from loginTab;";
-                            List<Map<String, String>> queryList = SQLiteHelper.with(SplashActivity.this)
-                                    .query(queryLoginTab);
-                            LogUtils.d("sxs", " -- 闪屏页 --- " + queryList.toString());
-                            // 没有登录
-                            if (ListUtils.getSize(queryList) == 0) {
+                            List<LoginData> loginDataList = SQLiteHelper.with(SplashActivity.this).query(LoginData.class);
+                            if (ListUtils.getSize(loginDataList) == 0) {
+                                // 没有登录-- 直接跳转到登录
                                 openActivity(LoginActivity.class);
-                                return;
+                                finish();
+                            } else {
+                                // 登录过了，检查会话的时效性
+                                Constants.life = loginDataList.get(0).getLife();
+                                startActivity(HomeActivity.class);
+                                finish();
                             }
                             // 没有网络
-                            boolean available = NetworkUtils.isAvailable(SplashActivity.this);
+                           /* boolean available = NetworkUtils.isAvailable(SplashActivity.this);
                             if (!available) {
                                 startActivity(LoginActivity.class);
                                 return;
                             }
-                            //
-                            String userName = queryList.get(ListUtils.getSize(queryList) - 1).get("userName");
-                            String pwd = queryList.get(ListUtils.getSize(queryList) - 1).get("pwd");
-                            String life = queryList.get(ListUtils.getSize(queryList) - 1).get("life");
-                            mLoginAboutPresenter.Login(userName, pwd);
+                            // 请求网络
+                            String userName = loginDataList.get(0).getUserName();
+                            String pwd = loginDataList.get(0).getPwd();
+                            mLoginAboutPresenter.Login(userName, pwd);*/
                         }
                     }
 
@@ -189,6 +188,7 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
         // 说明处于可登录状态
         Constants.life = life;
         startActivity(HomeActivity.class);
+        finish();
     }
 
     @Override

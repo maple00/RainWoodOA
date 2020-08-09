@@ -131,51 +131,6 @@
                     android:textSize="12sp" />
 
             </RelativeLayout>
-
-            <!-- 公客-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/iv_princess"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/bg_monkey_king" />
-
-                <TextView
-                    android:id="@+id/tv_princess_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@+id/iv_princess"
-                    android:text="公客"
-                    android:textColor="@color/fontColor"
-                    android:textSize="16sp" />
-
-                <Button
-                    style="@style/SecondaryButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/selector_assist_button"
-                    android:paddingStart="15dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="10dp"
-                    android:text="转让客户"
-                    android:textSize="12sp" />
-
-            </RelativeLayout>
-
             <!-- 介绍人-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -202,6 +157,7 @@
                 <View style="@style/HorizontalLineStyle" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_share_man"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
@@ -235,6 +191,52 @@
                         android:layout_marginTop="10dp"
                         android:layout_toEndOf="@+id/iv_references"
                         android:textColor="@color/labelColor"
+                        android:textSize="12sp" />
+
+                </RelativeLayout>
+
+                <!-- 公客-->
+                <RelativeLayout
+                    android:id="@+id/rl_none_share_man"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="15dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_princess"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_default_head" />
+
+                    <TextView
+                        android:id="@+id/tv_princess_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/iv_princess"
+                        android:text="公客"
+                        android:textColor="@color/fontColor"
+                        android:textSize="16sp" />
+
+                    <Button
+                        android:id="@+id/btn_publish_custom_transfer"
+                        style="@style/SecondaryButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/selector_assist_button"
+                        android:paddingStart="15dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="15dp"
+                        android:paddingBottom="10dp"
+                        android:text="转让客户"
                         android:textSize="12sp" />
 
                 </RelativeLayout>

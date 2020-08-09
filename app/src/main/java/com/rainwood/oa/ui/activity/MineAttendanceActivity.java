@@ -40,9 +40,9 @@ import java.util.Map;
 public final class MineAttendanceActivity extends BaseActivity implements ICalendarCallback {
 
     // page
-    @ViewInject(R.id.rl_pager_top)
+    @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_menu_title)
+    @ViewInject(R.id.tv_page_title)
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;
@@ -144,6 +144,44 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
     }
 
     @Override
+    protected void initPresenter() {
+        mCalendarPresenter = PresenterManager.getOurInstance().getCalendarPresenter();
+        mCalendarPresenter.registerViewCallback(this);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void loadData() {
+        mMiui9Calendar.setOnCalendarChangedListener((baseCalendar, year, month, localDate, dateChangeBehavior) -> {
+            currentMonth.setText(year + "年" + month + "月");
+            // 不是同一个月份则请求
+            if (tempMonth != month || year != tempYear) {
+                showDialog();
+                mCalendarPresenter.requestMineAttendanceData(year + "-"
+                        + (month < 10 ? "0" + month : month));
+            } else {
+                // 同一个月份内的点击
+                int dayOfMonth = localDate.getDayOfMonth();
+                //LogUtil.d("sxs--- centuryOfEra", dayOfMonth + " -------  当月 --------" + ListUtils.getSize(mCurrentDayData));
+                for (CalendarStatics statics : mDayDescList) {
+                    if (statics.getDescData().contains("打卡时间(上班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth - 1).getStart().getTime());
+                    } else if (statics.getDescData().contains("打卡时间(下班)")) {
+                        statics.setData(mCurrentDayData.get(dayOfMonth - 1).getEnd().getTime());
+                    } else if (statics.getDescData().contains("今日打卡")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth - 1).getSignNum()));
+                    } else if (statics.getDescData().contains("今日工时")) {
+                        statics.setData(String.valueOf(mCurrentDayData.get(dayOfMonth - 1).getHour()));
+                    }
+                }
+                mDayAdapter.setList(mDayDescList);
+            }
+            tempYear = year;
+            tempMonth = month;
+        });
+    }
+
+    @Override
     protected void initData() {
         mPageTitle.setText(title);
         mPageRightTitle.setText(this.getString(R.string.back_today));
@@ -191,28 +229,6 @@ public final class MineAttendanceActivity extends BaseActivity implements ICalen
         // 本月工资
         mMonthSalaryAdapter.setLineCount(2);
         mMonthSalaryAdapter.setList(mMonthSalaryList);
-    }
-
-    @Override
-    protected void initPresenter() {
-        mCalendarPresenter = PresenterManager.getOurInstance().getCalendarPresenter();
-        mCalendarPresenter.registerViewCallback(this);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void loadData() {
-        mMiui9Calendar.setOnCalendarChangedListener((baseCalendar, year, month, localDate, dateChangeBehavior) -> {
-            currentMonth.setText(year + "年" + month + "月");
-            // 不是同一个月份则请求
-            if (tempMonth != month || year != tempYear) {
-                showDialog();
-                mCalendarPresenter.requestCurrentDayAttendance("", year + "-"
-                        + (month < 10 ? "0" + month : month));
-            }
-            tempYear = year;
-            tempMonth = month;
-        });
     }
 
     @OnClick({R.id.iv_lastMonth, R.id.iv_next_month, R.id.tv_page_right_title,

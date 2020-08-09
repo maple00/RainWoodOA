@@ -57,6 +57,7 @@ import com.rainwood.oa.ui.activity.WorkDayActivity;
 import com.rainwood.oa.ui.widget.svgcode.SvgSoftwareLayerSetter;
 import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.LogUtils;
+import com.rainwood.tkrefreshlayout.utils.LogUtil;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 

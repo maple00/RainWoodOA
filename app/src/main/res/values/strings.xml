@@ -62,7 +62,7 @@
     <string name="common_code_send_hint">验证码已发送，请注意查收</string>
     <string name="home_exit_hint">再按一次退出</string>
     <!-- 考勤-->
-    <string name="attendance_title">我的考勤</string>
+    <string name="attendance_title"></string>
     <string name="attendance_current_day">当日考勤</string>
     <string name="attendance_current_month">本月考勤</string>
     <string name="salary_current_day">本月工资</string>
@@ -166,5 +166,6 @@
     <string name="text_balance_type">收支类型</string>
     <string name="text_balance_money">收支金额</string>
     <string name="text_pay_voucher">付款凭证</string>
+    <string name="text_rainwood_system">雨木管理系统</string>
 
 </resources>

@@ -12,73 +12,79 @@
     <!-- title-->
     <include layout="@layout/include_title_bar" />
 
-    <LinearLayout
+    <com.rainwood.tools.wheel.widget.HintLayout
+        android:id="@+id/hl_status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/shape_default_white_bg"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@color/white">
-
-            <TextView
-                android:id="@+id/tv_current_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:textSize="20sp" />
-
-            <ImageView
-                android:id="@+id/iv_next_month"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
-                android:background="@mipmap/next" />
-
-            <ImageView
-                android:id="@+id/iv_lastMonth"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="25dp"
-                android:layout_toStartOf="@+id/iv_next_month"
-                android:background="@mipmap/last" />
-
-
-        </RelativeLayout>
-
-        <View
-            style="@style/HorizontalLineStyle"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="20dp" />
-
-        <!-- 周视图-->
-        <com.necer.view.WeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white" />
-
-        <com.necer.calendar.Miui9Calendar
-            android:id="@+id/mc_calendar_9"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:showNumberBackground="false"
-            app:solarTextBold="true">
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/shape_default_white_bg"
+            android:orientation="vertical">
 
-            <include layout="@layout/include_attendance_record" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/white">
 
-        </com.necer.calendar.Miui9Calendar>
+                <TextView
+                    android:id="@+id/tv_current_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:textSize="20sp" />
 
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_next_month"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:background="@mipmap/next" />
+
+                <ImageView
+                    android:id="@+id/iv_lastMonth"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="25dp"
+                    android:layout_toStartOf="@+id/iv_next_month"
+                    android:background="@mipmap/last" />
+
+
+            </RelativeLayout>
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- 周视图-->
+            <com.necer.view.WeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white" />
+
+            <com.necer.calendar.Miui9Calendar
+                android:id="@+id/mc_calendar_9"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:showNumberBackground="false"
+                app:solarTextBold="true">
+
+                <include layout="@layout/include_attendance_record" />
+
+            </com.necer.calendar.Miui9Calendar>
+        </LinearLayout>
+    </com.rainwood.tools.wheel.widget.HintLayout>
 </LinearLayout>

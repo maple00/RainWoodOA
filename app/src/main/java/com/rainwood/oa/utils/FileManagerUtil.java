@@ -109,16 +109,18 @@ public final class FileManagerUtil {
 
     /**
      * 查看大图
+     *
      * @param context
      * @param filePath
      */
-    public static void queryBigPicture(Context context, String filePath){
+    public static void queryBigPicture(Context context, String filePath) {
         ImageActivity.start(context, filePath);
     }
 
 
     /**
      * 通过Uri获取文件的实际路径
+     *
      * @param context
      * @param uri
      * @return

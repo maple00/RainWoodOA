@@ -1,6 +1,5 @@
 package com.rainwood.oa.presenter.impl;
 
-import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.network.aop.CheckNet;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -107,7 +106,9 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
             e.printStackTrace();
         }
         String life = JsonParser.parseJSONObject(result.body()).get("life");
-        mLoginAboutCallback.Login(life);
+        if (mLoginAboutCallback != null){
+            mLoginAboutCallback.Login(life);
+        }
     }
 
 }

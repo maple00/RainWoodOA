@@ -256,7 +256,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                     return;
                 }
                 XXPermissions.with(getActivity())
-                        .permission(Permission.REQUEST_INSTALL_PACKAGES,Permission.WRITE_EXTERNAL_STORAGE,Permission.READ_EXTERNAL_STORAGE)
+                        .permission(Permission.REQUEST_INSTALL_PACKAGES,Permission.WRITE_EXTERNAL_STORAGE
+                                ,Permission.READ_EXTERNAL_STORAGE)
                         .constantRequest()
                         .request(new OnPermission() {
                             @Override
@@ -275,7 +276,6 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                                             .show();
                                 }
                             }
-
                             @Override
                             public void noPermission(List<String> denied, boolean quick) {
                                 LogUtils.d("sxs", "-------- " + denied.toString());
@@ -386,7 +386,6 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
             } else {
                 // 是最新版本
                 hasLastVersion = true;
-
                 hasLastVersion = false;
                 SQLiteHelper.with(getContext()).insert(versionData);
                 mVersionView.setRightText("发现新版本");
