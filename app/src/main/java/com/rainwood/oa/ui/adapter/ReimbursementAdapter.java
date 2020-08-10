@@ -13,13 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.oa.R;
-import com.rainwood.oa.model.domain.AdminOverTime;
-import com.rainwood.oa.model.domain.Reimbursement;
+import com.rainwood.oa.model.domain.ReimbursementData;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.tools.annotation.ViewBind;
 import com.rainwood.tools.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,10 +27,10 @@ import java.util.List;
  */
 public final class ReimbursementAdapter extends RecyclerView.Adapter<ReimbursementAdapter.ViewHolder> {
 
-    private List<Reimbursement> mList ;
+    private List<ReimbursementData> mList;
     private Context mContext;
 
-    public void setList(List<Reimbursement> list) {
+    public void setList(List<ReimbursementData> list) {
         mList = list;
         notifyDataSetChanged();
     }
@@ -40,7 +38,7 @@ public final class ReimbursementAdapter extends RecyclerView.Adapter<Reimburseme
     /**
      * 追加一些数据
      */
-    public void addData(List<Reimbursement> data) {
+    public void addData(List<ReimbursementData> data) {
         if (data == null || data.size() == 0) {
             return;
         }
@@ -66,7 +64,7 @@ public final class ReimbursementAdapter extends RecyclerView.Adapter<Reimburseme
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.type.setText(mList.get(position).getType());
         holder.money.setText(mList.get(position).getMoney());
-        holder.voucher.setVisibility(mList.get(position).isIco() ? View.VISIBLE : View.GONE);
+        holder.voucher.setVisibility("是".equals(mList.get(position).getPay()) ? View.VISIBLE : View.GONE);
         holder.nameContent.setText(Html.fromHtml("<font color='" + mContext.getColor(R.color.fontColor) + "'> "
                 + mList.get(position).getStaffName() + "</font>" +
                 "<font color='" + mContext.getColor(R.color.labelColor) + "'> | " + mList.get(position).getText() + "</font>"));
@@ -116,10 +114,10 @@ public final class ReimbursementAdapter extends RecyclerView.Adapter<Reimburseme
         /**
          * 查看详情
          *
-         * @param reimbursement
+         * @param reimbursementData
          * @param position
          */
-        void onClickItem(Reimbursement reimbursement, int position);
+        void onClickItem(ReimbursementData reimbursementData, int position);
     }
 
     private OnClickReimburse mOnClickReimburse;

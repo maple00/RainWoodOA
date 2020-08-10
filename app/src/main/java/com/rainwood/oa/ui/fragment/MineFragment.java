@@ -256,8 +256,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                     return;
                 }
                 XXPermissions.with(getActivity())
-                        .permission(Permission.REQUEST_INSTALL_PACKAGES,Permission.WRITE_EXTERNAL_STORAGE
-                                ,Permission.READ_EXTERNAL_STORAGE)
+                        .permission(Permission.REQUEST_INSTALL_PACKAGES, Permission.WRITE_EXTERNAL_STORAGE
+                                , Permission.READ_EXTERNAL_STORAGE)
                         .constantRequest()
                         .request(new OnPermission() {
                             @Override
@@ -271,11 +271,12 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
                                             // 更新日志
                                             .setUpdateLog(mVersionData.getContent())
                                             // 下载 URL https://www.pgyer.com/IWG8
-                                            //.setDownloadUrl(mVersionData.getUrl())
-                                            .setDownloadUrl("https://www.pgyer.com/IWG8")
+                                            .setDownloadUrl(mVersionData.getUrl())
+                                            //.setDownloadUrl("https://www.pgyer.com/IWG8")
                                             .show();
                                 }
                             }
+
                             @Override
                             public void noPermission(List<String> denied, boolean quick) {
                                 LogUtils.d("sxs", "-------- " + denied.toString());

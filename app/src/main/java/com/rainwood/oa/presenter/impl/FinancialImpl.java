@@ -7,7 +7,7 @@ import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.IconAndFont;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.model.domain.MineReimbursement;
-import com.rainwood.oa.model.domain.Reimbursement;
+import com.rainwood.oa.model.domain.ReimbursementData;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.TeamFunds;
@@ -312,10 +312,10 @@ public final class FinancialImpl implements IFinancialPresenter, OnHttpListener 
         // 费用报销
         else if (result.url().contains("cla=cost&fun=home")) {
             try {
-                List<Reimbursement> reimbursementList = JsonParser.parseJSONArray(Reimbursement.class,
+                List<ReimbursementData> reimbursementDataList = JsonParser.parseJSONArray(ReimbursementData.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("cost"));
                 // TODO: null Exception
-                mFinancialCallbacks.getReimburseData(reimbursementList);
+                mFinancialCallbacks.getReimburseData(reimbursementDataList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

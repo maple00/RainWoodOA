@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @Date: 2020/6/4 14:26
  * @Desc: 费用报销
  */
-public final class Reimbursement implements Serializable {
+public final class ReimbursementData implements Serializable {
 
     /**
      * id

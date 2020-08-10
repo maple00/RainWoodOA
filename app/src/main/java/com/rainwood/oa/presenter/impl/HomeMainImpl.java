@@ -63,6 +63,7 @@ public final class HomeMainImpl implements IHomePresenter, OnHttpListener {
     @Override
     public void onHttpSucceed(HttpResponse result) {
         LogUtils.d("sxs", "result ---- " + result.body());
+        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mHomeCallbacks.onError();
             return;

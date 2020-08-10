@@ -1,5 +1,6 @@
 package com.rainwood.oa.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,19 +36,20 @@ import com.rainwood.oa.ui.activity.LoginActivity;
 import com.rainwood.oa.ui.adapter.HomeSalaryAdapter;
 import com.rainwood.oa.ui.widget.MeasureGridView;
 import com.rainwood.oa.ui.widget.MyChartMarkerView;
-import com.rainwood.oa.utils.Constants;
 import com.rainwood.oa.utils.ListUtils;
 import com.rainwood.oa.utils.LogUtils;
 import com.rainwood.oa.utils.PresenterManager;
 import com.rainwood.oa.view.IHomeCallbacks;
-import com.rainwood.tkrefreshlayout.utils.LogUtil;
 import com.rainwood.tools.annotation.OnClick;
 import com.rainwood.tools.annotation.ViewInject;
 import com.rainwood.tools.statusbar.StatusBarUtils;
 import com.rainwood.tools.utils.DateTimeUtils;
 import com.rainwood.tools.wheel.widget.HintLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cn.rawinwood.bgabanner.BGABanner;
@@ -101,12 +103,24 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
         mHomePresenter.registerViewCallback(this);
     }
 
+    public String getLast12Months(int i) {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.MONTH, -i);
+        Date m = c.getTime();
+        return sdf.format(m);
+    }
+
     @Override
     protected void loadData() {
-        // 加载数据 -- 当月1号到currentDay
+        // 加载数据 -- 当前月份到半年之前的月份
         int nowYear = DateTimeUtils.getNowYear();
         int nowMonth = DateTimeUtils.getNowMonth();
         int nowDay = DateTimeUtils.getNowDay();
+        //DateTimeUtils.getLongTime(20)
+        //Calendar calendar = Calendar.getInstance();
+        String last12Months = getLast12Months(6);
         if (!NetworkUtils.isAvailable(getContext())) {
             StatusBarUtils.darkMode(getActivity(), true);
             toast(getString(R.string.text_network_error));
@@ -115,15 +129,15 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
                     toast(getString(R.string.common_network));
                     return;
                 }
-                mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
-                        nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+                mHomePresenter.requestSalaryData(last12Months,
+                        nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth));
             });
             return;
         } else {
             StatusBarUtils.darkMode(getActivity(), false);
         }
-        mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
-                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+        mHomePresenter.requestSalaryData(last12Months,
+                nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth));
     }
 
     @SingleClick
@@ -153,8 +167,8 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
             int nowYear = DateTimeUtils.getNowYear();
             int nowMonth = DateTimeUtils.getNowMonth();
             int nowDay = DateTimeUtils.getNowDay();
-            mHomePresenter.requestSalaryData(nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-01",
-                    nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth) + "-" + (nowDay < 10 ? "0" + nowDay : nowDay));
+            mHomePresenter.requestSalaryData(getLast12Months(6),
+                    nowYear + "-" + (nowMonth < 10 ? "0" + nowMonth : nowMonth));
         }
     }
 
@@ -228,7 +242,7 @@ public final class HomeFragment extends BaseFragment implements BGABanner.Adapte
                 return;
             }
             descList.clear();
-            descList.add(new HomeSalaryDesc(Float.parseFloat(value) *1000, "工资："));
+            descList.add(new HomeSalaryDesc(Float.parseFloat(value) * 1000, "工资："));
             chartMarkerView.getTvPerson().setText(monthList.get(index));
             chartMarkerView.getTvFirm().setDescList(descList);
         });

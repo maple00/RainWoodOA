@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.MineReimbursement;
-import com.rainwood.oa.model.domain.Reimbursement;
+import com.rainwood.oa.model.domain.ReimbursementData;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.network.action.StatusAction;
 import com.rainwood.oa.network.aop.SingleClick;
@@ -297,9 +297,9 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
         });
 
         // 管理费用报销查看详情
-        mReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
+        mReimbursementAdapter.setOnClickReimburse((reimbursementData, position) ->
                 PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this,
-                        CostDetailActivity.class, reimbursement.getId()));
+                        CostDetailActivity.class, reimbursementData.getId()));
         // 我的费用报销查看详情
         mMineReimbursementAdapter.setOnClickReimburse((reimbursement, position) ->
                 PageJumpUtil.reimburseList2Detail(ReimbursementActivity.this, CostDetailActivity.class,
@@ -480,7 +480,7 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
     }
 
     @Override
-    public void getReimburseData(List<Reimbursement> reimbursementList) {
+    public void getReimburseData(List<ReimbursementData> reimbursementDataList) {
         // 管理---费用报销
         pageRefresh.finishLoadmore();
         showComplete();
@@ -488,13 +488,13 @@ public final class ReimbursementActivity extends BaseActivity implements IFinanc
             hideDialog();
         }
         if (pageCount != 1) {
-            toast("为您加载了" + ListUtils.getSize(reimbursementList) + "条数据");
-            mReimbursementAdapter.addData(reimbursementList);
+            toast("为您加载了" + ListUtils.getSize(reimbursementDataList) + "条数据");
+            mReimbursementAdapter.addData(reimbursementDataList);
         } else {
-            if (ListUtils.getSize(reimbursementList) == 0) {
+            if (ListUtils.getSize(reimbursementDataList) == 0) {
                 showEmpty();
             }
-            mReimbursementAdapter.setList(reimbursementList);
+            mReimbursementAdapter.setList(reimbursementDataList);
         }
     }
 

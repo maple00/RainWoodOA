@@ -34,7 +34,6 @@
             app:text_color="@color/fontColor"
             app:text_size="15" />
 
-
         <com.rainwood.oa.ui.widget.GroupTextIcon
             android:id="@+id/gti_sorting"
             android:layout_width="0dp"

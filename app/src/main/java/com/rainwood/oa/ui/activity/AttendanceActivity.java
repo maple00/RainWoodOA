@@ -474,6 +474,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
             }
         });
         mPageRightTitle.setVisibility(View.GONE);
+        rightMenu.setVisibility(View.GONE);
         toast(tips);
     }
 

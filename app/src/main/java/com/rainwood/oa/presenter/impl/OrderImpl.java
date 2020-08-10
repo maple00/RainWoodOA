@@ -522,7 +522,9 @@ public final class OrderImpl implements IOrderPresenter, OnHttpListener {
                     item.setName(payerArray.get(i));
                     sortList.add(item);
                 }
-                mOrderEditCallbacks.getOrderCondition(stateList, sortList);
+                String hasPermission = JsonParser.parseJSONObjectString(
+                        JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("stid");
+                mOrderEditCallbacks.getOrderCondition(stateList, sortList, "是".equals(hasPermission));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

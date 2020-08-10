@@ -1,5 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.model.domain.AdminLeaveOut;
 import com.rainwood.oa.model.domain.AdminOverTime;
 import com.rainwood.oa.model.domain.CardRecord;
@@ -331,6 +332,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     /**
      * 开票记录详情
+     *
      * @param invoiceId
      */
     @Override
@@ -638,6 +640,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
         // 知识管理 -- 跟进记录 （记录类型）
         else if (result.url().contains("cla=follow&fun=search")) {
             try {
+                LogUtil.d("sxs", "-------- 跟进记录类型" + result.body());
                 List<String> typeArray = JsonParser.parseJSONList(JsonParser.parseJSONObjectString(
                         JsonParser.parseJSONObjectString(result.body()).getString("search")).getString("target"));
                 typeArray.add(0, "全部");
@@ -647,7 +650,9 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
                     item.setName(typeArray.get(i));
                     typeList.add(item);
                 }
-                mRecordCallbacks.getRecordsTypes(typeList);
+                String hasPermission = JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(result.body())
+                        .getString("search")).getString("stid");
+                mRecordCallbacks.getRecordsTypes("是".equals(hasPermission), typeList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

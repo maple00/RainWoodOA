@@ -55,7 +55,7 @@
         tools:targetApi="q">
 
         <!-- 适配 Android 7.0 文件意图 -->
-        <provider
+       <!-- <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
@@ -64,7 +64,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
+        </provider>-->
 
         <uses-library
             android:name="org.apache.http.legacy"

@@ -77,7 +77,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     @ViewInject(R.id.gti_status)
     private GroupTextIcon orderStatus;
     @ViewInject(R.id.gti_staff)
-    private GroupTextIcon departStaff;
+    private GroupTextIcon mDepartStaff;
     @ViewInject(R.id.gti_sorting)
     private GroupTextIcon sorting;
     @ViewInject(R.id.divider)
@@ -167,7 +167,7 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
             }
         });
         // 部门员工
-        departStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(OrderListActivity.this,
+        mDepartStaff.setOnItemClick(text -> startActivityForResult(getNewIntent(OrderListActivity.this,
                 ContactsActivity.class, "通讯录", ""),
                 CHOOSE_STAFF_REQUEST_SIZE));
         // 排序状态
@@ -313,7 +313,8 @@ public final class OrderListActivity extends BaseActivity implements IOrderCallb
     }
 
     @Override
-    public void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sortList) {
+    public void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sortList, boolean hasPermission) {
+        mDepartStaff.setVisibility(hasPermission ? View.VISIBLE : View.GONE);
         Collections.reverse(stateList);
         mStateList = stateList;
         mSortList = sortList;

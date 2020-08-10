@@ -7,7 +7,7 @@ import com.rainwood.oa.model.domain.BalanceRecord;
 import com.rainwood.oa.model.domain.ClassificationStatics;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.model.domain.MineReimbursement;
-import com.rainwood.oa.model.domain.Reimbursement;
+import com.rainwood.oa.model.domain.ReimbursementData;
 import com.rainwood.oa.model.domain.SelectedItem;
 import com.rainwood.oa.model.domain.StaffCurve;
 import com.rainwood.oa.model.domain.TeamFunds;
@@ -24,7 +24,7 @@ public interface IFinancialCallbacks extends IBaseCallback {
     /**
      * 获取费用报销数据
      */
-    default void getReimburseData(List<Reimbursement> reimbursementList) {
+    default void getReimburseData(List<ReimbursementData> reimbursementDataList) {
     }
 
     /**

@@ -346,12 +346,12 @@ public final class DateTimeUtils {
      * @param hour hour=-1为上一个小时，hour=1为下一个小时
      * @return
      */
-    public static String getLongTime(int hour) {
+    public static String getLongTime(int hour, DatePattern pattern) {
         Calendar c = Calendar.getInstance(); // 当时的日期和时间
         int h; // 需要更改的小时
         h = c.get(Calendar.HOUR_OF_DAY) - hour;
         c.set(Calendar.HOUR_OF_DAY, h);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat(pattern.getValue());
         Log.v("time", df.format(c.getTime()));
         return df.format(c.getTime());
     }

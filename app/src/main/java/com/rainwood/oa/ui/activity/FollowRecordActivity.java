@@ -80,6 +80,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     private RecyclerView followRecords;
     @ViewInject(R.id.divider)
     private View divider;
+    @ViewInject(R.id.ll_depart_staff)
+    private LinearLayout mDepartStaff;
 
     @ViewInject(R.id.hl_status_hint)
     private HintLayout mHintLayout;
@@ -255,7 +257,8 @@ public final class FollowRecordActivity extends BaseActivity implements IRecordC
     }
 
     @Override
-    public void getRecordsTypes(List<SelectedItem> typeList) {
+    public void getRecordsTypes(boolean hasPermission, List<SelectedItem> typeList) {
+        mDepartStaff.setVisibility(hasPermission ? View.VISIBLE : View.GONE);
         Collections.reverse(typeList);
         mTypeList = typeList;
     }

@@ -59,7 +59,7 @@ public interface IOrderCallbacks extends IBaseCallback {
     /**
      * 订单列表-- condition
      */
-    default void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sorting) {
+    default void getOrderCondition(List<SelectedItem> stateList, List<SelectedItem> sorting, boolean hasPermission) {
     }
 
     /**

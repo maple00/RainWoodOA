@@ -141,9 +141,10 @@ public interface IRecordCallbacks extends IBaseCallback {
     /**
      * 知识管理 --- 跟进记录 （记录类型）
      *
+     * @param hasPermission
      * @param typeList
      */
-    default void getRecordsTypes(List<SelectedItem> typeList) {
+    default void getRecordsTypes(boolean hasPermission, List<SelectedItem> typeList) {
     }
 
     /**
