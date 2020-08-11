@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.core.content.FileProvider;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.R;
 import com.rainwood.oa.network.aop.Permissions;
 import com.rainwood.oa.network.aop.SingleClick;
@@ -142,15 +143,14 @@ public final class UpdateDialog {
          */
         private void downloadApk() {
             // 创建要下载的文件对象
-            mApkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    getString(R.string.app_name) + "_v" + mNameView.getText().toString().trim() + ".apk");
-            LogUtils.d("sxs", "---- 文件下载的路径 -------- " + mApkFile.getPath());
+            mApkFile = new File(getString(R.string.app_name) + "_v" + mNameView.getText().toString().trim() + ".apk");
+            LogUtils.d("sxs", "---- 文件下载的路径 -------- " + mApkFile.getAbsolutePath());
             // 设置对话框不能被取消
             setCancelable(false);
             new Downloader.Builder()
                     .url(mDownloadUrl)
                     .name(mApkFile.getName())
-                    .folder(mApkFile.getAbsolutePath())
+                    .folder("rainWood")
                     .isBreakpoint(true)
                     .listener(new OnDownloadListener() {
                         @Override
@@ -202,9 +202,11 @@ public final class UpdateDialog {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 uri = FileProvider.getUriForFile(getContext(), AppConfig.getPackageName() + ".provider", mApkFile);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                // intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } else {
                 uri = Uri.fromFile(mApkFile);
             }
+            LogUtil.d("sxs", uri.getPath());
             //Uri.parse("file://" + path);
             // uri = Uri.parse("file://" + mApkFile.getAbsolutePath());
             // intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

@@ -1,7 +1,6 @@
 package com.rainwood.oa.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -122,8 +121,8 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         StatusBarUtils.setPaddingSmart(this.getContext(), mineBar);
         StatusBarUtils.setMargin(this.getContext(), mScrollView);
         // 字体设置(苹方字体)
-        Typeface typeface = Typeface.createFromAsset(rootView.getContext().getAssets(), "pingfang.ttf");
-        accountBalance.setTypeface(typeface);
+        // Typeface typeface = Typeface.createFromAsset(rootView.getContext().getAssets(), "pingfang.ttf");
+        // accountBalance.setTypeface(typeface);
         // 创建适配器--- 账户管理、我的管理
         mMineAccountAdapter = new MineAccountAdapter();
         mModuleAdapter = new ItemModuleAdapter();
