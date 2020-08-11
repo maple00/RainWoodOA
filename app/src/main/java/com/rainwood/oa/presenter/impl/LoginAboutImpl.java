@@ -1,5 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.network.aop.CheckNet;
 import com.rainwood.oa.network.json.JsonParser;
 import com.rainwood.oa.network.okhttp.HttpResponse;
@@ -25,7 +26,6 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
 
     /**
      * 登录
-     *
      * @param userName 用户名
      * @param password 密码
      */
@@ -42,6 +42,9 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
         // 手机厂商-手机型号-系统版本
         params.add("deviceName", SystemUtil.getDeviceBrand() + SystemUtil.getSystemModel() + SystemUtil.getSystemVersion());
         params.add("deviceID", Constants.IMEI);
+        // "https://www.yumukej.cn/project/demo/interface/controlApp/app.php?cla=login"
+        LogUtil.d("sxs", "------ userName-----" + userName + "---- pwd ---- " + password);
+        LogUtil.d("sxs", SystemUtil.getDeviceBrand() + SystemUtil.getSystemModel() + SystemUtil.getSystemVersion());
         OkHttp.post(Constants.BASE_URL + "cla=login", params, this);
     }
 
@@ -85,7 +88,7 @@ public final class LoginAboutImpl implements OnHttpListener, ILoginAboutPresente
 
     @Override
     public void onHttpFailure(HttpResponse result) {
-        //LogUtil.d("sxs", "----- result ---" );
+        LogUtil.d("sxs", "----- result ---" );
         mLoginAboutCallback.onError();
     }
 

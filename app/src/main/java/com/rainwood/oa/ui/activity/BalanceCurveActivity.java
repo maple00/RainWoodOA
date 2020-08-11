@@ -277,7 +277,7 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
             lineDataSet.setHighLightColor(color);
             lineDataSet.setColor(color);
             lineDataSet.setCircleColor(color);
-            lineDataSet.setDrawValues(true);
+            lineDataSet.setDrawValues(false);
             lineDataSet.setDrawFilled(false);
             // 设置显示最小值
             lineDataSet.setFillFormatter((dataSet, dataProvider) -> yMinValues);
@@ -406,7 +406,8 @@ public final class BalanceCurveActivity extends BaseActivity implements IFinanci
         lyAxis.setDrawLabels(true);//是否显示数值
         lyAxis.setDrawAxisLine(false);//是否显示坐标线
         lyAxis.setDrawGridLines(true);//是否显示水平网格线
-        lyAxis.setDrawZeroLine(false);//是否绘制零线
+        lyAxis.setDrawZeroLine(true);//是否绘制零线
+        lyAxis.setStartAtZero(false);
         float yMinValues = lyAxis.getAxisMinimum();
         lyAxis.setZeroLineColor(getColor(R.color.labelColor));
         lyAxis.setZeroLineWidth(0.8f);

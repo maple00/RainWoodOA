@@ -1,5 +1,6 @@
 package com.rainwood.oa.presenter.impl;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.model.domain.Logcat;
 import com.rainwood.oa.model.domain.ManagerMain;
 import com.rainwood.oa.network.json.JsonParser;
@@ -60,6 +61,32 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
     }
 
     @Override
+    public void requestHasShowDepart() {
+        RequestParams params = new RequestParams();
+        params.add("life", Constants.life);
+        OkHttp.post(Constants.BASE_URL + "cla=log&fun=search", params, new OnHttpListener() {
+            @Override
+            public void onHttpFailure(HttpResponse result) {
+                if (mLogcatCallbacks != null){
+                    mLogcatCallbacks.onError();
+                }
+            }
+
+            @Override
+            public void onHttpSucceed(HttpResponse result) {
+                LogUtil.d("sxs", "----- result 展示员工 ---" + result.body());
+                try {
+                    String stid = JsonParser.parseJSONObjectString(JsonParser.parseJSONObjectString(result.body())
+                            .getString("search")).getString("stid");
+                    mLogcatCallbacks.getRes4ShowDepart(stid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
     public void registerViewCallback(ILogcatCallbacks callback) {
         mLogcatCallbacks = callback;
     }
@@ -76,8 +103,6 @@ public final class LogcatImpl implements ILogcatPresenter, OnHttpListener {
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        LogUtils.d("sxs", "result ---- " + result.body());
-        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mLogcatCallbacks.onError();
             return;

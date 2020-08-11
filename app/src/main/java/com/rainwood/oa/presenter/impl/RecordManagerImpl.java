@@ -377,8 +377,6 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        LogUtils.d("sxs", "result ---- " + result.body());
-        LogUtils.d("sxs", "result ---- " + result.requestParams());
         if (!(result.code() == 200)) {
             mRecordCallbacks.onError();
             return;
@@ -632,6 +630,7 @@ public final class RecordManagerImpl implements IRecordManagerPresenter, OnHttpL
             try {
                 List<KnowledgeFollowRecord> knowledgeFollowRecordList = JsonParser.parseJSONArray(KnowledgeFollowRecord.class,
                         JsonParser.parseJSONObjectString(result.body()).getString("follow"));
+
                 mRecordCallbacks.getKnowledgeFollowRecords(knowledgeFollowRecordList);
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -38,7 +38,7 @@ public final class CustomOrderListActivity extends BaseActivity implements IOrde
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pagerTop;
-    @ViewInject(R.id.tv_page_menu_title)
+    @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // content
     @ViewInject(R.id.tv_company_name)

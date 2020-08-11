@@ -52,7 +52,7 @@ public final class AttendanceActivity extends BaseActivity implements ICalendarC
     // page
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_menu_title)
+    @ViewInject(R.id.tv_page_title)
     private TextView mPageTitle;
     @ViewInject(R.id.tv_page_right_title)
     private TextView mPageRightTitle;

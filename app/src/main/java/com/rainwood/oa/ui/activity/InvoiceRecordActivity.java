@@ -76,7 +76,7 @@ public final class InvoiceRecordActivity extends BaseActivity implements IRecord
     private LinearLayout searchTopView;
     @ViewInject(R.id.et_search_tips)
     private TextView searchTipsView;
-    @ViewInject(R.id.tv_page_menu_title)
+    @ViewInject(R.id.tv_page_title)
     private TextView pageMenuTitle;
     @ViewInject(R.id.tv_cancel)
     private TextView mTextCancel;

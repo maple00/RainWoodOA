@@ -54,12 +54,12 @@ public final class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         // 程序创建的时候执行
-        LogUtils.d(TAG, "onCreate");
-        // android 7.0系统解决拍照的问题
+       // LogUtils.d(TAG, "onCreate");
+        // 严格模式
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
-//            builder.detectFileUriExposure();
+            // builder.detectFileUriExposure();
         }
         app = this;
         // initActivity 初始化Activity 栈管理

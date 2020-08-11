@@ -55,7 +55,7 @@ import static com.rainwood.tools.utils.DateTimeUtils.dateToString;
  * @Date: 2020/6/29 13:38
  * @Desc: 员工数曲线
  */
-public final class StaffCurveActivity extends BaseActivity implements IFinancialCallbacks , StatusAction {
+public final class StaffCurveActivity extends BaseActivity implements IFinancialCallbacks, StatusAction {
 
     @ViewInject(R.id.rl_page_top)
     private RelativeLayout pageTop;
@@ -105,7 +105,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         int nowDay = DateTimeUtils.getNowDay();
         // -- 默认选择6个月
         Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
-        ca.set(nowYear, nowMonth -1, nowDay);// 月份是从0开始的，所以11表示12月
+        ca.set(nowYear, nowMonth - 1, nowDay);// 月份是从0开始的，所以11表示12月
         ca.add(Calendar.YEAR, 0); // 年份减1
         ca.add(Calendar.MONTH, -6);// 月份减1
         ca.add(Calendar.DATE, 0);// 日期减1
@@ -167,6 +167,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
     @SuppressLint("SetTextI18n")
     @Override
     public void getStaffNumByCurve(List<String> xValues, List<StaffCurve> staffNumList) {
+        showComplete();
         if (isShowDialog()) {
             hideDialog();
         }
@@ -231,7 +232,6 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
             chartMarkerView.getTvFirm().setDescList(descList);
         });
         staffCurveView.setMarker(chartMarkerView);
-        showComplete();
     }
 
     /**
@@ -261,7 +261,7 @@ public final class StaffCurveActivity extends BaseActivity implements IFinancial
         // 是否显示表格颜色
         staffCurveView.setBackgroundColor(Color.TRANSPARENT);
         // 设置动画
-        staffCurveView.animateY(1000, Easing.Linear);
+        staffCurveView.animateY(10, Easing.Linear);
         // 防止底部数据显示不完整，设置底部偏移量
         staffCurveView.setExtraBottomOffset(5f);
         /*

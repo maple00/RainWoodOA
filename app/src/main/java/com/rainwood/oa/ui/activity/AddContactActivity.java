@@ -34,7 +34,7 @@ public final class AddContactActivity extends BaseActivity implements ICustomCal
     // actionBar
     @ViewInject(R.id.rl_pager_top)
     private RelativeLayout pageTop;
-    @ViewInject(R.id.tv_page_menu_title)
+    @ViewInject(R.id.tv_page_title)
     private TextView pageTitle;
     // 必填项
     @ViewInject(R.id.tv_post)

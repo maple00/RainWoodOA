@@ -3,14 +3,18 @@ package com.rainwood.oa.ui.dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.core.content.FileProvider;
+
 import com.rainwood.oa.R;
 import com.rainwood.oa.network.aop.Permissions;
 import com.rainwood.oa.network.aop.SingleClick;
+import com.rainwood.oa.network.app.AppConfig;
 import com.rainwood.oa.network.io.Downloader;
 import com.rainwood.oa.network.io.OnDownloadListener;
 import com.rainwood.oa.utils.LogUtils;
@@ -195,13 +199,15 @@ public final class UpdateDialog {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             Uri uri;
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                uri = FileProvider.getUriForFile(getContext(), AppConfig.getPackageName() + ".provider", mApkFile);
-//            } else {
-//                uri = Uri.fromFile(mApkFile);
-//            }
-            uri = Uri.fromFile(mApkFile);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                uri = FileProvider.getUriForFile(getContext(), AppConfig.getPackageName() + ".provider", mApkFile);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            } else {
+                uri = Uri.fromFile(mApkFile);
+            }
+            //Uri.parse("file://" + path);
+            // uri = Uri.parse("file://" + mApkFile.getAbsolutePath());
+            // intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);

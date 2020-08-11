@@ -23,4 +23,10 @@ public interface ILogcatCallbacks extends IBaseCallback {
      * @param menuList
      */
     default void getMainManagerData(List<ManagerMain> menuList){};
+
+    /**
+     * 是否展示部门员工
+     * @param stid
+     */
+    default void getRes4ShowDepart(String stid){}
 }

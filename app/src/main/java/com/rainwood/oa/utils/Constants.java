@@ -11,9 +11,9 @@ public final class Constants {
      * 后台请求BaseURL
      */
     // 正式环境 https://www.yumukeji.com/interface/controlApp/
-     public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
+    public static final String BASE_URL = "https://www.yumukeji.com/interface/controlApp/app.php?";
     // 参数环境 https://www.yumukej.cn/project/demo/interface/controlApp/
-//    public static final String BASE_URL = "https://www.yumukej.cn/project/demo/interface/controlApp/app.php?";
+    // public static final String BASE_URL = "https://www.yumukej.cn/project/demo/interface/controlApp/app.php?";
 
     /**
      * 无网络-What

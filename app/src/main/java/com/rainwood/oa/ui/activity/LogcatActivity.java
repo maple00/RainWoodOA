@@ -134,6 +134,8 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
         netRequestData("", "", "", "", "", "");
         // 请求日志类型
         mLogcatPresenter.requestLogcatType();
+        // 请求权限
+        mLogcatPresenter.requestHasShowDepart();
     }
 
     /**
@@ -248,6 +250,11 @@ public final class LogcatActivity extends BaseActivity implements ILogcatCallbac
                 }
                 break;
         }
+    }
+
+    @Override
+    public void getRes4ShowDepart(String stid) {
+        departStaff.setVisibility("是".equals(stid) ? View.VISIBLE : View.GONE);
     }
 
     @Override

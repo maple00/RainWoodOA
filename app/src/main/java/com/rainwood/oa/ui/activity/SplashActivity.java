@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
 
+import com.rainwood.customchartview.utils.LogUtil;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseActivity;
 import com.rainwood.oa.model.domain.LoginData;
@@ -125,16 +126,16 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
                         if (isAll) {
                             // 查询数据库
                             List<LoginData> loginDataList = SQLiteHelper.with(SplashActivity.this).query(LoginData.class);
+                            LogUtil.d("sxs", "------- 登录 -------" + loginDataList);
                             if (ListUtils.getSize(loginDataList) == 0) {
                                 // 没有登录-- 直接跳转到登录
                                 openActivity(LoginActivity.class);
-                                finish();
                             } else {
                                 // 登录过了，检查会话的时效性
                                 Constants.life = loginDataList.get(0).getLife();
                                 startActivity(HomeActivity.class);
-                                finish();
                             }
+                            finish();
                             // 没有网络
                            /* boolean available = NetworkUtils.isAvailable(SplashActivity.this);
                             if (!available) {

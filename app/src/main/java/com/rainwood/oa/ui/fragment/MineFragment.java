@@ -21,6 +21,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.rainwood.oa.R;
 import com.rainwood.oa.base.BaseFragment;
 import com.rainwood.oa.model.domain.FontAndFont;
+import com.rainwood.oa.model.domain.LoginData;
 import com.rainwood.oa.model.domain.MineData;
 import com.rainwood.oa.model.domain.VersionData;
 import com.rainwood.oa.network.aop.SingleClick;
@@ -358,6 +359,7 @@ public final class MineFragment extends BaseFragment implements IMineCallbacks {
         postDelayed(() -> {
             ActivityStackManager.getInstance().finishAllActivities(LoginActivity.class);
             Constants.life = null;
+            SQLiteHelper.with(getContext()).delete(LoginData.class.getSimpleName());
             openActivity(LoginActivity.class);
         }, 500);
     }

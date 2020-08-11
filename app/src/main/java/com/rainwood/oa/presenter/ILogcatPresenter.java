@@ -27,4 +27,9 @@ public interface ILogcatPresenter extends IBasePresenter<ILogcatCallbacks> {
      * 请求查询日志类型
      */
     void requestLogcatType();
+
+    /**
+     * 请求是否展示部门员工
+     */
+    void requestHasShowDepart();
 }
